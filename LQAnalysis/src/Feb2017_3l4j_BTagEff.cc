@@ -140,7 +140,7 @@ void Feb2017_3l4j_BTagEff::ExecuteEvents()throw( LQError ){
    CorrectMuonMomentum(muonColl);
    
      eventbase->GetElectronSel()->SetID(BaseSelection::ELECTRON_POG_LOOSE);
-     eventbase->GetElectronSel()->SetPt(15.);                eventbase->GetElectronSel()->SetEta(2.5);
+     eventbase->GetElectronSel()->SetPt(10.);                eventbase->GetElectronSel()->SetEta(2.5);
      eventbase->GetElectronSel()->SetBETrRegIncl(false);
      eventbase->GetElectronSel()->SetRelIsoType("Default");  eventbase->GetElectronSel()->SetRelIsoBEMax(0.0994, 0.107);//ISO Ichep16 Loose WP
    //eventbase->GetElectronSel()->SetdxyBEMax(0.005, 0.01);  eventbase->GetElectronSel()->SetdzBEMax(0.005, 0.01);
@@ -148,12 +148,12 @@ void Feb2017_3l4j_BTagEff::ExecuteEvents()throw( LQError ){
    std::vector<snu::KElectron> electronLooseColl; eventbase->GetElectronSel()->Selection(electronLooseColl);//pt>10/eta<2.4(hole region ~1.4 excluded by default)/EGAMMA_LOOSE/NoExtIso*/
 //cout << eventbase->GetElectronSel()->pt_cut_min<<endl;
      eventbase->GetElectronSel()->SetID(BaseSelection::ELECTRON_POG_TIGHT);
-     eventbase->GetElectronSel()->SetPt(15.);                eventbase->GetElectronSel()->SetEta(2.5);
+     eventbase->GetElectronSel()->SetPt(10.);                eventbase->GetElectronSel()->SetEta(2.5);
      eventbase->GetElectronSel()->SetBETrRegIncl(false);
      eventbase->GetElectronSel()->SetRelIsoType("Default");  eventbase->GetElectronSel()->SetRelIsoBEMax(0.0588, 0.0571);//Iso Ichep16 Loose WP
      eventbase->GetElectronSel()->SetdxyBEMax(0.05, 0.1);    eventbase->GetElectronSel()->SetdzBEMax(0.1, 0.2);
    //std::vector<snu::KElectron> electronColl; eventbase->GetElectronSel()->Selection(electronColl);//pt>10/eta<2.4(hole region ~1.4 excluded by default)/EGAMMA_LOOSE/NoExtIso*/
-   std::vector<snu::KElectron> electronColl; eventbase->GetElectronSel()->SelectElectrons(electronColl, "ELECTRON_POG_TIGHT", 15., 2.5);//pt>10/eta<2.4/RelIso03<0.2/MUON_LOOSE
+   std::vector<snu::KElectron> electronColl; eventbase->GetElectronSel()->SelectElectrons(electronColl, "ELECTRON_POG_TIGHT", 10., 2.5);//pt>10/eta<2.4/RelIso03<0.2/MUON_LOOSE
 //cout<<electronLooseColl.size()<<" "<<electronColl.size()<<endl;
      eventbase->GetJetSel()->SetID(BaseSelection::PFJET_TIGHT);
      eventbase->GetJetSel()->SetPt(20.);                     eventbase->GetJetSel()->SetEta(2.4);
@@ -257,559 +257,84 @@ void Feb2017_3l4j_BTagEff::ExecuteEvents()throw( LQError ){
 ///////Event Selection&Histograms//////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////   
  
-   if(EMu_analysis){
+  int Nlep=electronColl.size()+muonColl.size();
+  float BTagWP=0.8484;
 
-     if(isData){ if(!PassTrigger(analysis_trigger)) return; }
-
-     //Step1 : 1e+1mu
-     if(electronColl.size()!=1 || muonColl.size()!=1 ) return;
-     if(!(electronColl.at(0).Pt()>25 && muonColl.at(0).Pt()>10)) return;
-     FillHist("Cutflow_NoW", 0., weight*trigger_eff, 0., 10., 10);
-     FillHist("Cutflow_TrkIDIsoW", 0., weight*trigger_eff*id_weight_mu*id_weight_ele*trk_weight_mu*iso_weight_mu, 0., 10., 10);
-     FillHist("Cutflow_TrkIDIsoPUW", 0., weight*trigger_eff*id_weight_mu*id_weight_ele*trk_weight_mu*iso_weight_mu*pileup_reweight, 0., 10., 10);
-
-     //Step2 : OS
-     if(electronColl.at(0).Charge()==muonColl.at(0).Charge()) return;
-     FillHist("Cutflow_NoW", 1., weight*trigger_eff, 0., 10., 10);
-     FillHist("Cutflow_TrkIDIsoW", 1., weight*trigger_eff*id_weight_mu*id_weight_ele*trk_weight_mu*iso_weight_mu, 0., 10., 10);
-     FillHist("Cutflow_TrkIDIsoPUW", 1., weight*trigger_eff*id_weight_mu*id_weight_ele*trk_weight_mu*iso_weight_mu*pileup_reweight, 0., 10., 10);
-
-     //Step3 : Nj>=1
-     if(jetColl.size()<1) return;
-     FillHist("Cutflow_NoW", 2., weight*trigger_eff, 0., 10., 10);
-     FillHist("Cutflow_TrkIDIsoW", 2., weight*trigger_eff*id_weight_mu*id_weight_ele*trk_weight_mu*iso_weight_mu, 0., 10., 10);
-     FillHist("Cutflow_TrkIDIsoPUW", 2., weight*trigger_eff*id_weight_mu*id_weight_ele*trk_weight_mu*iso_weight_mu*pileup_reweight, 0., 10., 10);
-
-     //Step2 : Nj>=2
-     if(jetColl.size()<2) return;
-     FillHist("Cutflow_NoW", 3., weight*trigger_eff, 0., 10., 10);
-     FillHist("Cutflow_TrkIDIsoW", 3., weight*trigger_eff*id_weight_mu*id_weight_ele*trk_weight_mu*iso_weight_mu, 0., 10., 10);
-     FillHist("Cutflow_TrkIDIsoPUW", 3., weight*trigger_eff*id_weight_mu*id_weight_ele*trk_weight_mu*iso_weight_mu*pileup_reweight, 0., 10., 10);
-
-     //Step5 : MET>20
-     if(met<40) return;
-     FillHist("Cutflow_NoW", 4., weight*trigger_eff, 0., 10., 10);
-     FillHist("Cutflow_TrkIDIsoW", 4., weight*trigger_eff*id_weight_mu*id_weight_ele*trk_weight_mu*iso_weight_mu, 0., 10., 10);
-     FillHist("Cutflow_TrkIDIsoPUW", 4., weight*trigger_eff*id_weight_mu*id_weight_ele*trk_weight_mu*iso_weight_mu*pileup_reweight, 0., 10., 10);
-
-
-     FillHist("PTe", electronColl.at(0).Pt(), weight, 0., 200., 200);
-     FillHist("PTmu1", muonColl.at(0).Pt(), weight, 0., 200., 200);
-     FillHist("PTj1", jetColl.at(0).Pt(), weight, 0., 200., 200);
-     FillHist("PTj2", jetColl.at(1).Pt(), weight, 0., 200., 200);
-//     FillHist("PTj3", jetColl.at(2).Pt(), weight, 0., 200., 200);
-//     FillHist("PTb1", bjetColl.at(0).Pt(), weight, 0., 200., 200);
-     FillHist("MET", met, weight, 0., 200., 200);
-
-
-     //Step3 : Nj>=3
-     if(jetColl.size()<3) return;
-     FillHist("Cutflow_NoW", 5., weight*trigger_eff, 0., 10., 10);
-     FillHist("Cutflow_TrkIDIsoW", 5., weight*trigger_eff*id_weight_mu*id_weight_ele*trk_weight_mu*iso_weight_mu, 0., 10., 10);
-     FillHist("Cutflow_TrkIDIsoPUW", 5., weight*trigger_eff*id_weight_mu*id_weight_ele*trk_weight_mu*iso_weight_mu*pileup_reweight, 0., 10., 10);
-
-     //Step4 : Nb>=1
-     if(bjetColl.size()==0) return;
-     FillHist("Cutflow_NoW", 6., weight*trigger_eff, 0., 10., 10);
-     FillHist("Cutflow_TrkIDIsoW", 6., weight*trigger_eff*id_weight_mu*id_weight_ele*trk_weight_mu*iso_weight_mu, 0., 10., 10);
-     FillHist("Cutflow_TrkIDIsoPUW", 6., weight*trigger_eff*id_weight_mu*id_weight_ele*trk_weight_mu*iso_weight_mu*pileup_reweight, 0., 10., 10);
-
-
-
-/*     if(fabs(electronColl.at(0).Eta())<1.479){
-       FillHist("dxy_eB", electronColl.at(0).dxy(), weight, 0., 1., 1000);
-       FillHist("dz_eB", electronColl.at(0).dz(), weight, 0., 1., 1000);
-       FillHist("Iso03_eB", electronColl.at(0).PFRelIso(0.3), 0., 1., 1000);
-     }
-     else{
-       FillHist("dxy_eE", fabs(electronColl.at(0).dxy()), weight, 0., 1., 1000);
-       FillHist("dz_eE", fabs(electronColl.at(0).dz()), weight, 0., 1., 1000);
-       FillHist("Iso03_eE", fabs(electronColl.at(0).PFRelIso(0.3)), weight, 0., 1., 1000);
-     }
-
-     FillHist("dxy_mu1", fabs(muonColl.at(0).dXY()), weight, 0., 1., 1000);
-     FillHist("dz_mu1", fabs(muonColl.at(0).dZ()), weight, 0., 1., 1000);
-     FillHist("dxysig_mu1", fabs(muonColl.at(0).dXYSig()), weight, 0., 10., 1000);
-     FillHist("Iso04_mu1", muonColl.at(0).RelIso04(), weight, 0., 1., 1000);     */
-
-
-   }
-   if(SingleMu_analysis){
-    if(muonLooseColl.size()==2){
-     if(SumCharge(muonLooseColl)==0){
-      if(muonLooseColl.at(0).Pt()<27){
-     
-        if(fabs((muonLooseColl.at(0)+muonLooseColl.at(1)).M()-91.2)>10) return;
-   
-        FillHist("PTmu1_Zwin", muonLooseColl.at(0).Pt(), weight, 0., 200., 200);
-        FillHist("PTmu2_Zwin", muonLooseColl.at(1).Pt(), weight, 0., 200., 200);
-   
-        float PTmu2=muonLooseColl.at(1).Pt();
-        float PTmu1=muonLooseColl.at(0).Pt();
-   
-        FillHist("dxy_mu", fabs(muonLooseColl.at(0).dXY()), weight, 0., 1., 1000);
-        FillHist("dz_mu", fabs(muonLooseColl.at(0).dZ()), weight, 0., 1., 1000);
-        FillHist("dxysig_mu", fabs(muonLooseColl.at(0).dXYSig()), weight, 0., 10., 1000);
-   
-        if(PTmu2<10){
-          FillHist("dxy_mu_PT5_10", fabs(muonLooseColl.at(1).dXY()), weight, 0., 1., 1000);
-          FillHist("dz_mu_PT5_10", fabs(muonLooseColl.at(1).dZ()), weight, 0., 1., 1000);
-          FillHist("dxysig_mu_PT5_10", fabs(muonLooseColl.at(1).dXYSig()), weight, 0., 10., 1000);
+  //Curious 1: lepVeto needed? -> Yes, we don't want lepton to enter selection
+  //Curious 2: lepton cut needed? -> Well, Let's check it.
+  if(jetColl.size()>0){
+    for( int i=0; i<jetColl.size(); i++){
+      if(jetColl.at(i).HadronFlavour()==5){
+        FillHist("NB_True_PT_Eta", jetColl.at(i).Pt(), jetColl.at(i).Eta(), 1, 20, 3000, 149, -2.4, 2.4, 8);
+        if(jetColl.at(i).BJetTaggerValue(snu::KJet::CSVv2)>BTagWP){
+          FillHist("NBtag_TrueB_PT_Eta", jetColl.at(i).Pt(), jetColl.at(i).Eta(), 1, 20, 3000, 149, -2.4, 2.4, 8);
         }
-        if(PTmu2<20){//default cut muPT>10
-          FillHist("dxy_mu_PT10_20", fabs(muonLooseColl.at(1).dXY()), weight, 0., 1., 1000);
-          FillHist("dz_mu_PT10_20", fabs(muonLooseColl.at(1).dZ()), weight, 0., 1., 1000);
-          FillHist("dxysig_mu_PT10_20", fabs(muonLooseColl.at(1).dXYSig()), weight, 0., 10., 1000);
-        }
-   
-        if(PTmu1<30){//default cut muPT>20
-          FillHist("dxy_mu_PT20_30", fabs(muonLooseColl.at(0).dXY()), weight, 0., 1., 1000);
-          FillHist("dz_mu_PT20_30", fabs(muonLooseColl.at(0).dZ()), weight, 0., 1., 1000);
-          FillHist("dxysig_mu_PT20_30", fabs(muonLooseColl.at(0).dXYSig()), weight, 0., 10., 1000);
-        }
-        else if(PTmu1<40){
-          FillHist("dxy_mu_PT30_40", fabs(muonLooseColl.at(0).dXY()), weight, 0., 1., 1000);
-          FillHist("dz_mu_PT30_40", fabs(muonLooseColl.at(0).dZ()), weight, 0., 1., 1000);
-          FillHist("dxysig_mu_PT30_40", fabs(muonLooseColl.at(0).dXYSig()), weight, 0., 10., 1000);
-        }
-        else if(PTmu1<50){
-          FillHist("dxy_mu_PT40_50", fabs(muonLooseColl.at(0).dXY()), weight, 0., 1., 1000);
-          FillHist("dz_mu_PT40_50", fabs(muonLooseColl.at(0).dZ()), weight, 0., 1., 1000);
-          FillHist("dxysig_mu_PT40_50", fabs(muonLooseColl.at(0).dXYSig()), weight, 0., 10., 1000);
-        }
-        else if(PTmu1<60){
-          FillHist("dxy_mu_PT50_60", fabs(muonLooseColl.at(0).dXY()), weight, 0., 1., 1000);
-          FillHist("dz_mu_PT50_60", fabs(muonLooseColl.at(0).dZ()), weight, 0., 1., 1000);
-          FillHist("dxysig_mu_PT50_60", fabs(muonLooseColl.at(0).dXYSig()), weight, 0., 10., 1000);
-        }
-        else if(PTmu1<70){
-          FillHist("dxy_mu_PT60_70", fabs(muonLooseColl.at(0).dXY()), weight, 0., 1., 1000);
-          FillHist("dz_mu_PT60_70", fabs(muonLooseColl.at(0).dZ()), weight, 0., 1., 1000);
-          FillHist("dxysig_mu_PT60_70", fabs(muonLooseColl.at(0).dXYSig()), weight, 0., 10., 1000);
-        }
-        else if(PTmu1<80){
-          FillHist("dxy_mu_PT70_80", fabs(muonLooseColl.at(0).dXY()), weight, 0., 1., 1000);
-          FillHist("dz_mu_PT70_80", fabs(muonLooseColl.at(0).dZ()), weight, 0., 1., 1000);
-          FillHist("dxysig_mu_PT70_80", fabs(muonLooseColl.at(0).dXYSig()), weight, 0., 10., 1000);
-        }
-        else if(PTmu1<90){
-          FillHist("dxy_mu_PT80_90", fabs(muonLooseColl.at(0).dXY()), weight, 0., 1., 1000);
-          FillHist("dz_mu_PT80_90", fabs(muonLooseColl.at(0).dZ()), weight, 0., 1., 1000);
-          FillHist("dxysig_mu_PT80_90", fabs(muonLooseColl.at(0).dXYSig()), weight, 0., 10., 1000);
-        }
-        else if(PTmu1<100){
-          FillHist("dxy_mu_PT90_100", fabs(muonLooseColl.at(0).dXY()), weight, 0., 1., 1000);
-          FillHist("dz_mu_PT90_100", fabs(muonLooseColl.at(0).dZ()), weight, 0., 1., 1000);
-          FillHist("dxysig_mu_PT90_100", fabs(muonLooseColl.at(0).dXYSig()), weight, 0., 10., 1000);
-        }
-        else if(PTmu1<130){
-          FillHist("dxy_mu_PT100_130", fabs(muonLooseColl.at(0).dXY()), weight, 0., 1., 1000);
-          FillHist("dz_mu_PT100_130", fabs(muonLooseColl.at(0).dZ()), weight, 0., 1., 1000);
-          FillHist("dxysig_mu_PT100_130", fabs(muonLooseColl.at(0).dXYSig()), weight, 0., 10., 1000);
-        }
-        else if(PTmu1<200){
-          FillHist("dxy_mu_PT130_200", fabs(muonLooseColl.at(0).dXY()), weight, 0., 1., 1000);
-          FillHist("dz_mu_PT130_200", fabs(muonLooseColl.at(0).dZ()), weight, 0., 1., 1000);
-          FillHist("dxysig_mu_PT130_200", fabs(muonLooseColl.at(0).dXYSig()), weight, 0., 10., 1000);
-        }
-
       }
-     }
+      else if(jetColl.at(i).HadronFlavour()==4){
+        FillHist("NC_True_PT_Eta", jetColl.at(i).Pt(), jetColl.at(i).Eta(), 1, 20, 3000, 149, -2.4, 2.4, 8);
+        if(jetColl.at(i).BJetTaggerValue(snu::KJet::CSVv2)>BTagWP){
+          FillHist("NBtag_TrueC_PT_Eta", jetColl.at(i).Pt(), jetColl.at(i).Eta(), 1, 20, 3000, 149, -2.4, 2.4, 8);
+        }
+      }
+      else if(jetColl.at(i).HadronFlavour()==0){
+        FillHist("NL_True_PT_Eta", jetColl.at(i).Pt(), jetColl.at(i).Eta(), 1, 20, 3000, 149, -2.4, 2.4, 8);
+        if(jetColl.at(i).BJetTaggerValue(snu::KJet::CSVv2)>BTagWP){
+          FillHist("NBtag_TrueL_PT_Eta", jetColl.at(i).Pt(), jetColl.at(i).Eta(), 1, 20, 3000, 149, -2.4, 2.4, 8);
+        }
+      }
     }
-   }
-   if(DoubleMu_analysis){
-     if(PassTrigger(analysis_trigger)){
-       FillHist("Counter_Nobj_NoW", 0., muonLooseColl.size()*weight, 0., 10., 10);
-       FillHist("Counter_Nobj_NoW", 1., muonColl.size()*weight, 0., 10., 10);
-       FillHist("Counter_Nobj_NoW", 2., jetColl.size()*weight, 0., 10., 10);
-       FillHist("Counter_Nobj_NoW", 3., bjetColl.size()*weight, 0., 10., 10);
+  }//End of Inclusive
 
-       if(muonColl.size()!=2) return;
-       if(SumCharge(muonColl)!=0) return;
-       if(muonColl.at(0).Pt()<20) return;
-       if(muonColl.at(1).Pt()<20) return;
-       if(fabs((muonColl.at(0)+muonColl.at(1)).M()-91.2)>15) return;
+  if(Nlep==1){
+    if(jetColl.size()>0){
+      for( int i=0; i<jetColl.size(); i++){
+        if(jetColl.at(i).HadronFlavour()==5){
+          FillHist("NB_True_PT_Eta_1l", jetColl.at(i).Pt(), jetColl.at(i).Eta(), 1, 20, 3000, 149, -2.4, 2.4, 8);
+          if(jetColl.at(i).BJetTaggerValue(snu::KJet::CSVv2)>BTagWP){
+            FillHist("NBtag_TrueB_PT_Eta_1l", jetColl.at(i).Pt(), jetColl.at(i).Eta(), 1, 20, 3000, 149, -2.4, 2.4, 8);
+          }
+        }
+        else if(jetColl.at(i).HadronFlavour()==4){
+          FillHist("NC_True_PT_Eta_1l", jetColl.at(i).Pt(), jetColl.at(i).Eta(), 1, 20, 3000, 149, -2.4, 2.4, 8);
+          if(jetColl.at(i).BJetTaggerValue(snu::KJet::CSVv2)>BTagWP){
+            FillHist("NBtag_TrueC_PT_Eta_1l", jetColl.at(i).Pt(), jetColl.at(i).Eta(), 1, 20, 3000, 149, -2.4, 2.4, 8);
+          }
+        }
+        else if(jetColl.at(i).HadronFlavour()==0){
+          FillHist("NL_True_PT_Eta_1l", jetColl.at(i).Pt(), jetColl.at(i).Eta(), 1, 20, 3000, 149, -2.4, 2.4, 8);
+          if(jetColl.at(i).BJetTaggerValue(snu::KJet::CSVv2)>BTagWP){
+            FillHist("NBtag_TrueL_PT_Eta_1l", jetColl.at(i).Pt(), jetColl.at(i).Eta(), 1, 20, 3000, 149, -2.4, 2.4, 8);
+          }
+        }
+      }
+    }
+  }//End of lep 1 loop
+  else if(Nlep==2){
+    if(jetColl.size()>0){
+      for( int i=0; i<jetColl.size(); i++){
+        if(jetColl.at(i).HadronFlavour()==5){
+          FillHist("NB_True_PT_Eta_2l", jetColl.at(i).Pt(), jetColl.at(i).Eta(), 1, 20, 3000, 149, -2.4, 2.4, 8);
+          if(jetColl.at(i).BJetTaggerValue(snu::KJet::CSVv2)>BTagWP){
+            FillHist("NBtag_TrueB_PT_Eta_2l", jetColl.at(i).Pt(), jetColl.at(i).Eta(), 1, 20, 3000, 149, -2.4, 2.4, 8);
+          }
+        }
+        else if(jetColl.at(i).HadronFlavour()==4){
+          FillHist("NC_True_PT_Eta_2l", jetColl.at(i).Pt(), jetColl.at(i).Eta(), 1, 20, 3000, 149, -2.4, 2.4, 8);
+          if(jetColl.at(i).BJetTaggerValue(snu::KJet::CSVv2)>BTagWP){
+            FillHist("NBtag_TrueC_PT_Eta_2l", jetColl.at(i).Pt(), jetColl.at(i).Eta(), 1, 20, 3000, 149, -2.4, 2.4, 8);
+          }
+        }
+        else if(jetColl.at(i).HadronFlavour()==0){
+          FillHist("NL_True_PT_Eta_2l", jetColl.at(i).Pt(), jetColl.at(i).Eta(), 1, 20, 3000, 149, -2.4, 2.4, 8);
+          if(jetColl.at(i).BJetTaggerValue(snu::KJet::CSVv2)>BTagWP){
+            FillHist("NBtag_TrueL_PT_Eta_2l", jetColl.at(i).Pt(), jetColl.at(i).Eta(), 1, 20, 3000, 149, -2.4, 2.4, 8);
+          }
+        }
+      }
+    }
+  }//End of lep 2 loop
 
-       FillHist("PTmu1_NoW", muonColl.at(0).Pt(), weight, 0., 200., 200);
-       FillHist("PTmu2_NoW", muonColl.at(1).Pt(), weight, 0., 200., 200);
-       FillHist("Etamu1_NoW", muonColl.at(0).Eta(), weight, -5., 5., 100);
-       FillHist("Etamu2_NoW", muonColl.at(1).Eta(), weight, -5., 5., 100);
-       FillHist("Nj_NoW", jetColl.size(), weight, 0., 10., 10);
-       FillHist("NjL_NoW", jetLooseColl.size(), weight, 0., 10., 10);
-       FillHist("MET_NoW", met, weight, 0., 500., 500);
-       FillHist("Nvtx_NoW", Nvtx, weight, 0., 50., 50);
-       
-       FillHist("Iso_NoW", muonColl.at(0).RelIso04(), weight, 0., 0.2, 1000);
-       FillHist("dxy_NoW", muonColl.at(0).dXY(), weight, 0., 0.4, 1000);
-       FillHist("dz_NoW", muonColl.at(0).dZ(), weight, 0., 0.7, 1000);
-       FillHist("NhitTkLayer_NoW", muonColl.at(0).ActiveLayer(), weight, 0., 20., 20);//Nhit on trackLayer
-       FillHist("Nhitpixel_NoW", muonColl.at(0).validPixHits(), weight, 0., 20., 20);//Nhit on pixel
-       FillHist("NhitMuChamber_NoW", muonColl.at(0).validHits(), weight, 0., 50., 50);//Nhit on muon chamber
-       FillHist("NmatchedStation_NoW", muonColl.at(0).validStations(), weight, 0., 20., 20);//N muon station having muon segment
-       
-       FillHist("PTmu1_TkIDIsoPUW", muonColl.at(0).Pt(), weight*trk_weight_mu*id_weight_mu*iso_weight_mu*pileup_reweight, 0., 200., 200);
-       FillHist("PTmu2_TkIDIsoPUW", muonColl.at(1).Pt(), weight*trk_weight_mu*id_weight_mu*iso_weight_mu*pileup_reweight, 0., 200., 200);
-       FillHist("Etamu1_TkIDIsoPUW", muonColl.at(0).Eta(), weight*trk_weight_mu*id_weight_mu*iso_weight_mu*pileup_reweight, -5., 5., 100);
-       FillHist("Etamu2_TkIDIsoPUW", muonColl.at(1).Eta(), weight*trk_weight_mu*id_weight_mu*iso_weight_mu*pileup_reweight, -5., 5., 100);
-       FillHist("Nj_TkIDIsoPUW", jetColl.size(), weight*trk_weight_mu*id_weight_mu*iso_weight_mu*pileup_reweight, 0., 10., 10);
-       FillHist("NjL_TkIDIsoPUW", jetLooseColl.size(), weight*trk_weight_mu*id_weight_mu*iso_weight_mu*pileup_reweight, 0., 10., 10);
-       FillHist("MET_TkIDIsoPUW", met, weight*trk_weight_mu*id_weight_mu*iso_weight_mu*pileup_reweight, 0., 500., 500);
-       FillHist("Nvtx_TkIDIsoPUW", Nvtx, weight*trk_weight_mu*id_weight_mu*iso_weight_mu*pileup_reweight, 0., 50., 50);
-       
-       FillHist("Iso_TkIDIsoPUW", muonColl.at(0).RelIso04(), weight*trk_weight_mu*id_weight_mu*iso_weight_mu*pileup_reweight, 0., 0.2, 1000);
-       FillHist("dxy_TkIDIsoPUW", muonColl.at(0).dXY(), weight*trk_weight_mu*id_weight_mu*iso_weight_mu*pileup_reweight, 0., 0.4, 1000);
-       FillHist("dz_TkIDIsoPUW", muonColl.at(0).dZ(), weight*trk_weight_mu*id_weight_mu*iso_weight_mu*pileup_reweight, 0., 0.7, 1000);
-       FillHist("NhitTkLayer_TkIDIsoPUW", muonColl.at(0).ActiveLayer(), weight*trk_weight_mu*id_weight_mu*iso_weight_mu*pileup_reweight, 0., 20., 20);//Nhit on trackLayer
-       FillHist("Nhitpixel_TkIDIsoPUW", muonColl.at(0).validPixHits(), weight*trk_weight_mu*id_weight_mu*iso_weight_mu*pileup_reweight, 0., 20., 20);//Nhit on pixel
-       FillHist("NhitMuChamber_TkIDIsoPUW", muonColl.at(0).validHits(), weight*trk_weight_mu*id_weight_mu*iso_weight_mu*pileup_reweight, 0., 50., 50);//Nhit on muon chamber
-       FillHist("NmatchedStation_TkIDIsoPUW", muonColl.at(0).validStations(), weight*trk_weight_mu*id_weight_mu*iso_weight_mu*pileup_reweight, 0., 20., 20);//N muon station having muon segment
-     
-       if(njets==0){
-         FillHist("PTmu1_0j", muonColl.at(0).Pt(), weight*trk_weight_mu*id_weight_mu*iso_weight_mu*pileup_reweight, 0., 200., 200);
-         FillHist("PTmu2_0j", muonColl.at(1).Pt(), weight*trk_weight_mu*id_weight_mu*iso_weight_mu*pileup_reweight, 0., 200., 200);
-         FillHist("Etamu1_0j", muonColl.at(0).Eta(), weight*trk_weight_mu*id_weight_mu*iso_weight_mu*pileup_reweight, -5., 5., 100);
-         FillHist("Etamu2_0j", muonColl.at(1).Eta(), weight*trk_weight_mu*id_weight_mu*iso_weight_mu*pileup_reweight, -5., 5., 100);
-         FillHist("MET_0j", met, weight*trk_weight_mu*id_weight_mu*iso_weight_mu*pileup_reweight, 0., 500., 500);
-       }
-       if(njets==1){
-         FillHist("PTmu1_1j", muonColl.at(0).Pt(), weight*trk_weight_mu*id_weight_mu*iso_weight_mu*pileup_reweight, 0., 200., 200);
-         FillHist("PTmu2_1j", muonColl.at(1).Pt(), weight*trk_weight_mu*id_weight_mu*iso_weight_mu*pileup_reweight, 0., 200., 200);
-         FillHist("Etamu1_1j", muonColl.at(0).Eta(), weight*trk_weight_mu*id_weight_mu*iso_weight_mu*pileup_reweight, -5., 5., 100);
-         FillHist("Etamu2_1j", muonColl.at(1).Eta(), weight*trk_weight_mu*id_weight_mu*iso_weight_mu*pileup_reweight, -5., 5., 100);
-         FillHist("MET_1j", met, weight*trk_weight_mu*id_weight_mu*iso_weight_mu*pileup_reweight, 0., 500., 500);
-         FillHist("PTj1_1j", jetColl.at(0).Pt(), weight*trk_weight_mu*id_weight_mu*iso_weight_mu*pileup_reweight, 0., 200., 200);
-         FillHist("Etaj1_1j", jetColl.at(0).Eta(), weight*trk_weight_mu*id_weight_mu*iso_weight_mu*pileup_reweight, -5., 5., 100);
-       }
-       if(njets==2){
-         FillHist("PTmu1_2j", muonColl.at(0).Pt(), weight*trk_weight_mu*id_weight_mu*iso_weight_mu*pileup_reweight, 0., 200., 200);
-         FillHist("PTmu2_2j", muonColl.at(1).Pt(), weight*trk_weight_mu*id_weight_mu*iso_weight_mu*pileup_reweight, 0., 200., 200);
-         FillHist("Etamu1_2j", muonColl.at(0).Eta(), weight*trk_weight_mu*id_weight_mu*iso_weight_mu*pileup_reweight, -5., 5., 100);
-         FillHist("Etamu2_2j", muonColl.at(1).Eta(), weight*trk_weight_mu*id_weight_mu*iso_weight_mu*pileup_reweight, -5., 5., 100);
-         FillHist("MET_2j", met, weight*trk_weight_mu*id_weight_mu*iso_weight_mu*pileup_reweight, 0., 500., 500);
-         FillHist("PTj1_2j", jetColl.at(0).Pt(), weight*trk_weight_mu*id_weight_mu*iso_weight_mu*pileup_reweight, 0., 200., 200);
-         FillHist("PTj2_2j", jetColl.at(1).Pt(), weight*trk_weight_mu*id_weight_mu*iso_weight_mu*pileup_reweight, 0., 200., 200);
-         FillHist("Etaj1_2j", jetColl.at(0).Eta(), weight*trk_weight_mu*id_weight_mu*iso_weight_mu*pileup_reweight, -5., 5., 100);
-         FillHist("Etaj2_2j", jetColl.at(1).Eta(), weight*trk_weight_mu*id_weight_mu*iso_weight_mu*pileup_reweight, -5., 5., 100);
-       }
-     }
-   }
-   if(DoubleEle_analysis){
-     bool cycle1=false, cycle2=true;
-     if(cycle1){
-     ////////////////////////////////////////////////////////////////////////////
-
-     if(electronLooseColl.size()!=2) return;
-     FillCutFlow("NlCut(2l)", weight);
-     if(electronLooseColl.at(0).Charge()==electronLooseColl.at(1).Charge()) return;
-     FillCutFlow("OSlep", weight);
-     if(electronLooseColl.at(0).Pt()<30) return;
-     
-     if(fabs((electronLooseColl.at(0)+electronLooseColl.at(1)).M()-91.2)>10) return;
-
-     FillHist("PTe1_Zwin", electronLooseColl.at(0).Pt(), weight, 0., 200., 200);
-     FillHist("PTe2_Zwin", electronLooseColl.at(1).Pt(), weight, 0., 200., 200);
-
-     if(fabs(electronLooseColl.at(0).Eta())<1.479){
-       FillHist("PTeB1_Zwin", electronLooseColl.at(0).Pt(), weight, 0., 200., 200);
-       FillHist("PTeB2_Zwin", electronLooseColl.at(1).Pt(), weight, 0., 200., 200);
-
-       FillHist("dxy_eleB", fabs(electronLooseColl.at(0).dxy()), weight, 0., 1., 1000);
-       FillHist("dz_eleB", fabs(electronLooseColl.at(0).dz()), weight, 0., 1., 1000);
-     }
-     else{
-       FillHist("PTeE1_Zwin", electronLooseColl.at(0).Pt(), weight, 0., 200., 200);
-       FillHist("PTeE2_Zwin", electronLooseColl.at(1).Pt(), weight, 0., 200., 200);
-
-       FillHist("dxy_eleE", fabs(electronLooseColl.at(0).dxy()), weight, 0., 1., 1000);
-       FillHist("dz_eleE", fabs(electronLooseColl.at(0).dz()), weight, 0., 1., 1000);
-     }
-
-
-     float PTele2=electronLooseColl.at(1).Pt();
-     float PTele1=electronLooseColl.at(0).Pt();
-     if(fabs(electronLooseColl.at(1).Eta())<1.479){
-       if(PTele2<20){//default cut elePT>15
-         FillHist("dxy_eleB_PT15_20", fabs(electronLooseColl.at(1).dxy()), weight, 0., 1., 1000);
-         FillHist("dz_eleB_PT15_20", fabs(electronLooseColl.at(1).dz()), weight, 0., 1., 1000);
-       }
-       else if(PTele2<30){
-         FillHist("dxy_eleB_PT20_30", fabs(electronLooseColl.at(1).dxy()), weight, 0., 1., 1000);
-         FillHist("dz_eleB_PT20_30", fabs(electronLooseColl.at(1).dz()), weight, 0., 1., 1000);
-       }
-     }
-     else{
-       if(PTele2<20){//default cut elePT>15
-         FillHist("dxy_eleE_PT15_20", fabs(electronLooseColl.at(1).dxy()), weight, 0., 1., 1000);
-         FillHist("dz_eleE_PT15_20", fabs(electronLooseColl.at(1).dz()), weight, 0., 1., 1000);
-       }
-       else if(PTele2<30){
-         FillHist("dxy_eleE_PT20_30", fabs(electronLooseColl.at(1).dxy()), weight, 0., 1., 1000);
-         FillHist("dz_eleE_PT20_30", fabs(electronLooseColl.at(1).dz()), weight, 0., 1., 1000);
-       }
-     }
-
-
-     if(fabs(electronLooseColl.at(0).Eta())<1.479){
-       if(PTele1<40){//defaultcut elePT>30
-         FillHist("dxy_eleB_PT30_40", fabs(electronLooseColl.at(0).dxy()), weight, 0., 1., 1000);
-         FillHist("dz_eleB_PT30_40", fabs(electronLooseColl.at(0).dz()), weight, 0., 1., 1000);
-       }
-       else if(PTele1<50){
-         FillHist("dxy_eleB_PT40_50", fabs(electronLooseColl.at(0).dxy()), weight, 0., 1., 1000);
-         FillHist("dz_eleB_PT40_50", fabs(electronLooseColl.at(0).dz()), weight, 0., 1., 1000);
-       }
-       else if(PTele1<60){
-         FillHist("dxy_eleB_PT50_60", fabs(electronLooseColl.at(0).dxy()), weight, 0., 1., 1000);
-         FillHist("dz_eleB_PT50_60", fabs(electronLooseColl.at(0).dz()), weight, 0., 1., 1000);
-       }
-       else if(PTele1<70){
-         FillHist("dxy_eleB_PT60_70", fabs(electronLooseColl.at(0).dxy()), weight, 0., 1., 1000);
-         FillHist("dz_eleB_PT60_70", fabs(electronLooseColl.at(0).dz()), weight, 0., 1., 1000);
-       }
-       else if(PTele1<80){
-         FillHist("dxy_eleB_PT70_80", fabs(electronLooseColl.at(0).dxy()), weight, 0., 1., 1000);
-         FillHist("dz_eleB_PT70_80", fabs(electronLooseColl.at(0).dz()), weight, 0., 1., 1000);
-       }
-       else if(PTele1<90){
-         FillHist("dxy_eleB_PT80_90", fabs(electronLooseColl.at(0).dxy()), weight, 0., 1., 1000);
-         FillHist("dz_eleB_PT80_90", fabs(electronLooseColl.at(0).dz()), weight, 0., 1., 1000);
-       }
-       else if(PTele1<100){
-         FillHist("dxy_eleB_PT90_100", fabs(electronLooseColl.at(0).dxy()), weight, 0., 1., 1000);
-         FillHist("dz_eleB_PT90_100", fabs(electronLooseColl.at(0).dz()), weight, 0., 1., 1000);
-       }
-       else if(PTele1<130){
-         FillHist("dxy_eleB_PT100_130", fabs(electronLooseColl.at(0).dxy()), weight, 0., 1., 1000);
-         FillHist("dz_eleB_PT100_130", fabs(electronLooseColl.at(0).dz()), weight, 0., 1., 1000);
-       }
-       else if(PTele1<200){
-         FillHist("dxy_eleB_PT130_200", fabs(electronLooseColl.at(0).dxy()), weight, 0., 1., 1000);
-         FillHist("dz_eleB_PT130_200", fabs(electronLooseColl.at(0).dz()), weight, 0., 1., 1000);
-       }
-     }
-     else{
-       if(PTele1<40){//default cut elePT>30
-         FillHist("dxy_eleE_PT30_40", fabs(electronLooseColl.at(0).dxy()), weight, 0., 1., 1000);
-         FillHist("dz_eleE_PT30_40", fabs(electronLooseColl.at(0).dz()), weight, 0., 1., 1000);
-       }
-       else if(PTele1<50){
-         FillHist("dxy_eleE_PT40_50", fabs(electronLooseColl.at(0).dxy()), weight, 0., 1., 1000);
-         FillHist("dz_eleE_PT40_50", fabs(electronLooseColl.at(0).dz()), weight, 0., 1., 1000);
-       }
-       else if(PTele1<60){
-         FillHist("dxy_eleE_PT50_60", fabs(electronLooseColl.at(0).dxy()), weight, 0., 1., 1000);
-         FillHist("dz_eleE_PT50_60", fabs(electronLooseColl.at(0).dz()), weight, 0., 1., 1000);
-       }
-       else if(PTele1<70){
-         FillHist("dxy_eleE_PT60_70", fabs(electronLooseColl.at(0).dxy()), weight, 0., 1., 1000);
-         FillHist("dz_eleE_PT60_70", fabs(electronLooseColl.at(0).dz()), weight, 0., 1., 1000);
-       }
-       else if(PTele1<80){
-         FillHist("dxy_eleE_PT70_80", fabs(electronLooseColl.at(0).dxy()), weight, 0., 1., 1000);
-         FillHist("dz_eleE_PT70_80", fabs(electronLooseColl.at(0).dz()), weight, 0., 1., 1000);
-       }
-       else if(PTele1<90){
-         FillHist("dxy_eleE_PT80_90", fabs(electronLooseColl.at(0).dxy()), weight, 0., 1., 1000);
-         FillHist("dz_eleE_PT80_90", fabs(electronLooseColl.at(0).dz()), weight, 0., 1., 1000);
-       }
-       else if(PTele1<100){
-         FillHist("dxy_eleE_PT90_100", fabs(electronLooseColl.at(0).dxy()), weight, 0., 1., 1000);
-         FillHist("dz_eleE_PT90_100", fabs(electronLooseColl.at(0).dz()), weight, 0., 1., 1000);
-       }
-       else if(PTele1<130){
-         FillHist("dxy_eleE_PT100_130", fabs(electronLooseColl.at(0).dxy()), weight, 0., 1., 1000);
-         FillHist("dz_eleE_PT100_130", fabs(electronLooseColl.at(0).dz()), weight, 0., 1., 1000);
-       }
-       else if(PTele1<200){
-         FillHist("dxy_eleE_PT130_200", fabs(electronLooseColl.at(0).dxy()), weight, 0., 1., 1000);
-         FillHist("dz_eleE_PT130_200", fabs(electronLooseColl.at(0).dz()), weight, 0., 1., 1000);
-       }
-
-     }//EndCap End
-     /////////////////////////////////
-     }//Cycle1 End
-     if(cycle2){
-
-     if(isData){
-       if(!PassTrigger(analysis_trigger)) return;
-     }
-     if(electronColl.size()!=2) return;
-     if(electronColl.at(0).Charge()==electronColl.at(1).Charge()) return;
-     if(electronColl.at(0).Pt()<25) return;
-     if(electronColl.at(1).Pt()<15) return;
-     if(fabs((electronColl.at(0)+electronColl.at(1)).M()-91.2)<15){ 
-     ///////////////////////////////////////////////////////////////////////////
-     
-       if(!isData){
-         if(PassTrigger(analysis_trigger)){
-           FillHist("PTele1_NoW_TrigCut", electronColl.at(0).Pt(), weight, 0., 200., 200);
-           FillHist("Etaele1_NoW_TrigCut", electronColl.at(0).Eta(), weight, -5., 5., 200);
-           FillHist("PTele2_NoW_TrigCut", electronColl.at(1).Pt(), weight, 0., 200., 200);
-           FillHist("Etaele2_NoW_TrigCut", electronColl.at(1).Eta(), weight, -5., 5., 200);
-           FillHist("Nj_NoW_TrigCut", jetColl.size(), weight, 0., 10., 10);
-           FillHist("NjL_NoW_TrigCut", jetLooseColl.size(), weight, 0., 10., 10);
-           FillHist("Nvtx_NoW_TrigCut", Nvtx, weight, 0., 50., 50);
-      
-           FillHist("PTele1_IDSF_TrigCut", electronColl.at(0).Pt(), weight*id_weight_ele, 0., 200., 200);
-           FillHist("Etaele1_IDSF_TrigCut", electronColl.at(0).Eta(), weight*id_weight_ele, -5., 5., 200);
-           FillHist("PTele2_IDSF_TrigCut", electronColl.at(1).Pt(), weight*id_weight_ele, 0., 200., 200);
-           FillHist("Etaele2_IDSF_TrigCut", electronColl.at(1).Eta(), weight*id_weight_ele, -5., 5., 200);
-           FillHist("Nj_IDSF_TrigCut", jetColl.size(), weight*id_weight_ele, 0., 10., 10);
-           FillHist("NjL_IDSF_TrigCut", jetLooseColl.size(), weight*id_weight_ele, 0., 10., 10);
-           FillHist("Nvtx_IDSF_TrigCut", Nvtx, weight*id_weight_ele, 0., 50., 50);
-      
-           FillHist("PTele1_IDPUSF_TrigCut", electronColl.at(0).Pt(), weight*id_weight_ele*pileup_reweight, 0., 200., 200);
-           FillHist("Etaele1_IDPUSF_TrigCut", electronColl.at(0).Eta(), weight*id_weight_ele*pileup_reweight, -5., 5., 200);
-           FillHist("PTele2_IDPUSF_TrigCut", electronColl.at(1).Pt(), weight*id_weight_ele*pileup_reweight, 0., 200., 200);
-           FillHist("Etaele2_IDPUSF_TrigCut", electronColl.at(1).Eta(), weight*id_weight_ele*pileup_reweight, -5., 5., 200);
-           FillHist("Nj_IDPUSF_TrigCut", jetColl.size(), weight*id_weight_ele*pileup_reweight, 0., 10., 10);
-           FillHist("NjL_IDPUSF_TrigCut", jetLooseColl.size(), weight*id_weight_ele*pileup_reweight, 0., 10., 10);
-           FillHist("Nvtx_IDPUSF_TrigCut", Nvtx, weight*id_weight_ele*pileup_reweight, 0., 50., 50);
-         }
-           FillHist("PTele1_NoW_TrigW", electronColl.at(0).Pt(), weight*trigger_eff, 0., 200., 200);
-           FillHist("Etaele1_NoW_TrigW", electronColl.at(0).Eta(), weight*trigger_eff, -5., 5., 200);
-           FillHist("PTele2_NoW_TrigW", electronColl.at(1).Pt(), weight*trigger_eff, 0., 200., 200);
-           FillHist("Etaele2_NoW_TrigW", electronColl.at(1).Eta(), weight*trigger_eff, -5., 5., 200);
-           FillHist("Nj_NoW_TrigW", jetColl.size(), weight*trigger_eff, 0., 10., 10);
-           FillHist("NjL_NoW_TrigW", jetLooseColl.size(), weight*trigger_eff, 0., 10., 10);
-           FillHist("Nvtx_NoW_TrigW", Nvtx, weight*trigger_eff, 0., 50., 50);
-      
-           FillHist("PTele1_IDSF_TrigW", electronColl.at(0).Pt(), weight*trigger_eff*id_weight_ele, 0., 200., 200);
-           FillHist("Etaele1_IDSF_TrigW", electronColl.at(0).Eta(), weight*trigger_eff*id_weight_ele, -5., 5., 200);
-           FillHist("PTele2_IDSF_TrigW", electronColl.at(1).Pt(), weight*trigger_eff*id_weight_ele, 0., 200., 200);
-           FillHist("Etaele2_IDSF_TrigW", electronColl.at(1).Eta(), weight*trigger_eff*id_weight_ele, -5., 5., 200);
-           FillHist("Nj_IDSF_TrigW", jetColl.size(), weight*trigger_eff*id_weight_ele, 0., 10., 10);
-           FillHist("NjL_IDSF_TrigW", jetLooseColl.size(), weight*trigger_eff*id_weight_ele, 0., 10., 10);
-           FillHist("Nvtx_IDSF_TrigW", Nvtx, weight*trigger_eff*id_weight_ele, 0., 50., 50);
-      
-           FillHist("PTele1_IDPUSF_TrigW", electronColl.at(0).Pt(), weight*trigger_eff*id_weight_ele*pileup_reweight, 0., 200., 200);
-           FillHist("Etaele1_IDPUSF_TrigW", electronColl.at(0).Eta(), weight*trigger_eff*id_weight_ele*pileup_reweight, -5., 5., 200);
-           FillHist("PTele2_IDPUSF_TrigW", electronColl.at(1).Pt(), weight*trigger_eff*id_weight_ele*pileup_reweight, 0., 200., 200);
-           FillHist("Etaele2_IDPUSF_TrigW", electronColl.at(1).Eta(), weight*trigger_eff*id_weight_ele*pileup_reweight, -5., 5., 200);
-           FillHist("Nj_IDPUSF_TrigW", jetColl.size(), weight*trigger_eff*id_weight_ele*pileup_reweight, 0., 10., 10);
-           FillHist("NjL_IDPUSF_TrigW", jetLooseColl.size(), weight*trigger_eff*id_weight_ele*pileup_reweight, 0., 10., 10);
-           FillHist("Nvtx_IDPUSF_TrigW", Nvtx, weight*trigger_eff*id_weight_ele*pileup_reweight, 0., 50., 50);
-       }
-       else{
-           FillHist("PTele1_NoW_TrigCut", electronColl.at(0).Pt(), weight, 0., 200., 200);
-           FillHist("Etaele1_NoW_TrigCut", electronColl.at(0).Eta(), weight, -5., 5., 200);
-           FillHist("PTele2_NoW_TrigCut", electronColl.at(1).Pt(), weight, 0., 200., 200);
-           FillHist("Etaele2_NoW_TrigCut", electronColl.at(1).Eta(), weight, -5., 5., 200);
-           FillHist("Nj_NoW_TrigCut", jetColl.size(), weight, 0., 10., 10);
-           FillHist("NjL_NoW_TrigCut", jetLooseColl.size(), weight, 0., 10., 10);
-           FillHist("Nvtx_NoW_TrigCut", Nvtx, weight, 0., 50., 50);
-      
-           FillHist("PTele1_IDSF_TrigCut", electronColl.at(0).Pt(), weight*id_weight_ele, 0., 200., 200);
-           FillHist("Etaele1_IDSF_TrigCut", electronColl.at(0).Eta(), weight*id_weight_ele, -5., 5., 200);
-           FillHist("PTele2_IDSF_TrigCut", electronColl.at(1).Pt(), weight*id_weight_ele, 0., 200., 200);
-           FillHist("Etaele2_IDSF_TrigCut", electronColl.at(1).Eta(), weight*id_weight_ele, -5., 5., 200);
-           FillHist("Nj_IDSF_TrigCut", jetColl.size(), weight*id_weight_ele, 0., 10., 10);
-           FillHist("NjL_IDSF_TrigCut", jetLooseColl.size(), weight*id_weight_ele, 0., 10., 10);
-           FillHist("Nvtx_IDSF_TrigCut", Nvtx, weight*id_weight_ele, 0., 50., 50);
-      
-           FillHist("PTele1_IDPUSF_TrigCut", electronColl.at(0).Pt(), weight*id_weight_ele*pileup_reweight, 0., 200., 200);
-           FillHist("Etaele1_IDPUSF_TrigCut", electronColl.at(0).Eta(), weight*id_weight_ele*pileup_reweight, -5., 5., 200);
-           FillHist("PTele2_IDPUSF_TrigCut", electronColl.at(1).Pt(), weight*id_weight_ele*pileup_reweight, 0., 200., 200);
-           FillHist("Etaele2_IDPUSF_TrigCut", electronColl.at(1).Eta(), weight*id_weight_ele*pileup_reweight, -5., 5., 200);
-           FillHist("Nj_IDPUSF_TrigCut", jetColl.size(), weight*id_weight_ele*pileup_reweight, 0., 10., 10);
-           FillHist("NjL_IDPUSF_TrigCut", jetLooseColl.size(), weight*id_weight_ele*pileup_reweight, 0., 10., 10);
-           FillHist("Nvtx_IDPUSF_TrigCut", Nvtx, weight*id_weight_ele*pileup_reweight, 0., 50., 50);
-  
-           FillHist("PTele1_NoW_TrigW", electronColl.at(0).Pt(), weight*trigger_eff, 0., 200., 200);
-           FillHist("Etaele1_NoW_TrigW", electronColl.at(0).Eta(), weight*trigger_eff, -5., 5., 200);
-           FillHist("PTele2_NoW_TrigW", electronColl.at(1).Pt(), weight*trigger_eff, 0., 200., 200);
-           FillHist("Etaele2_NoW_TrigW", electronColl.at(1).Eta(), weight*trigger_eff, -5., 5., 200);
-           FillHist("Nj_NoW_TrigW", jetColl.size(), weight*trigger_eff, 0., 10., 10);
-           FillHist("NjL_NoW_TrigW", jetLooseColl.size(), weight*trigger_eff, 0., 10., 10);
-           FillHist("Nvtx_NoW_TrigW", Nvtx, weight*trigger_eff, 0., 50., 50);
-      
-           FillHist("PTele1_IDSF_TrigW", electronColl.at(0).Pt(), weight*trigger_eff*id_weight_ele, 0., 200., 200);
-           FillHist("Etaele1_IDSF_TrigW", electronColl.at(0).Eta(), weight*trigger_eff*id_weight_ele, -5., 5., 200);
-           FillHist("PTele2_IDSF_TrigW", electronColl.at(1).Pt(), weight*trigger_eff*id_weight_ele, 0., 200., 200);
-           FillHist("Etaele2_IDSF_TrigW", electronColl.at(1).Eta(), weight*trigger_eff*id_weight_ele, -5., 5., 200);
-           FillHist("Nj_IDSF_TrigW", jetColl.size(), weight*trigger_eff*id_weight_ele, 0., 10., 10);
-           FillHist("NjL_IDSF_TrigW", jetLooseColl.size(), weight*trigger_eff*id_weight_ele, 0., 10., 10);
-           FillHist("Nvtx_IDSF_TrigW", Nvtx, weight*trigger_eff*id_weight_ele, 0., 50., 50);
-      
-           FillHist("PTele1_IDPUSF_TrigW", electronColl.at(0).Pt(), weight*trigger_eff*id_weight_ele*pileup_reweight, 0., 200., 200);
-           FillHist("Etaele1_IDPUSF_TrigW", electronColl.at(0).Eta(), weight*trigger_eff*id_weight_ele*pileup_reweight, -5., 5., 200);
-           FillHist("PTele2_IDPUSF_TrigW", electronColl.at(1).Pt(), weight*trigger_eff*id_weight_ele*pileup_reweight, 0., 200., 200);
-           FillHist("Etaele2_IDPUSF_TrigW", electronColl.at(1).Eta(), weight*trigger_eff*id_weight_ele*pileup_reweight, -5., 5., 200);
-           FillHist("Nj_IDPUSF_TrigW", jetColl.size(), weight*trigger_eff*id_weight_ele*pileup_reweight, 0., 10., 10);
-           FillHist("NjL_IDPUSF_TrigW", jetLooseColl.size(), weight*trigger_eff*id_weight_ele*pileup_reweight, 0., 10., 10);
-           FillHist("Nvtx_IDPUSF_TrigW", Nvtx, weight*trigger_eff*id_weight_ele*pileup_reweight, 0., 50., 50);
-       }
-         
-  /*
-       if(fabs(electronColl.at(0).Eta())<1.479){
-         FillHist("PTeleB_NoW", electronColl.at(0).Pt(), weight, 0., 200., 200);
-         FillHist("dxy_eleB_NoW", fabs(electronColl.at(0).dxy()), weight, 0., 1., 1000);
-         FillHist("dz_eleB_NoW", fabs(electronColl.at(0).dz()), weight, 0., 1., 1000);
-         FillHist("Iso_eleB_NoW", electronColl.at(0).PFRelIso(0.3), weight, 0., 0.2, 1000);
-  
-         FillHist("PTeleB_IDSF", electronColl.at(0).Pt(), weight*id_weight_ele, 0., 200., 200);
-         FillHist("dxy_eleB_IDSF", fabs(electronColl.at(0).dxy()), weight*id_weight_ele, 0., 1., 1000);
-         FillHist("dz_eleB_IDSF", fabs(electronColl.at(0).dz()), weight*id_weight_ele, 0., 1., 1000);
-         FillHist("Iso_eleB_IDSF", electronColl.at(0).PFRelIso(0.3), weight*id_weight_ele, 0., 0.2, 1000);
-  
-         FillHist("PTeleB_IDPUSF", electronColl.at(0).Pt(), weight*id_weight_ele*pileup_reweight, 0., 200., 200);
-         FillHist("dxy_eleB_IDPUSF", fabs(electronColl.at(0).dxy()), weight*id_weight_ele*pileup_reweight, 0., 1., 1000);
-         FillHist("dz_eleB_IDPUSF", fabs(electronColl.at(0).dz()), weight*id_weight_ele*pileup_reweight, 0., 1., 1000);
-         FillHist("Iso_eleB_IDPUSF", electronColl.at(0).PFRelIso(0.3), weight*id_weight_ele*pileup_reweight, 0., 0.2, 1000);
-  
-       }
-       else{
-         FillHist("PTeleE_NoW", electronColl.at(0).Pt(), weight, 0., 200., 200);
-         FillHist("dxy_eleE_NoW", fabs(electronColl.at(0).dxy()), weight, 0., 1., 1000);
-         FillHist("dz_eleE_NoW", fabs(electronColl.at(0).dz()), weight, 0., 1., 1000);
-         FillHist("Iso_eleE_NoW", electronColl.at(0).PFRelIso(0.3), weight, 0., 0.2, 1000);
-  
-         FillHist("PTeleE_IDSF", electronColl.at(0).Pt(), weight*id_weight_ele, 0., 200., 200);
-         FillHist("dxy_eleE_IDSF", fabs(electronColl.at(0).dxy()), weight*id_weight_ele, 0., 1., 1000);
-         FillHist("dz_eleE_IDSF", fabs(electronColl.at(0).dz()), weight*id_weight_ele, 0., 1., 1000);
-         FillHist("Iso_eleE_IDSF", electronColl.at(0).PFRelIso(0.3), weight*id_weight_ele, 0., 0.2, 1000);
-  
-         FillHist("PTeleE_IDPUSF", electronColl.at(0).Pt(), weight*id_weight_ele*pileup_reweight, 0., 200., 200);
-         FillHist("dxy_eleE_IDPUSF", fabs(electronColl.at(0).dxy()), weight*id_weight_ele*pileup_reweight, 0., 1., 1000);
-         FillHist("dz_eleE_IDPUSF", fabs(electronColl.at(0).dz()), weight*id_weight_ele*pileup_reweight, 0., 1., 1000);
-         FillHist("Iso_eleE_IDPUSF", electronColl.at(0).PFRelIso(0.3), weight*id_weight_ele*pileup_reweight, 0., 0.2, 1000);
-  
-       }       
-  */
-       }//fabs(Mee-MZ)<15 End
-       if((electronColl.at(0)+electronColl.at(1)).M()>50){
-         if(PassTrigger(analysis_trigger)){
-           FillHist("DY50Count_NoW_TrigCut", 0., weight, 0., 1., 1);
-           FillHist("DY50Count_IDW_TrigCut", 0., weight*id_weight_ele, 0., 1., 1);
-           FillHist("DY50Count_IDPUW_TrigCut", 0., weight*id_weight_ele*pileup_reweight, 0., 1., 1);
-
-           FillHist("PTe1_NoW_TrigCut_DY50", electronColl.at(0).Pt(), weight, 0., 200., 200);
-           FillHist("PTe2_NoW_TrigCut_DY50", electronColl.at(1).Pt(), weight, 0., 200., 200);
-           FillHist("Etae1_NoW_TrigCut_DY50", electronColl.at(0).Eta(), weight, -5., 5., 200);
-           FillHist("Etae2_NoW_TrigCut_DY50", electronColl.at(1).Eta(), weight, -5., 5., 200);
-           FillHist("Mee_NoW_TrigCut_DY50", (electronColl.at(0)+electronColl.at(1)).M(), weight, 0., 200., 200);
-
-           FillHist("PTe1_IDW_TrigCut_DY50", electronColl.at(0).Pt(), weight*id_weight_ele, 0., 200., 200);
-           FillHist("PTe2_IDW_TrigCut_DY50", electronColl.at(1).Pt(), weight*id_weight_ele, 0., 200., 200);
-           FillHist("Etae1_IDW_TrigCut_DY50", electronColl.at(0).Eta(), weight*id_weight_ele, -5., 5., 200);
-           FillHist("Etae2_IDW_TrigCut_DY50", electronColl.at(1).Eta(), weight*id_weight_ele, -5., 5., 200);
-           FillHist("Mee_IDW_TrigCut_DY50", (electronColl.at(0)+electronColl.at(1)).M(), weight*id_weight_ele, 0., 200., 200);
-
-           FillHist("PTe1_IDPUW_TrigCut_DY50", electronColl.at(0).Pt(), weight*id_weight_ele*pileup_reweight, 0., 200., 200);
-           FillHist("PTe2_IDPUW_TrigCut_DY50", electronColl.at(1).Pt(), weight*id_weight_ele*pileup_reweight, 0., 200., 200);
-           FillHist("Etae1_IDPUW_TrigCut_DY50", electronColl.at(0).Eta(), weight*id_weight_ele*pileup_reweight, -5., 5., 200);
-           FillHist("Etae2_IDPUW_TrigCut_DY50", electronColl.at(1).Eta(), weight*id_weight_ele*pileup_reweight, -5., 5., 200);
-           FillHist("Mee_IDPUW_TrigCut_DY50", (electronColl.at(0)+electronColl.at(1)).M(), weight*id_weight_ele*pileup_reweight, 0., 200., 200);
-
-         }
-
-       }
-     }//Cycle2 End
-
-
-   }//DoubleEle End
-
-
+ 
 return;
 }// End of execute event loop
   
@@ -929,49 +454,69 @@ void Feb2017_3l4j_BTagEff::MakeHistograms(){
 
   //After Nljcut
   AnalyzerCore::MakeHistograms("Basic_Nb_wNljcut", 10, 0., 10.);
-/*
-  //After all preselections
-  AnalyzerCore::MakeHistograms("Basic_MET_wPreSel", 100, 0., 200.);
-  AnalyzerCore::MakeHistograms("Basic_Nj_wPreSel", 10, 0., 10.);
-  AnalyzerCore::MakeHistograms("Basic_Nb_wPreSel", 5, 0., 5.);
-  AnalyzerCore::MakeHistograms("Basic_Jet1_Et", 50, 0., 200.);
-  AnalyzerCore::MakeHistograms("Basic_Jet2_Et", 50, 0., 200.);
-  AnalyzerCore::MakeHistograms("Basic_Jet3_Et", 50, 0., 200.);
-  AnalyzerCore::MakeHistograms("Basic_Jet4_Et", 50, 0., 200.);
-  AnalyzerCore::MakeHistograms("Basic_Jet1_Eta", 20, -5., 5.);
-  AnalyzerCore::MakeHistograms("Basic_Jet2_Eta", 20, -5., 5.);
-  AnalyzerCore::MakeHistograms("Basic_Jet3_Eta", 20, -5., 5.);
-  AnalyzerCore::MakeHistograms("Basic_Jet4_Eta", 20, -5., 5.);
-  AnalyzerCore::MakeHistograms("Basic_bJet1_Et", 20, 0., 200.);
-  AnalyzerCore::MakeHistograms("Basic_bJet2_Et", 20, 0., 200.);
-  AnalyzerCore::MakeHistograms("Basic_bJet1_Eta", 20, -5., 5.);
-  AnalyzerCore::MakeHistograms("Basic_bJet2_Eta", 20, -5., 5.);
 
-  AnalyzerCore::MakeHistograms("Basic_Pte_wPreSel", 200, 0., 200.);
-  AnalyzerCore::MakeHistograms("Basic_Ptmu1_wPreSel", 200, 0., 200.);
-  AnalyzerCore::MakeHistograms("Basic_Ptmu2_wPreSel", 200, 0., 200.);
-  AnalyzerCore::MakeHistograms("Basic_Etae_wPreSel", 100, -5., 5.);
-  AnalyzerCore::MakeHistograms("Basic_Etamu1_wPreSel", 100, -5., 5.);
-  AnalyzerCore::MakeHistograms("Basic_Etamu2_wPreSel", 100, -5., 5.);
 
-  AnalyzerCore::MakeHistograms("Basic_Ptmu3_wPreSel", 200, 0., 200.);
-  AnalyzerCore::MakeHistograms("Basic_Etamu3_wPreSel", 100, -5., 5.);
+  //2D Hist
+  AnalyzerCore::MakeHistograms2D("NB_True_PT_Eta", 149, 20, 3000, 8, -2.4, 2.4);
+    GetHist2D("NB_True_PT_Eta")->SetTitle("N(j)(TruthB);PT(GeV);#eta");
+    GetHist2D("NB_True_PT_Eta")->SetOption("textcolz");
+  AnalyzerCore::MakeHistograms2D("NBtag_TrueB_PT_Eta", 149, 20, 3000, 8, -2.4, 2.4);
+    GetHist2D("NBtag_TrueB_PT_Eta")->SetTitle("N(j)(BtaggedTruthB);PT(GeV);#eta");
+    GetHist2D("NBtag_TrueB_PT_Eta")->SetOption("textcolz");
+  AnalyzerCore::MakeHistograms2D("NC_True_PT_Eta", 149, 20, 3000, 8, -2.4, 2.4);
+    GetHist2D("NC_True_PT_Eta")->SetTitle("N(j)(TruthC);PT(GeV);#eta");
+    GetHist2D("NC_True_PT_Eta")->SetOption("textcolz");
+  AnalyzerCore::MakeHistograms2D("NBtag_TrueC_PT_Eta", 149, 20, 3000, 8, -2.4, 2.4);
+    GetHist2D("NBtag_TrueC_PT_Eta")->SetTitle("N(j)(BtaggedTruthC);PT(GeV);#eta");
+    GetHist2D("NBtag_TrueC_PT_Eta")->SetOption("textcolz");
+  AnalyzerCore::MakeHistograms2D("NL_True_PT_Eta", 149, 20, 3000, 8, -2.4, 2.4);
+    GetHist2D("NL_True_PT_Eta")->SetTitle("N(j)(TruthL);PT(GeV);#eta");
+    GetHist2D("NL_True_PT_Eta")->SetOption("textcolz");
+  AnalyzerCore::MakeHistograms2D("NBtag_TrueL_PT_Eta", 149, 20, 3000, 8, -2.4, 2.4);
+    GetHist2D("NBtag_TrueL_PT_Eta")->SetTitle("N(j)(BtaggedTruthL);PT(GeV);#eta");
+    GetHist2D("NBtag_TrueL_PT_Eta")->SetOption("textcolz");
+ 
+  //1l category
+  AnalyzerCore::MakeHistograms2D("NB_True_PT_Eta_1l", 149, 20, 3000, 8, -2.4, 2.4);
+    GetHist2D("NB_True_PT_Eta_1l")->SetTitle("N(j)(TruthB);PT(GeV);#eta");
+    GetHist2D("NB_True_PT_Eta_1l")->SetOption("textcolz");
+  AnalyzerCore::MakeHistograms2D("NBtag_TrueB_PT_Eta_1l", 149, 20, 3000, 8, -2.4, 2.4);
+    GetHist2D("NBtag_TrueB_PT_Eta_1l")->SetTitle("N(j)(BtaggedTruthB);PT(GeV);#eta");
+    GetHist2D("NBtag_TrueB_PT_Eta_1l")->SetOption("textcolz");
+  AnalyzerCore::MakeHistograms2D("NC_True_PT_Eta_1l", 149, 20, 3000, 8, -2.4, 2.4);
+    GetHist2D("NC_True_PT_Eta_1l")->SetTitle("N(j)(TruthC);PT(GeV);#eta");
+    GetHist2D("NC_True_PT_Eta_1l")->SetOption("textcolz");
+  AnalyzerCore::MakeHistograms2D("NBtag_TrueC_PT_Eta_1l", 149, 20, 3000, 8, -2.4, 2.4);
+    GetHist2D("NBtag_TrueC_PT_Eta_1l")->SetTitle("N(j)(BtaggedTruthC);PT(GeV);#eta");
+    GetHist2D("NBtag_TrueC_PT_Eta_1l")->SetOption("textcolz");
+  AnalyzerCore::MakeHistograms2D("NL_True_PT_Eta_1l", 149, 20, 3000, 8, -2.4, 2.4);
+    GetHist2D("NL_True_PT_Eta_1l")->SetTitle("N(j)(TruthL);PT(GeV);#eta");
+    GetHist2D("NL_True_PT_Eta_1l")->SetOption("textcolz");
+  AnalyzerCore::MakeHistograms2D("NBtag_TrueL_PT_Eta_1l", 149, 20, 3000, 8, -2.4, 2.4);
+    GetHist2D("NBtag_TrueL_PT_Eta_1l")->SetTitle("N(j)(BtaggedTruthL);PT(GeV);#eta");
+    GetHist2D("NBtag_TrueL_PT_Eta_1l")->SetOption("textcolz");
 
-  AnalyzerCore::MakeHistograms("Basic_Ptj1_wPreSel", 200, 0., 200.);
-  AnalyzerCore::MakeHistograms("Basic_Ptj2_wPreSel", 200, 0., 200.);
-  AnalyzerCore::MakeHistograms("Basic_Ptj3_wPreSel", 200, 0., 200.);
-  AnalyzerCore::MakeHistograms("Basic_Ptj4_wPreSel", 200, 0., 200.);
-  AnalyzerCore::MakeHistograms("Basic_Ptb1_wPreSel", 200, 0., 200.);
-  AnalyzerCore::MakeHistograms("Basic_Ptb2_wPreSel", 200, 0., 200.);
-  AnalyzerCore::MakeHistograms("Basic_Ptlj1_wPreSel", 200, 0., 200.);
 
-  AnalyzerCore::MakeHistograms("Basic_Etaj1_wPreSel", 100, -5., 5.);
-  AnalyzerCore::MakeHistograms("Basic_Etaj2_wPreSel", 100, -5., 5.);
-  AnalyzerCore::MakeHistograms("Basic_Etaj3_wPreSel", 100, -5., 5.);
-  AnalyzerCore::MakeHistograms("Basic_Etaj4_wPreSel", 100, -5., 5.);
-  AnalyzerCore::MakeHistograms("Basic_Etab1_wPreSel", 100, -5., 5.);
-  AnalyzerCore::MakeHistograms("Basic_Etab2_wPreSel", 100, -5., 5.);
-*/
+  //2l category
+  AnalyzerCore::MakeHistograms2D("NB_True_PT_Eta_2l", 149, 20, 3000, 8, -2.4, 2.4);
+    GetHist2D("NB_True_PT_Eta_2l")->SetTitle("N(j)(TruthB);PT(GeV);#eta");
+    GetHist2D("NB_True_PT_Eta_2l")->SetOption("textcolz");
+  AnalyzerCore::MakeHistograms2D("NBtag_TrueB_PT_Eta_2l", 149, 20, 3000, 8, -2.4, 2.4);
+    GetHist2D("NBtag_TrueB_PT_Eta_2l")->SetTitle("N(j)(BtaggedTruthB);PT(GeV);#eta");
+    GetHist2D("NBtag_TrueB_PT_Eta_2l")->SetOption("textcolz");
+  AnalyzerCore::MakeHistograms2D("NC_True_PT_Eta_2l", 149, 20, 3000, 8, -2.4, 2.4);
+    GetHist2D("NC_True_PT_Eta_2l")->SetTitle("N(j)(TruthC);PT(GeV);#eta");
+    GetHist2D("NC_True_PT_Eta_2l")->SetOption("textcolz");
+  AnalyzerCore::MakeHistograms2D("NBtag_TrueC_PT_Eta_2l", 149, 20, 3000, 8, -2.4, 2.4);
+    GetHist2D("NBtag_TrueC_PT_Eta_2l")->SetTitle("N(j)(BtaggedTruthC);PT(GeV);#eta");
+    GetHist2D("NBtag_TrueC_PT_Eta_2l")->SetOption("textcolz");
+  AnalyzerCore::MakeHistograms2D("NL_True_PT_Eta_2l", 149, 20, 3000, 8, -2.4, 2.4);
+    GetHist2D("NL_True_PT_Eta_2l")->SetTitle("N(j)(TruthL);PT(GeV);#eta");
+    GetHist2D("NL_True_PT_Eta_2l")->SetOption("textcolz");
+  AnalyzerCore::MakeHistograms2D("NBtag_TrueL_PT_Eta_2l", 149, 20, 3000, 8, -2.4, 2.4);
+    GetHist2D("NBtag_TrueL_PT_Eta_2l")->SetTitle("N(j)(BtaggedTruthL);PT(GeV);#eta");
+    GetHist2D("NBtag_TrueL_PT_Eta_2l")->SetOption("textcolz");
+
 
   Message("Made histograms", INFO);
   // **

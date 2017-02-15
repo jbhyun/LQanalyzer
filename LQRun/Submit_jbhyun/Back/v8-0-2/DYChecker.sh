@@ -3,25 +3,22 @@
 ########################################################################
 ## MC / DATA
 runMC=true
-runData=false
+runData=true
 
 
 ########################################################################
 ## RUN PARAMETERS
 
-AnalysisCode="Jan2017_3l4j_ObjValid_DiLep" #"Jan2017_3l4j_IDFnCompCheck" ###_D3lv" ###"Jun2016_3l4j_SigBasic" ###KPS ###"ExampleAnalyzerDiMuon"
+AnalysisCode="Jan2017_3l4j_DYCheck" #"Jan2017_3l4j_IDFnCompCheck" ###_D3lv" ###"Jun2016_3l4j_SigBasic" ###KPS ###"ExampleAnalyzerDiMuon"
 #Stream="DoubleMuon"     ### DoubleMuon DoubleEG MuonEG SingleElectron SingleMuon 
 Stream="DoubleEG"     ### DoubleMuon DoubleEG MuonEG SingleElectron SingleMuon 
-#Stream="MuonEG"     ### DoubleMuon DoubleEG MuonEG SingleElectron SingleMuon 
 Skim="SKTree_DiLepSkim" ###"Lepton" ### "Lepton"(single lepton skim)/"DiLep"(dilepton skim)/"NoCut"(noskim) ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
 DataPeriod="ALL"        ###  "C" = period C only   "ALL" or "CtoD"  = period C+D
 job_logstep=1000
 LogLevel="INFO"
-QueueOption="fastq" ##
+QueueOption="fastq"  ##"allq" "fastq" "longq" "node1" "node2" "node3" "node4" "node5" "node6" "None"
 
 MCList="DY"
-#MCList="CR_EMu"
-#MCList="Analysis_bkg_test"
 ###Backgound : AllSample / Analysis_bkg / Analysis_bkg_test / QCD_mu
 ###Signal    : Analysis_sig_All / Analysis_sig_1e2mu / Analysis_sig_3mu / tthwA_1e2mu / tthwA_3mu / Analysis_sig_test / Analysis_sig_test1
 
@@ -69,7 +66,7 @@ date >> CommandHist.txt
 
 
 if [[ $runData == 'false' || $runData == 'False' ]];
-  then nohup bash ${LQANALYZER_BIN_PATH}/submitSKTree.sh -b True -a ${AnalysisCode} -p ${DataPeriod} -s ${Skim} -list ${MCList} -o ${OutputDir} -d ${LogLevel} 
+  then nohup bash ${LQANALYZER_BIN_PATH}/submitSKTree.sh -b True -a ${AnalysisCode} -p ${DataPeriod} -s ${Skim} -list ${MCList} -o ${OutputDir} -d ${LogLevel} -events 10000 
   echo "nohup bash ${LQANALYZER_BIN_PATH}/submitSKTree.sh -b True -a ${AnalysisCode} -p ${DataPeriod} -s ${Skim} -list ${MCList} -o ${OutputDir} -d ${LogLevel}">> CommandHist.txt
 elif [[ $runMC == 'false' || $runMC == 'False' ]];
   then nohup bash ${LQANALYZER_BIN_PATH}/submitSKTree.sh -b True -a ${AnalysisCode} -S ${Stream} -p ${DataPeriod} -s ${Skim} -o ${OutputDir} -d ${LogLevel} -q ${QueueOption}

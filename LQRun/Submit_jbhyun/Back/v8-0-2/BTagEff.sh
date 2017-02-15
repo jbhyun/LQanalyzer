@@ -9,18 +9,15 @@ runData=false
 ########################################################################
 ## RUN PARAMETERS
 
-AnalysisCode="Jan2017_3l4j_ObjValid_DiLep" #"Jan2017_3l4j_IDFnCompCheck" ###_D3lv" ###"Jun2016_3l4j_SigBasic" ###KPS ###"ExampleAnalyzerDiMuon"
-#Stream="DoubleMuon"     ### DoubleMuon DoubleEG MuonEG SingleElectron SingleMuon 
-Stream="DoubleEG"     ### DoubleMuon DoubleEG MuonEG SingleElectron SingleMuon 
-#Stream="MuonEG"     ### DoubleMuon DoubleEG MuonEG SingleElectron SingleMuon 
+AnalysisCode="Feb2017_3l4j_BTagEff" 
+Stream="MuonEG"     ### DoubleMuon DoubleEG MuonEG SingleElectron SingleMuon 
 Skim="SKTree_DiLepSkim" ###"Lepton" ### "Lepton"(single lepton skim)/"DiLep"(dilepton skim)/"NoCut"(noskim) ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
 DataPeriod="ALL"        ###  "C" = period C only   "ALL" or "CtoD"  = period C+D
 job_logstep=1000
 LogLevel="INFO"
-QueueOption="fastq" ##
+QueueOption="fastq"
 
-MCList="DY"
-#MCList="CR_EMu"
+MCList="BtagEffSample"
 #MCList="Analysis_bkg_test"
 ###Backgound : AllSample / Analysis_bkg / Analysis_bkg_test / QCD_mu
 ###Signal    : Analysis_sig_All / Analysis_sig_1e2mu / Analysis_sig_3mu / tthwA_1e2mu / tthwA_3mu / Analysis_sig_test / Analysis_sig_test1
@@ -50,7 +47,9 @@ elif [[ ${DataPeriod} == "E" ]]; then dir_period="periodE";
 elif [[ ${DataPeriod} == "F" ]]; then dir_period="periodF";
 elif [[ ${DataPeriod} == "G" ]]; then dir_period="periodG";
 elif [[ ${DataPeriod} == "H" ]]; then dir_period="periodH";
-elif [[ ${DataPeriod}  == "ALL" || ${DataPeriod} == "BtoG" ]]; then dir_period="periodBtoG";
+elif [[ ${DataPeriod} == "BtoG" ]]; then dir_period="periodBtoG";
+elif [[ ${DataPeriod} == "ALL" ]]; then dir_period="periodBtoG";
+
 else echo "Error: Period Set Wrongly"; exit 1;
 fi
 OutputDir="${outputdir_lep}/${dir_period}/"

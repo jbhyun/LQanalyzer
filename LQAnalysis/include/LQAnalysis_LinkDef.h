@@ -19,6 +19,7 @@
 
 //#endif // __CINT__
 //Jihwan Bhyun Modification///////////
+#pragma link C++ class Feb2017_3l4j_PUjetCheck+;
 #pragma link C++ class Feb2017_3l4j_BTagEff+;
 #pragma link C++ class Jan2017_3l4j_DYCheck+;
 #pragma link C++ class Jan2017_3l4j_ObjValid_DiLep+;

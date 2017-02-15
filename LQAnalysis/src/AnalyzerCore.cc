@@ -1526,11 +1526,21 @@ float AnalyzerCore::TriggerEff(TString trigname, std::vector<snu::KElectron> ele
   
   if(electrons.size() >=2){
     float trig_eff(1.);
+    float e11=0, e12=0, e21=0, e22=0;//first trig, second ele idx
     if(trigname.Contains("HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v")){
       
-      trig_eff*= GetEff(electrons.at(0), "HLT_Ele23_CaloIdL_TrackIdL_IsoVL_v");
-      trig_eff*= GetEff(electrons.at(1), "HLT_Ele12_CaloIdL_TrackIdL_IsoVL_v");
+//      trig_eff*= GetEff(electrons.at(0), "HLT_Ele23_CaloIdL_TrackIdL_IsoVL_v");
+//      trig_eff*= GetEff(electrons.at(1), "HLT_Ele12_CaloIdL_TrackIdL_IsoVL_v");
+//      trig_eff *= 0.995; // DZ efficiency AN2016_228
+      e11=GetEff(electrons.at(0), "HLT_Ele23_CaloIdL_TrackIdL_IsoVL_v");
+      e12=GetEff(electrons.at(1), "HLT_Ele23_CaloIdL_TrackIdL_IsoVL_v");
+
+      e21=GetEff(electrons.at(0), "HLT_Ele12_CaloIdL_TrackIdL_IsoVL_v");
+      e22=GetEff(electrons.at(1), "HLT_Ele12_CaloIdL_TrackIdL_IsoVL_v");
+      
+      trig_eff=e11*e22+(1.-e11*e22)*e12*e21;
       trig_eff *= 0.995; // DZ efficiency AN2016_228
+ 
       return trig_eff;
     }
     else  return 0.;
