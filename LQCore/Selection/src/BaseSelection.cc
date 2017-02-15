@@ -293,7 +293,7 @@ void BaseSelection::reset(){
   apply_BESepCut    = false;
   apply_relisocut   = false;
   relIsoBarrel_max  = 100000.;   relIsoEndcap_max = 100000.;
-  relIsoBarrel_min  = 100000.;   relIsoEndcap_min = 100000.;
+  relIsoBarrel_min  = 0.;        relIsoEndcap_min = 0.;
   dxyBarrel_max     = 100000.;   dxyEndcap_max    = 100000.;
   dzBarrel_max      = 100000.;   dzEndcap_max     = 100000.;
   RelIsoType        = "Default";
