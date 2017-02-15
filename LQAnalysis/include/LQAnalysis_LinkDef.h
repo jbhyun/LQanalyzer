@@ -17,4 +17,22 @@
 #pragma link C++ class HNEMu+;
 #pragma link C++ class SKTreeValidation+;
 
+//#endif // __CINT__
+//Jihwan Bhyun Modification///////////
+#pragma link C++ class Jan2017_3l4j_DYCheck+;
+#pragma link C++ class Jan2017_3l4j_ObjValid_DiLep+;
+#pragma link C++ class Jan2017_3l4j_TrigInfoCheck+;
+#pragma link C++ class Jan2017_3l4j_ttZComposition+;
+#pragma link C++ class Jan2017_3l4j_ObjFnCheckScratch+;
+#pragma link C++ class Jan2017_3l4j_IDFnCompCheck+;
+#pragma link C++ class Sep2016_3l4j_DataMCComp+;
+#pragma link C++ class Dec2016_3l4j_SelFuncTest+;
+//#pragma link C++ class Sep2016_3l4j_DataMCComp_1e2mu+;
+//#pragma link C++ class Sep2016_3l4j_DataMCComp_3mu+;
+#pragma link C++ class Sep2016_MuMubj_DataMCComp+;
+#pragma link C++ class Sep2016_3l4j_Validation_DiLep+;
+#pragma link C++ class Oct2016_ttA_DataMCComp+;
+#pragma link C++ class Jan2017_3l4j_Validation_DiLep+;
+
+
 #endif // __CINT__

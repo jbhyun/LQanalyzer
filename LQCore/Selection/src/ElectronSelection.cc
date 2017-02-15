@@ -104,6 +104,7 @@ void ElectronSelection::Selection(std::vector<KElectron>& leptonColl , bool m_de
     float reliso;
     if     (apply_relisocut && RelIsoType.Contains("Default"))    reliso=el->PFRelIso(0.3); 
     else if(apply_relisocut && RelIsoType.Contains("PFRelIso04")) reliso=el->PFRelIso(0.4); 
+    else reliso=el->PFRelIso(0.3);
 
     if(apply_ptcut && !(el->Pt() >= pt_cut_min && el->Pt() < pt_cut_max)){
       pass_selection = false;
@@ -116,7 +117,9 @@ void ElectronSelection::Selection(std::vector<KElectron>& leptonColl , bool m_de
 
     //Whether to include EE-EBtransition region(Default: not)
     if(!apply_BETrRegIncl){
-      if(fabs(el->SCEta())>1.4442 && fabs(el->SCEta())<1.566) pass_selection = false;
+      if(fabs(el->SCEta())>1.4442 && fabs(el->SCEta())<1.566){
+        pass_selection = false;
+        if(m_debug)cout << "Selection: Fail BETrIncl Cut" << endl;}
     }
     //// Check charge consistancy between different detectors
     if(apply_chargeconst && !el->GsfCtfScPixChargeConsistency()){
@@ -270,10 +273,10 @@ bool ElectronSelection::PassID(snu::KElectron el, ID id){
   bool pass_loose_noiso  = false;
   bool pass_veto_noiso   = false;
 
-  if     (snuid >= 1000) pass_tight_noiso  = true;
-  else if(snuid >= 100 ) pass_medium_noiso = true;
-  else if(snuid >= 10  ) pass_loose_noiso  = true;
-  else if(snuid >= 1   ) pass_veto_noiso   = true;
+  if(snuid >= 1000) pass_tight_noiso  = true;
+  if(snuid >= 100 ) pass_medium_noiso = true;
+  if(snuid >= 10  ) pass_loose_noiso  = true;
+  if(snuid >= 1   ) pass_veto_noiso   = true;
 
 
   if(id == ELECTRON_POG_VETO   && !pass_veto_noiso)   {pass_selection = false; if(debug){ cout << "Failveto " << endl;}}
