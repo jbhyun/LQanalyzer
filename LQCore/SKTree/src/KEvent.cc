@@ -33,6 +33,8 @@ KEvent::KEvent() :
   k_pdf_x2(-999.),
 
   k_PF_MET(-999.), 
+  k_PF_METx(-999.), 
+  k_PF_METy(-999.), 
   k_PF_METphi(-999.),
   k_PF_SumET(-999.), 
   k_NoHF_MET(-999.),
@@ -83,7 +85,8 @@ KEvent::KEvent() :
   k_pu_gold_weightF(-999.),
   k_pu_gold_weightG(-999.),
   k_pu_gold_weightH(-999.),
-  k_catversion("")
+  k_catversion(""),
+  prop_metrc(false)
 {
 
 }
@@ -114,6 +117,8 @@ KEvent::KEvent(const KEvent& ev) :
   k_pdf_x2(ev.k_pdf_x2),
 
   k_PF_MET(ev.k_PF_MET),
+  k_PF_METx(ev.k_PF_METx),
+  k_PF_METy(ev.k_PF_METy),
   k_PF_METphi(ev.k_PF_METphi),
   k_PF_SumET(ev.k_PF_SumET),
   k_NoHF_MET(ev.k_NoHF_MET),
@@ -165,7 +170,8 @@ KEvent::KEvent(const KEvent& ev) :
   k_pu_gold_weightG(ev.k_pu_gold_weightG),
   k_pu_gold_weightH(ev.k_pu_gold_weightH),
 
-  k_catversion(ev.k_catversion)
+  k_catversion(ev.k_catversion),
+  prop_metrc(ev.prop_metrc)
 
 {
 }
@@ -198,6 +204,8 @@ void KEvent::Reset()
   
   k_scale_weights.clear();
   k_PF_MET= -999.;
+  k_PF_METx= -999.;
+  k_PF_METy= -999.;
   k_PF_SumET= -999.;
   k_PF_METphi= -999.;
   k_NoHF_MET= -999;
@@ -251,7 +259,7 @@ void KEvent::Reset()
   k_pu_gold_weightH = -999;
 
   k_catversion="";
-
+  prop_metrc=false;
 }
 
 
@@ -283,6 +291,8 @@ KEvent& KEvent::operator= (const KEvent& p)
 
       
       k_PF_MET= p.MET(pfmet);
+      k_PF_METx= p.PFMETx();
+      k_PF_METy= p.PFMETy();
       k_PF_METphi= p.METPhi(pfmet);
       k_PF_SumET = p.SumET(pfmet);
       k_NoHF_MET= p.MET(nohf);
@@ -339,6 +349,7 @@ KEvent& KEvent::operator= (const KEvent& p)
       k_pu_gold_weightH = p.PeriodPileUpWeight(7);
 
       k_catversion = p.CatVersion();
+      prop_metrc = p.PropagatedRochesterToMET();
     }
     
     return *this;
@@ -347,6 +358,10 @@ KEvent& KEvent::operator= (const KEvent& p)
 //// SET CLASS VARIBALES
 void KEvent::SetCatVersion(std::string cat){
   k_catversion = cat;
+}
+
+void KEvent::SetPropagatedRochesterToMET(bool hasprop){
+  prop_metrc = hasprop;
 }
 
 void KEvent::SetPassCSCHaloFilterTight(bool pass){
@@ -464,6 +479,17 @@ void KEvent::SetMET(met_type type, double met, double metphi, double sumet){
 
   else {cout << "Problem setting MET" << endl; exit(0) ;}
 }
+
+void KEvent::SetPFMETx( double metx){
+  k_PF_METx= metx;
+}
+
+void KEvent::SetPFMETy(double mety){
+  k_PF_METy= mety;
+}
+
+
+
 
 void KEvent::SetPFMETShift(syst_dir dir, met_syst type, double val){
   if(dir == up){

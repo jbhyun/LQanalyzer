@@ -191,14 +191,100 @@ AnalyzerCore::AnalyzerCore() : LQCycleBase(), n_cutflowcuts(0), MCweight(-999.),
 }
 
 
-//float AnalyzerCore::GetCorrectedMET(){                                                                                                                                                                                                                                       
 
 
-//float met_x =eventbase->GetEvent().PFMETx()                                                                                                                                                                                                                                 
-//float met_y =eventbase->GetEvent().PFMETy()                                                                                                                                                                                                                                 
+float AnalyzerCore::CorrectedMETRochester(TString muid_formet, bool update_met){
+
+  
+  float met_x =eventbase->GetEvent().PFMETx();                                                                                                            
+  float met_y =eventbase->GetEvent().PFMETy();
+  std::vector<snu::KMuon> muall = GetMuons(muid_formet);
+  
+  float px_orig(0.), py_orig(0.),px_corrected(0.), py_corrected(0.);
+  for(unsigned int im=0; im < muall.size() ; im++){
+      
+      px_orig+= muall.at(im).MiniAODPt()*TMath::Cos(muall.at(im).Phi());
+      py_orig+= muall.at(im).MiniAODPt()*TMath::Sin(muall.at(im).Phi());
+      
+      px_corrected += muall.at(im).Px();
+      py_corrected += muall.at(im).Py();
+      
+  }
+  met_x = met_x + px_orig - px_corrected;	
+  met_y = met_y + py_orig - py_corrected;	
+  
+  if(update_met){
+    if(!eventbase->GetEvent().PropagatedRochesterToMET()){
+      eventbase->GetEvent().SetMET(snu::KEvent::pfmet,  sqrt(met_x*met_x + met_y*met_y), eventbase->GetEvent().METPhi(), eventbase->GetEvent().SumET());
+      eventbase->GetEvent().SetPFMETx(met_x);
+      eventbase->GetEvent().SetPFMETy(met_y);
+      eventbase->GetEvent().SetPropagatedRochesterToMET(true);
+    }
+  }
+  return sqrt(met_x*met_x + met_y*met_y);
+}   
 
 
-//}   
+
+
+
+float AnalyzerCore::CorrectedMETElectron(TString elid_formet, int sys){
+
+  float met_x =eventbase->GetEvent().PFMETx();
+  float met_y =eventbase->GetEvent().PFMETy();
+  std::vector<snu::KElectron> elall = GetElectrons(elid_formet);
+
+  float px_orig(0.), py_orig(0.),px_shifted(0.), py_shifted(0.);
+  for(unsigned int iel=0; iel < elall.size() ; iel++){
+
+
+    px_orig+= elall.at(iel).Px();
+    py_orig+= elall.at(iel).Py();
+    if(sys==1){
+      px_shifted += elall.at(iel).Px()*elall.at(iel).PtShiftedUp();
+    }
+    if(sys==-1){
+      px_shifted += elall.at(iel).Px()*elall.at(iel).PtShiftedDown();
+    }
+
+
+  }
+  met_x = met_x + px_orig - px_shifted;
+  met_y = met_y + py_orig - py_shifted;
+
+
+  return sqrt(met_x*met_x + met_y*met_y);
+
+}
+
+float AnalyzerCore::CorrectedMETMuon(TString muid_formet, int sys){
+  
+  float met_x =eventbase->GetEvent().PFMETx();
+  float met_y =eventbase->GetEvent().PFMETy();
+  std::vector<snu::KMuon> muall = GetMuons(muid_formet);
+  
+  float px_orig(0.), py_orig(0.),px_shifted(0.), py_shifted(0.);
+  for(unsigned int imu=0; imu < muall.size() ; imu++){
+    
+    px_orig+= muall.at(imu).Px();
+    py_orig+= muall.at(imu).Py();
+    if(sys==1){
+      px_shifted += muall.at(imu).Px()*muall.at(imu).PtShiftedUp();
+    }
+    if(sys==-1){
+      px_shifted += muall.at(imu).Px()*muall.at(imu).PtShiftedDown();
+    }  
+  }
+  met_x = met_x + px_orig - px_shifted;
+  met_y = met_y + py_orig - py_shifted;
+  
+  
+  return sqrt(met_x*met_x + met_y*met_y);
+  
+}
+
+
+
 
 // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 ///// FUNCTION USED TO CREATE BTAG EFFICIENCIES USED BY BTAGSF.cxx CLass
