@@ -108,7 +108,7 @@ void ElectronSelection::Selection(std::vector<KElectron>& leptonColl , bool m_de
     float reliso(0.);
     if     (apply_relisocut && RelIsoType.Contains("Default"))    reliso=el->PFRelIso(0.3); 
     else if(apply_relisocut && RelIsoType.Contains("PFRelIso04")) reliso=el->PFRelIso(0.4); 
-    else reliso=el->PFRelIso(0.3);
+    else                                                          reliso=el->PFRelIso(0.3); 
 
     if(apply_ptcut && !(el->Pt() >= pt_cut_min && el->Pt() < pt_cut_max)){
       pass_selection = false;

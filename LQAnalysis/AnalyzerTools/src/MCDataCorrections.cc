@@ -30,7 +30,8 @@ MCDataCorrections::MCDataCorrections() {
   string pileupdir = getenv("PILEUPFILEDIR");
 
   FillCorrectionHists();
-  reweightPU = new Reweight((pileupdir + "/" + getenv("PUFILE")).c_str());       
+  //reweightPU = new Reweight((pileupdir + "/" + getenv("PUFILE")).c_str());       
+
 }
 
 
@@ -42,7 +43,7 @@ MCDataCorrections::MCDataCorrections(bool isdata) {
 
 MCDataCorrections::~MCDataCorrections(){
   delete rc;
-  delete reweightPU;
+  ///  delete reweightPU;
   CorrectionMap.clear();
   CorrectionMapGraph.clear();
 }
@@ -328,7 +329,8 @@ double MCDataCorrections::ElectronRecoScaleFactor(vector<snu::KElectron> el){
 float MCDataCorrections::UserPileupWeight(snu::KEvent ev){
   
   if(corr_isdata) return 1.;
-  return reweightPU->GetWeight(ev.nVertices(),TString(getenv("CATVERSION")));
+  return 1.;
+  //return reweightPU->GetWeight(ev.nVertices(),TString(getenv("CATVERSION")));
 }
 
 
@@ -413,6 +415,8 @@ void MCDataCorrections::CorrectMuonMomentum(vector<snu::KMuon>& k_muons, vector<
 	if ( genpt> 0.)  scalefactor = rc->kScaleFromGenMC(float(it->Charge()), it->Pt(), it->Eta(), it->Phi(), it->ActiveLayer(), genpt, u1,0, 0);
 	else scalefactor = rc->kScaleAndSmearMC(float(it->Charge()), it->Pt(), it->Eta(), it->Phi(), it->ActiveLayer(), u1, u2, 0,0);
     }
+    it->SetRelIso(0.3,it->RelMiniAODIso03()/scalefactor);
+    it->SetRelIso(0.4,it->RelMiniAODIso04()/scalefactor);
     it->SetPtEtaPhiM( (scalefactor*it->Pt() ), it->Eta(), it->Phi(), it->M());
   }  
   
