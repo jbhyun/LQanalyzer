@@ -326,5 +326,33 @@ class AnalyzerCore : public LQCycleBase {
   void PrintTruth();
 
   
+//};
+//#endif
+  //Jihwan Bhyun Modification/////////////////////////
+  std::vector<snu::KJet> SelBJets(std::vector<snu::KJet>& jetColl,TString level);
+  std::vector<int> GetSFBJetIdx(std::vector<snu::KJet>& jetColl,TString level);
+  std::vector<int> GetSFLJetIdx(std::vector<snu::KJet>& jetColl, std::vector<int>& bIdxColl, TString level);
+  std::vector<snu::KJet> SelLightJets(std::vector<snu::KJet>& jetColl, TString level);
+  std::vector<snu::KElectron> SelEndcapElectrons(std::vector<snu::KElectron>& electronColl);
+  std::vector<snu::KJet> GetTopBasicJets(/*std::vector<snu::KMuon>& muonColl, std::vector<snu::KElectron>& electronColl*/);
+  int SumCharge(std::vector<snu::KMuon>& MuonColl);
+  int TriMuChargeIndex(std::vector<snu::KMuon>& MuonColl, TString charge);
+  double GetvPz(snu::KParticle v, snu::KElectron e, int pm);
+  double GetvPz(snu::KParticle v, snu::KMuon mu, int pm);
+  double GetAngle(snu::KElectron e, snu::KMuon mu);
+  double GetAngle(snu::KMuon mu1, snu::KMuon mu2);
+  double GetAngle(snu::KElectron e, snu::KJet j);
+  double GetAngle(snu::KMuon mu, snu::KJet j);
+  double GetAngle(snu::KJet j1, snu::KJet j2);
+
+  double dPtRel(snu::KTruth T, snu::KElectron e);
+  double dPtRel(snu::KTruth T, snu::KMuon mu);
+  double dPtRel(snu::KTruth T, snu::KJet j);
+  int  GenMatchedIdx(snu::KTruth T, std::vector<snu::KMuon>& MuonColl);
+  int  GenMatchedIdx(snu::KTruth T, std::vector<snu::KElectron>& ElectronColl);
+  int  GenMatchedIdx(snu::KTruth T, std::vector<snu::KJet>& JetColl);
+  bool GenDecayInfo(std::vector<snu::KTruth>& truthColl, TString Decaymode);
+  int  GetGenMatchedSigIndex(std::vector<snu::KTruth>& truthColl, std::vector<snu::KMuon>& muonColl, std::vector<snu::KElectron>& electronColl, std::vector<snu::KJet>& jetColl, TString PtlName, float weight);
+
 };
 #endif
