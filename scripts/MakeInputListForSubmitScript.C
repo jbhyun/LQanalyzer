@@ -101,7 +101,7 @@ void MakeInputListForSubmitScript(){
   lumi_file << "" << endl;
  lumi_file << "declare -a ch_wa=('" ;
  for(std::map<TString, TString>::iterator mit =lqmap.begin(); mit != lqmap.end();++mit){
-   if(!mit->second.Contains("tthwA")) continue;
+   if(!mit->second.Contains("TTToHcToWA")) continue;
 
    cout << mit->first << " " << mit->second << endl;
    if(next(mit)!= lqmap.end()) lumi_file << mit->second << "' '"   ;
@@ -115,7 +115,7 @@ void MakeInputListForSubmitScript(){
  lumi_file << "" << endl;
  lumi_file << "declare -a ch_wz=('" ;
  for(std::map<TString, TString>::iterator mit =lqmap.begin(); mit != lqmap.end();++mit){
-   if(!mit->second.Contains("tthwZ")) continue;
+   if(!mit->second.Contains("TTToHcToWZ")) continue;
    
    cout << mit->first << " " << mit->second << endl;
    if(next(mit)!= lqmap.end()) lumi_file << mit->second << "' '"   ;
@@ -132,40 +132,54 @@ void MakeInputListForSubmitScript(){
  
   lumi_file << "declare -a hn_ll_ee=('" ;
   for(std::map<TString, TString>::iterator mit =lqmap.begin(); mit != lqmap.end();++mit){
-    if(!mit->second.Contains("Schan")) continue;
-    if(mit->second.Contains("_Mu")) continue;
-    if(mit->second.Contains("_EpM")) continue;
-    if(mit->second.Contains("_EmM")) continue;
-
+    if(mit->second.Contains("HNM")) continue;
+    if(mit->second.Contains("Mum")) continue;
+    if(mit->second.Contains("Mup")) continue;
+    if(mit->second.Contains("SSSF")) continue;
+    if(mit->second.Contains("HNMoriondLL")) continue;
+    if(mit->second.Contains("Official_HN")) continue;
+    if(!mit->second.Contains("HN")) continue;
+    if(mit->second.Contains("HN_MuMuMu")) continue;
     cout << mit->first << " " << mit->second << endl;
     if(next(mit)!= lqmap.end()) lumi_file << mit->second << "' '"   ;
     else  lumi_file << mit->second ;
 
   }
   lumi_file << "') " << endl;
+  lumi_file << "" << endl;
 
   lumi_file << "declare -a hn_ll_mm=('" ;
   for(std::map<TString, TString>::iterator mit =lqmap.begin(); mit != lqmap.end();++mit){
-    if(!mit->second.Contains("Schan")) continue;
-    if(mit->second.Contains("_E")) continue;
-    if(mit->second.Contains("_EpM")) continue;
-    if(mit->second.Contains("_EmM")) continue;
-    
+    if(mit->second.Contains("HNE")) continue;
+    if(mit->second.Contains("Em")) continue;
+    if(mit->second.Contains("Ep")) continue;
+    if(mit->second.Contains("SSSF")) continue;
+    if(mit->second.Contains("HNMoriondLL")) continue;
+    if(!mit->second.Contains("HN")) continue;
+    if(mit->second.Contains("Official_HN")) continue;
+    if(mit->second.Contains("HN_MuMuMu")) continue;
     cout << mit->first << " " << mit->second << endl;
     if(next(mit)!= lqmap.end()) lumi_file << mit->second << "' '"   ;
     else  lumi_file << mit->second ;
 
   }
+
 
   lumi_file << "') " << endl;
 
   lumi_file << "" << endl;
   lumi_file << "declare -a hn_ll_em=('" ;
   for(std::map<TString, TString>::iterator mit =lqmap.begin(); mit != lqmap.end();++mit){
-    if(!mit->second.Contains("Schan")) continue;
-    if(mit->second.Contains("_EpE")) continue;
-    if(mit->second.Contains("_EmE")) continue;
-    if(mit->second.Contains("_Mu")) continue;
+    if(!mit->second.Contains("HN")) continue;
+    if(mit->second.Contains("MumM")) continue;
+    if(mit->second.Contains("MupM")) continue;
+    if(mit->second.Contains("EmE")) continue;
+    if(mit->second.Contains("EpE")) continue;
+    if(mit->second.Contains("SSSF")) continue;
+    if(mit->second.Contains("HNMoriondLL")) continue;
+    if(mit->second.Contains("Official_HN")) continue;
+    if(!mit->second.Contains("HN")) continue;
+    if(mit->second.Contains("HN_MuMuMu")) continue;
 
     cout << mit->first << " " << mit->second << endl;
     if(next(mit)!= lqmap.end()) lumi_file << mit->second << "' '"   ;
@@ -184,8 +198,21 @@ void MakeInputListForSubmitScript(){
   lumi_file << "" << endl;
   lumi_file << "declare -a hn_mmm=('" ;
   for(std::map<TString, TString>::iterator mit =lqmap.begin(); mit != lqmap.end();++mit){
-    if(!mit->second.Contains("_mumumu")) continue;
-    if(!mit->second.Contains("HN")) continue;
+    if(mit->second.Contains("Official_HN")) continue;
+    if(!mit->second.Contains("HN_MuMuMu")) continue;
+
+    cout << mit->first << " " << mit->second << endl;
+    if(next(mit)!= lqmap.end()) lumi_file << mit->second << "' '"   ;
+    else  lumi_file << mit->second ;
+
+  }
+
+  lumi_file << "') " << endl;
+  lumi_file << "" << endl;
+  
+  lumi_file << "declare -a hn_mmm_official=('" ;
+  for(std::map<TString, TString>::iterator mit =lqmap.begin(); mit != lqmap.end();++mit){
+    if(!mit->second.Contains("Official_HN")) continue;
 
     cout << mit->first << " " << mit->second << endl;
     if(next(mit)!= lqmap.end()) lumi_file << mit->second << "' '"   ;
@@ -195,7 +222,9 @@ void MakeInputListForSubmitScript(){
 
 
 
+
   lumi_file << "') " << endl;
+  lumi_file << "" << endl;
   lumi_file << "" << endl;
   lumi_file << "declare -a hn_moriond_mm=('" ;
   for(std::map<TString, TString>::iterator mit =lqmap.begin(); mit != lqmap.end();++mit){
