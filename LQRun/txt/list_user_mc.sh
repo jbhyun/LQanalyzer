@@ -4,18 +4,12 @@
 ### SAMPLE LIST ########## 
 #######################
 
-#declare -a example=("tthwA_1l2ta_hc130A30" "tthwA_1ta2mu_hc130A30")  #"tthwA_4l_hc130A30")
-#declare -a example=("tthwA_1ta2mu_hc130A30" "tthwA_1l2ta_hc130A30" "tthwA_4l_hc130A30")
 declare -a example=("tthwA_1ta2mu_hc130A30" )
-declare -a tamumu=("tthwA_1ta2mu_hc130A30" "tthwA_1ta2mu_hc155A30")
-declare -a fourlep=("tthwA_4l2j_hc130A30" "tthwA_4l2j_hc155A30")
-declare -a NewSamples=("tthwA_1e2mu_hc130A30_NoGenCut" "tthwA_1e2mu_hc155A30_NoGenCut") 
-#declare -a NewSamples=("tthwA_3mu_hc130A30_NoGenCut") 
 
 #declare -a DY=("DYJets" 'TTJets_aMC') 
 declare -a ST=('SingleTop_s' 'SingleTbar_t' 'SingleTop_t' 'SingleTbar_tW_noHadron' 'SingleTop_tW_noHadron')
 declare -a DY=("DYJets") 
-declare -a BtagEffSample=("TT_powheg")
+declare -a BtagEffSample=('TTJets_aMC' "DYJets")
 
 declare -a tmplist=('WpWp_qcd_madgraph' 'ZG_llG_MCatNLO' 'ZZ_llnunu_powheg' 'ZZ_llqq_MCatNLO' 'ZZ_llll_MCatNLO' 'ZZ_llll_powheg' 'ZZ_pythia8' 'ttHnobb_Powheg' 'ttHtobb_Powheg')
 

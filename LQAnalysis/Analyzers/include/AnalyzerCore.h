@@ -354,5 +354,7 @@ class AnalyzerCore : public LQCycleBase {
   bool GenDecayInfo(std::vector<snu::KTruth>& truthColl, TString Decaymode);
   int  GetGenMatchedSigIndex(std::vector<snu::KTruth>& truthColl, std::vector<snu::KMuon>& muonColl, std::vector<snu::KElectron>& electronColl, std::vector<snu::KJet>& jetColl, TString PtlName, float weight);
 
+  int  NPromptLeptons(std::vector<snu::KTruth>& truthColl, TString Option="");
+
 };
 #endif

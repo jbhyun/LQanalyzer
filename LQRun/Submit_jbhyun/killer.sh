@@ -26,3 +26,5 @@ fi
 
 chmod 700 Assassin.sh
 ./Assassin.sh
+
+#if [[ $? -eq 0 ]]; rm Assassin.sh; fi;

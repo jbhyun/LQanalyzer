@@ -39,26 +39,33 @@ void GetEffectiveLuminosityPrivateSamples(){
   map<TString, Double_t> xsmap;
   /// key=  "Name of FlatCatuple dir"  = xsec;
   //xsmap["VBF_HToMuMu_M125_13TeV_powheg_pythia8"] =0.000828308;
-  xsmap["13TeV_HN40_mumumu_width_AUTO_VmuN_0p1"] = 8.605;
-  xsmap["13TeV_HN60_mumumu_width_AUTO_VmuN_0p1"] = 3.416;
-  xsmap["13TeV_HN150_mumumu_width_AUTO_VmuN_0p1"] = 0.0004561;
-  xsmap["13TeV_HN700_mumumu_width_AUTO_VmuN_0p1"] = 0.000002644;
+  xsmap["TTToHplusToWA_WToENu_AToMuMu_MH-100_MA-15_13TeV-madgraph"] = 0.020;
+  xsmap["TTToHplusToWA_WToENu_AToMuMu_MH-110_MA-30_13TeV-madgraph"] = 0.020;
+  xsmap["TTToHplusToWA_WToENu_AToMuMu_MH-160_MA-15_13TeV-madgraph"] = 0.020;
+  xsmap["TTToHplusToWA_WToENu_AToMuMu_MH-160_MA-30_13TeV-madgraph"] = 0.020;
+  xsmap["TTToHplusToWZprime_WToENu_ZToMuMu_MH-160_MZ-5_13TeV-madgraph"] = 0.020;
+  xsmap["TTToHplusToWZprime_WToENu_ZToMuMu_MH-90_MZ-5_13TeV-madgraph"] = 0.020;
 
   map<TString, TString> lqmap;
   //  key=  "Name of FlatCatuple dir"  = name to use in sktree -i <SAMPLENAME> 
   //lqmap["VBF_HToMuMu_M125_13TeV_powheg_pythia8"] ="vhf_Htomm_Powheg";
-  lqmap["13TeV_HN40_mumumu_width_AUTO_VmuN_0p1"] ="HN40_mumumu_VmuN_0p1";
-  lqmap["13TeV_HN60_mumumu_width_AUTO_VmuN_0p1"] ="HN60_mumumu_VmuN_0p1";
-  lqmap["13TeV_HN150_mumumu_width_AUTO_VmuN_0p1"] ="HN150_mumumu_VmuN_0p1";
-  lqmap["13TeV_HN700_mumumu_width_AUTO_VmuN_0p1"] ="HN700_mumumu_VmuN_0p1";
+  lqmap["TTToHplusToWA_WToENu_AToMuMu_MH-100_MA-15_13TeV-madgraph"]     = "TTToHcToWA_1e2mu_MHc100_MA15";
+  lqmap["TTToHplusToWA_WToENu_AToMuMu_MH-110_MA-30_13TeV-madgraph"]     = "TTToHcToWA_1e2mu_MHc110_MA30";
+  lqmap["TTToHplusToWA_WToENu_AToMuMu_MH-160_MA-15_13TeV-madgraph"]     = "TTToHcToWA_1e2mu_MHc160_MA15";
+  lqmap["TTToHplusToWA_WToENu_AToMuMu_MH-160_MA-30_13TeV-madgraph"]     = "TTToHcToWA_1e2mu_MHc160_MA30";
+  lqmap["TTToHplusToWZprime_WToENu_ZToMuMu_MH-160_MZ-5_13TeV-madgraph"] = "TTToHcToWZp_1e2mu_MHc160_MZp5";
+  lqmap["TTToHplusToWZprime_WToENu_ZToMuMu_MH-90_MZ-5_13TeV-madgraph"]  = "TTToHcToWZp_1e2mu_MHc90_MZp5";
 
   //// version must be the version in the directoy name of your flat catuples 
   map<TString, TString> catversion_map;
   //catversion_map["VBF_HToMuMu_M125_13TeV_powheg_pythia8"] = "v7-6-4"; /// This specifies what directory to look in
-  catversion_map["13TeV_HN40_mumumu_width_AUTO_VmuN_0p1"] = "v7-6-4";
-  catversion_map["13TeV_HN60_mumumu_width_AUTO_VmuN_0p1"] = "v7-6-4";
-  catversion_map["13TeV_HN150_mumumu_width_AUTO_VmuN_0p1"] = "v7-6-4";
-  catversion_map["13TeV_HN700_mumumu_width_AUTO_VmuN_0p1"] = "v7-6-4";
+  catversion_map["TTToHplusToWA_WToENu_AToMuMu_MH-100_MA-15_13TeV-madgraph"]     = "v8-0-4";
+  catversion_map["TTToHplusToWA_WToENu_AToMuMu_MH-110_MA-30_13TeV-madgraph"]     = "v8-0-4";
+  catversion_map["TTToHplusToWA_WToENu_AToMuMu_MH-160_MA-15_13TeV-madgraph"]     = "v8-0-4";
+  catversion_map["TTToHplusToWA_WToENu_AToMuMu_MH-160_MA-30_13TeV-madgraph"]     = "v8-0-4";
+  catversion_map["TTToHplusToWZprime_WToENu_ZToMuMu_MH-160_MZ-5_13TeV-madgraph"] = "v8-0-4";
+  catversion_map["TTToHplusToWZprime_WToENu_ZToMuMu_MH-90_MZ-5_13TeV-madgraph"]  = "v8-0-4";
+
   for(std::map<TString, Double_t>::iterator mit =xsmap.begin(); mit != xsmap.end();++mit){
     std::map<TString, TString>::iterator mitv = catversion_map.find(mit->first);
     if(mitv== catversion_map.end()) {cout << "Error in naming datasets in map" << endl; return;}

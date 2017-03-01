@@ -2,8 +2,8 @@
 
 ########################################################################
 ## MC / DATA
-runMC=false
-runData=true
+runMC=true
+runData=false
 
 
 ########################################################################
@@ -13,7 +13,8 @@ AnalysisCode="Jan2017_3l4j_ObjValid_DiLep" #"Jan2017_3l4j_IDFnCompCheck" ###_D3l
 #Stream="MuonEG"     ### DoubleMuon DoubleEG MuonEG SingleElectron SingleMuon 
 Stream="SingleMuon"     ### DoubleMuon DoubleEG MuonEG SingleElectron SingleMuon 
 #Stream="DoubleEG"     ### DoubleMuon DoubleEG MuonEG SingleElectron SingleMuon 
-Skim="SKTree_LeptonSkim" ###"Lepton" ### "Lepton"(single lepton skim)/"DiLep"(dilepton skim)/"NoCut"(noskim) ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
+Skim="SKTree_DiLepSkim" ###"Lepton" ### "Lepton"(single lepton skim)/"DiLep"(dilepton skim)/"NoCut"(noskim) ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
+#Skim="SKTree_LeptonSkim" ###"Lepton" ### "Lepton"(single lepton skim)/"DiLep"(dilepton skim)/"NoCut"(noskim) ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
 DataPeriod="ALL"        ###  "C" = period C only   "ALL" or "CtoD"  = period C+D
 job_logstep=1000
 LogLevel="INFO"

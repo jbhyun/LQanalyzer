@@ -243,15 +243,17 @@ void Feb2017_3l4j_TrigEff::ExecuteEvents()throw( LQError ){
 
 
      weight *= id_weight_ele*reco_weight_ele*id_weight_mu*iso_weight_mu*trk_weight_mu*pileup_reweight;
+     FillHist("Count_NoCut", 0., weight, 0., 1., 1);
 
    if(TriMu_analysis){
 
-     bool Pass_LepMinSel=false, Pass_LepMeanSel=false;
+     bool Pass_LepMinSel=false, Pass_LepMeanSel=false, Pass_SiglLepSel=false;
      
      if(muonColl.size()==3){
        if(fabs(SumCharge(muonColl))==1){
          if(muonColl.at(0).Pt()>20 && muonColl.at(1).Pt()>10) Pass_LepMinSel=true;
          if(muonColl.at(0).Pt()>20 && muonColl.at(2).Pt()>10) Pass_LepMeanSel=true;
+         if(muonColl.at(0).Pt()>26)                           Pass_SiglLepSel=true;
        }
      }
 
@@ -262,20 +264,26 @@ void Feb2017_3l4j_TrigEff::ExecuteEvents()throw( LQError ){
        if(Pass_Mu17TkMu8Dz) FillHist("Count_EachTrigMinSel_3mu", 0., weight, 0., 10., 10);
        if(Pass_Mu17Mu8Dz)   FillHist("Count_EachTrigMinSel_3mu", 1., weight, 0., 10., 10);
        if(Pass_Mu17TkMu8Dz || Pass_Mu17Mu8Dz) FillHist("Count_EachTrigMinSel_3mu", 2., weight, 0., 10., 10);
+     }
+     if(Pass_SiglLepSel){
        if(Pass_IsoMu24)     FillHist("Count_EachTrigMinSel_3mu", 3., weight, 0., 10., 10);
-       if(Pass_IsoTkMu24)   FillHist("Count_EachTrigMinSel_3mu", 4., weight, 0., 10., 10);
-       if(Pass_IsoMu24 || Pass_IsoTkMu24) FillHist("Count_EachTrigMinSel_3mu", 5., weight, 0., 10., 10);
-       if(Pass_Mu12Mu8Mu5)  FillHist("Count_EachTrigMinSel_3mu", 6., weight, 0., 10., 10);
+      // if(Pass_IsoTkMu24)   FillHist("Count_EachTrigMinSel_3mu", 4., weight, 0., 10., 10);
+      // if(Pass_IsoMu24 || Pass_IsoTkMu24) FillHist("Count_EachTrigMinSel_3mu", 5., weight, 0., 10., 10);
+     }
+     if(Pass_LepMinSel){
+      // if(Pass_Mu12Mu8Mu5)  FillHist("Count_EachTrigMinSel_3mu", 6., weight, 0., 10., 10);
+       if(Pass_Mu12Mu8Mu5)  FillHist("Count_EachTrigMinSel_3mu", 4., weight, 0., 10., 10);
      }
 
      if(Pass_LepMeanSel){
        if(Pass_Mu17TkMu8Dz) FillHist("Count_EachTrigMeanSel_3mu", 0., weight, 0., 10., 10);
        if(Pass_Mu17Mu8Dz)   FillHist("Count_EachTrigMeanSel_3mu", 1., weight, 0., 10., 10);
        if(Pass_Mu17TkMu8Dz || Pass_Mu17Mu8Dz) FillHist("Count_EachTrigMeanSel_3mu", 2., weight, 0., 10., 10);
-       if(Pass_IsoMu24)     FillHist("Count_EachTrigMeanSel_3mu", 3., weight, 0., 10., 10);
-       if(Pass_IsoTkMu24)   FillHist("Count_EachTrigMeanSel_3mu", 4., weight, 0., 10., 10);
-       if(Pass_IsoMu24 || Pass_IsoTkMu24) FillHist("Count_EachTrigMeanSel_3mu", 5., weight, 0., 10., 10);
-       if(Pass_Mu12Mu8Mu5)  FillHist("Count_EachTrigMeanSel_3mu", 6., weight, 0., 10., 10);
+       if(Pass_SiglLepSel && Pass_IsoMu24)     FillHist("Count_EachTrigMeanSel_3mu", 3., weight, 0., 10., 10);
+       //if(Pass_SiglLepSel && Pass_IsoTkMu24)   FillHist("Count_EachTrigMeanSel_3mu", 4., weight, 0., 10., 10);
+       //if(Pass_SiglLepSel && (Pass_IsoMu24 || Pass_IsoTkMu24)) FillHist("Count_EachTrigMeanSel_3mu", 5., weight, 0., 10., 10);
+       //if(Pass_Mu12Mu8Mu5)  FillHist("Count_EachTrigMeanSel_3mu", 6., weight, 0., 10., 10);
+       if(Pass_Mu12Mu8Mu5)  FillHist("Count_EachTrigMeanSel_3mu", 4., weight, 0., 10., 10);
      }
 
 
@@ -304,57 +312,42 @@ void Feb2017_3l4j_TrigEff::ExecuteEvents()throw( LQError ){
 
    if(EMuMu_analysis){
 
-     bool Pass_LepMinSel1=false, Pass_LepMeanSel1=false, Pass_LepSel2=false, Pass_Trig=false;
+     bool Pass_EMuMinSel=false, Pass_DiMuMinSel=false, Pass_EMuMeanSel=false, Pass_EMuMuSel=false, Pass_SiglESel=false, Pass_SiglMuSel=false, Pass_MuLegMeanSel=false;
      
      if(muonColl.size()==2 && electronColl.size()==1){
        if(fabs(SumCharge(muonColl))==0){
-         if(electronColl.at(0).Pt()>25 && muonColl.at(0).Pt()>14) Pass_LepMinSel1=true;//EMu Trig Base approach
-         if(electronColl.at(0).Pt()>25 && muonColl.at(0).Pt()>14 && muonColl.at(1).Pt()>10) Pass_LepMeanSel1=true;//EMu Trig Base approach
-         if(electronColl.at(0).Pt()>20 && muonColl.at(1).Pt()>11) Pass_LepSel2=true;//EMuMu Trig Base approach
+         if(electronColl.at(0).Pt()>25 && muonColl.at(0).Pt()>14) Pass_EMuMinSel=true;//EMu Trig Base approach
+         if(electronColl.at(0).Pt()>25 && muonColl.at(0).Pt()>14 && muonColl.at(1).Pt()>10) Pass_EMuMeanSel=true;//EMu Trig Base approach
+         if(electronColl.at(0).Pt()>20 && muonColl.at(1).Pt()>11) Pass_EMuMuSel=true;//EMuMu Trig Base approach
+         if(electronColl.at(0).Pt()>30 ) Pass_SiglESel=true;//EMuMu Trig Base approach
+         if(muonColl.at(0).Pt()>26 )     Pass_SiglMuSel=true;//EMuMu Trig Base approach
+         if(muonColl.at(0).Pt()>20 && muonColl.at(1).Pt()>10) Pass_DiMuMinSel=true;//EMuMu Trig Base approach
+         if(muonColl.at(1).Pt()>10) Pass_MuLegMeanSel=true;//EMuMu Trig Base approach
        }
      }
 
 
      //Only Trigger Skim
-     if(Pass_LepMinSel1){
-       if(Pass_Ele23Mu8or12) FillHist("Count_EachTrigMinSel1_1e2mu", 0., weight, 0., 10., 10);
-       if(Pass_DiMu9Ele9)    FillHist("Count_EachTrigMinSel1_1e2mu", 1., weight, 0., 10., 10);
-       if(Pass_Ele27)        FillHist("Count_EachTrigMinSel1_1e2mu", 2., weight, 0., 10., 10);
-       if(Pass_IsoMu24)      FillHist("Count_EachTrigMinSel1_1e2mu", 3., weight, 0., 10., 10);
-       if(Pass_IsoTkMu24)    FillHist("Count_EachTrigMinSel1_1e2mu", 4., weight, 0., 10., 10);
-       if(Pass_IsoMu24 || Pass_IsoTkMu24)     FillHist("Count_EachTrigMinSel1_1e2mu", 5., weight, 0., 10., 10);
-       if(Pass_Mu17TkMu8Dz)  FillHist("Count_EachTrigMinSel1_1e2mu", 6., weight, 0., 10., 10);
-       if(Pass_Mu17Mu8Dz)    FillHist("Count_EachTrigMinSel1_1e2mu", 7., weight, 0., 10., 10);
-       if(Pass_Mu17TkMu8Dz || Pass_Mu17Mu8Dz) FillHist("Count_EachTrigMinSel1_1e2mu", 8., weight, 0., 10., 10);
-     }
-     if(Pass_LepMeanSel1){
-       if(Pass_Ele23Mu8or12) FillHist("Count_EachTrigMeanSel1_1e2mu", 0., weight, 0., 10., 10);
-       if(Pass_DiMu9Ele9)    FillHist("Count_EachTrigMeanSel1_1e2mu", 1., weight, 0., 10., 10);
-       if(Pass_Ele27)        FillHist("Count_EachTrigMeanSel1_1e2mu", 2., weight, 0., 10., 10);
-       if(Pass_IsoMu24)      FillHist("Count_EachTrigMeanSel1_1e2mu", 3., weight, 0., 10., 10);
-       if(Pass_IsoTkMu24)    FillHist("Count_EachTrigMeanSel1_1e2mu", 4., weight, 0., 10., 10);
-       if(Pass_IsoMu24 || Pass_IsoTkMu24)     FillHist("Count_EachTrigMeanSel1_1e2mu", 5., weight, 0., 10., 10);
-       if(Pass_Mu17TkMu8Dz)  FillHist("Count_EachTrigMeanSel1_1e2mu", 6., weight, 0., 10., 10);
-       if(Pass_Mu17Mu8Dz)    FillHist("Count_EachTrigMeanSel1_1e2mu", 7., weight, 0., 10., 10);
-       if(Pass_Mu17TkMu8Dz || Pass_Mu17Mu8Dz) FillHist("Count_EachTrigMeanSel1_1e2mu", 8., weight, 0., 10., 10);
-     }
+     //Minimum Cuts
+     if(Pass_EMuMinSel   && Pass_Ele23Mu8or12)                    FillHist("Count_EachTrigMinSel_1e2mu", 0., weight, 0., 10., 10);
+     if(Pass_EMuMuSel    && Pass_DiMu9Ele9)                       FillHist("Count_EachTrigMinSel_1e2mu", 1., weight, 0., 10., 10);
+     if(Pass_SiglESel    && Pass_Ele27)                           FillHist("Count_EachTrigMinSel_1e2mu", 2., weight, 0., 10., 10);
+     if(Pass_SiglMuSel   && Pass_IsoMu24)                         FillHist("Count_EachTrigMinSel_1e2mu", 3., weight, 0., 10., 10);
+     if(Pass_DiMuMinSel  && (Pass_Mu17TkMu8Dz || Pass_Mu17Mu8Dz)) FillHist("Count_EachTrigMinSel_1e2mu", 4., weight, 0., 10., 10);
 
 
-     if(Pass_LepSel2){
-       if(Pass_Ele23Mu8or12) FillHist("Count_EachTrigOnSel2_1e2mu", 0., weight, 0., 10., 10);
-       if(Pass_DiMu9Ele9)    FillHist("Count_EachTrigOnSel2_1e2mu", 1., weight, 0., 10., 10);
-       if(Pass_Ele27)        FillHist("Count_EachTrigOnSel2_1e2mu", 2., weight, 0., 10., 10);
-       if(Pass_IsoMu24)      FillHist("Count_EachTrigOnSel2_1e2mu", 3., weight, 0., 10., 10);
-       if(Pass_IsoTkMu24)    FillHist("Count_EachTrigOnSel2_1e2mu", 4., weight, 0., 10., 10);
-       if(Pass_IsoMu24 || Pass_IsoTkMu24)     FillHist("Count_EachTrigOnSel2_1e2mu", 5., weight, 0., 10., 10);
-       if(Pass_Mu17TkMu8Dz)  FillHist("Count_EachTrigOnSel2_1e2mu", 6., weight, 0., 10., 10);
-       if(Pass_Mu17Mu8Dz)    FillHist("Count_EachTrigOnSel2_1e2mu", 7., weight, 0., 10., 10);
-       if(Pass_Mu17TkMu8Dz || Pass_Mu17Mu8Dz) FillHist("Count_EachTrigOnSel2_1e2mu", 8., weight, 0., 10., 10);
-     }
+     //Reasonable Cuts
+     if(Pass_EMuMeanSel && Pass_Ele23Mu8or12)                   FillHist("Count_EachTrigMeanSel_1e2mu", 0., weight, 0., 10., 10);
+     if(Pass_EMuMuSel   && Pass_DiMu9Ele9)                      FillHist("Count_EachTrigMeanSel_1e2mu", 1., weight, 0., 10., 10);
+     if(Pass_SiglESel && Pass_MuLegMeanSel && Pass_Ele27)       FillHist("Count_EachTrigMeanSel_1e2mu", 2., weight, 0., 10., 10);
+     if(Pass_SiglMuSel && Pass_MuLegMeanSel && (Pass_IsoMu24 || Pass_IsoTkMu24))     FillHist("Count_EachTrigMeanSel_1e2mu", 3., weight, 0., 10., 10);
+     if(Pass_DiMuMinSel && (Pass_Mu17TkMu8Dz || Pass_Mu17Mu8Dz))FillHist("Count_EachTrigMeanSel_1e2mu", 4., weight, 0., 10., 10);
+     
+
 
 
      //Combinations Approach 1
-     if(Pass_LepMinSel1){
+     if(Pass_EMuMinSel){
        if(Pass_Ele23Mu8or12)                 FillHist("Count_CombTrigMinSel1_1e2mu", 0., weight, 0., 10., 10);
        if(Pass_Ele23Mu8or12 || Pass_Ele27)   FillHist("Count_CombTrigMinSel1_1e2mu", 1., weight, 0., 10., 10);
        if(Pass_Ele23Mu8or12 || Pass_IsoMu24) FillHist("Count_CombTrigMinSel1_1e2mu", 2., weight, 0., 10., 10);
@@ -362,7 +355,7 @@ void Feb2017_3l4j_TrigEff::ExecuteEvents()throw( LQError ){
          FillHist("Count_CombTrigMinSel1_1e2mu", 3., weight, 0., 10., 10);
        }
      }
-     if(Pass_LepMeanSel1){
+     if(Pass_EMuMeanSel){
        if(Pass_Ele23Mu8or12)                 FillHist("Count_CombTrigMeanSel1_1e2mu", 0., weight, 0., 10., 10);
        if(Pass_Ele23Mu8or12 || Pass_Ele27)   FillHist("Count_CombTrigMeanSel1_1e2mu", 1., weight, 0., 10., 10);
        if(Pass_Ele23Mu8or12 || Pass_IsoMu24) FillHist("Count_CombTrigMeanSel1_1e2mu", 2., weight, 0., 10., 10);
@@ -373,7 +366,7 @@ void Feb2017_3l4j_TrigEff::ExecuteEvents()throw( LQError ){
 
 
      //Combinations Approach 2
-     if(Pass_LepSel2){
+     if(Pass_EMuMuSel){
        if(Pass_DiMu9Ele9)                    FillHist("Count_CombTrigOnSel2_1e2mu", 0., weight, 0., 10., 10);
        if(Pass_DiMu9Ele9 || Pass_Ele27)      FillHist("Count_CombTrigOnSel2_1e2mu", 1., weight, 0., 10., 10);
        if(Pass_DiMu9Ele9 || Pass_IsoMu24)    FillHist("Count_CombTrigOnSel2_1e2mu", 2., weight, 0., 10., 10);
@@ -512,19 +505,20 @@ void Feb2017_3l4j_TrigEff::MakeHistograms(){
    GetHist("Count_EachTrigMinSel_3mu")->GetXaxis()->SetBinLabel(2,"Mu17Mu8Dz");
    GetHist("Count_EachTrigMinSel_3mu")->GetXaxis()->SetBinLabel(3,"Mu17(Tk)Mu8Dz");
    GetHist("Count_EachTrigMinSel_3mu")->GetXaxis()->SetBinLabel(4,"IsoMu24");
-   GetHist("Count_EachTrigMinSel_3mu")->GetXaxis()->SetBinLabel(5,"IsoTkMu24");
-   GetHist("Count_EachTrigMinSel_3mu")->GetXaxis()->SetBinLabel(6,"Iso(Tk)Mu24");
-   GetHist("Count_EachTrigMinSel_3mu")->GetXaxis()->SetBinLabel(7,"Mu12_8_5");
+   //GetHist("Count_EachTrigMinSel_3mu")->GetXaxis()->SetBinLabel(5,"IsoTkMu24");
+   //GetHist("Count_EachTrigMinSel_3mu")->GetXaxis()->SetBinLabel(6,"Iso(Tk)Mu24");
+   //GetHist("Count_EachTrigMinSel_3mu")->GetXaxis()->SetBinLabel(7,"Mu12_8_5");
+   GetHist("Count_EachTrigMinSel_3mu")->GetXaxis()->SetBinLabel(5,"Mu12_8_5");
 
   AnalyzerCore::MakeHistograms("Count_EachTrigMeanSel_3mu", 10, 0., 10.);
    GetHist("Count_EachTrigMeanSel_3mu")->GetXaxis()->SetBinLabel(1,"Mu17TkMu8Dz");
    GetHist("Count_EachTrigMeanSel_3mu")->GetXaxis()->SetBinLabel(2,"Mu17Mu8Dz");
    GetHist("Count_EachTrigMeanSel_3mu")->GetXaxis()->SetBinLabel(3,"Mu17(Tk)Mu8Dz");
    GetHist("Count_EachTrigMeanSel_3mu")->GetXaxis()->SetBinLabel(4,"IsoMu24");
-   GetHist("Count_EachTrigMeanSel_3mu")->GetXaxis()->SetBinLabel(5,"IsoTkMu24");
-   GetHist("Count_EachTrigMeanSel_3mu")->GetXaxis()->SetBinLabel(6,"Iso(Tk)Mu24");
-   GetHist("Count_EachTrigMeanSel_3mu")->GetXaxis()->SetBinLabel(7,"Mu12_8_5");
-
+   //GetHist("Count_EachTrigMeanSel_3mu")->GetXaxis()->SetBinLabel(5,"IsoTkMu24");
+   //GetHist("Count_EachTrigMeanSel_3mu")->GetXaxis()->SetBinLabel(6,"Iso(Tk)Mu24");
+   //GetHist("Count_EachTrigMeanSel_3mu")->GetXaxis()->SetBinLabel(7,"Mu12_8_5");
+   GetHist("Count_EachTrigMeanSel_3mu")->GetXaxis()->SetBinLabel(5,"Mu12_8_5");
 
   AnalyzerCore::MakeHistograms("Count_CombTrigMinSel_3mu", 10, 0., 10.);
    GetHist("Count_CombTrigMinSel_3mu")->GetXaxis()->SetBinLabel(1,"Mu17(Tk)Mu8Dz");
@@ -538,40 +532,21 @@ void Feb2017_3l4j_TrigEff::MakeHistograms(){
 
 
   //EMuMu
-  AnalyzerCore::MakeHistograms("Count_EachTrigMinSel1_1e2mu", 10, 0., 10.);
-   GetHist("Count_EachTrigMinSel1_1e2mu")->GetXaxis()->SetBinLabel(1,"Ele23Mu8or12");
-   GetHist("Count_EachTrigMinSel1_1e2mu")->GetXaxis()->SetBinLabel(2,"DiMu9Ele9");
-   GetHist("Count_EachTrigMinSel1_1e2mu")->GetXaxis()->SetBinLabel(3,"Ele27");
-   GetHist("Count_EachTrigMinSel1_1e2mu")->GetXaxis()->SetBinLabel(4,"IsoMu24");
-   GetHist("Count_EachTrigMinSel1_1e2mu")->GetXaxis()->SetBinLabel(5,"IsoTkMu24");
-   GetHist("Count_EachTrigMinSel1_1e2mu")->GetXaxis()->SetBinLabel(6,"Iso(Tk)Mu24");
-   GetHist("Count_EachTrigMinSel1_1e2mu")->GetXaxis()->SetBinLabel(7,"Mu17TkMu8Dz");
-   GetHist("Count_EachTrigMinSel1_1e2mu")->GetXaxis()->SetBinLabel(8,"Mu17Mu8Dz");
-   GetHist("Count_EachTrigMinSel1_1e2mu")->GetXaxis()->SetBinLabel(9,"Mu17(Tk)Mu8Dz");
+  AnalyzerCore::MakeHistograms("Count_EachTrigMinSel_1e2mu", 10, 0., 10.);
+   GetHist("Count_EachTrigMinSel_1e2mu")->GetXaxis()->SetBinLabel(1,"Ele23Mu8or12");
+   GetHist("Count_EachTrigMinSel_1e2mu")->GetXaxis()->SetBinLabel(2,"DiMu9Ele9");
+   GetHist("Count_EachTrigMinSel_1e2mu")->GetXaxis()->SetBinLabel(3,"Ele27");
+   GetHist("Count_EachTrigMinSel_1e2mu")->GetXaxis()->SetBinLabel(4,"IsoMu24");
+   GetHist("Count_EachTrigMinSel_1e2mu")->GetXaxis()->SetBinLabel(5,"Mu17(Tk)Mu8Dz");
 
 
-  AnalyzerCore::MakeHistograms("Count_EachTrigMeanSel1_1e2mu", 10, 0., 10.);
-   GetHist("Count_EachTrigMeanSel1_1e2mu")->GetXaxis()->SetBinLabel(1,"Ele23Mu8or12");
-   GetHist("Count_EachTrigMeanSel1_1e2mu")->GetXaxis()->SetBinLabel(2,"DiMu9Ele9");
-   GetHist("Count_EachTrigMeanSel1_1e2mu")->GetXaxis()->SetBinLabel(3,"Ele27");
-   GetHist("Count_EachTrigMeanSel1_1e2mu")->GetXaxis()->SetBinLabel(4,"IsoMu24");
-   GetHist("Count_EachTrigMeanSel1_1e2mu")->GetXaxis()->SetBinLabel(5,"IsoTkMu24");
-   GetHist("Count_EachTrigMeanSel1_1e2mu")->GetXaxis()->SetBinLabel(6,"Iso(Tk)Mu24");
-   GetHist("Count_EachTrigMeanSel1_1e2mu")->GetXaxis()->SetBinLabel(7,"Mu17TkMu8Dz");
-   GetHist("Count_EachTrigMeanSel1_1e2mu")->GetXaxis()->SetBinLabel(8,"Mu17Mu8Dz");
-   GetHist("Count_EachTrigMeanSel1_1e2mu")->GetXaxis()->SetBinLabel(9,"Mu17(Tk)Mu8Dz");
+  AnalyzerCore::MakeHistograms("Count_EachTrigMeanSel_1e2mu", 10, 0., 10.);
+   GetHist("Count_EachTrigMeanSel_1e2mu")->GetXaxis()->SetBinLabel(1,"Ele23Mu8or12");
+   GetHist("Count_EachTrigMeanSel_1e2mu")->GetXaxis()->SetBinLabel(2,"DiMu9Ele9");
+   GetHist("Count_EachTrigMeanSel_1e2mu")->GetXaxis()->SetBinLabel(3,"Ele27");
+   GetHist("Count_EachTrigMeanSel_1e2mu")->GetXaxis()->SetBinLabel(4,"IsoMu24");
+   GetHist("Count_EachTrigMeanSel_1e2mu")->GetXaxis()->SetBinLabel(5,"Mu17(Tk)Mu8Dz");
 
-
-  AnalyzerCore::MakeHistograms("Count_EachTrigOnSel2_1e2mu", 10, 0., 10.);
-   GetHist("Count_EachTrigOnSel2_1e2mu")->GetXaxis()->SetBinLabel(1,"Ele23Mu8or12");
-   GetHist("Count_EachTrigOnSel2_1e2mu")->GetXaxis()->SetBinLabel(2,"DiMu9Ele9");
-   GetHist("Count_EachTrigOnSel2_1e2mu")->GetXaxis()->SetBinLabel(3,"Ele27");
-   GetHist("Count_EachTrigOnSel2_1e2mu")->GetXaxis()->SetBinLabel(4,"IsoMu24");
-   GetHist("Count_EachTrigOnSel2_1e2mu")->GetXaxis()->SetBinLabel(5,"IsoTkMu24");
-   GetHist("Count_EachTrigOnSel2_1e2mu")->GetXaxis()->SetBinLabel(6,"Iso(Tk)Mu24");
-   GetHist("Count_EachTrigOnSel2_1e2mu")->GetXaxis()->SetBinLabel(7,"Mu17TkMu8Dz");
-   GetHist("Count_EachTrigOnSel2_1e2mu")->GetXaxis()->SetBinLabel(8,"Mu17Mu8Dz");
-   GetHist("Count_EachTrigOnSel2_1e2mu")->GetXaxis()->SetBinLabel(9,"Mu17(Tk)Mu8Dz");
 
 
   AnalyzerCore::MakeHistograms("Count_CombTrigMinSel1_1e2mu", 10, 0., 10.);

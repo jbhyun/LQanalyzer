@@ -2977,3 +2977,33 @@ return -1;
 //End of function
 }
 
+int AnalyzerCore::NPromptLeptons(std::vector<snu::KTruth>& truthColl, TString Option){
+  
+  int NPromptLepton_Tot=0, NPromptLepton_EW=0, NPromptLepton_BSM=0;
+  bool InAcceptance=Option.Contains("InAcceptance");
+  for(unsigned int i=0; i<truthColl.size(); i++){
+    if(truthColl.at(i).IndexMother() < 0 ) continue;
+    int pid=truthColl.at(i).PdgId(), mpid=truthColl.at(truthColl.at(i).IndexMother()).PdgId();
+   
+    if(fabs(pid)==11 || fabs(pid)==13){
+      if(!InAcceptance){
+        if     (fabs(mpid)==23 || fabs(mpid)==24) NPromptLepton_EW++;
+        else if(fabs(mpid)==32 || fabs(mpid)==36) NPromptLepton_BSM++;//For H+>AW analysis
+      }
+      else{
+        if(truthColl.at(i).Pt()<10) continue;
+        if((fabs(truthColl.at(i).Eta())>2.4 && fabs(pid)==13) || (fabs(truthColl.at(i).Eta())>2.5 && fabs(pid)==11)){
+          continue;
+        }
+        if     (fabs(mpid)==23 || fabs(mpid)==24) NPromptLepton_EW++;
+        else if(fabs(mpid)==32 || fabs(mpid)==36) NPromptLepton_BSM++;//For H+>AW analysis
+      }
+    }
+  }
+  NPromptLepton_Tot=NPromptLepton_EW+NPromptLepton_BSM;
+
+  if     (Option.Contains("EW"))  return NPromptLepton_EW;
+  else if(Option.Contains("BSM")) return NPromptLepton_BSM;
+
+  return NPromptLepton_Tot;
+}

@@ -11,7 +11,7 @@ runData=false
 
 AnalysisCode="Feb2017_3l4j_BTagEff" 
 Stream="MuonEG"     ### DoubleMuon DoubleEG MuonEG SingleElectron SingleMuon 
-Skim="SKTree_DiLepSkim" ###"Lepton" ### "Lepton"(single lepton skim)/"DiLep"(dilepton skim)/"NoCut"(noskim) ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
+Skim="SKTree_LeptonSkim" ###"Lepton" ### "Lepton"(single lepton skim)/"DiLep"(dilepton skim)/"NoCut"(noskim) ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
 DataPeriod="ALL"        ###  "C" = period C only   "ALL" or "CtoD"  = period C+D
 job_logstep=1000
 LogLevel="INFO"
@@ -47,8 +47,8 @@ elif [[ ${DataPeriod} == "E" ]]; then dir_period="periodE";
 elif [[ ${DataPeriod} == "F" ]]; then dir_period="periodF";
 elif [[ ${DataPeriod} == "G" ]]; then dir_period="periodG";
 elif [[ ${DataPeriod} == "H" ]]; then dir_period="periodH";
-elif [[ ${DataPeriod} == "BtoG" ]]; then dir_period="periodBtoG";
-elif [[ ${DataPeriod} == "ALL" ]]; then dir_period="periodBtoG";
+elif [[ ${DataPeriod} == "BtoH" ]]; then dir_period="periodBtoH";
+elif [[ ${DataPeriod} == "ALL" ]]; then dir_period="periodBtoH";
 
 else echo "Error: Period Set Wrongly"; exit 1;
 fi

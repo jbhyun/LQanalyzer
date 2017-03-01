@@ -50,6 +50,7 @@ void Jan2017_3l4j_ObjValid_DiLep::ExecuteEvents()throw( LQError ){
    if(!isData) weight_nopu*=MCweight;
    FillHist("GenWeight", MCweight, 1, -10, 10, 1000);
 
+   FillHist("test", weight, 1, -1., 1., 2);
    //Total Event  
    FillCutFlow("NoCut", weight);
 
@@ -72,7 +73,7 @@ void Jan2017_3l4j_ObjValid_DiLep::ExecuteEvents()throw( LQError ){
 
 
 //   bool EMu_analysis=true, DoubleMu_analysis=false;
-   bool DoubleEle_analysis=false, SingleMu_analysis=true, DoubleMu_analysis=false, EMu_analysis=false;
+   bool DoubleEle_analysis=false, SingleMu_analysis=false, DoubleMu_analysis=false, EMu_analysis=true;
 
 
    //Trigers
@@ -234,16 +235,16 @@ void Jan2017_3l4j_ObjValid_DiLep::ExecuteEvents()throw( LQError ){
 
    if(EMu_analysis){
 
-     //if( !(PassTrigger("HLT_IsoMu24_v")||PassTrigger("HLT_IsoTkMu24_v")) ) return;
-     if( !(PassTrigger("HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v")
-          || PassTrigger("HLT_Mu12_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v")
-          || PassTrigger("HLT_Mu12_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ_v")) ) return;
+     if( !(PassTrigger("HLT_IsoMu24_v")||PassTrigger("HLT_IsoTkMu24_v")) ) return;
+     //if( !(PassTrigger("HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v")
+     //     || PassTrigger("HLT_Mu12_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v")
+     //     || PassTrigger("HLT_Mu12_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ_v")) ) return;
 
 
      //Step1 : 1e+1mu
      if( !(electronColl.size()==1 && muonColl.size()==1) ) return;
-     if( !(electronColl.at(0).Pt()>25 && muonColl.at(0).Pt()>15) ) return; //EMu Trig Case
-     //if( !(muonColl.at(0).Pt()>27) ) return; //SingleMuon Trig Case
+     //if( !(electronColl.at(0).Pt()>25 && muonColl.at(0).Pt()>15) ) return; //EMu Trig Case
+     if( !(muonColl.at(0).Pt()>27) ) return; //SingleMuon Trig Case
      FillHist("Cutflow_NoW", 0., weight, 0., 10., 10);
      FillHist("Cutflow_TrkRecoW", 0., weight*trk_weight_mu*reco_weight_ele, 0., 10., 10);
      FillHist("Cutflow_TrkRecoIDIsoW", 0., weight*trk_weight_mu*reco_weight_ele*id_weight_ele*id_weight_mu*iso_weight_mu, 0., 10., 10);
@@ -261,6 +262,16 @@ void Jan2017_3l4j_ObjValid_DiLep::ExecuteEvents()throw( LQError ){
 
      FillHist("Nj_NlOSCut_TrkRecoIDIsoTrigPUW", njets, weight*trk_weight_mu*reco_weight_ele*id_weight_ele*id_weight_mu*iso_weight_mu*trigger_sf*pileup_reweight, 0., 10., 10);
      FillHist("MET_NlOSCut_TrkRecoIDIsoTrigPUW", met, weight*trk_weight_mu*reco_weight_ele*id_weight_ele*id_weight_mu*iso_weight_mu*trigger_sf*pileup_reweight, 0., 500., 500);
+
+
+     if(jetColl.size()==0){
+       FillHist("Pte_0j_NlOSCut_TrkRecoIDIsoTrigPUW", electronColl.at(0).Pt(), weight*trk_weight_mu*reco_weight_ele*id_weight_ele*id_weight_mu*iso_weight_mu*trigger_sf*pileup_reweight, 0., 500., 500);
+       FillHist("Etae_0j_NlOSCut_TrkRecoIDIsoTrigPUW", electronColl.at(0).Eta(), weight*trk_weight_mu*reco_weight_ele*id_weight_ele*id_weight_mu*iso_weight_mu*trigger_sf*pileup_reweight, -5., 5., 100);
+       FillHist("Ptmu_0j_NlOSCut_TrkRecoIDIsoTrigPUW", muonColl.at(0).Pt(), weight*trk_weight_mu*reco_weight_ele*id_weight_ele*id_weight_mu*iso_weight_mu*trigger_sf*pileup_reweight, 0., 500., 500);
+       FillHist("Etamu_0j_NlOSCut_TrkRecoIDIsoTrigPUW", muonColl.at(0).Eta(), weight*trk_weight_mu*reco_weight_ele*id_weight_ele*id_weight_mu*iso_weight_mu*trigger_sf*pileup_reweight, -5., 5., 100);
+     }
+     FillHist("dRemu_NlOSCut_TrkRecoIDIsoTrigPUW", electronColl.at(0).DeltaR(muonColl.at(0)), weight*trk_weight_mu*reco_weight_ele*id_weight_ele*id_weight_mu*iso_weight_mu*trigger_sf*pileup_reweight, 0., 5., 100);
+     FillHist("dPhiemu_NlOSCut_TrkRecoIDIsoTrigPUW", electronColl.at(0).DeltaPhi(muonColl.at(0)), weight*trk_weight_mu*reco_weight_ele*id_weight_ele*id_weight_mu*iso_weight_mu*trigger_sf*pileup_reweight, -3.15, 3.15, 200);
 
 
      //Step3 : Nj>=1
@@ -282,6 +293,9 @@ void Jan2017_3l4j_ObjValid_DiLep::ExecuteEvents()throw( LQError ){
 
 
      FillHist("MET_NljOSCut_TrkRecoIDIsoTrigPUW", met, weight*trk_weight_mu*reco_weight_ele*id_weight_ele*id_weight_mu*iso_weight_mu*trigger_sf*pileup_reweight, 0., 500., 500);
+     FillHist("dRemu_NljOSCut_TrkRecoIDIsoTrigPUW", electronColl.at(0).DeltaR(muonColl.at(0)), weight*trk_weight_mu*reco_weight_ele*id_weight_ele*id_weight_mu*iso_weight_mu*trigger_sf*pileup_reweight, 0., 5., 100);
+     FillHist("dPhiemu_NljOSCut_TrkRecoIDIsoTrigPUW", electronColl.at(0).DeltaPhi(muonColl.at(0)), weight*trk_weight_mu*reco_weight_ele*id_weight_ele*id_weight_mu*iso_weight_mu*trigger_sf*pileup_reweight, -3.15, 3.15, 200);
+
 
      //Step5 : MET>40
      if(met<40) return;
@@ -306,7 +320,8 @@ void Jan2017_3l4j_ObjValid_DiLep::ExecuteEvents()throw( LQError ){
 //     FillHist("PTb1", bjetColl.at(0).Pt(), SFappliedWeight, 0., 200., 200);
      FillHist("MET", met, SFappliedWeight, 0., 500., 500);
      FillHist("Nvtx", Nvtx, SFappliedWeight, 0., 50., 50);
-
+     FillHist("dRemu", electronColl.at(0).DeltaR(muonColl.at(0)), SFappliedWeight, 0., 5., 100);
+     FillHist("dPhiemu", electronColl.at(0).DeltaPhi(muonColl.at(0)), SFappliedWeight, -3.15, 3.15, 200);
 
 
      //Step6 : Nj>=3
