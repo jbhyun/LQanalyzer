@@ -156,8 +156,8 @@ void Feb2017_3l4j_BTagEff::ExecuteEvents()throw( LQError ){
      eventbase->GetJetSel()->SetPt(20.);                     eventbase->GetJetSel()->SetEta(2.4);
 //     eventbase->GetJetSel()->SetPileUpJetID(true,"Medium");
      bool LeptonVeto=true;
-   //std::vector<snu::KJet> jetColl; eventbase->GetJetSel()->Selection(jetColl, LeptonVeto, muonLooseColl, electronLooseColl);
-   std::vector<snu::KJet> jetColl; eventbase->GetJetSel()->Selection(jetColl, LeptonVeto, muonColl, electronColl);
+   std::vector<snu::KJet> jetColl; eventbase->GetJetSel()->Selection(jetColl, LeptonVeto, muonLooseColl, electronLooseColl);
+   //std::vector<snu::KJet> jetColl; eventbase->GetJetSel()->Selection(jetColl, LeptonVeto, muonColl, electronColl);
      eventbase->GetJetSel()->SetID(BaseSelection::PFJET_LOOSE);
      eventbase->GetJetSel()->SetPt(20.);                     eventbase->GetJetSel()->SetEta(2.4);
 //     eventbase->GetJetSel()->SetPileUpJetID(true,"Medium");
@@ -379,6 +379,28 @@ void Feb2017_3l4j_BTagEff::ExecuteEvents()throw( LQError ){
       }
     }
   }
+
+  for( int i=0; i<jetNoLepVetoColl.size(); i++){
+    if(jetNoLepVetoColl.at(i).HadronFlavour()==5){
+      FillHist("NB_True_PT_Eta_NoVeto", jetNoLepVetoColl.at(i).Pt(), fabs(jetNoLepVetoColl.at(i).Eta()), 1, 20, 3000, 149, -2.4, 2.4, 8);
+      if(jetNoLepVetoColl.at(i).BJetTaggerValue(snu::KJet::CSVv2)>BTagWP){
+        FillHist("NBtag_TrueB_PT_Eta_NoVeto", jetNoLepVetoColl.at(i).Pt(), fabs(jetNoLepVetoColl.at(i).Eta()), 1, 20, 3000, 149, -2.4, 2.4, 8);
+      }
+    }
+    else if(jetNoLepVetoColl.at(i).HadronFlavour()==4){
+      FillHist("NC_True_PT_Eta_NoVeto", jetNoLepVetoColl.at(i).Pt(), fabs(jetNoLepVetoColl.at(i).Eta()), 1, 20, 3000, 149, -2.4, 2.4, 8);
+      if(jetNoLepVetoColl.at(i).BJetTaggerValue(snu::KJet::CSVv2)>BTagWP){
+        FillHist("NBtag_TrueC_PT_Eta_NoVeto", jetNoLepVetoColl.at(i).Pt(), fabs(jetNoLepVetoColl.at(i).Eta()), 1, 20, 3000, 149, -2.4, 2.4, 8);
+      }
+    }
+    else if(jetNoLepVetoColl.at(i).HadronFlavour()==0){
+      FillHist("NL_True_PT_Eta_NoVeto", jetNoLepVetoColl.at(i).Pt(), fabs(jetNoLepVetoColl.at(i).Eta()), 1, 20, 3000, 149, -2.4, 2.4, 8);
+      if(jetNoLepVetoColl.at(i).BJetTaggerValue(snu::KJet::CSVv2)>BTagWP){
+        FillHist("NBtag_TrueL_PT_Eta_NoVeto", jetNoLepVetoColl.at(i).Pt(), fabs(jetNoLepVetoColl.at(i).Eta()), 1, 20, 3000, 149, -2.4, 2.4, 8);
+      }
+    }
+  }//End of LeptonNotVetoed loop
+
   //End of Inclusive
 
   if(Nlep==1){
@@ -403,7 +425,30 @@ void Feb2017_3l4j_BTagEff::ExecuteEvents()throw( LQError ){
         }
       }
     }
+
+    for( int i=0; i<jetNoLepVetoColl.size(); i++){
+      if(jetNoLepVetoColl.at(i).HadronFlavour()==5){
+        FillHist("NB_True_PT_Eta_1l_NoVeto", jetNoLepVetoColl.at(i).Pt(), fabs(jetNoLepVetoColl.at(i).Eta()), 1, 20, 3000, 149, -2.4, 2.4, 8);
+        if(jetNoLepVetoColl.at(i).BJetTaggerValue(snu::KJet::CSVv2)>BTagWP){
+          FillHist("NBtag_TrueB_PT_Eta_1l_NoVeto", jetNoLepVetoColl.at(i).Pt(), fabs(jetNoLepVetoColl.at(i).Eta()), 1, 20, 3000, 149, -2.4, 2.4, 8);
+        }
+      }
+      else if(jetNoLepVetoColl.at(i).HadronFlavour()==4){
+        FillHist("NC_True_PT_Eta_1l_NoVeto", jetNoLepVetoColl.at(i).Pt(), fabs(jetNoLepVetoColl.at(i).Eta()), 1, 20, 3000, 149, -2.4, 2.4, 8);
+        if(jetNoLepVetoColl.at(i).BJetTaggerValue(snu::KJet::CSVv2)>BTagWP){
+          FillHist("NBtag_TrueC_PT_Eta_1l_NoVeto", jetNoLepVetoColl.at(i).Pt(), fabs(jetNoLepVetoColl.at(i).Eta()), 1, 20, 3000, 149, -2.4, 2.4, 8);
+        }
+      }
+      else if(jetNoLepVetoColl.at(i).HadronFlavour()==0){
+        FillHist("NL_True_PT_Eta_1l_NoVeto", jetNoLepVetoColl.at(i).Pt(), fabs(jetNoLepVetoColl.at(i).Eta()), 1, 20, 3000, 149, -2.4, 2.4, 8);
+        if(jetNoLepVetoColl.at(i).BJetTaggerValue(snu::KJet::CSVv2)>BTagWP){
+          FillHist("NBtag_TrueL_PT_Eta_1l_NoVeto", jetNoLepVetoColl.at(i).Pt(), fabs(jetNoLepVetoColl.at(i).Eta()), 1, 20, 3000, 149, -2.4, 2.4, 8);
+        }
+      }
+    }//End of LeptonNotVetoed loop
+
   }//End of lep 1 loop
+
   else if(Nlep==2){
   //else if(NTrueLepton==2){
     for( int i=0; i<jetColl.size(); i++){
@@ -444,6 +489,52 @@ void Feb2017_3l4j_BTagEff::ExecuteEvents()throw( LQError ){
         FillHist("NL_True_PT_Eta_2l_NoVeto", jetNoLepVetoColl.at(i).Pt(), fabs(jetNoLepVetoColl.at(i).Eta()), 1, 20, 3000, 149, -2.4, 2.4, 8);
         if(jetNoLepVetoColl.at(i).BJetTaggerValue(snu::KJet::CSVv2)>BTagWP){
           FillHist("NBtag_TrueL_PT_Eta_2l_NoVeto", jetNoLepVetoColl.at(i).Pt(), fabs(jetNoLepVetoColl.at(i).Eta()), 1, 20, 3000, 149, -2.4, 2.4, 8);
+        }
+      }
+    }//End of LeptonNotVetoed loop
+
+  }//End of lep 2 loop
+
+  else if(Nlep==3){
+  //else if(NTrueLepton==3){
+    for( int i=0; i<jetColl.size(); i++){
+      if(jetColl.at(i).HadronFlavour()==5){
+        FillHist("NB_True_PT_Eta_3l", jetColl.at(i).Pt(), fabs(jetColl.at(i).Eta()), 1, 20, 3000, 149, -2.4, 2.4, 8);
+        if(jetColl.at(i).BJetTaggerValue(snu::KJet::CSVv2)>BTagWP){
+          FillHist("NBtag_TrueB_PT_Eta_3l", jetColl.at(i).Pt(), fabs(jetColl.at(i).Eta()), 1, 20, 3000, 149, -2.4, 2.4, 8);
+        }
+      }
+      else if(jetColl.at(i).HadronFlavour()==4){
+        FillHist("NC_True_PT_Eta_3l", jetColl.at(i).Pt(), fabs(jetColl.at(i).Eta()), 1, 20, 3000, 149, -2.4, 2.4, 8);
+        if(jetColl.at(i).BJetTaggerValue(snu::KJet::CSVv2)>BTagWP){
+          FillHist("NBtag_TrueC_PT_Eta_3l", jetColl.at(i).Pt(), fabs(jetColl.at(i).Eta()), 1, 20, 3000, 149, -2.4, 2.4, 8);
+        }
+      }
+      else if(jetColl.at(i).HadronFlavour()==0){
+        FillHist("NL_True_PT_Eta_3l", jetColl.at(i).Pt(), fabs(jetColl.at(i).Eta()), 1, 20, 3000, 149, -2.4, 2.4, 8);
+        if(jetColl.at(i).BJetTaggerValue(snu::KJet::CSVv2)>BTagWP){
+          FillHist("NBtag_TrueL_PT_Eta_3l", jetColl.at(i).Pt(), fabs(jetColl.at(i).Eta()), 1, 20, 3000, 149, -2.4, 2.4, 8);
+        }
+      }
+    }//End of leptonVetoed loop
+
+    for( int i=0; i<jetNoLepVetoColl.size(); i++){
+      if(jetNoLepVetoColl.at(i).HadronFlavour()==5){
+        FillHist("NB_True_PT_Eta_3l_NoVeto", jetNoLepVetoColl.at(i).Pt(), fabs(jetNoLepVetoColl.at(i).Eta()), 1, 20, 3000, 149, -2.4, 2.4, 8);
+        if(jetNoLepVetoColl.at(i).BJetTaggerValue(snu::KJet::CSVv2)>BTagWP){
+          FillHist("NBtag_TrueB_PT_Eta_3l_NoVeto", jetNoLepVetoColl.at(i).Pt(), fabs(jetNoLepVetoColl.at(i).Eta()), 1, 20, 3000, 149, -2.4, 2.4, 8);
+        }
+      }
+      else if(jetNoLepVetoColl.at(i).HadronFlavour()==4){
+        FillHist("NC_True_PT_Eta_3l_NoVeto", jetNoLepVetoColl.at(i).Pt(), fabs(jetNoLepVetoColl.at(i).Eta()), 1, 20, 3000, 149, -2.4, 2.4, 8);
+        if(jetNoLepVetoColl.at(i).BJetTaggerValue(snu::KJet::CSVv2)>BTagWP){
+          FillHist("NBtag_TrueC_PT_Eta_3l_NoVeto", jetNoLepVetoColl.at(i).Pt(), fabs(jetNoLepVetoColl.at(i).Eta()), 1, 20, 3000, 149, -2.4, 2.4, 8);
+        }
+      }
+      else if(jetNoLepVetoColl.at(i).HadronFlavour()==0){
+        FillHist("NL_True_PT_Eta_3l_NoVeto", jetNoLepVetoColl.at(i).Pt(), fabs(jetNoLepVetoColl.at(i).Eta()), 1, 20, 3000, 149, -2.4, 2.4, 8);
+        if(jetNoLepVetoColl.at(i).BJetTaggerValue(snu::KJet::CSVv2)>BTagWP){
+          FillHist("NBtag_TrueL_PT_Eta_3l_NoVeto", jetNoLepVetoColl.at(i).Pt(), fabs(jetNoLepVetoColl.at(i).Eta()), 1, 20, 3000, 149, -2.4, 2.4, 8);
         }
       }
     }//End of LeptonNotVetoed loop
@@ -575,6 +666,8 @@ void Feb2017_3l4j_BTagEff::MakeHistograms(){
   //2D Hist
   float XbinEdges[9]={20.,30.,50.,70.,100.,140.,200.,300.,3000};
   float YbinEdges[5]={0., 0.6, 1.2, 1.8, 2.4};
+
+  //Inclusive category
   AnalyzerCore::MakeHistograms2D("NB_True_PT_Eta", 8, XbinEdges, 4, YbinEdges);
     GetHist2D("NB_True_PT_Eta")->SetTitle("N(j)(TruthB);PT(GeV);#eta");
     GetHist2D("NB_True_PT_Eta")->SetOption("textcolz");
@@ -593,6 +686,27 @@ void Feb2017_3l4j_BTagEff::MakeHistograms(){
   AnalyzerCore::MakeHistograms2D("NBtag_TrueL_PT_Eta", 8, XbinEdges, 4, YbinEdges);
     GetHist2D("NBtag_TrueL_PT_Eta")->SetTitle("N(j)(BtaggedTruthL);PT(GeV);#eta");
     GetHist2D("NBtag_TrueL_PT_Eta")->SetOption("textcolz");
+
+
+  AnalyzerCore::MakeHistograms2D("NB_True_PT_Eta_NoVeto", 8, XbinEdges, 4, YbinEdges);
+    GetHist2D("NB_True_PT_Eta_NoVeto")->SetTitle("N(j)(TruthB);PT(GeV);#eta");
+    GetHist2D("NB_True_PT_Eta_NoVeto")->SetOption("textcolz");
+  AnalyzerCore::MakeHistograms2D("NBtag_TrueB_PT_Eta_NoVeto", 8, XbinEdges, 4, YbinEdges);
+    GetHist2D("NBtag_TrueB_PT_Eta_NoVeto")->SetTitle("N(j)(BtaggedTruthB);PT(GeV);#eta");
+    GetHist2D("NBtag_TrueB_PT_Eta_NoVeto")->SetOption("textcolz");
+  AnalyzerCore::MakeHistograms2D("NC_True_PT_Eta_NoVeto", 8, XbinEdges, 4, YbinEdges);
+    GetHist2D("NC_True_PT_Eta_NoVeto")->SetTitle("N(j)(TruthC);PT(GeV);#eta");
+    GetHist2D("NC_True_PT_Eta_NoVeto")->SetOption("textcolz");
+  AnalyzerCore::MakeHistograms2D("NBtag_TrueC_PT_Eta_NoVeto", 8, XbinEdges, 4, YbinEdges);
+    GetHist2D("NBtag_TrueC_PT_Eta_NoVeto")->SetTitle("N(j)(BtaggedTruthC);PT(GeV);#eta");
+    GetHist2D("NBtag_TrueC_PT_Eta_NoVeto")->SetOption("textcolz");
+  AnalyzerCore::MakeHistograms2D("NL_True_PT_Eta_NoVeto", 8, XbinEdges, 4, YbinEdges);
+    GetHist2D("NL_True_PT_Eta_NoVeto")->SetTitle("N(j)(TruthL);PT(GeV);#eta");
+    GetHist2D("NL_True_PT_Eta_NoVeto")->SetOption("textcolz");
+  AnalyzerCore::MakeHistograms2D("NBtag_TrueL_PT_Eta_NoVeto", 8, XbinEdges, 4, YbinEdges);
+    GetHist2D("NBtag_TrueL_PT_Eta_NoVeto")->SetTitle("N(j)(BtaggedTruthL);PT(GeV);#eta");
+    GetHist2D("NBtag_TrueL_PT_Eta_NoVeto")->SetOption("textcolz");
+
  
   //1l category
   AnalyzerCore::MakeHistograms2D("NB_True_PT_Eta_1l", 8, XbinEdges, 4, YbinEdges);
@@ -613,6 +727,27 @@ void Feb2017_3l4j_BTagEff::MakeHistograms(){
   AnalyzerCore::MakeHistograms2D("NBtag_TrueL_PT_Eta_1l", 8, XbinEdges, 4, YbinEdges);
     GetHist2D("NBtag_TrueL_PT_Eta_1l")->SetTitle("N(j)(BtaggedTruthL);PT(GeV);#eta");
     GetHist2D("NBtag_TrueL_PT_Eta_1l")->SetOption("textcolz");
+
+
+  AnalyzerCore::MakeHistograms2D("NB_True_PT_Eta_1l_NoVeto", 8, XbinEdges, 4, YbinEdges);
+    GetHist2D("NB_True_PT_Eta_1l_NoVeto")->SetTitle("N(j)(TruthB);PT(GeV);#eta");
+    GetHist2D("NB_True_PT_Eta_1l_NoVeto")->SetOption("textcolz");
+  AnalyzerCore::MakeHistograms2D("NBtag_TrueB_PT_Eta_1l_NoVeto", 8, XbinEdges, 4, YbinEdges);
+    GetHist2D("NBtag_TrueB_PT_Eta_1l_NoVeto")->SetTitle("N(j)(BtaggedTruthB);PT(GeV);#eta");
+    GetHist2D("NBtag_TrueB_PT_Eta_1l_NoVeto")->SetOption("textcolz");
+  AnalyzerCore::MakeHistograms2D("NC_True_PT_Eta_1l_NoVeto", 8, XbinEdges, 4, YbinEdges);
+    GetHist2D("NC_True_PT_Eta_1l_NoVeto")->SetTitle("N(j)(TruthC);PT(GeV);#eta");
+    GetHist2D("NC_True_PT_Eta_1l_NoVeto")->SetOption("textcolz");
+  AnalyzerCore::MakeHistograms2D("NBtag_TrueC_PT_Eta_1l_NoVeto", 8, XbinEdges, 4, YbinEdges);
+    GetHist2D("NBtag_TrueC_PT_Eta_1l_NoVeto")->SetTitle("N(j)(BtaggedTruthC);PT(GeV);#eta");
+    GetHist2D("NBtag_TrueC_PT_Eta_1l_NoVeto")->SetOption("textcolz");
+  AnalyzerCore::MakeHistograms2D("NL_True_PT_Eta_1l_NoVeto", 8, XbinEdges, 4, YbinEdges);
+    GetHist2D("NL_True_PT_Eta_1l_NoVeto")->SetTitle("N(j)(TruthL);PT(GeV);#eta");
+    GetHist2D("NL_True_PT_Eta_1l_NoVeto")->SetOption("textcolz");
+  AnalyzerCore::MakeHistograms2D("NBtag_TrueL_PT_Eta_1l_NoVeto", 8, XbinEdges, 4, YbinEdges);
+    GetHist2D("NBtag_TrueL_PT_Eta_1l_NoVeto")->SetTitle("N(j)(BtaggedTruthL);PT(GeV);#eta");
+    GetHist2D("NBtag_TrueL_PT_Eta_1l_NoVeto")->SetOption("textcolz");
+
 
 
   //2l category
@@ -654,6 +789,46 @@ void Feb2017_3l4j_BTagEff::MakeHistograms(){
   AnalyzerCore::MakeHistograms2D("NBtag_TrueL_PT_Eta_2l_NoVeto", 8, XbinEdges, 4, YbinEdges);
     GetHist2D("NBtag_TrueL_PT_Eta_2l_NoVeto")->SetTitle("N(j)(BtaggedTruthL);PT(GeV);#eta");
     GetHist2D("NBtag_TrueL_PT_Eta_2l_NoVeto")->SetOption("textcolz");
+
+  //3l category
+  AnalyzerCore::MakeHistograms2D("NB_True_PT_Eta_3l", 8, XbinEdges, 4, YbinEdges);
+    GetHist2D("NB_True_PT_Eta_3l")->SetTitle("N(j)(TruthB);PT(GeV);#eta");
+    GetHist2D("NB_True_PT_Eta_3l")->SetOption("textcolz");
+  AnalyzerCore::MakeHistograms2D("NBtag_TrueB_PT_Eta_3l", 8, XbinEdges, 4, YbinEdges);
+    GetHist2D("NBtag_TrueB_PT_Eta_3l")->SetTitle("N(j)(BtaggedTruthB);PT(GeV);#eta");
+    GetHist2D("NBtag_TrueB_PT_Eta_3l")->SetOption("textcolz");
+  AnalyzerCore::MakeHistograms2D("NC_True_PT_Eta_3l", 8, XbinEdges, 4, YbinEdges);
+    GetHist2D("NC_True_PT_Eta_3l")->SetTitle("N(j)(TruthC);PT(GeV);#eta");
+    GetHist2D("NC_True_PT_Eta_3l")->SetOption("textcolz");
+  AnalyzerCore::MakeHistograms2D("NBtag_TrueC_PT_Eta_3l", 8, XbinEdges, 4, YbinEdges);
+    GetHist2D("NBtag_TrueC_PT_Eta_3l")->SetTitle("N(j)(BtaggedTruthC);PT(GeV);#eta");
+    GetHist2D("NBtag_TrueC_PT_Eta_3l")->SetOption("textcolz");
+  AnalyzerCore::MakeHistograms2D("NL_True_PT_Eta_3l", 8, XbinEdges, 4, YbinEdges);
+    GetHist2D("NL_True_PT_Eta_3l")->SetTitle("N(j)(TruthL);PT(GeV);#eta");
+    GetHist2D("NL_True_PT_Eta_3l")->SetOption("textcolz");
+  AnalyzerCore::MakeHistograms2D("NBtag_TrueL_PT_Eta_3l", 8, XbinEdges, 4, YbinEdges);
+    GetHist2D("NBtag_TrueL_PT_Eta_3l")->SetTitle("N(j)(BtaggedTruthL);PT(GeV);#eta");
+    GetHist2D("NBtag_TrueL_PT_Eta_3l")->SetOption("textcolz");
+
+
+  AnalyzerCore::MakeHistograms2D("NB_True_PT_Eta_3l_NoVeto", 8, XbinEdges, 4, YbinEdges);
+    GetHist2D("NB_True_PT_Eta_3l_NoVeto")->SetTitle("N(j)(TruthB);PT(GeV);#eta");
+    GetHist2D("NB_True_PT_Eta_3l_NoVeto")->SetOption("textcolz");
+  AnalyzerCore::MakeHistograms2D("NBtag_TrueB_PT_Eta_3l_NoVeto", 8, XbinEdges, 4, YbinEdges);
+    GetHist2D("NBtag_TrueB_PT_Eta_3l_NoVeto")->SetTitle("N(j)(BtaggedTruthB);PT(GeV);#eta");
+    GetHist2D("NBtag_TrueB_PT_Eta_3l_NoVeto")->SetOption("textcolz");
+  AnalyzerCore::MakeHistograms2D("NC_True_PT_Eta_3l_NoVeto", 8, XbinEdges, 4, YbinEdges);
+    GetHist2D("NC_True_PT_Eta_3l_NoVeto")->SetTitle("N(j)(TruthC);PT(GeV);#eta");
+    GetHist2D("NC_True_PT_Eta_3l_NoVeto")->SetOption("textcolz");
+  AnalyzerCore::MakeHistograms2D("NBtag_TrueC_PT_Eta_3l_NoVeto", 8, XbinEdges, 4, YbinEdges);
+    GetHist2D("NBtag_TrueC_PT_Eta_3l_NoVeto")->SetTitle("N(j)(BtaggedTruthC);PT(GeV);#eta");
+    GetHist2D("NBtag_TrueC_PT_Eta_3l_NoVeto")->SetOption("textcolz");
+  AnalyzerCore::MakeHistograms2D("NL_True_PT_Eta_3l_NoVeto", 8, XbinEdges, 4, YbinEdges);
+    GetHist2D("NL_True_PT_Eta_3l_NoVeto")->SetTitle("N(j)(TruthL);PT(GeV);#eta");
+    GetHist2D("NL_True_PT_Eta_3l_NoVeto")->SetOption("textcolz");
+  AnalyzerCore::MakeHistograms2D("NBtag_TrueL_PT_Eta_3l_NoVeto", 8, XbinEdges, 4, YbinEdges);
+    GetHist2D("NBtag_TrueL_PT_Eta_3l_NoVeto")->SetTitle("N(j)(BtaggedTruthL);PT(GeV);#eta");
+    GetHist2D("NBtag_TrueL_PT_Eta_3l_NoVeto")->SetOption("textcolz");
 
 
   Message("Made histograms", INFO);
