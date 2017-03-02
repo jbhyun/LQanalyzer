@@ -113,13 +113,13 @@ float BTagSFUtil::GetJetSF(int JetFlavor, float JetPt, float JetEta) {
   float Btag_SF;
 
   float ThisJetPt = JetPt;
-  if (abs(JetFlavor)==4 || abs(JetFlavor)==5) {
-    if (JetPt>599.99) ThisJetPt = 599.99;
-    if (JetPt < 30.) return 1.;
-  } else {
+//  if (abs(JetFlavor)==4 || abs(JetFlavor)==5) {
+//    if (JetPt>599.99) ThisJetPt = 599.99;
+//    if (JetPt < 30.) return 1.;
+//  } else {
     if (JetPt>999.99) ThisJetPt = 999.99;
     if (JetPt < 20.) return 1.; 
-  }
+//  }
   
   
 

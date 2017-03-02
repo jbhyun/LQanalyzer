@@ -24,7 +24,8 @@ declare -a Analysis_bkg_test=( 'WZTo3LNu_powheg' )
 declare -a Analysis_bkg_TT=('TT_powheg')
 
 ###Signal
-declare -a Analysis_sig_All=("tthwA_3mu_hc90A5" "tthwA_1e2mu_hc90A5" "tthwA_3mu_hc130A5" "tthwA_1e2mu_hc130A5" "tthwA_3mu_hc130A30" "tthwA_1e2mu_hc130A30" "tthwA_3mu_hc155A30" "tthwA_1e2mu_hc155A30" "tthwzp_3mu_hc155zp5" "tthwzp_1e2mu_hc155zp5")
+declare -a SignalMajor_All=("TTToHcToWA_1e2mu_MHc100_MA15" "TTToHcToWA_1e2mu_MHc110_MA30" "TTToHcToWA_1e2mu_MHc160_MA15" "TTToHcToWA_1e2mu_MHc160_MA30" "TTToHcToWZp_1e2mu_MHc160_MZp5" "TTToHcToWZp_1e2mu_MHc90_MZp5" "TTToHcToWA_3mu_MHc100_MA15" "TTToHcToWA_3mu_MHc110_MA30" "TTToHcToWA_3mu_MHc160_MA15" "TTToHcToWA_3mu_MHc160_MA30" "TTToHcToWZp_3mu_MHc160_MZp5" "TTToHcToWZp_3mu_MHc90_MZp5" "TTToHcToWA_1ta2mu_MHc100_MA15" "TTToHcToWA_1ta2mu_MHc110_MA30" "TTToHcToWA_1ta2mu_MHc160_MA15" "TTToHcToWA_1ta2mu_MHc160_MA30" "TTToHcToWZp_1ta2mu_MHc160_MZp5" "TTToHcToWZp_1ta2mu_MHc90_MZp5" "TTToHcToWA_2l2mu_MHc100_MA15" "TTToHcToWA_2l2mu_MHc110_MA30" "TTToHcToWA_2l2mu_MHc160_MA15" "TTToHcToWA_2l2mu_MHc160_MA30" "TTToHcToWZp_2l2mu_MHc160_MZp5" "TTToHcToWZp_2l2mu_MHc90_MZp5")
+
 
 declare -a SignalMajor_1e2mu=("TTToHcToWA_1e2mu_MHc100_MA15" "TTToHcToWA_1e2mu_MHc110_MA30" "TTToHcToWA_1e2mu_MHc160_MA15" "TTToHcToWA_1e2mu_MHc160_MA30" "TTToHcToWZp_1e2mu_MHc160_MZp5" "TTToHcToWZp_1e2mu_MHc90_MZp5") 
 declare -a SignalMajor_3mu=("TTToHcToWA_3mu_MHc100_MA15" "TTToHcToWA_3mu_MHc110_MA30" "TTToHcToWA_3mu_MHc160_MA15" "TTToHcToWA_3mu_MHc160_MA30" "TTToHcToWZp_3mu_MHc160_MZp5" "TTToHcToWZp_3mu_MHc90_MZp5")

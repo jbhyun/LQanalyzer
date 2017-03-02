@@ -2335,6 +2335,76 @@ bool AnalyzerCore::IsBTagged(snu::KJet jet,  KJet::Tagger tag, KJet::WORKING_POI
   return isBtag;
 }
 
+
+double AnalyzerCore::BTagScaleFactor_1a(std::vector<snu::KJet> jetColl, KJet::Tagger tag, KJet::WORKING_POINT wp, int mcperiod){
+
+  //BTag SF from 1a method.
+  //This is coded for H+->WA analysis. I'm fine with anybody else using this function, but be aware that HN analyses had an agreement with using 2a method.
+  //And I currently have no plan to use multiple WP. so I just coded to work only for single WP regime.
+
+  if(isData) return 1.;
+
+  if(mcperiod < 0) {
+//    Message("mcperiod not set in AnalyzerCore::IsBTagged. Will assign mcperiod for you but this may not give correct behaviour", WARNING);
+    mcperiod=GetPeriod();
+  }
+
+  TString btag_key_lf(""), btag_key_hf("");
+  TString wp_string="";
+  if(wp == snu::KJet::Loose)  wp_string = "Loose";
+  if(wp == snu::KJet::Medium) wp_string = "Medium";
+  if(wp == snu::KJet::Tight)  wp_string = "Tight";
+
+  TString tag_string="";
+  if(mcperiod < 6){ if(tag== snu::KJet::CSVv2)  tag_string ="CSVv2Moriond17_2017_1_26_BtoF";}
+  else            { if(tag== snu::KJet::CSVv2)  tag_string ="CSVv2Moriond17_2017_1_26_GtoH";}
+
+  if(mcperiod < 6){ if(tag== snu::KJet::cMVAv2) tag_string ="cMVAv2Moriond17_2017_1_26_BtoF";}
+  else            { if(tag== snu::KJet::cMVAv2) tag_string ="cMVAv2Moriond17_2017_1_26_GtoH";}
+
+  btag_key_lf = tag_string+"_"+wp_string+"_lf";
+  btag_key_hf = tag_string+"_"+wp_string+"_hf";
+  std::map<TString,BTagSFUtil*>::iterator it_lf = MapBTagSF.find(btag_key_lf);
+  std::map<TString,BTagSFUtil*>::iterator it_hf = MapBTagSF.find(btag_key_hf);
+
+  if(it_lf == MapBTagSF.end()){   Message("Combination of btagger and working point is not allowed. Check configation of MapBTagSF", ERROR);  exit(EXIT_FAILURE);}
+  if(it_hf == MapBTagSF.end()){   Message("Combination of btagger and working point is not allowed. Check configation of MapBTagSF", ERROR);  exit(EXIT_FAILURE);}
+
+  if ( tag == snu::KJet::JETPROB) return -999;
+
+  double BTagSF=1.;
+  for(unsigned int i=0; i<jetColl.size(); i++){
+    if(jetColl.at(i).IsBTagged(tag, wp)){
+      if(jetColl.at(i).HadronFlavour()==5 || jetColl.at(i).HadronFlavour()==4){
+        BTagSF *= it_hf->second->GetJetSF(jetColl.at(i).HadronFlavour(), jetColl.at(i).Pt(), jetColl.at(i).Eta());
+      }
+      else{
+        BTagSF *= it_lf->second->GetJetSF(jetColl.at(i).HadronFlavour(), jetColl.at(i).Pt(), jetColl.at(i).Eta());
+      }
+    }
+    else{
+      double SFj=1., Effj=1.;
+      if(jetColl.at(i).HadronFlavour()==5 || jetColl.at(i).HadronFlavour()==4){
+        SFj  = it_hf->second->GetJetSF(jetColl.at(i).HadronFlavour(), jetColl.at(i).Pt(), jetColl.at(i).Eta());
+        Effj = it_hf->second->JetTagEfficiency(jetColl.at(i).HadronFlavour(), jetColl.at(i).Pt(), jetColl.at(i).Eta());
+      }
+      else{
+        SFj  = it_lf->second->GetJetSF(jetColl.at(i).HadronFlavour(), jetColl.at(i).Pt(), jetColl.at(i).Eta());
+        Effj = it_lf->second->JetTagEfficiency(jetColl.at(i).HadronFlavour(), jetColl.at(i).Pt(), jetColl.at(i).Eta());
+      }
+
+      if( (1.-Effj)==0. ) return 0.;
+      BTagSF *= (1.-SFj*Effj)/(1.-Effj);
+    }
+  }
+
+  return BTagSF;
+
+}
+     
+
+
+
 double AnalyzerCore::MuonDYMassCorrection(std::vector<snu::KMuon> mu, double w){
   
   if(mu.size()< 2) return 0.;
