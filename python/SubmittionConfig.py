@@ -249,9 +249,6 @@ def GetAverageTime( gettinglongest, deftagger,defsample,defcycle,defskim, rundeb
         read_file_jobsummary = open(file_jobsummary,"r")
         nfound=0.
         for line in read_file_jobsummary:
-            tmpgettime_nfiles=-999.
-            tmpgettime_njobs=-999.
-            tmpgettime_jobtime=-999.
             
             if not "True" in line:
                 continue
@@ -267,28 +264,20 @@ def GetAverageTime( gettinglongest, deftagger,defsample,defcycle,defskim, rundeb
                     for s in splitline:
                         if nthsplit==24:
                             if float(s) < 0:
-                                tmpgettime_jobtime=0.
+                                gettime_jobtime=0.
                             else:
-                                tmpgettime_jobtime=float(s)
+                                gettime_jobtime=float(s)
                         if nthsplit==10:
-                            tmpgettime_njobs=float(s)
+                            gettime_njobs=float(s)
                         if nthsplit==12:
-                            tmpgettime_nfiles=float(s)
+                            gettime_nfiles=float(s)
 
                         nthsplit=nthsplit+1
-                    if tmpgettime_jobtime > 0.:
-                        gettime_nfiles+=tmpgettime_nfiles
-                        gettime_njobs+=tmpgettime_njobs
-                        gettime_jobtime+=tmpgettime_jobtime
-                        nfound=nfound+1.
+                    if gettime_jobtime > 0.:
+                        break
                                                         
         read_file_jobsummary.close()
-        
-        if nfound > 0.:
-            gettime_nfiles=float(gettime_nfiles)/float(nfound)
-            gettime_njobs = float(gettime_njobs) / float(nfound)
-            gettime_jobtime = float(gettime_jobtime)/  float(nfound)
-        
+          
         if gettime_jobtime < 1.:
             continue
         if gettime_nfiles < 1:
@@ -1435,10 +1424,10 @@ for s in sample:
     s_nfile=GetNFiles(tagger, s, cycle,useskim)
     njobfiles+=s_nfile
 
-    ### 30000 is 20 minutes for 25 job
+    ### 60000 is 20 minutes for 25 job
     ### time of previous job is > 30000 then this job is sent to longq
     ### if jobs is > 10000 then number of jobs sent to batch queue is > 10, and chosen so that the time is similar to longest expected job
-    if stime > 30000.:
+    if stime > 60000.:
         nlongjobfiles=nlongjobfiles+GetNFiles(tagger, s, cycle,useskim)
         ### will be true if 25 jobs take > 20 minutes OR the job is a new job
         islongjob.append(True)
@@ -1583,7 +1572,7 @@ for nsample in range(0, len(sample)):
         printedqueue=newqueue
         queue=newqueue
     
-        ### If job is known to last longer than 30000 (if n=1 in submittion) seconds then send job to longq
+        ### If job is known to last longer than 60000 (if n=1 in submittion) seconds then send job to longq
         if sample_islongjob:
             printedqueue="longq"
             queue="longq"
