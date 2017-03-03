@@ -213,7 +213,7 @@ def GetNFiles( deftagger,defsample,defcycle,defskim):
 def GetAverageTime( gettinglongest, deftagger,defsample,defcycle,defskim, rundebug):
 
     if not os.path.exists(path_jobpre+"/LQAnalyzer_rootfiles_for_analysis/CATAnalyzerStatistics/MasterFile_"+ os.getenv("CATVERSION")+".txt"):
-        return 100000.
+        return 1000.
     
 
     nit=2
@@ -222,13 +222,15 @@ def GetAverageTime( gettinglongest, deftagger,defsample,defcycle,defskim, rundeb
     tmpday=int(checkdate.strftime("%d"))
     diff = datetime.timedelta(days=(tmpday+1))
     checkdate=checkdate+diff
-    gettime_nfiles=0
-    gettime_njobs=0
-    gettime_jobtime=0
     
     while avg_time < 0:
+        
+        gettime_nfiles=0
+        gettime_njobs=0
+        gettime_jobtime=0
+
         if nit < 0:
-            return 100000
+            return 1000.
         nit =nit-1
         #### get previous month
         checkdate=checkdate-diff
@@ -242,10 +244,15 @@ def GetAverageTime( gettinglongest, deftagger,defsample,defcycle,defskim, rundeb
         if rundebug:
             file_debug.write(file_jobsummary+"\n")
         if not os.path.exists(file_jobsummary):
-            return 100000
+            return 1000.
 
         read_file_jobsummary = open(file_jobsummary,"r")
+        nfound=0.
         for line in read_file_jobsummary:
+            tmpgettime_nfiles=-999.
+            tmpgettime_njobs=-999.
+            tmpgettime_jobtime=-999.
+            
             if not "True" in line:
                 continue
             if os.getenv("USER") in line:
@@ -258,17 +265,30 @@ def GetAverageTime( gettinglongest, deftagger,defsample,defcycle,defskim, rundeb
                     if len(splitline) < 38:
                         continue
                     for s in splitline:
-                        if nthsplit==10:
-                            gettime_njobs=float(s)
-                        if nthsplit==12:
-                            gettime_nfiles=float(s)
                         if nthsplit==24:
                             if float(s) < 0:
-                                gettime_jobtime=0
-                            gettime_jobtime=float(s)
+                                tmpgettime_jobtime=0.
+                            else:
+                                tmpgettime_jobtime=float(s)
+                        if nthsplit==10:
+                            tmpgettime_njobs=float(s)
+                        if nthsplit==12:
+                            tmpgettime_nfiles=float(s)
 
                         nthsplit=nthsplit+1
+                    if tmpgettime_jobtime > 0.:
+                        gettime_nfiles+=tmpgettime_nfiles
+                        gettime_njobs+=tmpgettime_njobs
+                        gettime_jobtime+=tmpgettime_jobtime
+                        nfound=nfound+1.
+                                                        
         read_file_jobsummary.close()
+        
+        if nfound > 0.:
+            gettime_nfiles=float(gettime_nfiles)/float(nfound)
+            gettime_njobs = float(gettime_njobs) / float(nfound)
+            gettime_jobtime = float(gettime_jobtime)/  float(nfound)
+        
         if gettime_jobtime < 1.:
             continue
         if gettime_nfiles < 1:
@@ -394,7 +414,7 @@ def ChangeQueue(jobsummary, jobqueue, ncores_job, deftagger, rundebug):
                         file_debug.write("longq, return " + jobqueue+ "\n")
                         file_debug.close()
                     return "longq"
-                elif (float(longq_ninqueue)/ float(longq_nallowedinqueue)) < 0.9:
+                elif (float(longq_ninqueue)/ float(longq_nallowedinqueue)) < 0.1:
                     job_summary.append("########################################")
                     job_summary.append("Changing queue to submit job in empty queue")
                     job_summary.append("########################################")
@@ -411,7 +431,7 @@ def ChangeQueue(jobsummary, jobqueue, ncores_job, deftagger, rundebug):
                 file_debug.close()
             return jobqueue
         else:
-            if (float(longq_ninqueue) / float(longq_nallowedinqueue)) < 0.9:
+            if (float(longq_ninqueue) / float(longq_nallowedinqueue)) < 0.7:
                 if rundebug:
                     file_debug.write("longq2, return " + jobqueue+ "\n")
                     file_debug.close()
@@ -453,7 +473,7 @@ def DetermineNjobs(jobsummary, nfiles_job, longestjobtime, ncores_job, deftagger
     if rundebug:
         file_debug.write("deftagger " + deftagger + " defsample = " + defsample + " defskim = " + defskim + " defqueue = " + defqueue + "\n")
     if not os.path.exists(path_jobpre+"/LQAnalyzer_rootfiles_for_analysis/CATAnalyzerStatistics/MasterFile_"+ os.getenv("CATVERSION")+".txt"):
-        return 1000
+        return 10
    
        
     if ncores_job == 1:
@@ -471,7 +491,7 @@ def DetermineNjobs(jobsummary, nfiles_job, longestjobtime, ncores_job, deftagger
     
     if expectedjobnfiles < 0:
         jobsummary.append( "current sample/skim has not been processed before. Setting number of of jobs to 20 as default.")
-        return 200
+        return 10
 
 
     if rundebug:
@@ -569,11 +589,11 @@ def DetermineNjobs(jobsummary, nfiles_job, longestjobtime, ncores_job, deftagger
     if longestjobtime < 0.:
         if rundebug:
             file_debug.close()
-        return 200
+        return 10
 
 
     ### expectedjobtime = time per file if ran 1 job in bacth queue
-    expectedjobtime=GetAverageTime(False,deftagger, defsample, defcycle,defskim,rundebug)
+    expectedjobtime=tmplongestjobtime
 
     if rundebug:
         file_debug.write("expectedjobtime = " + str(expectedjobtime) + "\n")
@@ -581,10 +601,10 @@ def DetermineNjobs(jobsummary, nfiles_job, longestjobtime, ncores_job, deftagger
         print "current job has not been processed before. Setting number of of jobs to 20 as default."
         if rundebug:
             file_debug.close()
-        return 200
+        return 10
 
     ## now this is total time expcected to run for all files
-    expectedjobtime = expectedjobtime* expectedjobnfiles
+    #expectedjobtime = expectedjobtime* expectedjobnfiles
     if rundebug:
         file_debug.write("enfiles*xpectedjobtime = " + str(expectedjobtime) + "\n")
 
@@ -1524,7 +1544,7 @@ for nsample in range(0, len(sample)):
             file_debug.write("longq: nfreeqall = " + str(nfreeqall) +"\n")
         
         ### check that second queue is almost not full. If so move back to default queue 
-        if queue == "longq" and nfreeqall < 5:
+        if queue == "longq" and nfreeqall < 50:
             if rundebug:
                 file_debug.write("longq is busy \n")
             queue="fastq"
