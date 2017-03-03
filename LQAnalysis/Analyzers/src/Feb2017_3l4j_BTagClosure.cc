@@ -336,7 +336,7 @@ void Feb2017_3l4j_BTagClosure::ExecuteEvents()throw( LQError ){
      }
      if(bjetColl2a.size()!=0){
        FillHist("PTb1_2aSFed", bjetColl2a.at(0).Pt(), SFappliedWeight, 0., 200., 200);
-       FillHist("Etab2_2aSFed", bjetColl2a.at(0).Eta(), SFappliedWeight, -5., 5., 100);
+       FillHist("Etab1_2aSFed", bjetColl2a.at(0).Eta(), SFappliedWeight, -5., 5., 100);
      }
 
 
@@ -351,8 +351,8 @@ void Feb2017_3l4j_BTagClosure::ExecuteEvents()throw( LQError ){
 
 
      FillHist("Nb_Nl3jMETCut_raw", nbjets, SFappliedWeight, 0., 10., 10);
-     FillHist("Nb1a_Nl3jMETCut_SFed", nbjets, SFappliedWeight*btag_sf, 0., 10., 10);
-     FillHist("Nb2a_Nl3jMETCut_SFed", bjetColl2a.size(), SFappliedWeight, 0., 10., 10);
+     FillHist("Nb_Nl3jMETCut_1aSFed", nbjets, SFappliedWeight*btag_sf, 0., 10., 10);
+     FillHist("Nb_Nl3jMETCut_2aSFed", bjetColl2a.size(), SFappliedWeight, 0., 10., 10);
      if(nbjets!=0){
        FillHist("PTb1_Nl3jMETCut_raw", bjetColl.at(0).Pt(), SFappliedWeight, 0., 200., 200);
        FillHist("PTb1_Nl3jMETCut_1aSFed", bjetColl.at(0).Pt(), SFappliedWeight*btag_sf, 0., 200., 200);
@@ -362,7 +362,7 @@ void Feb2017_3l4j_BTagClosure::ExecuteEvents()throw( LQError ){
      }
      if(bjetColl2a.size()!=0){
        FillHist("PTb1_Nl3jMETCut_2aSFed", bjetColl2a.at(0).Pt(), SFappliedWeight, 0., 200., 200);
-       FillHist("Etab2_Nl3jMETCut_2aSFed", bjetColl2a.at(0).Eta(), SFappliedWeight, -5., 5., 100);
+       FillHist("Etab1_Nl3jMETCut_2aSFed", bjetColl2a.at(0).Eta(), SFappliedWeight, -5., 5., 100);
      }
 
 
