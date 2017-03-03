@@ -9,16 +9,16 @@ runData=true
 ########################################################################
 ## RUN PARAMETERS
 
-AnalysisCode="Jan2017_3l4j_ObjValid_DiLep" #"Jan2017_3l4j_IDFnCompCheck" ###_D3lv" ###"Jun2016_3l4j_SigBasic" ###KPS ###"ExampleAnalyzerDiMuon"
-Stream="MuonEG"     ### DoubleMuon DoubleEG MuonEG SingleElectron SingleMuon 
+AnalysisCode="Feb2017_3l4j_BTagClosure" 
+Stream="MuonEG"     
 #Stream="SingleMuon"     ### DoubleMuon DoubleEG MuonEG SingleElectron SingleMuon 
-#Stream="DoubleEG"     ### DoubleMuon DoubleEG MuonEG SingleElectron SingleMuon 
-Skim="SKTree_DiLepSkim" ###"Lepton" ### "Lepton"(single lepton skim)/"DiLep"(dilepton skim)/"NoCut"(noskim) ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
-#Skim="SKTree_LeptonSkim" ###"Lepton" ### "Lepton"(single lepton skim)/"DiLep"(dilepton skim)/"NoCut"(noskim) ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
-DataPeriod="ALL"        ###  "C" = period C only   "ALL" or "CtoD"  = period C+D
+#Stream="DoubleEG"       ### DoubleMuon DoubleEG MuonEG SingleElectron SingleMuon 
+Skim="SKTree_DiLepSkim"  ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
+#Skim="SKTree_LeptonSkim"### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
+DataPeriod="ALL"       
 job_logstep=1000
 LogLevel="INFO"
-QueueOption="fastq" ##
+QueueOption="fastq" 
 
 #MCList="DY"
 #MCList="ST"
