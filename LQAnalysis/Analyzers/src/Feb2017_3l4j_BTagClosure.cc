@@ -154,10 +154,10 @@ void Feb2017_3l4j_BTagClosure::ExecuteEvents()throw( LQError ){
    std::vector<snu::KJet> jetLooseColl; eventbase->GetJetSel()->SelectJets(jetLooseColl, muonColl, electronColl, "PFJET_LOOSE", 20., 2.4);
 
    //Method to apply 2a method SF
-   //std::vector<int> bIdxColl=GetSFBJetIdx(jetColl,"Medium");
-   //std::vector<int> ljIdxColl=GetSFLJetIdx(jetColl, bIdxColl, "Medium");
-   //std::vector<snu::KJet> bjetColl; for(int i=0; i<bIdxColl.size(); i++){bjetColl.push_back(jetColl.at(bIdxColl.at(i)));}
-   //std::vector<snu::KJet> ljetColl; for(int i=0; i<ljIdxColl.size(); i++){ljetColl.push_back(jetColl.at(ljIdxColl.at(i)));}
+   std::vector<int> bIdxColl  = GetSFBJetIdx(jetColl,"Medium");
+   std::vector<int> ljIdxColl = GetSFLJetIdx(jetColl, bIdxColl, "Medium");
+   std::vector<snu::KJet> bjetColl2a; for(int i=0; i<bIdxColl.size(); i++) {bjetColl2a.push_back(jetColl.at(bIdxColl.at(i)));}
+   std::vector<snu::KJet> ljetColl2a; for(int i=0; i<ljIdxColl.size(); i++){ljetColl2a.push_back(jetColl.at(ljIdxColl.at(i)));}
 
    std::vector<snu::KJet> bjetColl = SelBJets(jetColl, "Medium");
    std::vector<snu::KJet> ljetColl = SelLightJets(jetColl, "Medium");
@@ -319,14 +319,27 @@ void Feb2017_3l4j_BTagClosure::ExecuteEvents()throw( LQError ){
      FillHist("PTj2", jetColl.at(1).Pt(), SFappliedWeight, 0., 500., 500);
      FillHist("Etaj2", jetColl.at(1).Eta(), SFappliedWeight, -5., 5., 100);
 //     FillHist("PTj3", jetColl.at(2).Pt(), SFappliedWeight, 0., 200., 200);
-//     FillHist("PTb1", bjetColl.at(0).Pt(), SFappliedWeight, 0., 200., 200);
      FillHist("MET", met, SFappliedWeight, 0., 500., 500);
      FillHist("Nvtx", Nvtx, SFappliedWeight, 0., 50., 50);
      FillHist("dRemu", electronColl.at(0).DeltaR(muonColl.at(0)), SFappliedWeight, 0., 5., 100);
      FillHist("dPhiemu", electronColl.at(0).DeltaPhi(muonColl.at(0)), SFappliedWeight, -3.15, 3.15, 200);
 
-     FillHist("Nb_SFed", nbjets, SFappliedWeight*btag_sf, 0., 10., 10);
      FillHist("Nb_raw", nbjets, SFappliedWeight, 0., 10., 10);
+     FillHist("Nb_1aSFed", nbjets, SFappliedWeight*btag_sf, 0., 10., 10);
+     FillHist("Nb_2aSFed", bjetColl2a.size(), SFappliedWeight, 0., 10., 10);
+     if(nbjets!=0){
+       FillHist("PTb1_raw", bjetColl.at(0).Pt(), SFappliedWeight, 0., 200., 200);
+       FillHist("PTb1_1aSFed", bjetColl.at(0).Pt(), SFappliedWeight*btag_sf, 0., 200., 200);
+
+       FillHist("Etab1_raw", bjetColl.at(0).Eta(), SFappliedWeight, -5., 5., 100);
+       FillHist("Etab1_1aSFed", bjetColl.at(0).Eta(), SFappliedWeight*btag_sf, -5., 5., 100);
+     }
+     if(bjetColl2a.size()!=0){
+       FillHist("PTb1_2aSFed", bjetColl2a.at(0).Pt(), SFappliedWeight, 0., 200., 200);
+       FillHist("Etab2_2aSFed", bjetColl2a.at(0).Eta(), SFappliedWeight, -5., 5., 100);
+     }
+
+
 
      //Step6 : Nj>=3
      if(jetColl.size()<3) return;
@@ -337,8 +350,22 @@ void Feb2017_3l4j_BTagClosure::ExecuteEvents()throw( LQError ){
      FillHist("Cutflow_TrkRecoIDIsoTrigPUW", 5., weight*trk_weight_mu*reco_weight_ele*id_weight_ele*id_weight_mu*iso_weight_mu*trigger_sf*pileup_reweight, 0., 10., 10);
 
 
-     FillHist("Nb_Nl3jMETCut_SFed", nbjets, SFappliedWeight*btag_sf, 0., 10., 10);
      FillHist("Nb_Nl3jMETCut_raw", nbjets, SFappliedWeight, 0., 10., 10);
+     FillHist("Nb1a_Nl3jMETCut_SFed", nbjets, SFappliedWeight*btag_sf, 0., 10., 10);
+     FillHist("Nb2a_Nl3jMETCut_SFed", bjetColl2a.size(), SFappliedWeight, 0., 10., 10);
+     if(nbjets!=0){
+       FillHist("PTb1_Nl3jMETCut_raw", bjetColl.at(0).Pt(), SFappliedWeight, 0., 200., 200);
+       FillHist("PTb1_Nl3jMETCut_1aSFed", bjetColl.at(0).Pt(), SFappliedWeight*btag_sf, 0., 200., 200);
+
+       FillHist("Etab1_Nl3jMETCut_raw", bjetColl.at(0).Eta(), SFappliedWeight, -5., 5., 100);
+       FillHist("Etab1_Nl3jMETCut_1aSFed", bjetColl.at(0).Eta(), SFappliedWeight*btag_sf, -5., 5., 100);
+     }
+     if(bjetColl2a.size()!=0){
+       FillHist("PTb1_Nl3jMETCut_2aSFed", bjetColl2a.at(0).Pt(), SFappliedWeight, 0., 200., 200);
+       FillHist("Etab2_Nl3jMETCut_2aSFed", bjetColl2a.at(0).Eta(), SFappliedWeight, -5., 5., 100);
+     }
+
+
 
 
      //Step7 : Nb>=1
