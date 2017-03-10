@@ -129,7 +129,7 @@ float BTagSFUtil::GetJetSF(int JetFlavor, float JetPt, float JetEta) {
     else if(JetPt < 20.   ) return 1.; 
   }
   else return 1.; //For safety.
-  
+
 
   if (abs(JetFlavor)==5) 
     Btag_SF = reader_bc->eval(BTagEntry::FLAV_B, JetEta, ThisJetPt);

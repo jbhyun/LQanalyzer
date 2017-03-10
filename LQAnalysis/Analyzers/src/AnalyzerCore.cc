@@ -2323,6 +2323,19 @@ bool AnalyzerCore::SameCharge(std::vector<snu::KElectron> electrons, bool runnin
   return false;
 }
 
+bool AnalyzerCore::OppositeCharge(std::vector<snu::KElectron> electrons, bool runningcf){
+
+  if(electrons.size()!=2) return false;
+
+  if(!runningcf){
+    if(electrons.at(0).Charge() != electrons.at(1).Charge()) return true;
+  }
+  else     if(electrons.at(0).Charge() == electrons.at(1).Charge()) return true;
+
+  return false;
+}
+
+
 
 int AnalyzerCore::NBJet(std::vector<snu::KJet> jets,  KJet::Tagger tag, KJet::WORKING_POINT wp, int period){
 
@@ -2452,13 +2465,13 @@ bool AnalyzerCore::IsBTagged(snu::KJet jet,  KJet::Tagger tag, KJet::WORKING_POI
 float AnalyzerCore::BTagScaleFactor_1a(std::vector<snu::KJet> jetColl, KJet::Tagger tag, KJet::WORKING_POINT wp, int mcperiod){
 
   //BTag SF from 1a method.
-  //This is coded for H+->WA analysis. I'm fine with anybody else using this function, but be aware that HN analyses had an agreement with using 2a method.
+  //This is coded for H+->WA analysis. I'm fine with anybody else using this function, but be aware that HN analyses decided to use 2a method.
   //And I currently have no plan to use multiple WP. so I just coded to work only for single WP regime.
 
   if(isData) return 1.;
 
   if(mcperiod < 0) {
-    Message("mcperiod not set in AnalyzerCore::IsBTagged. Will assign mcperiod for you but this may not give correct behaviour", DEBUG);
+    Message("FYI : mcperiod not set in AnalyzerCore::BTagScaleFactor_1a: meaning auto-set", DEBUG);
     mcperiod=GetPeriod();
   }
 
@@ -2514,7 +2527,7 @@ float AnalyzerCore::BTagScaleFactor_1a(std::vector<snu::KJet> jetColl, KJet::Tag
   return BTagSF;
 
 }
-     
+
 
 double AnalyzerCore::MuonDYMassCorrection(std::vector<snu::KMuon> mu, double w){
   

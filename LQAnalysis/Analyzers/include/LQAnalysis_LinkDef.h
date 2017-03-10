@@ -11,6 +11,8 @@
 #pragma link C++ class HNDiElectron+;
 #pragma link C++ class FakeRateCalculator_El+;
 #pragma link C++ class HNEMu+;
+#pragma link C++ class GetFakeSF+;
+
 
 //#endif // __CINT__
 //Jihwan Bhyun Modification///////////
