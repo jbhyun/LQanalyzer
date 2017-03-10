@@ -541,7 +541,14 @@ void Feb2017_3l4j_BTagEff::ExecuteEvents()throw( LQError ){
 
   }//End of lep 2 loop
 
+
+  /***********************************************************
+  **Test for why Btag efficiency depends on sample
+  ***********************************************************/
  
+  
+   
+
 return;
 }// End of execute event loop
   

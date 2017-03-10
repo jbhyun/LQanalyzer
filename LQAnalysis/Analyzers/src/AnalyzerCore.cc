@@ -2449,7 +2449,7 @@ bool AnalyzerCore::IsBTagged(snu::KJet jet,  KJet::Tagger tag, KJet::WORKING_POI
 }
 
 
-double AnalyzerCore::BTagScaleFactor_1a(std::vector<snu::KJet> jetColl, KJet::Tagger tag, KJet::WORKING_POINT wp, int mcperiod){
+float AnalyzerCore::BTagScaleFactor_1a(std::vector<snu::KJet> jetColl, KJet::Tagger tag, KJet::WORKING_POINT wp, int mcperiod){
 
   //BTag SF from 1a method.
   //This is coded for H+->WA analysis. I'm fine with anybody else using this function, but be aware that HN analyses had an agreement with using 2a method.
@@ -2458,7 +2458,7 @@ double AnalyzerCore::BTagScaleFactor_1a(std::vector<snu::KJet> jetColl, KJet::Ta
   if(isData) return 1.;
 
   if(mcperiod < 0) {
-//    Message("mcperiod not set in AnalyzerCore::IsBTagged. Will assign mcperiod for you but this may not give correct behaviour", WARNING);
+    Message("mcperiod not set in AnalyzerCore::IsBTagged. Will assign mcperiod for you but this may not give correct behaviour", DEBUG);
     mcperiod=GetPeriod();
   }
 
@@ -2485,7 +2485,7 @@ double AnalyzerCore::BTagScaleFactor_1a(std::vector<snu::KJet> jetColl, KJet::Ta
 
   if ( tag == snu::KJet::JETPROB) return -999;
 
-  double BTagSF=1.;
+  float BTagSF=1.;
   for(unsigned int i=0; i<jetColl.size(); i++){
     if(jetColl.at(i).IsBTagged(tag, wp)){
       if(jetColl.at(i).HadronFlavour()==5 || jetColl.at(i).HadronFlavour()==4){
@@ -2496,7 +2496,7 @@ double AnalyzerCore::BTagScaleFactor_1a(std::vector<snu::KJet> jetColl, KJet::Ta
       }
     }
     else{
-      double SFj=1., Effj=1.;
+      float SFj=1., Effj=1.;
       if(jetColl.at(i).HadronFlavour()==5 || jetColl.at(i).HadronFlavour()==4){
         SFj  = it_hf->second->GetJetSF(jetColl.at(i).HadronFlavour(), jetColl.at(i).Pt(), jetColl.at(i).Eta());
         Effj = it_hf->second->JetTagEfficiency(jetColl.at(i).HadronFlavour(), jetColl.at(i).Pt(), jetColl.at(i).Eta());
@@ -2515,8 +2515,6 @@ double AnalyzerCore::BTagScaleFactor_1a(std::vector<snu::KJet> jetColl, KJet::Ta
 
 }
      
-
-
 
 double AnalyzerCore::MuonDYMassCorrection(std::vector<snu::KMuon> mu, double w){
   

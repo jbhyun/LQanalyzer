@@ -50,7 +50,6 @@ void Feb2017_3l4j_BTagClosure::ExecuteEvents()throw( LQError ){
    if(!isData) weight_nopu*=MCweight;
    FillHist("GenWeight", MCweight, 1, -10, 10, 1000);
 
-   FillHist("test", weight, 1, -1., 1., 2);
    //Total Event  
    FillCutFlow("NoCut", weight);
 
@@ -72,7 +71,7 @@ void Feb2017_3l4j_BTagClosure::ExecuteEvents()throw( LQError ){
    FillHist("Nvtx_nocut_PURW", eventbase->GetEvent().nVertices(), weight, 0., 50., 50);
 
 
-//   bool EMu_analysis=true, DoubleMu_analysis=false;
+   //bool EMu_analysis=true, DoubleMu_analysis=false;
    bool DoubleEle_analysis=false, SingleMu_analysis=false, DoubleMu_analysis=false, EMu_analysis=true;
 
 
@@ -82,7 +81,7 @@ void Feb2017_3l4j_BTagClosure::ExecuteEvents()throw( LQError ){
    TString analysis_trigger;
    //if(EMu_analysis) {analysis_trigger="HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v";}
    if(EMu_analysis) {analysis_trigger="HLT_IsoMu24_v";}
-   else if(DoubleMu_analysis) analysis_trigger="HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_v";
+   else if(DoubleMu_analysis) analysis_trigger="HLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_DZ_v";
    else if(SingleMu_analysis) analysis_trigger="HLT_IsoMu24_v";
    else if(DoubleEle_analysis) analysis_trigger="HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v";
    //if(!PassTrigger(analysis_trigger)) return; //Not for now..
@@ -148,7 +147,7 @@ void Feb2017_3l4j_BTagClosure::ExecuteEvents()throw( LQError ){
      eventbase->GetJetSel()->SetID(BaseSelection::PFJET_LOOSE);
      //eventbase->GetJetSel()->SetPt(30.);                     eventbase->GetJetSel()->SetEta(2.4);
      eventbase->GetJetSel()->SetPt(20.);                     eventbase->GetJetSel()->SetEta(2.4);
-   //eventbase->GetJetSel()->SetUseJetPileUp(true);
+     //eventbase->GetJetSel()->SetPileUpJetID(true,"Loose");
      bool LeptonVeto=true;
    std::vector<snu::KJet> jetColl; eventbase->GetJetSel()->Selection(jetColl, LeptonVeto, muonColl, electronColl);
    std::vector<snu::KJet> jetLooseColl; eventbase->GetJetSel()->SelectJets(jetLooseColl, muonColl, electronColl, "PFJET_LOOSE", 20., 2.4);
@@ -193,7 +192,7 @@ void Feb2017_3l4j_BTagClosure::ExecuteEvents()throw( LQError ){
    float trigger_sf=1.;
 
    if(!isData){
-    // trigger_sf      = mcdata_correction->TriggerScaleFactor( electronColl, muonColl, "HLT_IsoMu24_v" );
+     trigger_sf      = mcdata_correction->TriggerScaleFactor( electronColl, muonColl, "HLT_IsoMu24_v" );
 
      id_weight_ele   = mcdata_correction->ElectronScaleFactor("ELECTRON_POG_TIGHT", electronColl);
      reco_weight_ele = mcdata_correction->ElectronRecoScaleFactor(electronColl);
@@ -237,16 +236,16 @@ void Feb2017_3l4j_BTagClosure::ExecuteEvents()throw( LQError ){
 
    if(EMu_analysis){
 
-     //if( !(PassTrigger("HLT_IsoMu24_v")||PassTrigger("HLT_IsoTkMu24_v")) ) return;
-     if( !(PassTrigger("HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v")
-          || PassTrigger("HLT_Mu12_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v")
-          || PassTrigger("HLT_Mu12_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ_v")) ) return;
+     if( !(PassTrigger("HLT_IsoMu24_v")||PassTrigger("HLT_IsoTkMu24_v")) ) return;
+     //if( !(PassTrigger("HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v")
+     //     || PassTrigger("HLT_Mu12_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v")
+     //     || PassTrigger("HLT_Mu12_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ_v")) ) return;
 
 
      //Step1 : 1e+1mu
      if( !(electronColl.size()==1 && muonColl.size()==1) ) return;
-     if( !(electronColl.at(0).Pt()>25 && muonColl.at(0).Pt()>15) ) return; //EMu Trig Case
-     //if( !(muonColl.at(0).Pt()>27) ) return; //SingleMuon Trig Case
+     //if( !(electronColl.at(0).Pt()>25 && muonColl.at(0).Pt()>15) ) return; //EMu Trig Case
+     if( !(muonColl.at(0).Pt()>27) ) return; //SingleMuon Trig Case
      FillHist("Cutflow_NoW", 0., weight, 0., 10., 10);
      FillHist("Cutflow_TrkRecoW", 0., weight*trk_weight_mu*reco_weight_ele, 0., 10., 10);
      FillHist("Cutflow_TrkRecoIDIsoW", 0., weight*trk_weight_mu*reco_weight_ele*id_weight_ele*id_weight_mu*iso_weight_mu, 0., 10., 10);
@@ -274,6 +273,12 @@ void Feb2017_3l4j_BTagClosure::ExecuteEvents()throw( LQError ){
      }
      FillHist("dRemu_NlOSCut_TrkRecoIDIsoTrigPUW", electronColl.at(0).DeltaR(muonColl.at(0)), weight*trk_weight_mu*reco_weight_ele*id_weight_ele*id_weight_mu*iso_weight_mu*trigger_sf*pileup_reweight, 0., 5., 100);
      FillHist("dPhiemu_NlOSCut_TrkRecoIDIsoTrigPUW", electronColl.at(0).DeltaPhi(muonColl.at(0)), weight*trk_weight_mu*reco_weight_ele*id_weight_ele*id_weight_mu*iso_weight_mu*trigger_sf*pileup_reweight, -3.15, 3.15, 200);
+     if(electronColl.at(0).DeltaR(muonColl.at(0))<0.3){
+       FillHist("Pte_Extra", electronColl.at(0).Pt(), weight*trk_weight_mu*reco_weight_ele*id_weight_ele*id_weight_mu*iso_weight_mu*trigger_sf*pileup_reweight, 0., 200., 200);
+       FillHist("Ptmu_Extra", muonColl.at(0).Pt(), weight*trk_weight_mu*reco_weight_ele*id_weight_ele*id_weight_mu*iso_weight_mu*trigger_sf*pileup_reweight, 0., 200., 200);
+       FillHist("Etae_Extra", electronColl.at(0).Eta(), weight*trk_weight_mu*reco_weight_ele*id_weight_ele*id_weight_mu*iso_weight_mu*trigger_sf*pileup_reweight, -5., 5., 100);
+       FillHist("Etamu_Extra", muonColl.at(0).Eta(), weight*trk_weight_mu*reco_weight_ele*id_weight_ele*id_weight_mu*iso_weight_mu*trigger_sf*pileup_reweight, -5., 5., 100);
+     }
 
 
      //Step3 : Nj>=1
@@ -379,6 +384,116 @@ void Feb2017_3l4j_BTagClosure::ExecuteEvents()throw( LQError ){
 
 
    }
+   if(DoubleMu_analysis){
+
+     if(!PassTrigger("HLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_DZ_v")) return;
+     if(!(muonColl.size()==2 && electronColl.size()==0)) return;
+     if(SumCharge(muonColl)!=0) return;
+     if(muonColl.at(0).Pt()<20) return;
+     if(muonColl.at(1).Pt()<20) return;
+     if((muonColl.at(0)+muonColl.at(1)).M()<12) return;
+
+
+     //Step1 OS2mu+Mmumu>12
+     FillHist("Cutflow_TrkIDIsoPUW", 0., weight*trk_weight_mu*id_weight_mu*iso_weight_mu*trigger_sf*pileup_reweight, 0., 10., 10);
+
+     FillHist("Nj_NlOSMmuCut_TrkIDIsoPUW", njets, weight*trk_weight_mu*id_weight_mu*iso_weight_mu*trigger_sf*pileup_reweight, 0., 10., 10);
+     FillHist("Nb_NlOSMmuCut_TrkIDIsoPUW", nbjets, weight*trk_weight_mu*id_weight_mu*iso_weight_mu*trigger_sf*pileup_reweight, 0., 10., 10);
+     FillHist("Nb_NlOSMmuCut_TrkIDIsoPU1aBtagW", nbjets, weight*trk_weight_mu*id_weight_mu*iso_weight_mu*trigger_sf*pileup_reweight*btag_sf, 0., 10., 10);
+     FillHist("MET_NlOSMmuCut_TrkIDIsoPUW", met, weight*trk_weight_mu*id_weight_mu*iso_weight_mu*trigger_sf*pileup_reweight, 0., 500., 500);
+
+     FillHist("dRmumu_NlOSMmuCut_TrkIDIsoPUW", muonColl.at(0).DeltaR(muonColl.at(1)), weight*trk_weight_mu*id_weight_mu*iso_weight_mu*trigger_sf*pileup_reweight, 0., 5., 100);
+     FillHist("dPhimumu_NlOSMmuCut_TrkIDIsoPUW", muonColl.at(0).DeltaPhi(muonColl.at(1)), weight*trk_weight_mu*id_weight_mu*iso_weight_mu*trigger_sf*pileup_reweight, -3.15, 3.15, 200);
+
+     if(njets>0){
+       FillHist("PTj1_NlOSMmuCut_TrkIDIsoPUW", jetColl.at(0).Pt(), weight*trk_weight_mu*id_weight_mu*iso_weight_mu*trigger_sf*pileup_reweight, 0., 200., 200);
+       FillHist("Etaj1_NlOSMmuCut_TrkIDIsoPUW", jetColl.at(0).Eta(), weight*trk_weight_mu*id_weight_mu*iso_weight_mu*trigger_sf*pileup_reweight, -5., 5., 100);
+     }
+     if(njets>1){
+       FillHist("PTj2_NlOSMmuCut_TrkIDIsoPUW", jetColl.at(1).Pt(), weight*trk_weight_mu*id_weight_mu*iso_weight_mu*trigger_sf*pileup_reweight, 0., 200., 200);
+       FillHist("Etaj2_NlOSMmuCut_TrkIDIsoPUW", jetColl.at(1).Eta(), weight*trk_weight_mu*id_weight_mu*iso_weight_mu*trigger_sf*pileup_reweight, -5., 5., 100);
+     }
+
+
+     FillHist("Mmumu_test_ttbar",(muonColl.at(0)+muonColl.at(1)).M(), weight, 0., 100., 100);
+
+       
+     //Step2 : Z Veto
+     if(fabs((muonColl.at(0)+muonColl.at(1)).M()-91.2)<15) return;
+     FillHist("Cutflow_TrkIDIsoPUW", 1., weight*trk_weight_mu*id_weight_mu*iso_weight_mu*trigger_sf*pileup_reweight, 0., 10., 10);
+
+     FillHist("Nj_NlOSMmuZCut_TrkIDIsoPUW", njets, weight*trk_weight_mu*id_weight_mu*iso_weight_mu*trigger_sf*pileup_reweight, 0., 10., 10);
+     FillHist("Nb_NlOSMmuZCut_TrkIDIsoPUW", nbjets, weight*trk_weight_mu*id_weight_mu*iso_weight_mu*trigger_sf*pileup_reweight, 0., 10., 10);
+     FillHist("Nb_NlOSMmuZCut_TrkIDIsoPU1aBtagW", nbjets, weight*trk_weight_mu*id_weight_mu*iso_weight_mu*trigger_sf*pileup_reweight*btag_sf, 0., 10., 10);
+     FillHist("MET_NlOSMmuZCut_TrkIDIsoPUW", met, weight*trk_weight_mu*id_weight_mu*iso_weight_mu*trigger_sf*pileup_reweight, 0., 500., 500);
+
+
+
+     //Step3 : Nj>=1
+     if(jetColl.size()<1) return;
+     FillHist("Cutflow_TrkIDIsoPUW", 2., weight*trk_weight_mu*id_weight_mu*iso_weight_mu*trigger_sf*pileup_reweight, 0., 10., 10);
+
+
+     //Step4 : Nj>=2
+     if(jetColl.size()<2) return;
+     FillHist("Cutflow_TrkIDIsoPUW", 3., weight*trk_weight_mu*id_weight_mu*iso_weight_mu*trigger_sf*pileup_reweight, 0., 10., 10);
+
+     FillHist("MET_NljOSMmuZCut_TrkIDIsoPUW", met, weight*trk_weight_mu*id_weight_mu*iso_weight_mu*trigger_sf*pileup_reweight, 0., 500., 500);
+
+
+     //Step5 : MET>40
+     if(met<40) return;
+     FillHist("Cutflow_TrkIDIsoPUW", 4., weight*trk_weight_mu*id_weight_mu*iso_weight_mu*trigger_sf*pileup_reweight, 0., 10., 10);
+
+
+     float SFappliedWeight=weight*trk_weight_mu*id_weight_mu*iso_weight_mu*trigger_sf*pileup_reweight;
+     FillHist("Nb_raw_NljOSMmuZMETCut_TrkIDIsoPUW", nbjets, SFappliedWeight, 0., 10., 10);
+     FillHist("Nb_1aSFed_NljOSMmuZMETCut_TrkIDIsoPUW", nbjets, SFappliedWeight*btag_sf, 0., 10., 10);
+     FillHist("Nb_2aSFed_NljOSMmuZMETCut_TrkIDIsoPUW", bjetColl2a.size(), SFappliedWeight, 0., 10., 10);
+
+
+     //Step6 : Nb>=1
+     if(bjetColl.size()==0) return;
+     FillHist("Cutflow_TrkIDIsoPUW", 5., weight*trk_weight_mu*id_weight_mu*iso_weight_mu*trigger_sf*pileup_reweight*btag_sf, 0., 10., 10);
+     FillHist("PTmu1_NljOSMmuZMETBCut_TrkIDIsoPUW", muonColl.at(0).Pt(), SFappliedWeight, 0., 200., 200);
+     FillHist("Etamu1_NljOSMmuZMETBCut_TrkIDIsoPUW", muonColl.at(0).Eta(), SFappliedWeight, -5., 5., 100);
+     FillHist("PTmu2_NljOSMmuZMETBCut_TrkIDIsoPUW", muonColl.at(1).Pt(), SFappliedWeight, 0., 200., 200);
+     FillHist("Etamu2_NljOSMmuZMETBCut_TrkIDIsoPUW", muonColl.at(1).Eta(), SFappliedWeight, -5., 5., 100);
+
+     FillHist("PTj1_NljOSMmuZMETBCut_TrkIDIsoPUW", jetColl.at(0).Pt(), SFappliedWeight, 0., 500., 500);
+     FillHist("Etaj1_NljOSMmuZMETBCut_TrkIDIsoPUW", jetColl.at(0).Eta(), SFappliedWeight, -5., 5., 100);
+     FillHist("PTj2_NljOSMmuZMETBCut_TrkIDIsoPUW", jetColl.at(1).Pt(), SFappliedWeight, 0., 500., 500);
+     FillHist("Etaj2_NljOSMmuZMETBCut_TrkIDIsoPUW", jetColl.at(1).Eta(), SFappliedWeight, -5., 5., 100);
+     FillHist("MET_NljOSMmuZMETBCut_TrkIDIsoPUW", met, SFappliedWeight, 0., 500., 500);
+     FillHist("Nvtx_NljOSMmuZMETBCut_TrkIDIsoPUW", Nvtx, SFappliedWeight, 0., 50., 50);
+
+     FillHist("Nb_raw_NljOSMmuZMETBCut_TrkIDIsoPUW", nbjets, SFappliedWeight, 0., 10., 10);
+     FillHist("Nb_1aSFed_NljOSMmuZMETBCut_TrkIDIsoPUW", nbjets, SFappliedWeight*btag_sf, 0., 10., 10);
+     FillHist("Nb_2aSFed_NljOSMmuZMETBCut_TrkIDIsoPUW", bjetColl2a.size(), SFappliedWeight, 0., 10., 10);
+
+     if(nbjets!=0){
+       FillHist("PTb1_raw_NljOSMmuZMETBCut_TrkIDIsoPUW", bjetColl.at(0).Pt(), SFappliedWeight, 0., 200., 200);
+       FillHist("PTb1_1aSFed_NljOSMmuZMETBCut_TrkIDIsoPUW", bjetColl.at(0).Pt(), SFappliedWeight*btag_sf, 0., 200., 200);
+
+       FillHist("Etab1_raw_NljOSMmuZMETBCut_TrkIDIsoPUW", bjetColl.at(0).Eta(), SFappliedWeight, -5., 5., 100);
+       FillHist("Etab1_1aSFed_NljOSMmuZMETBCut_TrkIDIsoPUW", bjetColl.at(0).Eta(), SFappliedWeight*btag_sf, -5., 5., 100);
+     }
+     if(bjetColl2a.size()!=0){
+       FillHist("PTb1_2aSFed_NljOSMmuZMETBCut_TrkIDIsoPUW", bjetColl2a.at(0).Pt(), SFappliedWeight, 0., 200., 200);
+       FillHist("Etab1_2aSFed_NljOSMmuZMETBCut_TrkIDIsoPUW", bjetColl2a.at(0).Eta(), SFappliedWeight, -5., 5., 100);
+     }
+
+
+     //Step7 : Nj>=3
+     if(jetColl.size()<3) return;
+     FillHist("Cutflow_TrkIDIsoPUW", 6., weight*trk_weight_mu*id_weight_mu*iso_weight_mu*trigger_sf*pileup_reweight, 0., 10., 10);
+
+       
+
+   }
+
+
+
    if(SingleMu_analysis){
     bool cycle1=false, cycle2=true;
     if(cycle1){
@@ -538,82 +653,6 @@ void Feb2017_3l4j_BTagClosure::ExecuteEvents()throw( LQError ){
     
    
     }//End of cycle 2
-   }
-   if(DoubleMu_analysis){
-     if(PassTrigger(analysis_trigger)){
-       FillHist("Counter_Nobj_NoW", 0., muonLooseColl.size()*weight, 0., 10., 10);
-       FillHist("Counter_Nobj_NoW", 1., muonColl.size()*weight, 0., 10., 10);
-       FillHist("Counter_Nobj_NoW", 2., jetColl.size()*weight, 0., 10., 10);
-       FillHist("Counter_Nobj_NoW", 3., bjetColl.size()*weight, 0., 10., 10);
-
-       if(muonColl.size()!=2) return;
-       if(SumCharge(muonColl)!=0) return;
-       if(muonColl.at(0).Pt()<20) return;
-       if(muonColl.at(1).Pt()<20) return;
-       if(fabs((muonColl.at(0)+muonColl.at(1)).M()-91.2)>15) return;
-
-       FillHist("PTmu1_NoW", muonColl.at(0).Pt(), weight, 0., 200., 200);
-       FillHist("PTmu2_NoW", muonColl.at(1).Pt(), weight, 0., 200., 200);
-       FillHist("Etamu1_NoW", muonColl.at(0).Eta(), weight, -5., 5., 100);
-       FillHist("Etamu2_NoW", muonColl.at(1).Eta(), weight, -5., 5., 100);
-       FillHist("Nj_NoW", jetColl.size(), weight, 0., 10., 10);
-       FillHist("NjL_NoW", jetLooseColl.size(), weight, 0., 10., 10);
-       FillHist("MET_NoW", met, weight, 0., 500., 500);
-       FillHist("Nvtx_NoW", Nvtx, weight, 0., 50., 50);
-       
-       FillHist("Iso_NoW", muonColl.at(0).RelIso04(), weight, 0., 0.2, 1000);
-       FillHist("dxy_NoW", muonColl.at(0).dXY(), weight, 0., 0.4, 1000);
-       FillHist("dz_NoW", muonColl.at(0).dZ(), weight, 0., 0.7, 1000);
-       FillHist("NhitTkLayer_NoW", muonColl.at(0).ActiveLayer(), weight, 0., 20., 20);//Nhit on trackLayer
-       FillHist("Nhitpixel_NoW", muonColl.at(0).validPixHits(), weight, 0., 20., 20);//Nhit on pixel
-       FillHist("NhitMuChamber_NoW", muonColl.at(0).validHits(), weight, 0., 50., 50);//Nhit on muon chamber
-       FillHist("NmatchedStation_NoW", muonColl.at(0).validStations(), weight, 0., 20., 20);//N muon station having muon segment
-       
-       FillHist("PTmu1_TkIDIsoPUW", muonColl.at(0).Pt(), weight*trk_weight_mu*id_weight_mu*iso_weight_mu*pileup_reweight, 0., 200., 200);
-       FillHist("PTmu2_TkIDIsoPUW", muonColl.at(1).Pt(), weight*trk_weight_mu*id_weight_mu*iso_weight_mu*pileup_reweight, 0., 200., 200);
-       FillHist("Etamu1_TkIDIsoPUW", muonColl.at(0).Eta(), weight*trk_weight_mu*id_weight_mu*iso_weight_mu*pileup_reweight, -5., 5., 100);
-       FillHist("Etamu2_TkIDIsoPUW", muonColl.at(1).Eta(), weight*trk_weight_mu*id_weight_mu*iso_weight_mu*pileup_reweight, -5., 5., 100);
-       FillHist("Nj_TkIDIsoPUW", jetColl.size(), weight*trk_weight_mu*id_weight_mu*iso_weight_mu*pileup_reweight, 0., 10., 10);
-       FillHist("NjL_TkIDIsoPUW", jetLooseColl.size(), weight*trk_weight_mu*id_weight_mu*iso_weight_mu*pileup_reweight, 0., 10., 10);
-       FillHist("MET_TkIDIsoPUW", met, weight*trk_weight_mu*id_weight_mu*iso_weight_mu*pileup_reweight, 0., 500., 500);
-       FillHist("Nvtx_TkIDIsoPUW", Nvtx, weight*trk_weight_mu*id_weight_mu*iso_weight_mu*pileup_reweight, 0., 50., 50);
-       
-       FillHist("Iso_TkIDIsoPUW", muonColl.at(0).RelIso04(), weight*trk_weight_mu*id_weight_mu*iso_weight_mu*pileup_reweight, 0., 0.2, 1000);
-       FillHist("dxy_TkIDIsoPUW", muonColl.at(0).dXY(), weight*trk_weight_mu*id_weight_mu*iso_weight_mu*pileup_reweight, 0., 0.4, 1000);
-       FillHist("dz_TkIDIsoPUW", muonColl.at(0).dZ(), weight*trk_weight_mu*id_weight_mu*iso_weight_mu*pileup_reweight, 0., 0.7, 1000);
-       FillHist("NhitTkLayer_TkIDIsoPUW", muonColl.at(0).ActiveLayer(), weight*trk_weight_mu*id_weight_mu*iso_weight_mu*pileup_reweight, 0., 20., 20);//Nhit on trackLayer
-       FillHist("Nhitpixel_TkIDIsoPUW", muonColl.at(0).validPixHits(), weight*trk_weight_mu*id_weight_mu*iso_weight_mu*pileup_reweight, 0., 20., 20);//Nhit on pixel
-       FillHist("NhitMuChamber_TkIDIsoPUW", muonColl.at(0).validHits(), weight*trk_weight_mu*id_weight_mu*iso_weight_mu*pileup_reweight, 0., 50., 50);//Nhit on muon chamber
-       FillHist("NmatchedStation_TkIDIsoPUW", muonColl.at(0).validStations(), weight*trk_weight_mu*id_weight_mu*iso_weight_mu*pileup_reweight, 0., 20., 20);//N muon station having muon segment
-     
-       if(njets==0){
-         FillHist("PTmu1_0j", muonColl.at(0).Pt(), weight*trk_weight_mu*id_weight_mu*iso_weight_mu*pileup_reweight, 0., 200., 200);
-         FillHist("PTmu2_0j", muonColl.at(1).Pt(), weight*trk_weight_mu*id_weight_mu*iso_weight_mu*pileup_reweight, 0., 200., 200);
-         FillHist("Etamu1_0j", muonColl.at(0).Eta(), weight*trk_weight_mu*id_weight_mu*iso_weight_mu*pileup_reweight, -5., 5., 100);
-         FillHist("Etamu2_0j", muonColl.at(1).Eta(), weight*trk_weight_mu*id_weight_mu*iso_weight_mu*pileup_reweight, -5., 5., 100);
-         FillHist("MET_0j", met, weight*trk_weight_mu*id_weight_mu*iso_weight_mu*pileup_reweight, 0., 500., 500);
-       }
-       if(njets==1){
-         FillHist("PTmu1_1j", muonColl.at(0).Pt(), weight*trk_weight_mu*id_weight_mu*iso_weight_mu*pileup_reweight, 0., 200., 200);
-         FillHist("PTmu2_1j", muonColl.at(1).Pt(), weight*trk_weight_mu*id_weight_mu*iso_weight_mu*pileup_reweight, 0., 200., 200);
-         FillHist("Etamu1_1j", muonColl.at(0).Eta(), weight*trk_weight_mu*id_weight_mu*iso_weight_mu*pileup_reweight, -5., 5., 100);
-         FillHist("Etamu2_1j", muonColl.at(1).Eta(), weight*trk_weight_mu*id_weight_mu*iso_weight_mu*pileup_reweight, -5., 5., 100);
-         FillHist("MET_1j", met, weight*trk_weight_mu*id_weight_mu*iso_weight_mu*pileup_reweight, 0., 500., 500);
-         FillHist("PTj1_1j", jetColl.at(0).Pt(), weight*trk_weight_mu*id_weight_mu*iso_weight_mu*pileup_reweight, 0., 200., 200);
-         FillHist("Etaj1_1j", jetColl.at(0).Eta(), weight*trk_weight_mu*id_weight_mu*iso_weight_mu*pileup_reweight, -5., 5., 100);
-       }
-       if(njets==2){
-         FillHist("PTmu1_2j", muonColl.at(0).Pt(), weight*trk_weight_mu*id_weight_mu*iso_weight_mu*pileup_reweight, 0., 200., 200);
-         FillHist("PTmu2_2j", muonColl.at(1).Pt(), weight*trk_weight_mu*id_weight_mu*iso_weight_mu*pileup_reweight, 0., 200., 200);
-         FillHist("Etamu1_2j", muonColl.at(0).Eta(), weight*trk_weight_mu*id_weight_mu*iso_weight_mu*pileup_reweight, -5., 5., 100);
-         FillHist("Etamu2_2j", muonColl.at(1).Eta(), weight*trk_weight_mu*id_weight_mu*iso_weight_mu*pileup_reweight, -5., 5., 100);
-         FillHist("MET_2j", met, weight*trk_weight_mu*id_weight_mu*iso_weight_mu*pileup_reweight, 0., 500., 500);
-         FillHist("PTj1_2j", jetColl.at(0).Pt(), weight*trk_weight_mu*id_weight_mu*iso_weight_mu*pileup_reweight, 0., 200., 200);
-         FillHist("PTj2_2j", jetColl.at(1).Pt(), weight*trk_weight_mu*id_weight_mu*iso_weight_mu*pileup_reweight, 0., 200., 200);
-         FillHist("Etaj1_2j", jetColl.at(0).Eta(), weight*trk_weight_mu*id_weight_mu*iso_weight_mu*pileup_reweight, -5., 5., 100);
-         FillHist("Etaj2_2j", jetColl.at(1).Eta(), weight*trk_weight_mu*id_weight_mu*iso_weight_mu*pileup_reweight, -5., 5., 100);
-       }
-     }
    }
    if(DoubleEle_analysis){
      bool cycle1=false, cycle2=true;

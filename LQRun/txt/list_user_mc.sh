@@ -9,7 +9,10 @@ declare -a example=("tthwA_1ta2mu_hc130A30" )
 #declare -a DY=("DYJets" 'TTJets_aMC') 
 declare -a ST=('SingleTop_s' 'SingleTbar_t' 'SingleTop_t' 'SingleTbar_tW_noHadron' 'SingleTop_tW_noHadron')
 declare -a DY=("DYJets") 
-declare -a BtagEffSample=('TTJets_aMC' "DYJets")
+declare -a TT=("TTJets_aMC") 
+#declare -a TT=("TT_powheg") 
+declare -a BtagEffSample=('TT_powheg')
+#declare -a BtagEffSample=('TTJets_aMC' "DYJets")
 
 declare -a tmplist=('WpWp_qcd_madgraph' 'ZG_llG_MCatNLO' 'ZZ_llnunu_powheg' 'ZZ_llqq_MCatNLO' 'ZZ_llll_MCatNLO' 'ZZ_llll_powheg' 'ZZ_pythia8' 'ttHnobb_Powheg' 'ttHtobb_Powheg')
 
@@ -43,7 +46,8 @@ declare -a CR_MuMu=('WJets' 'DYJets_10to50' 'DYJets' 'SingleTop_s' 'SingleTbar_t
 
 declare -a CR_EMu=('WJets' 'DYJets_10to50' 'DYJets' 'SingleTop_s' 'SingleTbar_t' 'SingleTop_t' 'SingleTbar_tW' 'SingleTop_tW' 'TT_powheg' 'WZ' 'ZZ' 'WW' 'WGtoLNuG' 'WGtoLNuEE' 'WGtoLNuMM' 'ZGto2LG' 'ttH_nonbb' 'ttH_bb' 'ttW' 'ttZ' 'QCD_Pt-15to20_MuEnriched' 'QCD_Pt-20to30_MuEnriched' 'QCD_Pt-30to50_MuEnriched' 'QCD_Pt-50to80_MuEnriched' 'QCD_Pt-80to120_MuEnriched' 'QCD_Pt-120to170_MuEnriched' 'QCD_Pt-170to300_MuEnriched' 'QCD_Pt-300to470_MuEnriched' 'QCD_Pt-470to600_MuEnriched' 'QCD_Pt-600to800_MuEnriched' 'QCD_Pt-800to1000_MuEnriched' 'QCD_Pt-1000toInf_MuEnriched' 'QCD_Pt-20to30_EMEnriched' 'QCD_Pt-30to50_EMEnriched' 'QCD_Pt-50to80_EMEnriched' 'QCD_Pt-80to120_EMEnriched' 'QCD_Pt-120to170_EMEnriched' 'QCD_Pt-170to300_EMEnriched' 'QCD_Pt-300toInf_EMEnriched' )
 
-declare -a CR_EMu_804=('WJets' 'DYJets_10to50' 'DYJets' 'SingleTbar_tW_noHadron' 'SingleTop_tW_noHadron' 'TTJets_aMC' 'WZ' 'ZZ' 'WWTo2L2Nu' 'ZGto2LG')
+declare -a CR_EMu_804=('WJets' 'DYJets_10to50' 'DYJets' 'SingleTbar_tW_noHadron' 'SingleTop_tW_noHadron' 'TT_powheg' 'WZ' 'ZZ' 'WWTo2L2Nu' 'ZGto2LG')
+#declare -a CR_EMu_804=('WJets' 'DYJets_10to50' 'DYJets' 'SingleTbar_tW_noHadron' 'SingleTop_tW_noHadron' 'TTJets_aMC' 'WZ' 'ZZ' 'WWTo2L2Nu' 'ZGto2LG')
 
 
 #CR-TriLep

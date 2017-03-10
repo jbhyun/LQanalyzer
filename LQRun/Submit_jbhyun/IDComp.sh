@@ -9,22 +9,22 @@ runData=false
 ########################################################################
 ## RUN PARAMETERS
 
-AnalysisCode="Feb2017_3l4j_BTagClosure" 
-#Stream="MuonEG"     
+AnalysisCode="Mar2017_3l4j_IDCompatibility" 
+Stream="MuonEG"     
 #Stream="DoubleMuon"     
-Stream="SingleMuon"       ### DoubleMuon DoubleEG MuonEG SingleElectron SingleMuon 
-#Stream="DoubleEG"        ### DoubleMuon DoubleEG MuonEG SingleElectron SingleMuon 
+#Stream="DoubleEG"
 Skim="SKTree_DiLepSkim"  ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
-#Skim="SKTree_LeptonSkim"  ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
 DataPeriod="ALL"
+#DataPeriod="H"
 job_logstep=1000
 LogLevel="INFO"
+#QueueOption="longq" 
 QueueOption="fastq" 
 
+MCList="SignalMajor_1e2mu"
+#MCList="SignalMajor_3mu"
 #MCList="DY"
-#MCList="TT"
-MCList="CR_EMu_804"
-#MCList="CR_EMu"
+#MCList="CR_EMu_804"
 #MCList="Analysis_bkg_test"
 ###Backgound : AllSample / Analysis_bkg / Analysis_bkg_test / QCD_mu
 ###Signal    : Analysis_sig_All / Analysis_sig_1e2mu / Analysis_sig_3mu / tthwA_1e2mu / tthwA_3mu / Analysis_sig_test / Analysis_sig_test1

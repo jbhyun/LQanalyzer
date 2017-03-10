@@ -14,6 +14,8 @@
 
 //#endif // __CINT__
 //Jihwan Bhyun Modification///////////
+#pragma link C++ class Mar2017_3l4j_TriLepComp+;
+#pragma link C++ class Mar2017_3l4j_IDCompatibility+;
 #pragma link C++ class Feb2017_3l4j_BTagClosure+;
 #pragma link C++ class Feb2017_3l4j_TrigEff+;
 #pragma link C++ class Feb2017_3l4j_PUjetCheck+;
