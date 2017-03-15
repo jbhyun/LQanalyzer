@@ -129,6 +129,10 @@ void Mar2017_3l4j_TriLepComp::ExecuteEvents()throw( LQError ){
    //Primary Object Collection
    std::vector<snu::KTruth> truthColl; eventbase->GetTruthSel()->Selection(truthColl);
   
+     eventbase->GetMuonSel()->SetID(BaseSelection::MUON_POG_LOOSE);
+     eventbase->GetMuonSel()->SetPt(10.);                    eventbase->GetMuonSel()->SetEta(2.4);
+     eventbase->GetMuonSel()->SetRelIsoType("PFRelIso04");   eventbase->GetMuonSel()->SetRelIso(0.25);//POG WP L
+   std::vector<snu::KMuon> muonVetoColl; eventbase->GetMuonSel()->Selection(muonVetoColl, true);//(muonColl, bool RochCorr, bool debug)
      eventbase->GetMuonSel()->SetID(BaseSelection::MUON_POG_TIGHT);
      eventbase->GetMuonSel()->SetPt(10.);                    eventbase->GetMuonSel()->SetEta(2.4);
      eventbase->GetMuonSel()->SetBSdxy(0.05);                eventbase->GetMuonSel()->SetdxySigMax(3.);
@@ -143,6 +147,12 @@ void Mar2017_3l4j_TriLepComp::ExecuteEvents()throw( LQError ){
    //std::vector<snu::KMuon> muonHNColl; eventbase->GetMuonSel()->SelectMuons(muonHNColl, "MUON_HN_TRI_TIGHT", 10., 2.4);
    //std::vector<snu::KMuon> muonPromptColl; muonPromptColl=GetTruePrompt(muonColl, false);
 
+     eventbase->GetElectronSel()->SetID(BaseSelection::ELECTRON_POG_LOOSE);
+     eventbase->GetElectronSel()->SetPt(10.);                eventbase->GetElectronSel()->SetEta(2.5);
+     eventbase->GetElectronSel()->SetBETrRegIncl(false);
+     eventbase->GetElectronSel()->SetRelIsoType("Default");  eventbase->GetElectronSel()->SetRelIsoBEMax(0.0994, 0.107);//2016 80X tuned WP
+     eventbase->GetElectronSel()->SetdxyBEMax(0.05, 0.1);    eventbase->GetElectronSel()->SetdzBEMax(0.1, 0.2);//Not in ID, but additional safe WP
+   std::vector<snu::KElectron> electronVetoColl; eventbase->GetElectronSel()->Selection(electronVetoColl);
      eventbase->GetElectronSel()->SetID(BaseSelection::ELECTRON_POG_TIGHT);
      eventbase->GetElectronSel()->SetPt(20.);                eventbase->GetElectronSel()->SetEta(2.5);
      eventbase->GetElectronSel()->SetBETrRegIncl(false);
@@ -274,7 +284,7 @@ void Mar2017_3l4j_TriLepComp::ExecuteEvents()throw( LQError ){
 
      //Step1 : 3mu +PTCut+ SSS veto
      //if( !(muonColl.at(0).Pt()>27) ) return; //SingleMuon Trig Case
-     if( !(muonColl.size()==3) ) return;
+     if( !(muonColl.size()==3 && electronColl.size()==0) ) return;
      if( !(muonColl.at(0).Pt()>20 && muonColl.at(2).Pt()>10) ) return;
      if( fabs(SumCharge(muonColl))!=1 ) return;
      FillCutFlow("3lCut", weight);
@@ -291,9 +301,9 @@ void Mar2017_3l4j_TriLepComp::ExecuteEvents()throw( LQError ){
      float Mmumu_OSSS2=(muonColl.at(IdxOS)+muonColl.at(IdxSS2)).M();
 
      //CR - TriLep + b veto
-     if(bjetColl.size()!=0) goto Reg_3ljb;
+//     if(bjetColl.size()!=0) goto Reg_3ljb;
 
-     FillCutFlow("bVeto", weight);
+//     FillCutFlow("bVeto", weight);
      //3lep Z peak test : Fake Control Check
      if(IdxZCandLead!=-1 && IdxZCandSubl!=-1){
        FillHist("Mmumu_Zwin10_3mu", (muonColl.at(IdxZCandLead)+muonColl.at(IdxZCandSubl)).M(), weight, 0., 200., 200);
@@ -308,11 +318,16 @@ void Mar2017_3l4j_TriLepComp::ExecuteEvents()throw( LQError ){
      FillHist("Etamu3_3lOSCut_3mu", muonColl.at(2).Eta(), weight, -5., 5., 100);
 
      FillHist("Nj_3lOSCut_3mu", jetColl.size(), weight, 0., 10., 10);
+     FillHist("NlVeto_3lOSCut_3mu", muonVetoColl.size()+electronVetoColl.size(), weight, 0., 10., 10);
+     FillHist("NeVeto_3lOSCut_3mu", electronVetoColl.size(), weight, 0., 10., 10);
+     FillHist("NmuVeto_3lOSCut_3mu", muonVetoColl.size(), weight, 0., 10., 10);
      FillHist("MET_3lOSCut_3mu", met, weight, 0., 200., 200); 
      FillHist("Nb_3lOSCut_3mu", bjetColl.size(), weight, 0., 10., 10);
      FillHist("Mmumu_OSSS1_3lOSCut_3mu", (muonColl.at(IdxOS)+muonColl.at(IdxSS1)).M(), weight, 0., 200., 200);
      FillHist("Mmumu_OSSS2_3lOSCut_3mu", (muonColl.at(IdxOS)+muonColl.at(IdxSS2)).M(), weight, 0., 200., 200);
-     if(Mmumu_OSSS2>12){
+     FillHist("M3mu_3lOSCut_3mu", (muonColl.at(IdxOS)+muonColl.at(IdxSS1)+muonColl.at(IdxSS2)).M(), weight, 0., 500., 500);
+
+     if(Mmumu_OSSS2>4 && Mmumu_OSSS1>4){
        FillHist("PTmu1_3lOSM12Cut_3mu", muonColl.at(0).Pt(), weight, 0., 200., 200);
        FillHist("PTmu2_3lOSM12Cut_3mu", muonColl.at(1).Pt(), weight, 0., 200., 200);
        FillHist("PTmu3_3lOSM12Cut_3mu", muonColl.at(2).Pt(), weight, 0., 200., 200);
@@ -321,16 +336,20 @@ void Mar2017_3l4j_TriLepComp::ExecuteEvents()throw( LQError ){
        FillHist("Etamu3_3lOSM12Cut_3mu", muonColl.at(2).Eta(), weight, -5., 5., 100);
   
        FillHist("Nj_3lOSM12Cut_3mu", jetColl.size(), weight, 0., 10., 10);
+       FillHist("NlVeto_3lOSM12Cut_3mu", muonVetoColl.size()+electronVetoColl.size(), weight, 0., 10., 10);
+       FillHist("NeVeto_3lOSM12Cut_3mu", electronVetoColl.size(), weight, 0., 10., 10);
+       FillHist("NmuVeto_3lOSM12Cut_3mu", muonVetoColl.size(), weight, 0., 10., 10);
        FillHist("MET_3lOSM12Cut_3mu", met, weight, 0., 200., 200); 
        FillHist("Nb_3lOSM12Cut_3mu", bjetColl.size(), weight, 0., 10., 10);
        FillHist("dRmumu_OSSS1_3lOSM12Cut_3mu", muonColl.at(IdxOS).DeltaR(muonColl.at(IdxSS1)), weight, 0., 5., 500);
        FillHist("dRmumu_OSSS2_3lOSM12Cut_3mu", muonColl.at(IdxOS).DeltaR(muonColl.at(IdxSS2)), weight, 0., 5., 500);
        FillHist("Mmumu_OSSS1_3lOSM12Cut_3mu", (muonColl.at(IdxOS)+muonColl.at(IdxSS1)).M(), weight, 0., 200., 200);
        FillHist("Mmumu_OSSS2_3lOSM12Cut_3mu", (muonColl.at(IdxOS)+muonColl.at(IdxSS2)).M(), weight, 0., 200., 200);
+       FillHist("M3mu_3lOSM12Cut_3mu", (muonColl.at(IdxOS)+muonColl.at(IdxSS1)+muonColl.at(IdxSS2)).M(), weight, 0., 500., 500);
      }
 
      //ttZ peak test : ttZ cross section && Fake Control with b present
-     Reg_3ljb: ;
+//     Reg_3ljb: ;
 
    }
    if(DiMuon_analysis){
