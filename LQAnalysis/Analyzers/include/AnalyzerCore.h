@@ -362,5 +362,8 @@ class AnalyzerCore : public LQCycleBase {
 
   int  NPromptLeptons(std::vector<snu::KTruth>& truthColl, TString Option="");
 
+  //template <class Ptl> int GetDaughterCandIdx(std::vector<Ptl> PtlColl, TString MotherPtl, float WindowWidth=10., TString Option="");
+  int GetDaughterCandIdx(std::vector<snu::KMuon> PtlColl, TString MotherPtl, float WindowWidth=10., TString Option="");
+
 };
 #endif

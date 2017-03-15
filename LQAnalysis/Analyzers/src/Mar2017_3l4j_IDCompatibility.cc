@@ -71,8 +71,8 @@ void Mar2017_3l4j_IDCompatibility::ExecuteEvents()throw( LQError ){
 
 
    //bool TriMu_analysis=true, EMuMu_analysis=false, DiMuon_analysis=false, DiEle_analysis=false;
-   bool TriMu_analysis=false, EMuMu_analysis=true, DiMuon_analysis=false, DiEle_analysis=false;
-   //bool TriMu_analysis=false, EMuMu_analysis=false, DiMuon_analysis=true, DiEle_analysis=false;
+   //bool TriMu_analysis=false, EMuMu_analysis=true, DiMuon_analysis=false, DiEle_analysis=false;
+   bool TriMu_analysis=false, EMuMu_analysis=false, DiMuon_analysis=true, DiEle_analysis=false;
    //bool TriMu_analysis=false, EMuMu_analysis=false, DiMuon_analysis=false, DiEle_analysis=true;
 
    //Trigers
@@ -113,7 +113,7 @@ void Mar2017_3l4j_IDCompatibility::ExecuteEvents()throw( LQError ){
      eventbase->GetMuonSel()->SetRelIsoType("PFRelIso04");   eventbase->GetMuonSel()->SetRelIso(0.25);//POG WP L
    std::vector<snu::KMuon> muonLooseColl; eventbase->GetMuonSel()->Selection(muonLooseColl, true);//(muonColl, bool RochCorr, bool debug)
      eventbase->GetMuonSel()->SetID(BaseSelection::MUON_POG_TIGHT);
-     eventbase->GetMuonSel()->SetPt(10.);                    eventbase->GetMuonSel()->SetEta(2.4);
+     eventbase->GetMuonSel()->SetPt(5.);                    eventbase->GetMuonSel()->SetEta(2.4);
      eventbase->GetMuonSel()->SetRelIsoType("PFRelIso04");   eventbase->GetMuonSel()->SetRelIso(0.15);//POG WP T
    std::vector<snu::KMuon> muonColl; eventbase->GetMuonSel()->Selection(muonColl,true);//(muonColl, bool RochCorr, bool debug)
    std::vector<snu::KMuon> muonHNColl; eventbase->GetMuonSel()->SelectMuons(muonHNColl, "MUON_HN_TRI_TIGHT", 10., 2.4);
@@ -172,7 +172,7 @@ void Mar2017_3l4j_IDCompatibility::ExecuteEvents()throw( LQError ){
    float trigger_sf=1.;
 
    if(!isData){
-    // trigger_sf      = mcdata_correction->TriggerScaleFactor( electronColl, muonColl, "HLT_IsoMu24_v" );
+     trigger_sf      = mcdata_correction->TriggerScaleFactor( electronColl, muonColl, "HLT_IsoMu24_v" );
 
      id_weight_ele   = mcdata_correction->ElectronScaleFactor("ELECTRON_POG_TIGHT", electronColl);
      reco_weight_ele = mcdata_correction->ElectronRecoScaleFactor(electronColl);
@@ -336,14 +336,16 @@ void Mar2017_3l4j_IDCompatibility::ExecuteEvents()throw( LQError ){
    }
 
    if(DiMuon_analysis){
-     //if( !(PassTrigger("HLT_IsoMu24_v")||PassTrigger("HLT_IsoTkMu24_v")) ) return;
-     if( !(PassTrigger("HLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_DZ_v")) ) return;
+     if( !(PassTrigger("HLT_IsoMu24_v")||PassTrigger("HLT_IsoTkMu24_v")) ) return;
+     weight *= trigger_sf;
+     //if( !(PassTrigger("HLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_DZ_v")) ) return;
 
 
      //Step1 : 2OSmu +PTCut +Zwindow
      //if( !(muonColl.at(0).Pt()>27) ) return; //SingleMuon Trig Case
      if( !(muonColl.size()==2) ) return;
-     if( !(muonColl.at(0).Pt()>20 && muonColl.at(1).Pt()>10) ) return;
+     //if( !(muonColl.at(0).Pt()>20 && muonColl.at(1).Pt()>10) ) return;
+     if( !(muonColl.at(0).Pt()>27) ) return;
      if( fabs(SumCharge(muonColl))!=0 ) return;
      if( fabs((muonColl.at(0)+muonColl.at(1)).M()-91.2)>15 )   return;
 
@@ -370,7 +372,7 @@ void Mar2017_3l4j_IDCompatibility::ExecuteEvents()throw( LQError ){
          FillHist("Absd0_mu_10_20", fabs(muonColl.at(i).dXY()), weight, 0., 0.2, 2000);
          FillHist("Absdz_mu_10_20", fabs(muonColl.at(i).dZ()), weight, 0., 0.2, 2000);
          FillHist("Absd0sig_mu_10_20", fabs(muonColl.at(i).dXYSig()), weight, 0., 10., 100);
-         FillHist("RelIso04_mu_10.150", RochIso04, weight, 0., 0.15, 200);
+         FillHist("RelIso04_mu_10_20", RochIso04, weight, 0., 0.15, 200);
        }
        else if(mupt<30){
          FillHist("Absd0_mu_20_30", fabs(muonColl.at(i).dXY()), weight, 0., 0.2, 2000);

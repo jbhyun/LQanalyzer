@@ -3,9 +3,9 @@
 # Context : kill all the processes submitted with LQanalyzer or kill some specific process jobs.
 # Usage : ./killer <LogPath>
 
-KillAll="true"  ## true, True, false, False accepted.
-#KillAll="false"
-declare -a ToKillProcess=('TT_powheg')
+#KillAll="true"  ## true, True, false, False accepted.
+KillAll="false"
+declare -a ToKillProcess=('ttZ')
 
 if [[ ! -d $1 ]]; then echo "Log path wrong, exiting"; exit 1; fi
 if [[ -e Assassin.sh ]]; then rm Assassin.sh; echo "Removed previous assassin code."; fi

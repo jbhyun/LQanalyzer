@@ -3,27 +3,29 @@
 ########################################################################
 ## MC / DATA
 runMC=true
-runData=false
+runData=true
 
 
 ########################################################################
 ## RUN PARAMETERS
 
 AnalysisCode="Mar2017_3l4j_IDCompatibility" 
-Stream="MuonEG"     
+#Stream="MuonEG"     
+Stream="SingleMuon"     
 #Stream="DoubleMuon"     
 #Stream="DoubleEG"
-Skim="SKTree_DiLepSkim"  ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
+Skim="SKTree_LeptonSkim"  ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
+#Skim="SKTree_DiLepSkim"  ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
 DataPeriod="ALL"
 #DataPeriod="H"
 job_logstep=1000
 LogLevel="INFO"
-#QueueOption="longq" 
-QueueOption="fastq" 
+QueueOption="longq" 
+#QueueOption="fastq" 
 
-MCList="SignalMajor_1e2mu"
+#MCList="SignalMajor_1e2mu"
 #MCList="SignalMajor_3mu"
-#MCList="DY"
+MCList="DY"
 #MCList="CR_EMu_804"
 #MCList="Analysis_bkg_test"
 ###Backgound : AllSample / Analysis_bkg / Analysis_bkg_test / QCD_mu
@@ -74,13 +76,13 @@ date >> CommandHist.txt
 
 if [[ $runData == 'false' || $runData == 'False' ]];
   then nohup bash ${LQANALYZER_BIN_PATH}/submitSKTree.sh -b True -a ${AnalysisCode} -p ${DataPeriod} -s ${Skim} -list ${MCList} -o ${OutputDir} -d ${LogLevel} -q ${QueueOption} 
-  echo "nohup bash ${LQANALYZER_BIN_PATH}/submitSKTree.sh -b True -a ${AnalysisCode} -p ${DataPeriod} -s ${Skim} -list ${MCList} -o ${OutputDir} -d ${LogLevel}">> CommandHist.txt
+  echo "nohup bash ${LQANALYZER_BIN_PATH}/submitSKTree.sh -b True -a ${AnalysisCode} -p ${DataPeriod} -s ${Skim} -list ${MCList} -o ${OutputDir} -d ${LogLevel} -q ${QueueOption}">> CommandHist.txt
 elif [[ $runMC == 'false' || $runMC == 'False' ]];
   then nohup bash ${LQANALYZER_BIN_PATH}/submitSKTree.sh -b True -a ${AnalysisCode} -S ${Stream} -p ${DataPeriod} -s ${Skim} -o ${OutputDir} -d ${LogLevel} -q ${QueueOption}
-  echo "nohup bash ${LQANALYZER_BIN_PATH}/submitSKTree.sh -b True -a ${AnalysisCode} -S ${Stream} -p ${DataPeriod} -s ${Skim} -o ${OutputDir} -d ${LogLevel}" >> CommandHist.txt
+  echo "nohup bash ${LQANALYZER_BIN_PATH}/submitSKTree.sh -b True -a ${AnalysisCode} -S ${Stream} -p ${DataPeriod} -s ${Skim} -o ${OutputDir} -d ${LogLevel} -q ${QueueOption}" >> CommandHist.txt
 else
   nohup bash ${LQANALYZER_BIN_PATH}/submitSKTree.sh -b True -a ${AnalysisCode} -S ${Stream} -p ${DataPeriod} -s ${Skim} -list ${MCList} -o ${OutputDir} -d ${LogLevel} -q ${QueueOption}
-  echo "nohup bash ${LQANALYZER_BIN_PATH}/submitSKTree.sh -b True -a ${AnalysisCode} -S ${Stream} -p ${DataPeriod} -s ${Skim} -list ${MCList} -o ${OutputDir} -d ${LogLevel}" >> CommandHist.txt
+  echo "nohup bash ${LQANALYZER_BIN_PATH}/submitSKTree.sh -b True -a ${AnalysisCode} -S ${Stream} -p ${DataPeriod} -s ${Skim} -list ${MCList} -o ${OutputDir} -d ${LogLevel} -q ${QueueOption}" >> CommandHist.txt
 fi
 
 echo >> CommandHist.txt

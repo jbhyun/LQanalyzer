@@ -3251,3 +3251,25 @@ int AnalyzerCore::NPromptLeptons(std::vector<snu::KTruth>& truthColl, TString Op
 
   return NPromptLepton_Tot;
 }
+
+
+//template <class Ptl> int AnalyzerCore::GetDaughterCandIdx(std::vector<Ptl> PtlColl, TString MotherPtl, float WindowWidth, TString Option){
+int AnalyzerCore::GetDaughterCandIdx(std::vector<snu::KMuon> PtlColl, TString MotherPtl, float WindowWidth, TString Option){
+
+  if(MotherPtl=="Z"){
+    float mindM=9999.; int IdxLead=-1, IdxSubl=-1;
+    for(unsigned int i=0; i<PtlColl.size(); i++){
+      for(unsigned int j=i+1; j<PtlColl.size(); j++){
+        float Mass=(PtlColl.at(i)+PtlColl.at(j)).M();
+        if(fabs(Mass-91.2)<mindM) {mindM=fabs(Mass-91.2); IdxLead=i; IdxSubl=j;}
+      }
+    }
+    if(mindM<WindowWidth){
+      if     (Option.Contains("Lead")) return IdxLead;
+      else if(Option.Contains("Subl")) return IdxSubl;
+    }
+    
+  }
+
+  return -1;
+};

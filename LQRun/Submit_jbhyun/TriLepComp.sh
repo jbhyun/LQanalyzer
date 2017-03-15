@@ -3,20 +3,34 @@
 ########################################################################
 ## MC / DATA
 runMC=true
-runData=false
+runData=true
 
 
 ########################################################################
 ## RUN PARAMETERS
 
-AnalysisCode="Jan2017_3l4j_ttZComposition" #"Jan2017_3l4j_IDFnCompCheck" ###_D3lv" ###"Jun2016_3l4j_SigBasic" ###KPS ###"ExampleAnalyzerDiMuon"
-Stream="SingleMuon"    ### DoubleMuon DoubleEG MuonEG SingleElectron SingleMuon 
-Skim="SKTree_LeptonSkim" ###"Lepton" ### "Lepton"(single lepton skim)/"DiLep"(dilepton skim)/"NoCut"(noskim) ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
-DataPeriod="ALL"   ###  "C" = period C only   "ALL" or "CtoD"  = period C+D
+AnalysisCode="Mar2017_3l4j_TriLepComp" 
+#Stream="MuonEG"     
+#Stream="SingleMuon"     
+Stream="DoubleMuon"     
+#Stream="DoubleEG"
+RunFake=false
+#Skim="SKTree_LeptonSkim"  ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
+#Skim="SKTree_DiLepSkim"  ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
+Skim="SKTree_TriLepSkim"  ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
+DataPeriod="ALL"
 job_logstep=1000
 LogLevel="INFO"
+#QueueOption="longq" 
+QueueOption="fastq" 
 
-MCList="Analysis_bkg_test"
+
+MCList="Analysis_bkg"
+#MCList="SignalMajor_1e2mu"
+#MCList="SignalMajor_3mu"
+#MCList="DY"
+#MCList="CR_EMu_804"
+#MCList="Analysis_bkg_test"
 ###Backgound : AllSample / Analysis_bkg / Analysis_bkg_test / QCD_mu
 ###Signal    : Analysis_sig_All / Analysis_sig_1e2mu / Analysis_sig_3mu / tthwA_1e2mu / tthwA_3mu / Analysis_sig_test / Analysis_sig_test1
 
@@ -45,13 +59,22 @@ elif [[ ${DataPeriod} == "E" ]]; then dir_period="periodE";
 elif [[ ${DataPeriod} == "F" ]]; then dir_period="periodF";
 elif [[ ${DataPeriod} == "G" ]]; then dir_period="periodG";
 elif [[ ${DataPeriod} == "H" ]]; then dir_period="periodH";
-elif [[ ${DataPeriod}  == "ALL" || ${DataPeriod} == "BtoG" ]]; then dir_period="periodBtoG";
+elif [[ ${DataPeriod}  == "ALL" || ${DataPeriod} == "BtoH" ]]; then dir_period="periodBtoH";
 else echo "Error: Period Set Wrongly"; exit 1;
 fi
-OutputDir="${outputdir_lep}/${dir_period}/"
+outputdir_period="${outputdir_lep}/${dir_period}/"
+outputdir_fake="${outputdir_period}Fakes/";
+OutputDir=${outputdir_period}
+
 
 if [[ ! -d "${outputdir_lep}" ]]; then mkdir ${outputdir_lep}; echo "Made ${outputdir_lep}"; fi
-if [[ ! -d "${OutputDir}" ]]; then mkdir ${OutputDir}; echo "Made ${OutputDir}"; fi
+if [[ ! -d "${outputdir_period}" ]]; then mkdir ${outputdir_period}; echo "Made ${outputdir_period}"; fi
+if [[ ${RunFake} == "True" || ${RunFake} == "true" ]];
+then
+  if [[ ! -d "${outputdir_fake}" ]]; then mkdir ${outputdir_fake}; echo "Made ${outputdir_fake}"; fi
+  OutputDir=${outputdir_fake}
+fi
+
 
 if [[ $runData == 'false' || $runData == 'False' ]]; then Stream=""; fi
 if [[ $runMC == 'false' || $runMC == 'False' ]]; then MCList=""; fi
@@ -64,14 +87,14 @@ date >> CommandHist.txt
 
 
 if [[ $runData == 'false' || $runData == 'False' ]];
-  then nohup bash ${LQANALYZER_BIN_PATH}/submitSKTree.sh -b True -a ${AnalysisCode} -p ${DataPeriod} -s ${Skim} -list ${MCList} -o ${OutputDir} -d ${LogLevel} -events 10000 
-  echo "nohup bash ${LQANALYZER_BIN_PATH}/submitSKTree.sh -b True -a ${AnalysisCode} -p ${DataPeriod} -s ${Skim} -list ${MCList} -o ${OutputDir} -d ${LogLevel}">> CommandHist.txt
+  then nohup bash ${LQANALYZER_BIN_PATH}/submitSKTree.sh -b True -a ${AnalysisCode} -p ${DataPeriod} -s ${Skim} -list ${MCList} -o ${OutputDir} -d ${LogLevel} -q ${QueueOption} 
+  echo "nohup bash ${LQANALYZER_BIN_PATH}/submitSKTree.sh -b True -a ${AnalysisCode} -p ${DataPeriod} -s ${Skim} -list ${MCList} -o ${OutputDir} -d ${LogLevel} -q ${QueueOption}">> CommandHist.txt
 elif [[ $runMC == 'false' || $runMC == 'False' ]];
-  then nohup bash ${LQANALYZER_BIN_PATH}/submitSKTree.sh -b True -a ${AnalysisCode} -S ${Stream} -p ${DataPeriod} -s ${Skim} -o ${OutputDir} -d ${LogLevel} 
-  echo "nohup bash ${LQANALYZER_BIN_PATH}/submitSKTree.sh -b True -a ${AnalysisCode} -S ${Stream} -p ${DataPeriod} -s ${Skim} -o ${OutputDir} -d ${LogLevel}" >> CommandHist.txt
+  then nohup bash ${LQANALYZER_BIN_PATH}/submitSKTree.sh -b True -a ${AnalysisCode} -S ${Stream} -p ${DataPeriod} -s ${Skim} -o ${OutputDir} -d ${LogLevel} -q ${QueueOption}
+  echo "nohup bash ${LQANALYZER_BIN_PATH}/submitSKTree.sh -b True -a ${AnalysisCode} -S ${Stream} -p ${DataPeriod} -s ${Skim} -o ${OutputDir} -d ${LogLevel} -q ${QueueOption}" >> CommandHist.txt
 else
-  nohup bash ${LQANALYZER_BIN_PATH}/submitSKTree.sh -b True -a ${AnalysisCode} -S ${Stream} -p ${DataPeriod} -s ${Skim} -list ${MCList} -o ${OutputDir} -d ${LogLevel} 
-  echo "nohup bash ${LQANALYZER_BIN_PATH}/submitSKTree.sh -b True -a ${AnalysisCode} -S ${Stream} -p ${DataPeriod} -s ${Skim} -list ${MCList} -o ${OutputDir} -d ${LogLevel}" >> CommandHist.txt
+  nohup bash ${LQANALYZER_BIN_PATH}/submitSKTree.sh -b True -a ${AnalysisCode} -S ${Stream} -p ${DataPeriod} -s ${Skim} -list ${MCList} -o ${OutputDir} -d ${LogLevel} -q ${QueueOption}
+  echo "nohup bash ${LQANALYZER_BIN_PATH}/submitSKTree.sh -b True -a ${AnalysisCode} -S ${Stream} -p ${DataPeriod} -s ${Skim} -list ${MCList} -o ${OutputDir} -d ${LogLevel} -q ${QueueOption}" >> CommandHist.txt
 fi
 
 echo >> CommandHist.txt
