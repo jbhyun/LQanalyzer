@@ -1721,9 +1721,11 @@ void AnalyzerCore::PrintTruth(){
   
   cout << "=========================================================" << endl;
   cout << "truth size = " << truthColl.size() << endl;
-  cout << "index" << '\t' << "pdgid" << '\t' << "mother" << '\t' << "mother pid" << endl;
+//  cout << "index" << '\t' << "pdgid" << '\t' << "mother" << '\t' << "mother pid" << '\t' <<"genstatus" << endl;
+  cout << "index" << '\t' << "pdgid" << '\t' << "MPid" << '\t' << "GenSt" << '\t' <<"Midx" << endl;
   for(int i=2; i<truthColl.size(); i++){
-    cout << i << '\t' << truthColl.at(i).PdgId() << '\t' << truthColl.at(i).IndexMother() << '\t' << truthColl.at( truthColl.at(i).IndexMother() ).PdgId() << endl;
+//    cout << i << '\t' << truthColl.at(i).PdgId() << '\t' << truthColl.at(i).IndexMother() << '\t' << truthColl.at( truthColl.at(i).IndexMother() ).PdgId() << '\t'<<'\t' << truthColl.at(i).GenStatus() << endl;
+    cout << i << '\t' << truthColl.at(i).PdgId() << '\t' << truthColl.at( truthColl.at(i).IndexMother() ).PdgId() << '\t' << truthColl.at(i).GenStatus() << '\t' << truthColl.at(i).IndexMother() << endl;
   }
 
 }
@@ -3261,6 +3263,7 @@ int AnalyzerCore::GetDaughterCandIdx(std::vector<snu::KMuon> PtlColl, TString Mo
     for(unsigned int i=0; i<PtlColl.size(); i++){
       for(unsigned int j=i+1; j<PtlColl.size(); j++){
         float Mass=(PtlColl.at(i)+PtlColl.at(j)).M();
+        if(PtlColl.at(i).Charge()==PtlColl.at(j).Charge()) continue;
         if(fabs(Mass-91.2)<mindM) {mindM=fabs(Mass-91.2); IdxLead=i; IdxSubl=j;}
       }
     }

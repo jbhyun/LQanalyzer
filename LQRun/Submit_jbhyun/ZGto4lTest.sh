@@ -2,32 +2,32 @@
 
 ########################################################################
 ## MC / DATA
-runMC=false
-runData=true
+runMC=true
+runData=false
 
 
 ########################################################################
 ## RUN PARAMETERS
 
-AnalysisCode="Mar2017_3l4j_TriLepComp" 
+AnalysisCode="Mar2017_3l4j_ZGto4lTest"
 #Stream="MuonEG"     
 #Stream="SingleMuon"     
 Stream="DoubleMuon"     
 #Stream="DoubleEG"
-runFake="True"
-#Skim="SKTree_LeptonSkim"  ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
+runFake="False"
+Skim="SKTree_LeptonSkim"  ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
 #Skim="SKTree_DiLepSkim"  ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
-Skim="SKTree_TriLepSkim"  ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
-DataPeriod="H"
+#Skim="SKTree_TriLepSkim"  ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
+DataPeriod="ALL"
 #job_logstep=1000
 LogLevel="INFO"
 #QueueOption="longq" 
 QueueOption="fastq" 
 
 
-#MCList="Analysis_bkg"
-MCList="ZG2l"
-#MCList="SignalMajor_1e2mu"#MCList="SignalMajor_3mu"
+MCList="ZZ4l"
+#MCList="ZG2l"
+#MCList="SignalMajor_1e2mu"
 #MCList="SignalMajor_3mu"
 #MCList="DY"
 #MCList="CR_EMu_804"
