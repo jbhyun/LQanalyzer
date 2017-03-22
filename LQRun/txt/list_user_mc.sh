@@ -4,12 +4,71 @@
 ### SAMPLE LIST ########## 
 #######################
 
-declare -a example=("WW" "WZ" "HNMupMup_100" "DYJets")
+declare -a example=("tthwA_1ta2mu_hc130A30" )
+
+#declare -a DY=("DYJets" 'TTJets_aMC') 
+declare -a ST=('SingleTop_s' 'SingleTbar_t' 'SingleTop_t' 'SingleTbar_tW_noHadron' 'SingleTop_tW_noHadron')
+declare -a DY=("DYJets") 
+declare -a ZZ4l=("ZZTo4L_powheg") 
+declare -a ZG2l=("ZGto2LG" "WGtoLNuG") 
+declare -a TT=("TTJets_aMC") 
+#declare -a TT=("TT_powheg") 
+declare -a BtagEffSample=('TT_powheg')
+#declare -a BtagEffSample=('TTJets_aMC' "DYJets")
 
 declare -a tmplist=('WpWp_qcd_madgraph' 'ZG_llG_MCatNLO' 'ZZ_llnunu_powheg' 'ZZ_llqq_MCatNLO' 'ZZ_llll_MCatNLO' 'ZZ_llll_powheg' 'ZZ_pythia8' 'ttHnobb_Powheg' 'ttHtobb_Powheg')
 
-declare -a tmpall_mc=('TTJets_aMC' 'WJets' 'WW'  'WZ' 'ZZ' 'DYJets')
+declare -a AllSample=('WJets' 'DYJets_10to50' 'DYJets' 'SingleTop_s' 'SingleTbar_t' 'SingleTop_t' 'SingleTbar_tW' 'SingleTop_tW' 'TT_powheg' 'ZZ' 'WZ' 'WW' 'WGtoLNuG' 'WGtoLNuEE' 'WGtoLNuMM' 'ZGto2LG' 'ttH_nonbb' 'ttH_bb' 'ttW' 'ttZ') 
+###Backgound
+###declare -a input_samples=( 'DY10to50_MCatNLO' 'DY50plus_MCatNLO' 'WJets_MCatNLO' "TT_MCatNLO" 'TTG_MCatNLO' 'WZ_lllnu_MCatNLO' 'WZ_llqq_MCatNLO' 'ZZ_llqq_MCatNLO' 'ZZ_llll_MCatNLO' 'singletop_tbarW_Powheg' 'singletop_tW_Powheg' 'singletop_tbar_Powheg' 'singletop_t_Powheg' 'singletop_s_MCatNLO' 'ttHtobb_Powheg' 'ttHnobb_Powheg' 'ttWJetsToLNu_MCatNLO' 'ttZToQQ_MCatNLO' 'ttZToLLNuNu_MCatNLO' )
+#declare -a Analysis_bkg_3mu=( 'DY10to50_MCatNLO' 'DY50plus_MCatNLO' 'WJets_MCatNLO' 'TT_powheg' 'TTG_MCatNLO' 'WW_llnn_powheg' 'WZ_lllnu_MCatNLO' 'WZ_llqq_MCatNLO' 'ZZ_llqq_MCatNLO' 'ZZ_llll_MCatNLO' 'WG_lnuG_madgraph' 'ZG_llG_MCatNLO' 'singletop_tbarW_Powheg' 'singletop_tW_Powheg' 'singletop_tbar_Powheg' 'singletop_t_Powheg' 'singletop_s_MCatNLO' 'ttHtobb_Powheg' 'ttHnobb_Powheg' 'ttWJetsToLNu_MCatNLO' 'ttWJetsToQQ_MCatNLO' 'ttZToQQ_MCatNLO' 'ttZToLLNuNu_MCatNLO' )
+declare -a Analysis_bkg=('WZTo3LNu_amcatnlo' 'ZZTo4L_powheg' 'ttWToLNu' 'ttZToLL_M-1to10' 'ttZ' 'ttH_nonbb' 'WWW' 'WWZ' 'WZZ' 'ZZZ')
 
-declare -a hn=('DYJets_10to50'  'DYJets' 'WW' 'ZZ' 'WZ' 'TTJets_MG')
+declare -a Analysis_bkg_test=( 'WZTo3LNu_powheg' )
+#declare -a Analysis_bkg_test=( 'ttZ' )
+declare -a Analysis_bkg_TT=('TT_powheg')
+
+###Signal
+declare -a SignalMajor_All=("TTToHcToWA_1e2mu_MHc100_MA15" "TTToHcToWA_1e2mu_MHc110_MA30" "TTToHcToWA_1e2mu_MHc160_MA15" "TTToHcToWA_1e2mu_MHc160_MA30" "TTToHcToWZp_1e2mu_MHc160_MZp5" "TTToHcToWZp_1e2mu_MHc90_MZp5" "TTToHcToWA_3mu_MHc100_MA15" "TTToHcToWA_3mu_MHc110_MA30" "TTToHcToWA_3mu_MHc160_MA15" "TTToHcToWA_3mu_MHc160_MA30" "TTToHcToWZp_3mu_MHc160_MZp5" "TTToHcToWZp_3mu_MHc90_MZp5" "TTToHcToWA_1ta2mu_MHc100_MA15" "TTToHcToWA_1ta2mu_MHc110_MA30" "TTToHcToWA_1ta2mu_MHc160_MA15" "TTToHcToWA_1ta2mu_MHc160_MA30" "TTToHcToWZp_1ta2mu_MHc160_MZp5" "TTToHcToWZp_1ta2mu_MHc90_MZp5" "TTToHcToWA_2l2mu_MHc100_MA15" "TTToHcToWA_2l2mu_MHc110_MA30" "TTToHcToWA_2l2mu_MHc160_MA15" "TTToHcToWA_2l2mu_MHc160_MA30" "TTToHcToWZp_2l2mu_MHc160_MZp5" "TTToHcToWZp_2l2mu_MHc90_MZp5")
 
 
+declare -a SignalMajor_1e2mu=("TTToHcToWA_1e2mu_MHc100_MA15" "TTToHcToWA_1e2mu_MHc110_MA30" "TTToHcToWA_1e2mu_MHc160_MA15" "TTToHcToWA_1e2mu_MHc160_MA30" "TTToHcToWZp_1e2mu_MHc160_MZp5" "TTToHcToWZp_1e2mu_MHc90_MZp5") 
+declare -a SignalMajor_3mu=("TTToHcToWA_3mu_MHc100_MA15" "TTToHcToWA_3mu_MHc110_MA30" "TTToHcToWA_3mu_MHc160_MA15" "TTToHcToWA_3mu_MHc160_MA30" "TTToHcToWZp_3mu_MHc160_MZp5" "TTToHcToWZp_3mu_MHc90_MZp5")
+declare -a SignalMajor_1tamu=("TTToHcToWA_1ta2mu_MHc100_MA15" "TTToHcToWA_1ta2mu_MHc110_MA30" "TTToHcToWA_1ta2mu_MHc160_MA15" "TTToHcToWA_1ta2mu_MHc160_MA30" "TTToHcToWZp_1ta2mu_MHc160_MZp5" "TTToHcToWZp_1ta2mu_MHc90_MZp5") 
+declare -a SignalMajor_2l2mu=("TTToHcToWA_2l2mu_MHc100_MA15" "TTToHcToWA_2l2mu_MHc110_MA30" "TTToHcToWA_2l2mu_MHc160_MA15" "TTToHcToWA_2l2mu_MHc160_MA30" "TTToHcToWZp_2l2mu_MHc160_MZp5" "TTToHcToWZp_2l2mu_MHc90_MZp5")
+
+
+declare -a Analysis_sig_test=("tthwA_4l2j_hc155A30")
+declare -a Analysis_sig_test1e2mu=("tthwA_1e2mu_hc130A30")
+declare -a Analysis_sig_test3mu=("tthwA_3mu_hc130A30")
+
+#CR##########################
+#CR-DiLep+jets
+declare -a CR_MuMu=('WJets' 'DYJets_10to50' 'DYJets' 'SingleTop_s' 'SingleTbar_t' 'SingleTop_t' 'SingleTbar_tW' 'SingleTop_tW' 'TT_powheg' 'WZ' 'ZZ' 'WW' 'WGtoLNuG' 'WGtoLNuEE' 'WGtoLNuMM' 'ZGto2LG' 'ttH_nonbb' 'ttH_bb' 'ttW' 'ttZ' 'QCD_Pt-15to20_MuEnriched' 'QCD_Pt-20to30_MuEnriched' 'QCD_Pt-30to50_MuEnriched' 'QCD_Pt-50to80_MuEnriched' 'QCD_Pt-80to120_MuEnriched' 'QCD_Pt-120to170_MuEnriched' 'QCD_Pt-170to300_MuEnriched' 'QCD_Pt-300to470_MuEnriched' 'QCD_Pt-470to600_MuEnriched' 'QCD_Pt-600to800_MuEnriched' 'QCD_Pt-800to1000_MuEnriched' 'QCD_Pt-1000toInf_MuEnriched' 'QCD_Pt-20to30_EMEnriched' 'QCD_Pt-30to50_EMEnriched' 'QCD_Pt-50to80_EMEnriched' 'QCD_Pt-80to120_EMEnriched' 'QCD_Pt-120to170_EMEnriched' 'QCD_Pt-170to300_EMEnriched' 'QCD_Pt-300toInf_EMEnriched' )
+
+declare -a CR_EMu=('WJets' 'DYJets_10to50' 'DYJets' 'SingleTop_s' 'SingleTbar_t' 'SingleTop_t' 'SingleTbar_tW' 'SingleTop_tW' 'TT_powheg' 'WZ' 'ZZ' 'WW' 'WGtoLNuG' 'WGtoLNuEE' 'WGtoLNuMM' 'ZGto2LG' 'ttH_nonbb' 'ttH_bb' 'ttW' 'ttZ' 'QCD_Pt-15to20_MuEnriched' 'QCD_Pt-20to30_MuEnriched' 'QCD_Pt-30to50_MuEnriched' 'QCD_Pt-50to80_MuEnriched' 'QCD_Pt-80to120_MuEnriched' 'QCD_Pt-120to170_MuEnriched' 'QCD_Pt-170to300_MuEnriched' 'QCD_Pt-300to470_MuEnriched' 'QCD_Pt-470to600_MuEnriched' 'QCD_Pt-600to800_MuEnriched' 'QCD_Pt-800to1000_MuEnriched' 'QCD_Pt-1000toInf_MuEnriched' 'QCD_Pt-20to30_EMEnriched' 'QCD_Pt-30to50_EMEnriched' 'QCD_Pt-50to80_EMEnriched' 'QCD_Pt-80to120_EMEnriched' 'QCD_Pt-120to170_EMEnriched' 'QCD_Pt-170to300_EMEnriched' 'QCD_Pt-300toInf_EMEnriched' )
+
+declare -a CR_EMu_804=('WJets' 'DYJets_10to50' 'DYJets' 'SingleTbar_tW_noHadron' 'SingleTop_tW_noHadron' 'TT_powheg' 'WZ' 'ZZ' 'WWTo2L2Nu' 'ZGto2LG')
+#declare -a CR_EMu_804=('WJets' 'DYJets_10to50' 'DYJets' 'SingleTbar_tW_noHadron' 'SingleTop_tW_noHadron' 'TTJets_aMC' 'WZ' 'ZZ' 'WWTo2L2Nu' 'ZGto2LG')
+
+
+#CR-TriLep
+declare -a CR_EMuMu=('DY10to50_MCatNLO' 'DY50plus_MCatNLO' 'WJets_MCatNLO' 'WZ_lllnu_MCatNLO' 'WZ_llqq_MCatNLO' 'ZZ_llll_MCatNLO' 'ZZ_llqq_MCatNLO' 'WW_llnn_powheg' 'ZG_llG_MCatNLO' 'WG_lnuG_madgraph' 'TT_powheg' 'TTG_MCatNLO' 'ttZToQQ_MCatNLO' 'ttZToLLNuNu_MCatNLO' 'ttWJetsToLNu_MCatNLO' 'ttWJetsToQQ_MCatNLO' 'ttHtobb_Powheg' 'ttHnobb_Powheg' 'singletop_tbarW_Powheg' 'singletop_tbarW_Powheg' 'singletop_tbar_Powheg' 'singletop_t_Powheg' 'singletop_s_MCatNLO')
+declare -a CR_MuMuMu=('DY10to50_MCatNLO' 'DY50plus_MCatNLO' 'WJets_MCatNLO' 'WZ_lllnu_MCatNLO' 'WZ_llqq_MCatNLO' 'ZZ_llll_MCatNLO' 'ZZ_llqq_MCatNLO' 'WW_llnn_powheg' 'ZG_llG_MCatNLO' 'WG_lnuG_madgraph' 'TT_powheg' 'TTG_MCatNLO' 'ttZToQQ_MCatNLO' 'ttZToLLNuNu_MCatNLO' 'ttWJetsToLNu_MCatNLO' 'ttWJetsToQQ_MCatNLO' 'ttHtobb_Powheg' 'ttHnobb_Powheg' 'singletop_tbarW_Powheg' 'singletop_tbarW_Powheg' 'singletop_tbar_Powheg' 'singletop_t_Powheg' 'singletop_s_MCatNLO')
+
+
+###QCD
+declare -a QCD_mu=('QCD_Pt-15to20_MuEnriched' 'QCD_Pt-20to30_MuEnriched' 'QCD_Pt-30to50_MuEnriched' 'QCD_Pt-50to80_MuEnriched' 'QCD_Pt-80to120_MuEnriched' 'QCD_Pt-120to170_MuEnriched' 'QCD_Pt-170to300_MuEnriched' 'QCD_Pt-300to470_MuEnriched' 'QCD_Pt-470to600_MuEnriched' 'QCD_Pt-600to800_MuEnriched' 'QCD_Pt-800to1000_MuEnriched' 'QCD_Pt-1000toInf_MuEnriched' )
+declare -a QCD_em=('QCD_Pt-20to30_EMEnriched' 'QCD_Pt-30to50_EMEnriched' 'QCD_Pt-50to80_EMEnriched' 'QCD_Pt-80to120_EMEnriched' 'QCD_Pt-120to170_EMEnriched' 'QCD_Pt-170to300_EMEnriched' 'QCD_Pt-300toInf_EMEnriched' )
+
+##declare -a QCD_bcToE=('QCD_20to30_bcToE_pythia8' 'QCD_30to80_bcToE_pythia8' 'QCD_80to170_bcToE_pythia8' 'QCD_170to250_bcToE_pythia8' 'QCD_250toInf_bcToE_pythia8')
+##declare -a QCD_DoubleEM=('QCD_DoubleEM_30to40_pythia8' 'QCD_DoubleEM_30toInf_pythia8' 'QCD_DoubleEM_40toInf_pythia8')
+declare -a QCD_All=('QCD_Pt-15to20_MuEnriched' 'QCD_Pt-20to30_MuEnriched' 'QCD_Pt-30to50_MuEnriched' 'QCD_Pt-50to80_MuEnriched' 'QCD_Pt-80to120_MuEnriched' 'QCD_Pt-120to170_MuEnriched' 'QCD_Pt-170to300_MuEnriched' 'QCD_Pt-300to470_MuEnriched' 'QCD_Pt-470to600_MuEnriched' 'QCD_Pt-600to800_MuEnriched' 'QCD_Pt-800to1000_MuEnriched' 'QCD_Pt-1000toInf_MuEnriched' 'QCD_Pt-20to30_EMEnriched' 'QCD_Pt-30to50_EMEnriched' 'QCD_Pt-50to80_EMEnriched' 'QCD_Pt-80to120_EMEnriched' 'QCD_Pt-120to170_EMEnriched' 'QCD_Pt-170to300_EMEnriched' 'QCD_Pt-300toInf_EMEnriched' )
+
+
+
+#DataValidation-SingleE
+declare -a Validation_SEle=("WJets_MCatNLO" "WG_lnuG_madgraph" "TT_MG5" "ZG_llG_MCatNLO" "WW_pythia8" "DY10to50_MCatNLO" "DY50plus_MCatNLO" 'QCD_em15to20_pythia8' 'QCD_em20to30_pythia8' 'QCD_em50to80_pythia8' 'QCD_em80to120_pythia8' 'QCD_em120to170_pythia8' 'QCD_em170to300_pythia8' 'QCD_20to30_bcToE_pythia8' 'QCD_30to80_bcToE_pythia8' 'QCD_80to170_bcToE_pythia8' 'QCD_170to250_bcToE_pythia8' 'QCD_250toInf_bcToE_pythia8') 
+
+#MuMubj Test
+declare -a MuMubj_bkg=("TT_powheg" "DY50plus_MCatNLO" "DY10to50_MCatNLO" "singletop_tbar_Powheg" "singletop_s_MCatNLO" "singletop_tW_Powheg" "singletop_tbarW_Powheg" "singletop_t_Powheg" "TTG_MCatNLO" "ttZToLLNuNu_MCatNLO" "ttWJetsToLNu_MCatNLO" "ttZToQQ_MCatNLO" "ttHnobb_Powheg" "WZ_lllnu_MCatNLO" "WZ_llqq_MCatNLO" "WW_pythia8" "ZZ_llll_MCatNLO" "ZG_llG_MCatNLO" "ZZ_llqq_MCatNLO")
