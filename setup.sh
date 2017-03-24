@@ -221,7 +221,7 @@ export running2015=False
 ### setup paths to be used in analysis code
 export LQANALYZER_ANALYSIS_PATH=${LQANALYZER_DIR}/LQAnalysis/
 export LQANALYZER_SRC_PATH=${LQANALYZER_DIR}/LQAnalysis/Analyzers/src/
-export LQANALYZER_INCLUDE_PATH=${LQANALYZER_DIR}/LQAnalysis/Analyzersinclude/
+export LQANALYZER_INCLUDE_PATH=${LQANALYZER_DIR}/LQAnalysis/Analyzers/include/
 export LQANALYZER_CORE_PATH=${LQANALYZER_DIR}/LQCore/
 
 export isSLC5="False"

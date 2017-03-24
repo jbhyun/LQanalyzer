@@ -110,7 +110,7 @@ void Mar2017_3l4j_TriLepComp::ExecuteEvents()throw( LQError ){
    }
 
    //Trigger Cut
-   //if(!Pass_Trigger) return;
+   if(!Pass_Trigger) return;
    FillCutFlow("TriggerCut", weight*pileup_reweight);
    /**********************************************************************************/
 
@@ -144,7 +144,6 @@ void Mar2017_3l4j_TriLepComp::ExecuteEvents()throw( LQError ){
      eventbase->GetMuonSel()->SetRelIsoType("PFRelIso04");   eventbase->GetMuonSel()->SetRelIso(0.1);//POG WP T
    std::vector<snu::KMuon> muonTightColl; eventbase->GetMuonSel()->Selection(muonTightColl,true);//(muonTightColl, bool RochCorr, bool debug)
    std::vector<snu::KMuon> muonColl;      if(k_running_nonprompt){ muonColl=muonLooseColl;} else{ muonColl=muonTightColl;}
-   //std::vector<snu::KMuon> muonHNColl; eventbase->GetMuonSel()->SelectMuons(muonHNColl, "MUON_HN_TRI_TIGHT", 10., 2.4);
    //std::vector<snu::KMuon> muonPromptColl; muonPromptColl=GetTruePrompt(muonColl, false);
 
      eventbase->GetElectronSel()->SetID(BaseSelection::ELECTRON_POG_LOOSE);
@@ -168,7 +167,6 @@ void Mar2017_3l4j_TriLepComp::ExecuteEvents()throw( LQError ){
      eventbase->GetElectronSel()->SetCheckCharge(true);
    std::vector<snu::KElectron> electronColl; eventbase->GetElectronSel()->Selection(electronColl);
    std::vector<snu::KElectron> electronNull;
-   //std::vector<snu::KElectron> electronHNColl; eventbase->GetElectronSel()->SelectElectrons(electronHNColl, "ELECTRON_HN_TIGHT", 20., 2.4);
 
      eventbase->GetJetSel()->SetID(BaseSelection::PFJET_LOOSE);
      eventbase->GetJetSel()->SetPt(30.);                     eventbase->GetJetSel()->SetEta(2.4);
@@ -209,8 +207,6 @@ void Mar2017_3l4j_TriLepComp::ExecuteEvents()throw( LQError ){
 
 
 
-   //std::vector<snu::KJet> jetLooseColl; eventbase->GetJetSel()->SelectJets(jetLooseColl, muonColl, electronColl, "PFJET_LOOSE", 20., 2.4);
-
    //Method to apply 2a method SF
    //std::vector<int> bIdxColl  = GetSFBJetIdx(jetColl,"Medium");
    //std::vector<int> ljIdxColl = GetSFLJetIdx(jetColl, bIdxColl, "Medium");
@@ -225,8 +221,8 @@ void Mar2017_3l4j_TriLepComp::ExecuteEvents()throw( LQError ){
    double met_y = eventbase->GetEvent().MET()*TMath::Sin(eventbase->GetEvent().METPhi());
    double Pzv,Pzv1, Pzv2;
    snu::KParticle v; v.SetPxPyPzE(met_x, met_y, 0, sqrt(met_x*met_x+met_y*met_y));
-//   snu::KParticle v[4]; v[0].SetPx(met_x); v[0].SetPy(met_y);
-//                        v[1].SetPx(met_x); v[1].SetPy(met_y);
+   //snu::KParticle v[4]; v[0].SetPx(met_x); v[0].SetPy(met_y);
+   //                     v[1].SetPx(met_x); v[1].SetPy(met_y);
 
    int nbjets=bjetColl.size(); int njets=jetColl.size(); const int nljets=ljetColl.size();//njets-nbjets;//number of light jets
    int Nvtx=eventbase->GetEvent().nVertices();
