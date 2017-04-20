@@ -207,7 +207,6 @@ void ElectronSelection::Selection(std::vector<KElectron>& leptonColl , bool m_de
     if(apply_dxysigmin && !(fabs(el->dxySig()) >= dxySig_min)) pass_selection = false;
     if(apply_dxysigmax && !(fabs(el->dxySig()) <  dxySig_max)) pass_selection = false;
 
-
     if(apply_BESepCut){
       if(fabs(el->SCEta())<1.479){
         if(apply_relisocut && !(reliso < relIsoBarrel_max && reliso >= relIsoBarrel_min)) pass_selection=false;
@@ -306,8 +305,9 @@ bool ElectronSelection::PassUserID(TString id, snu::KElectron el, vector<pair<TS
       if(!el.IsTrigMVAValid())  {if(debug){ cout << "Fail MVA medium" << endl;} return false;}
       if(!el.PassTrigMVAMedium()) {if(debug){ cout << "Fail MVA medium" << endl;} return false;}
     }
+    
   }
-
+  
 
   LeptonRelIso = el.PFRelIso(0.3);
 

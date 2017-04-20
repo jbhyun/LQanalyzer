@@ -202,6 +202,7 @@ void MCDataCorrections::FillCorrectionHist(string label, string dirname, string 
   CheckFile(infile_sf);
   TDirectory* tempDir = getTemporaryDirectory();
   tempDir->cd();
+
   //==== for leg-by-leg strategy, we should get efficiencies, not scale factors
   TString tmp_histsname = histsname;
   TString tmp_filename = filename;
@@ -230,6 +231,7 @@ void MCDataCorrections::FillCorrectionHist(string label, string dirname, string 
   infile_sf->Close();
   delete infile_sf;
   origDir->cd();
+
 }
 
 
@@ -515,7 +517,6 @@ double  MCDataCorrections::GetDoubleEGTriggerEff(vector<snu::KElectron> el){
   if(corr_isdata) return 1.;
   
 
-
   // https://twiki.cern.ch/twiki/pub/CMS/HWW2016TriggerAndIdIsoScaleFactorsResults/AN-16-172_temp.pdf
   if(el.size() <  2.) return 0.;
   if(el.size() == 2.){
@@ -525,12 +526,20 @@ double  MCDataCorrections::GetDoubleEGTriggerEff(vector<snu::KElectron> el){
     double evt_eff = eff_tl + (1. - eff_lt) * eff_tl;
     return evt_eff;
   }
-  
+  /// This is approx correct to set nel > 2 as same form for nel=2 (Fix for correct form. when time permitss)
+  double eff_tl = GetEffDEG1(el[0]) * GetEffDEG2(el[1]);
+  double eff_lt = GetEffDEG2(el[0]) * GetEffDEG1(el[1]);
+
+  double evt_eff = eff_tl + (1. - eff_lt) * eff_tl;
+  return evt_eff;
+
+
   return 1.;
 }
 
 
 double MCDataCorrections::GetEffDEG1(snu::KElectron el){
+
   float el_eta = el.Eta();
   float el_pt = el.Pt();
   if(el_pt < 10.) return 0.;
@@ -562,7 +571,7 @@ double MCDataCorrections::GetEffDEG1(snu::KElectron el){
   ptbins.push_back(50.);
   ptbins.push_back(100.);
 
-  for(int i = 0 ; i <  etabins.size(); i++){
+  for(unsigned int i = 0 ; i <  etabins.size(); i++){
     if(el_eta  > etabins[i]) {
       std::map<float, std::vector<float>* >::iterator it = deg_etaptmap_leg1.find(etabins[i]);
 
@@ -599,20 +608,21 @@ double MCDataCorrections::GetEffDEG2(snu::KElectron el){
   etabins.push_back(-1.6);
   etabins.push_back(-2.1);
   etabins.push_back(-2.5);
-
+  
+  // low pt leg
   vector<float> ptbins;
-  ptbins.push_back(23.);
-  ptbins.push_back(24.);
-  ptbins.push_back(25.);
-  ptbins.push_back(26.);
+  ptbins.push_back(12.);
+  ptbins.push_back(13.);
+  ptbins.push_back(15.);
+  ptbins.push_back(18.);
+  ptbins.push_back(22.);
   ptbins.push_back(30.);
   ptbins.push_back(35.);
   ptbins.push_back(40.);
-  ptbins.push_back(45.);
   ptbins.push_back(50.);
   ptbins.push_back(100.);
 
-  for(int i = 0 ; i <  etabins.size(); i++){
+  for(unsigned int i = 0 ; i <  etabins.size(); i++){
     if(el_eta > etabins[i]) {
       std::map<float, std::vector<float>* >::iterator it = deg_etaptmap_leg2.find(etabins[i]);
       if(it == deg_etaptmap_leg2.end()){
@@ -627,6 +637,40 @@ double MCDataCorrections::GetEffDEG2(snu::KElectron el){
   return 1.;
 }
 
+//==== Trigger Scale Factor, by "leg-by-leg" strategy
+
+double MCDataCorrections::TriggerEfficiencyLegByLeg(std::vector<snu::KElectron> el, std::vector<snu::KMuon> mu, int TriggerCategory, int DataOrMC, int direction){
+
+  if(k_period < 0) {
+    /// If k_period < 0 then using ALL data periods and use weighted SF                                                                                                        
+
+    double lumi_periodB = 5.929001722;
+    double lumi_periodC = 2.645968083;
+    double lumi_periodD = 4.35344881;
+    double lumi_periodE = 4.049732039;
+    double lumi_periodF = 3.157020934;
+    double lumi_periodG = 7.549615806;
+    double lumi_periodH = 8.545039549 + 0.216782873;
+    double total_lumi = (lumi_periodB+lumi_periodC+lumi_periodD+lumi_periodE+lumi_periodF+lumi_periodG+lumi_periodH);
+
+    double WeightBtoF = (lumi_periodB+lumi_periodC+lumi_periodD+lumi_periodE+lumi_periodF)/total_lumi;
+    double WeightGtoH = (lumi_periodG+lumi_periodH)/total_lumi;
+    double Eff_bf = TriggerEfficiencyLegByLegPeriodDependant(el, mu, TriggerCategory, 1, DataOrMC, direction);
+    double Eff_gh = TriggerEfficiencyLegByLegPeriodDependant(el, mu, TriggerCategory, 7, DataOrMC, direction);
+
+    double Eff_weight = WeightBtoF*Eff_bf + WeightGtoH*Eff_gh;
+    //cout << "[MCDataCorrections::TriggerEfficiencyLegByLeg] WeightBtoF = " << WeightBtoF << endl;
+    //cout << "[MCDataCorrections::TriggerEfficiencyLegByLeg] WeightGtoH = " << WeightGtoH << endl;
+    //cout << "[MCDataCorrections::TriggerEfficiencyLegByLeg] Eff_bf = " << Eff_bf << endl;
+    //cout << "[MCDataCorrections::TriggerEfficiencyLegByLeg] Eff_gh = " << Eff_gh << endl;
+
+    return Eff_weight;
+  }
+  return TriggerEfficiencyLegByLegPeriodDependant(el, mu, TriggerCategory, k_period, DataOrMC, direction);
+
+}
+
+double MCDataCorrections::TriggerEfficiencyLegByLegPeriodDependant(std::vector<snu::KElectron> el, std::vector<snu::KMuon> mu, int TriggerCategory, int catperiod, int DataOrMC, int direction){
 
 //==== Trigger Scale Factor, by "leg-by-leg" strategy
 
@@ -712,9 +756,11 @@ double MCDataCorrections::TriggerEfficiency_DiMuon_passing_DoubleMuonTrigger(snu
   double eta1 = abs(mu1.Eta());
   double pt1 = mu1.Pt();
   if(pt1>=120.) pt1 = 119.;
+  if(pt1<10.) pt1 = 10.1;
   double eta2 = abs(mu2.Eta());
   double pt2 = mu2.Pt();
   if(pt2>120.) pt2 = 119.;
+  if(pt2<10.) pt2 = 10.1;
 
   //cout << "[MCDataCorrections::TriggerEfficiency_DiMuon_passing_DoubleMuonTrigger] tag = " << tag << ", sample = " << sample << endl;
 
@@ -726,11 +772,11 @@ double MCDataCorrections::TriggerEfficiency_DiMuon_passing_DoubleMuonTrigger(snu
     int bin_mu1 = hist_leg1->FindBin(eta1,pt1);
     int bin_mu2 = hist_leg1->FindBin(eta2,pt2);
 
-    double eff_mu1leg1 = hist_leg1->GetBinContent(bin_mu1);
-    double eff_mu2leg2 = hist_leg2->GetBinContent(bin_mu2);
+    double eff_mu1leg1 = hist_leg1->GetBinContent( hist_leg1->FindBin(eta1,pt1) );
+    double eff_mu2leg2 = hist_leg2->GetBinContent( hist_leg2->FindBin(eta2,pt2) );
 
-    double eff_mu1leg2 = hist_leg2->GetBinContent(bin_mu1);
-    double eff_mu2leg1 = hist_leg1->GetBinContent(bin_mu2);
+    double eff_mu1leg2 = hist_leg2->GetBinContent( hist_leg2->FindBin(eta1,pt1) );
+    double eff_mu2leg1 = hist_leg1->GetBinContent( hist_leg1->FindBin(eta2,pt2) );
 
     //cout << "[MCDataCorrections::TriggerEfficiency_DiMuon_passing_DoubleMuonTrigger] pt1 = " << pt1 << ", eta1 = " << eta1 << endl;
     //cout << "[MCDataCorrections::TriggerEfficiency_DiMuon_passing_DoubleMuonTrigger] => " << leg1 << " : " << eff_mu1leg1 << endl;
@@ -753,19 +799,17 @@ double MCDataCorrections::TriggerEfficiency_DiMuon_passing_DoubleMuonTrigger(snu
 
 
 
-
 double MCDataCorrections::ElectronScaleFactor( TString elid, vector<snu::KElectron> el, int sys){
   float sf= 1.;
   if(corr_isdata) return 1.;
-  
-  /// http://fcouderc.web.cern.ch/fcouderc/EGamma/scaleFactors/Moriond17/approval/RECO/passingRECO/egammaEffi.txt_egammaPlots.pdf
 
+  //http://fcouderc.web.cern.ch/fcouderc/EGamma/scaleFactors/Moriond17/approval/EleID/passingVeto80X/egammaEffi.txt_egammaPlots.pdf
   std::string sid= "";
   
   for(vector<KElectron>::iterator itel=el.begin(); itel!=el.end(); ++itel) {
     float elpt=itel->Pt();
     if(elpt > 500.) elpt= 499.;
-    if(elpt < 25.) elpt= 25;
+    if(elpt < 10.) elpt= 11;
     
     if(CheckCorrectionHist("ID_" + elid)){
       int bin =  GetCorrectionHist("ID_" + elid)->FindBin(fabs(itel->SCEta()), elpt);
@@ -777,7 +821,7 @@ double MCDataCorrections::ElectronScaleFactor( TString elid, vector<snu::KElectr
   return sf;
 }
 
-double MCDataCorrections::ElectronRecoScaleFactor(vector<snu::KElectron> el){
+double MCDataCorrections::ElectronRecoScaleFactor(vector<snu::KElectron> el, int sys){
   
   // https://indico.cern.ch/event/604907/contributions/2452907/attachments/1401460/2139067/RecoSF_ApprovalMoriond17_25Jan2017.pdf
 
@@ -785,11 +829,20 @@ double MCDataCorrections::ElectronRecoScaleFactor(vector<snu::KElectron> el){
   float sf= 1.;
   for(vector<KElectron>::iterator itel=el.begin(); itel!=el.end(); ++itel) {
     float elpt= itel->Pt() ;
+    float unc = 0.;
+    if(elpt < 20.) unc=0.01;
+    if(elpt >  80.) unc=0.01;
     if(itel->Pt() > 500.) elpt=499.;
     if(itel->Pt() < 25.) elpt=25.;
     if(CheckCorrectionHist("EL_RECO")){
       int bin =  GetCorrectionHist("EL_RECO")->FindBin(fabs(itel->SCEta()), elpt);
       sf *= GetCorrectionHist("EL_RECO")->GetBinContent(bin);
+      if(fabs(sys) == 1){
+	float err =  GetCorrectionHist("EL_RECO")->GetBinError(bin);
+	err = sqrt (pow(err, 2.) + pow(unc, 2.));
+	if(sys == 1)sf *= (1. + err);
+	if(sys == -1)sf *= (1. - err);
+      }
     }
   }
   
@@ -797,10 +850,10 @@ double MCDataCorrections::ElectronRecoScaleFactor(vector<snu::KElectron> el){
 }
 
 
-float MCDataCorrections::UserPileupWeight(snu::KEvent ev){
+float MCDataCorrections::UserPileupWeight(snu::KEvent ev, int nj){
   
   if(corr_isdata) return 1.;
-  return reweightPU->GetWeight(ev.nVertices(),TString(getenv("CATVERSION")));
+  return reweightPU->GetWeight(ev.nVertices(),TString(getenv("CATVERSION")), nj);
 }
 
 
@@ -879,7 +932,7 @@ void MCDataCorrections::CorrectMuonMomentum(vector<snu::KMuon>& k_muons, vector<
 	double u1 = gRandom->Rndm();
 	double u2 = gRandom->Rndm();
 
-	int mu_index = it->MCTruthIndex();
+	unsigned int mu_index = it->MCTruthIndex();
 	float genpt(-999.);
 	if(mu_index > 0 && mu_index < truth.size()) {
 	  if(fabs(truth.at(mu_index).PdgId() ) == 13) genpt = truth.at(mu_index).Pt();
