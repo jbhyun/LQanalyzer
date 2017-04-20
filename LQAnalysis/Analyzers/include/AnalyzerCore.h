@@ -373,6 +373,10 @@ class AnalyzerCore : public LQCycleBase {
 
   //template <class Ptl> int GetDaughterCandIdx(std::vector<Ptl> PtlColl, TString MotherPtl, float WindowWidth=10., TString Option="");
   int GetDaughterCandIdx(std::vector<snu::KMuon> PtlColl, TString MotherPtl, float WindowWidth=10., TString Option="");
+  int GetDaughterCandIdx(std::vector<snu::KJet>  PtlColl, TString MotherPtl, float WindowWidth=10., TString Option="");
+  double TopPTReweight(std::vector<snu::KTruth> TruthColl);
+  float  GenFilterEfficiency(TString SampleName);
+  float  SignalNorm(TString SampleName, float Xsec);
 
 };
 #endif

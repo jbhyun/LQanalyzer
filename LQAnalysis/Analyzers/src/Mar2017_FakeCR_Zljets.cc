@@ -1,6 +1,6 @@
-// $Id: Mar2017_3l4j_TriLepComp.cc 1 2013-11-26 10:23:10Z jalmond $
+// $Id: Mar2017_FakeCR_Zljets.cc 1 2013-11-26 10:23:10Z jalmond $
 /***************************************************************************
- * @Project: LQMar2017_3l4j_TriLepComp Frame - ROOT-based analysis framework for Korea SNU
+ * @Project: LQMar2017_FakeCR_Zljets Frame - ROOT-based analysis framework for Korea SNU
  * @Package: LQCycles
  *
  * @author John Almond       <jalmond@cern.ch>           - SNU
@@ -8,7 +8,7 @@
  ***************************************************************************/
 
 /// Local includes
- #include "Mar2017_3l4j_TriLepComp.h"
+ #include "Mar2017_FakeCR_Zljets.h"
 
  //Core includes
  #include "Reweight.h"
@@ -16,17 +16,17 @@
  #include "BaseSelection.h"
  #include "AnalyzerCore.h"
  //// Needed to allow inheritance for use in LQCore/core classes
- ClassImp (Mar2017_3l4j_TriLepComp);
+ ClassImp (Mar2017_FakeCR_Zljets);
 
- Mar2017_3l4j_TriLepComp::Mar2017_3l4j_TriLepComp() : AnalyzerCore(), out_muons(0) {
+ Mar2017_FakeCR_Zljets::Mar2017_FakeCR_Zljets() : AnalyzerCore(), out_muons(0) {
 
-   SetLogName("Mar2017_3l4j_TriLepComp");
-   Message("In Mar2017_3l4j_TriLepComp constructor", INFO);
+   SetLogName("Mar2017_FakeCR_Zljets");
+   Message("In Mar2017_FakeCR_Zljets constructor", INFO);
    InitialiseAnalysis();
  }
 
 
- void Mar2017_3l4j_TriLepComp::InitialiseAnalysis() throw( LQError ) {
+ void Mar2017_FakeCR_Zljets::InitialiseAnalysis() throw( LQError ) {
    
    /// Initialise histograms
    MakeHistograms();  
@@ -40,7 +40,7 @@
 //Loop///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-void Mar2017_3l4j_TriLepComp::ExecuteEvents()throw( LQError ){
+void Mar2017_FakeCR_Zljets::ExecuteEvents()throw( LQError ){
 
 ////Basic Infos///////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -70,8 +70,8 @@ void Mar2017_3l4j_TriLepComp::ExecuteEvents()throw( LQError ){
    FillCutFlow("NoCut", weight*pileup_reweight);
 
 
-   //bool TriMu_analysis=true, EMuMu_analysis=false, DiMuon_analysis=false, DiEle_analysis=false;
-   bool TriMu_analysis=false, EMuMu_analysis=true, DiMuon_analysis=false, DiEle_analysis=false;
+   bool TriMu_analysis=true, EMuMu_analysis=false, DiMuon_analysis=false, DiEle_analysis=false;
+   //bool TriMu_analysis=false, EMuMu_analysis=true, DiMuon_analysis=false, DiEle_analysis=false;
    //bool TriMu_analysis=false, EMuMu_analysis=false, DiMuon_analysis=true, DiEle_analysis=false;
    //bool TriMu_analysis=false, EMuMu_analysis=false, DiMuon_analysis=false, DiEle_analysis=true;
 
@@ -91,19 +91,19 @@ void Mar2017_3l4j_TriLepComp::ExecuteEvents()throw( LQError ){
 
    //Trigger Path of Analysis
    bool Pass_Trigger=false;
-   //if(false){
-   if(EMuMu_analysis){
+   if(false){
+   //if(EMuMu_analysis){
      //if( PassTrigger("HLT_IsoMu24_v") || PassTrigger("HLT_IsoTkMu24_v") ) Pass_Trigger=true;
      if( PassTrigger("HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v")
           || PassTrigger("HLT_Mu12_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v")
           || PassTrigger("HLT_Mu12_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ_v") ) Pass_Trigger=true;
    }
-   else if(TriMu_analysis){
-   //else if(EMuMu_analysis || TriMu_analysis){
+   else if(EMuMu_analysis || TriMu_analysis){
+   //else if(TriMu_analysis){
      //if( PassTrigger("HLT_IsoMu24_v") || PassTrigger("HLT_IsoTkMu24_v") ) Pass_Trigger=true;
      //if( PassTrigger("HLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_DZ_v") ) Pass_Trigger=true;
      if( PassTrigger("HLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_DZ_v")
-          || PassTrigger("HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_v") ) Pass_Trigger=true;
+        || PassTrigger("HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_v") ) Pass_Trigger=true;
    }
    else if(DiMuon_analysis){
      //if( PassTrigger("HLT_IsoMu24_v") || PassTrigger("HLT_IsoTkMu24_v") ) Pass_Trigger=true;
@@ -164,7 +164,7 @@ void Mar2017_3l4j_TriLepComp::ExecuteEvents()throw( LQError ){
      eventbase->GetMuonSel()->SetBSdxy(0.05);                eventbase->GetMuonSel()->SetdxySigMax(3.);
      eventbase->GetMuonSel()->SetRelIsoType("PFRelIso04");   eventbase->GetMuonSel()->SetRelIso(0.1);
    std::vector<snu::KMuon> muonTightColl; eventbase->GetMuonSel()->Selection(muonTightColl,true);
-   std::vector<snu::KMuon> muonColl;      if(k_running_nonprompt){ muonColl=muonLooseColl;} else{ muonColl=muonTightColl;}
+   std::vector<snu::KMuon> muonColl;      if(k_running_nonprompt){ muonColl=muonLooseColl; } else{ muonColl=muonTightColl; }
    //std::vector<snu::KMuon> muonPromptColl; muonPromptColl=GetTruePrompt(muonColl, false);
 
      eventbase->GetElectronSel()->SetID(BaseSelection::ELECTRON_POG_LOOSE);
@@ -194,42 +194,8 @@ void Mar2017_3l4j_TriLepComp::ExecuteEvents()throw( LQError ){
 
      eventbase->GetJetSel()->SetID(BaseSelection::PFJET_LOOSE);
      eventbase->GetJetSel()->SetPt(25.);                     eventbase->GetJetSel()->SetEta(2.4);
-     //eventbase->GetJetSel()->SetPileUpJetID(true,"Loose");
      bool LeptonVeto=true;
    std::vector<snu::KJet> jetColl; eventbase->GetJetSel()->Selection(jetColl, LeptonVeto, muonLooseColl, electronLooseColl);
-     eventbase->GetJetSel()->SetID(BaseSelection::PFJET_LOOSE);
-     eventbase->GetJetSel()->SetPt(20.);                     eventbase->GetJetSel()->SetEta(2.4);
-     LeptonVeto=true;
-   std::vector<snu::KJet> jet20POGLVetoColl; eventbase->GetJetSel()->Selection(jet20POGLVetoColl, LeptonVeto, muonPOGLColl, electronVetoColl);
-     eventbase->GetJetSel()->SetID(BaseSelection::PFJET_LOOSE);
-     eventbase->GetJetSel()->SetPt(30.);                     eventbase->GetJetSel()->SetEta(2.4);
-     LeptonVeto=true;
-   std::vector<snu::KJet> jet30POGLVetoColl; eventbase->GetJetSel()->Selection(jet30POGLVetoColl, LeptonVeto, muonPOGLColl, electronVetoColl);
-     eventbase->GetJetSel()->SetID(BaseSelection::PFJET_LOOSE);
-     eventbase->GetJetSel()->SetPt(20.);                     eventbase->GetJetSel()->SetEta(2.4);
-     LeptonVeto=true;
-   std::vector<snu::KJet> jet20HNVVetoColl; eventbase->GetJetSel()->Selection(jet20HNVVetoColl, LeptonVeto, muonVetoColl, electronVetoColl);
-     eventbase->GetJetSel()->SetID(BaseSelection::PFJET_LOOSE);
-     eventbase->GetJetSel()->SetPt(30.);                     eventbase->GetJetSel()->SetEta(2.4);
-     LeptonVeto=true;
-   std::vector<snu::KJet> jet30HNVVetoColl; eventbase->GetJetSel()->Selection(jet30HNVVetoColl, LeptonVeto, muonVetoColl, electronVetoColl);
-     eventbase->GetJetSel()->SetID(BaseSelection::PFJET_LOOSE);
-     eventbase->GetJetSel()->SetPt(20.);                     eventbase->GetJetSel()->SetEta(2.4);
-     LeptonVeto=true;
-   std::vector<snu::KJet> jet20FakeLVetoColl; eventbase->GetJetSel()->Selection(jet20FakeLVetoColl, LeptonVeto, muonLooseColl, electronVetoColl);
-     eventbase->GetJetSel()->SetID(BaseSelection::PFJET_LOOSE);
-     eventbase->GetJetSel()->SetPt(30.);                     eventbase->GetJetSel()->SetEta(2.4);
-     LeptonVeto=true;
-   std::vector<snu::KJet> jet30FakeLVetoColl; eventbase->GetJetSel()->Selection(jet30FakeLVetoColl, LeptonVeto, muonLooseColl, electronVetoColl);
-     eventbase->GetJetSel()->SetID(BaseSelection::PFJET_LOOSE);
-     eventbase->GetJetSel()->SetPt(20.);                     eventbase->GetJetSel()->SetEta(2.4);
-     LeptonVeto=true;
-   std::vector<snu::KJet> jet20FakeTVetoColl; eventbase->GetJetSel()->Selection(jet20FakeTVetoColl, LeptonVeto, muonTightColl, electronVetoColl);
-     eventbase->GetJetSel()->SetID(BaseSelection::PFJET_LOOSE);
-     eventbase->GetJetSel()->SetPt(30.);                     eventbase->GetJetSel()->SetEta(2.4);
-     LeptonVeto=true;
-   std::vector<snu::KJet> jet30FakeTVetoColl; eventbase->GetJetSel()->Selection(jet30FakeTVetoColl, LeptonVeto, muonTightColl, electronVetoColl);
-
 
 
    //Method to apply 2a method SF
@@ -283,7 +249,7 @@ void Mar2017_3l4j_TriLepComp::ExecuteEvents()throw( LQError ){
      }
      else{
        //Perfect Prompt Ratio Approximation applied.(p=1), Applicable to generic number, combination of leptons under premise of high prompt rate.
-       if(k_running_nonprompt){
+       if(k_running_nonprompt && TriMu_analysis){
          fake_weight = m_datadriven_bkg->Get_DataDrivenWeight(false, muonLooseColl, "MUON_HN_TRI_TIGHT", muonLooseColl.size(), electronLooseColl, "ELECTRON_HN_LOWDXY_TIGHT", electronLooseColl.size());
        }
      }
@@ -333,8 +299,8 @@ void Mar2017_3l4j_TriLepComp::ExecuteEvents()throw( LQError ){
      //if( !(muonColl.at(0).Pt()>27) ) return; //SingleMuon Trig Case
      if( !(electronLooseColl.size()==1 && muonLooseColl.size()==2) ) return;
      if( !(electronColl.size()==1 && muonColl.size()==2) ) return;
-     //if( !(electronColl.at(0).Pt()>20 && muonColl.at(0).Pt()>20 && muonColl.at(1).Pt()>10) ) return;
-     if( !(electronColl.at(0).Pt()>25 && muonColl.at(0).Pt()>15 && muonColl.at(1).Pt()>10) ) return;
+     if( !(electronColl.at(0).Pt()>20 && muonColl.at(0).Pt()>20 && muonColl.at(1).Pt()>10) ) return;
+     //if( !(electronColl.at(0).Pt()>25 && muonColl.at(0).Pt()>15 && muonColl.at(1).Pt()>10) ) return;
      if( SumCharge(muonColl)!=0 ) return;
      FillCutFlow("3lCut", weight);
      FillHist("WeightDist", weight, 1, -10., 10., 2000);
@@ -414,8 +380,7 @@ void Mar2017_3l4j_TriLepComp::ExecuteEvents()throw( LQError ){
    if(TriMu_analysis){
 
      //Step1 : 3mu +PTCut+ SSS veto
-     //if( !(muonVetoColl.size()==3 && electronVetoColl.size()==0) ) return;//No additional leptons - keep 4th mu ? ~ 5% These guys have impact of ~25%
-     if( !(muonLooseColl.size()==3) ) return;//For valid usage of fakeable object method. FakeLooseSel should be exactly 3.
+     if( !(muonLooseColl.size()==3 && electronLooseColl.size()==0) ) return;//For valid usage of fakeable object method. FakeLooseSel should be exactly 3.
      int NLmF=0;
      for(int i=0; i<muonVetoColl.size(); i++){
        if(k_running_nonprompt){
@@ -438,6 +403,7 @@ void Mar2017_3l4j_TriLepComp::ExecuteEvents()throw( LQError ){
      //General variables
      int IdxZCandLead = GetDaughterCandIdx(muonColl, "Z", 10., "Lead");
      int IdxZCandSubl = GetDaughterCandIdx(muonColl, "Z", 10., "Subl");
+     int IdxWCand = 3-IdxZCandLead-IdxZCandSubl;
 
      int IdxOS  = TriMuChargeIndex(muonColl,"OS");
      int IdxSS1 = TriMuChargeIndex(muonColl,"SS1");
@@ -457,180 +423,78 @@ void Mar2017_3l4j_TriLepComp::ExecuteEvents()throw( LQError ){
      int IdxWCand_NoLim = 3-IdxZCandLead_NoLim-IdxZCandSubl_NoLim; 
      FillHist("Mmumu_ZCand", (muonColl.at(IdxZCandLead_NoLim)+muonColl.at(IdxZCandSubl_NoLim)).M(), weight, 0., 200., 200);
      //float MTW = (muonColl.at(IdxWCand_NoLim)+v).Mt();
-     float MTW = sqrt(met*muonColl.at(IdxWCand_NoLim).Pt()-met_x*muonColl.at(IdxWCand_NoLim).Px()-met_y*muonColl.at(IdxWCand_NoLim).Py());
+     float MTW = sqrt( 2*(met*muonColl.at(IdxWCand_NoLim).Pt()-met_x*muonColl.at(IdxWCand_NoLim).Px()-met_y*muonColl.at(IdxWCand_NoLim).Py()) );
 
 
      //CR - TriLep + b veto
-     if(bjetColl.size()!=0) return;;
-
-//     FillCutFlow("bVeto", weight);
-     //3lep Z peak test : Fake Control Check
-     if(IdxZCandLead!=-1 && IdxZCandSubl!=-1){
-       FillHist("Mmumu_Zwin10_3mu", (muonColl.at(IdxZCandLead)+muonColl.at(IdxZCandSubl)).M(), weight, 0., 200., 200);
-       FillHist("PTmu1_Zwin10_3mu", muonColl.at(0).Pt(), weight, 0., 200., 200);
-       FillHist("PTmu2_Zwin10_3mu", muonColl.at(1).Pt(), weight, 0., 200., 200);
-       FillHist("PTmu3_Zwin10_3mu", muonColl.at(2).Pt(), weight, 0., 200., 200);
-       FillHist("Etamu1_Zwin10_3mu", muonColl.at(0).Eta(), weight, -5., 5., 100);
-       FillHist("Etamu2_Zwin10_3mu", muonColl.at(1).Eta(), weight, -5., 5., 100);
-       FillHist("Etamu3_Zwin10_3mu", muonColl.at(2).Eta(), weight, -5., 5., 100);
-     }
-
+     if(bjetColl.size()!=0) return;
+     FillCutFlow("bVeto", weight);
 
      //Generic 3lep agreement
-     FillHist("PTmu1_3lOSCut_3mu", muonColl.at(0).Pt(), weight, 0., 200., 200);
-     FillHist("PTmu2_3lOSCut_3mu", muonColl.at(1).Pt(), weight, 0., 200., 200);
-     FillHist("PTmu3_3lOSCut_3mu", muonColl.at(2).Pt(), weight, 0., 200., 200);
-     FillHist("Etamu1_3lOSCut_3mu", muonColl.at(0).Eta(), weight, -5., 5., 100);
-     FillHist("Etamu2_3lOSCut_3mu", muonColl.at(1).Eta(), weight, -5., 5., 100);
-     FillHist("Etamu3_3lOSCut_3mu", muonColl.at(2).Eta(), weight, -5., 5., 100);
+     FillHist("PTmu1_3lCut_3mu", muonColl.at(0).Pt(), weight, 0., 200., 200);
+     FillHist("PTmu2_3lCut_3mu", muonColl.at(1).Pt(), weight, 0., 200., 200);
+     FillHist("PTmu3_3lCut_3mu", muonColl.at(2).Pt(), weight, 0., 200., 200);
+     FillHist("Etamu1_3lCut_3mu", muonColl.at(0).Eta(), weight, -5., 5., 100);
+     FillHist("Etamu2_3lCut_3mu", muonColl.at(1).Eta(), weight, -5., 5., 100);
+     FillHist("Etamu3_3lCut_3mu", muonColl.at(2).Eta(), weight, -5., 5., 100);
 
-     FillHist("Nj_3lOSCut_3mu", jetColl.size(), weight, 0., 10., 10);
-     FillHist("NlVeto_3lOSCut_3mu", muonVetoColl.size()+electronVetoColl.size(), weight, 0., 10., 10);
-     FillHist("NeVeto_3lOSCut_3mu", electronVetoColl.size(), weight, 0., 10., 10);
-     FillHist("NmuVeto_3lOSCut_3mu", muonVetoColl.size(), weight, 0., 10., 10);
-     FillHist("NmuL_3lOSCut_3mu", muonLooseColl.size(), weight, 0., 10., 10);
+     FillHist("Nj_3lCut_3mu", jetColl.size(), weight, 0., 10., 10);
+     FillHist("NlVeto_3lCut_3mu", muonVetoColl.size()+electronVetoColl.size(), weight, 0., 10., 10);
+     FillHist("NeVeto_3lCut_3mu", electronVetoColl.size(), weight, 0., 10., 10);
+     FillHist("NmuVeto_3lCut_3mu", muonVetoColl.size(), weight, 0., 10., 10);
+     FillHist("NmuL_3lCut_3mu", muonLooseColl.size(), weight, 0., 10., 10);
 
-     FillHist("MET_3lOSCut_3mu", met, weight, 0., 200., 200); 
-     FillHist("Nb_3lOSCut_3mu", bjetColl.size(), weight, 0., 10., 10);
-     FillHist("Mmumu_OSSS1_3lOSCut_3mu", (muonColl.at(IdxOS)+muonColl.at(IdxSS1)).M(), weight, 0., 200., 200);
-     FillHist("Mmumu_OSSS2_3lOSCut_3mu", (muonColl.at(IdxOS)+muonColl.at(IdxSS2)).M(), weight, 0., 200., 200);
-     FillHist("M3mu_3lOSCut_3mu", (muonColl.at(IdxOS)+muonColl.at(IdxSS1)+muonColl.at(IdxSS2)).M(), weight, 0., 500., 500);
+     FillHist("MET_3lCut_3mu", met, weight, 0., 200., 200); 
+     FillHist("Nb_3lCut_3mu", bjetColl.size(), weight, 0., 10., 10);
+     FillHist("Mmumu_OSSS1_3lCut_3mu", (muonColl.at(IdxOS)+muonColl.at(IdxSS1)).M(), weight, 0., 200., 200);
+     FillHist("Mmumu_OSSS2_3lCut_3mu", (muonColl.at(IdxOS)+muonColl.at(IdxSS2)).M(), weight, 0., 200., 200);
+     FillHist("M3mu_3lCut_3mu", (muonColl.at(IdxOS)+muonColl.at(IdxSS1)+muonColl.at(IdxSS2)).M(), weight, 0., 500., 500);
+
 
      //Large Difference at Low Mass, but we don't have low prompt estimate from MC. 
      //So Remove low mass part
      if(Mmumu_OSSS2>4 && Mmumu_OSSS1>4){
-       FillHist("PTmu1_3lOSM12Cut_3mu", muonColl.at(0).Pt(), weight, 0., 200., 200);
-       FillHist("PTmu2_3lOSM12Cut_3mu", muonColl.at(1).Pt(), weight, 0., 200., 200);
-       FillHist("PTmu3_3lOSM12Cut_3mu", muonColl.at(2).Pt(), weight, 0., 200., 200);
-       FillHist("Etamu1_3lOSM12Cut_3mu", muonColl.at(0).Eta(), weight, -5., 5., 100);
-       FillHist("Etamu2_3lOSM12Cut_3mu", muonColl.at(1).Eta(), weight, -5., 5., 100);
-       FillHist("Etamu3_3lOSM12Cut_3mu", muonColl.at(2).Eta(), weight, -5., 5., 100);
+       FillCutFlow("M(#mu#mu)>4", weight);
+
+       FillHist("PTmu1_3lM4Cut_3mu", muonColl.at(0).Pt(), weight, 0., 200., 200);
+       FillHist("PTmu2_3lM4Cut_3mu", muonColl.at(1).Pt(), weight, 0., 200., 200);
+       FillHist("PTmu3_3lM4Cut_3mu", muonColl.at(2).Pt(), weight, 0., 200., 200);
+       FillHist("Etamu1_3lM4Cut_3mu", muonColl.at(0).Eta(), weight, -5., 5., 100);
+       FillHist("Etamu2_3lM4Cut_3mu", muonColl.at(1).Eta(), weight, -5., 5., 100);
+       FillHist("Etamu3_3lM4Cut_3mu", muonColl.at(2).Eta(), weight, -5., 5., 100);
   
-       FillHist("Nj_3lOSM12Cut_3mu", jetColl.size(), weight, 0., 10., 10);
-       FillHist("NlVeto_3lOSM12Cut_3mu", muonVetoColl.size()+electronVetoColl.size(), weight, 0., 10., 10);
-       FillHist("NeVeto_3lOSM12Cut_3mu", electronVetoColl.size(), weight, 0., 10., 10);
-       FillHist("NmuVeto_3lOSM12Cut_3mu", muonVetoColl.size(), weight, 0., 10., 10);
-       FillHist("NmuL_3lOSM12Cut_3mu", muonLooseColl.size(), weight, 0., 10., 10);
+       FillHist("Nj_3lM4Cut_3mu", jetColl.size(), weight, 0., 10., 10);
+       FillHist("NlVeto_3lM4Cut_3mu", muonVetoColl.size()+electronVetoColl.size(), weight, 0., 10., 10);
+       FillHist("NeVeto_3lM4Cut_3mu", electronVetoColl.size(), weight, 0., 10., 10);
+       FillHist("NmuVeto_3lM4Cut_3mu", muonVetoColl.size(), weight, 0., 10., 10);
+       FillHist("NmuL_3lM4Cut_3mu", muonLooseColl.size(), weight, 0., 10., 10);
 
-       FillHist("MET_3lOSM12Cut_3mu", met, weight, 0., 200., 200); 
-       FillHist("Nb_3lOSM12Cut_3mu", bjetColl.size(), weight, 0., 10., 10);
-       FillHist("dRmumu_OSSS1_3lOSM12Cut_3mu", muonColl.at(IdxOS).DeltaR(muonColl.at(IdxSS1)), weight, 0., 5., 500);
-       FillHist("dRmumu_OSSS2_3lOSM12Cut_3mu", muonColl.at(IdxOS).DeltaR(muonColl.at(IdxSS2)), weight, 0., 5., 500);
-       FillHist("Mmumu_OSSS1_3lOSM12Cut_3mu", (muonColl.at(IdxOS)+muonColl.at(IdxSS1)).M(), weight, 0., 200., 200);
-       FillHist("Mmumu_OSSS2_3lOSM12Cut_3mu", (muonColl.at(IdxOS)+muonColl.at(IdxSS2)).M(), weight, 0., 200., 200);
-       FillHist("M3mu_3lOSM12Cut_3mu", (muonColl.at(IdxOS)+muonColl.at(IdxSS1)+muonColl.at(IdxSS2)).M(), weight, 0., 500., 500);
-       FillHist("MTW_3lOSM12Cut_3mu", MTW, weight, 0., 300., 300);
-      
+       FillHist("MET_3lM4Cut_3mu", met, weight, 0., 200., 200); 
+       FillHist("Nb_3lM4Cut_3mu", bjetColl.size(), weight, 0., 10., 10);
+       FillHist("dRmumu_OSSS1_3lM4Cut_3mu", muonColl.at(IdxOS).DeltaR(muonColl.at(IdxSS1)), weight, 0., 5., 500);
+       FillHist("dRmumu_OSSS2_3lM4Cut_3mu", muonColl.at(IdxOS).DeltaR(muonColl.at(IdxSS2)), weight, 0., 5., 500);
+       FillHist("Mmumu_OSSS1_3lM4Cut_3mu", (muonColl.at(IdxOS)+muonColl.at(IdxSS1)).M(), weight, 0., 200., 200);
+       FillHist("Mmumu_OSSS2_3lM4Cut_3mu", (muonColl.at(IdxOS)+muonColl.at(IdxSS2)).M(), weight, 0., 200., 200);
+       FillHist("M3mu_3lM4Cut_3mu", (muonColl.at(IdxOS)+muonColl.at(IdxSS1)+muonColl.at(IdxSS2)).M(), weight, 0., 500., 500);
+       FillHist("MTW_3lM4Cut_3mu", MTW, weight, 0., 300., 300);
 
-       //Njet related Study
-       FillHist("Nj20_POGLVeto_3lOSM12Cut_3mu", jet20POGLVetoColl.size(), weight, 0., 10., 10);
-       FillHist("Nj30_POGLVeto_3lOSM12Cut_3mu", jet30POGLVetoColl.size(), weight, 0., 10., 10);
-       FillHist("Nj20_HNVVeto_3lOSM12Cut_3mu",  jet20HNVVetoColl.size(), weight, 0., 10., 10);
-       FillHist("Nj30_HNVVeto_3lOSM12Cut_3mu",  jet30HNVVetoColl.size(), weight, 0., 10., 10);
-       FillHist("Nj20_FakeLVeto_3lOSM12Cut_3mu", jet20FakeLVetoColl.size(), weight, 0., 10., 10);
-       FillHist("Nj30_FakeLVeto_3lOSM12Cut_3mu", jet30FakeLVetoColl.size(), weight, 0., 10., 10);
-       FillHist("Nj20_FakeTVeto_3lOSM12Cut_3mu", jet20FakeTVetoColl.size(), weight, 0., 10., 10);
-       FillHist("Nj30_FakeTVeto_3lOSM12Cut_3mu", jet30FakeTVetoColl.size(), weight, 0., 10., 10);
-
-       if(njets==0){
-         FillHist("PTmu1_3lOSM12Cut_0j_3mu", muonColl.at(0).Pt(), weight, 0., 200., 200);
-         FillHist("PTmu2_3lOSM12Cut_0j_3mu", muonColl.at(1).Pt(), weight, 0., 200., 200);
-         FillHist("PTmu3_3lOSM12Cut_0j_3mu", muonColl.at(2).Pt(), weight, 0., 200., 200);
-         FillHist("Etamu1_3lOSM12Cut_0j_3mu", muonColl.at(0).Eta(), weight, -5., 5., 100);
-         FillHist("Etamu2_3lOSM12Cut_0j_3mu", muonColl.at(1).Eta(), weight, -5., 5., 100);
-         FillHist("Etamu3_3lOSM12Cut_0j_3mu", muonColl.at(2).Eta(), weight, -5., 5., 100);
-         FillHist("MET_3lOSM12Cut_0j_3mu", met, weight, 0., 200., 200); 
-         FillHist("Mmumu_OSSS1_3lOSM12Cut_0j_3mu", (muonColl.at(IdxOS)+muonColl.at(IdxSS1)).M(), weight, 0., 200., 200);
-         FillHist("Mmumu_OSSS2_3lOSM12Cut_0j_3mu", (muonColl.at(IdxOS)+muonColl.at(IdxSS2)).M(), weight, 0., 200., 200);
-         FillHist("M3mu_3lOSM12Cut_0j_3mu", (muonColl.at(IdxOS)+muonColl.at(IdxSS1)+muonColl.at(IdxSS2)).M(), weight, 0., 500., 500);
-         FillHist("MTW_3lOSM12Cut_0j_3mu", MTW, weight, 0., 300., 300);
+       if(IdxZCandLead!=-1 && IdxZCandSubl!=-1){
+         FillCutFlow("|M(#mu#mu)-MZ|<10", weight);
+         FillHist("Mmumu_Zwin10_3lM4Cut_3mu", (muonColl.at(IdxZCandLead)+muonColl.at(IdxZCandSubl)).M(), weight, 0., 200., 200);
+         FillHist("PTmu1_Zwin10_3lM4Cut_3mu", muonColl.at(0).Pt(), weight, 0., 200., 200);
+         FillHist("PTmu2_Zwin10_3lM4Cut_3mu", muonColl.at(1).Pt(), weight, 0., 200., 200);
+         FillHist("PTmu3_Zwin10_3lM4Cut_3mu", muonColl.at(2).Pt(), weight, 0., 200., 200);
+         FillHist("PTmuW_Zwin10_3lM4Cut_3mu", muonColl.at(IdxWCand).Pt(), weight, 0., 200., 200);
+         FillHist("Etamu1_Zwin10_3lM4Cut_3mu", muonColl.at(0).Eta(), weight, -5., 5., 100);
+         FillHist("Etamu2_Zwin10_3lM4Cut_3mu", muonColl.at(1).Eta(), weight, -5., 5., 100);
+         FillHist("Etamu3_Zwin10_3lM4Cut_3mu", muonColl.at(2).Eta(), weight, -5., 5., 100);
+         if(Mmumu_OSSS1>40 && Mmumu_OSSS2>40){
+           FillHist("Mmumu_Zwin10_3lM4M40Cut_3mu", (muonColl.at(IdxZCandLead)+muonColl.at(IdxZCandSubl)).M(), weight, 0., 200., 200);
+           FillHist("PTmu3_Zwin10_3lM4M40Cut_3mu", muonColl.at(2).Pt(), weight, 0., 200., 200);
+           FillHist("PTmuW_Zwin10_3lM4M40Cut_3mu", muonColl.at(IdxWCand).Pt(), weight, 0., 200., 200);
+         }
        }
-       else if(njets==1){
-         FillHist("PTmu1_3lOSM12Cut_1j_3mu", muonColl.at(0).Pt(), weight, 0., 200., 200);
-         FillHist("PTmu2_3lOSM12Cut_1j_3mu", muonColl.at(1).Pt(), weight, 0., 200., 200);
-         FillHist("PTmu3_3lOSM12Cut_1j_3mu", muonColl.at(2).Pt(), weight, 0., 200., 200);
-         FillHist("Etamu1_3lOSM12Cut_1j_3mu", muonColl.at(0).Eta(), weight, -5., 5., 100);
-         FillHist("Etamu2_3lOSM12Cut_1j_3mu", muonColl.at(1).Eta(), weight, -5., 5., 100);
-         FillHist("Etamu3_3lOSM12Cut_1j_3mu", muonColl.at(2).Eta(), weight, -5., 5., 100);
-         FillHist("MET_3lOSM12Cut_1j_3mu", met, weight, 0., 200., 200); 
-         FillHist("Mmumu_OSSS1_3lOSM12Cut_1j_3mu", (muonColl.at(IdxOS)+muonColl.at(IdxSS1)).M(), weight, 0., 200., 200);
-         FillHist("Mmumu_OSSS2_3lOSM12Cut_1j_3mu", (muonColl.at(IdxOS)+muonColl.at(IdxSS2)).M(), weight, 0., 200., 200);
-         FillHist("M3mu_3lOSM12Cut_1j_3mu", (muonColl.at(IdxOS)+muonColl.at(IdxSS1)+muonColl.at(IdxSS2)).M(), weight, 0., 500., 500);
-         FillHist("MTW_3lOSM12Cut_1j_3mu", MTW, weight, 0., 300., 300);
-       }
-       else if(njets==2){
-         FillHist("PTmu1_3lOSM12Cut_2j_3mu", muonColl.at(0).Pt(), weight, 0., 200., 200);
-         FillHist("PTmu2_3lOSM12Cut_2j_3mu", muonColl.at(1).Pt(), weight, 0., 200., 200);
-         FillHist("PTmu3_3lOSM12Cut_2j_3mu", muonColl.at(2).Pt(), weight, 0., 200., 200);
-         FillHist("Etamu1_3lOSM12Cut_2j_3mu", muonColl.at(0).Eta(), weight, -5., 5., 100);
-         FillHist("Etamu2_3lOSM12Cut_2j_3mu", muonColl.at(1).Eta(), weight, -5., 5., 100);
-         FillHist("Etamu3_3lOSM12Cut_2j_3mu", muonColl.at(2).Eta(), weight, -5., 5., 100);
-         FillHist("MET_3lOSM12Cut_2j_3mu", met, weight, 0., 200., 200); 
-         FillHist("Mmumu_OSSS1_3lOSM12Cut_2j_3mu", (muonColl.at(IdxOS)+muonColl.at(IdxSS1)).M(), weight, 0., 200., 200);
-         FillHist("Mmumu_OSSS2_3lOSM12Cut_2j_3mu", (muonColl.at(IdxOS)+muonColl.at(IdxSS2)).M(), weight, 0., 200., 200);
-         FillHist("M3mu_3lOSM12Cut_2j_3mu", (muonColl.at(IdxOS)+muonColl.at(IdxSS1)+muonColl.at(IdxSS2)).M(), weight, 0., 500., 500);
-         FillHist("MTW_3lOSM12Cut_2j_3mu", MTW, weight, 0., 300., 300);
-       }
-
-      
-       
-
-       /*-----------------------------------------------------------------------------------------------------------------------*/
-       //Most difference removed by 4GeV cut. But still have M(3l)~90 difference
-       //Need to test whether this is from ZZTo4L & out of 4GeV gen cut and one of them out of acceptance
-       FillHist("PTmuNonZ_3lOSM12Cut_3mu", muonColl.at(IdxNonZSS).Pt(), weight, 0., 200., 200);
-       FillHist("EtamuNonZ_3lOSM12Cut_3mu", muonColl.at(IdxNonZSS).Eta(), weight, -5., 5., 100);
-       float dRS=min(muonColl.at(IdxNonZSS).DeltaR(muonColl.at(IdxZmuOS)),muonColl.at(IdxNonZSS).DeltaR(muonColl.at(IdxZmuSS)));
-       float dRL=max(muonColl.at(IdxNonZSS).DeltaR(muonColl.at(IdxZmuOS)),muonColl.at(IdxNonZSS).DeltaR(muonColl.at(IdxZmuSS)));
-       float dRZmu=muonColl.at(IdxNonZSS).DeltaR(muonColl.at(IdxZmuOS)+muonColl.at(IdxZmuSS));
-       float dPhiS=min(fabs(muonColl.at(IdxNonZSS).DeltaPhi(muonColl.at(IdxZmuOS))),fabs(muonColl.at(IdxNonZSS).DeltaPhi(muonColl.at(IdxZmuSS))));
-       float dPhiL=max(fabs(muonColl.at(IdxNonZSS).DeltaPhi(muonColl.at(IdxZmuOS))),fabs(muonColl.at(IdxNonZSS).DeltaPhi(muonColl.at(IdxZmuSS))));
-       float dPhiZmu=fabs(muonColl.at(IdxNonZSS).DeltaPhi(muonColl.at(IdxZmuOS)+muonColl.at(IdxZmuSS)));
-
-       FillHist("dRmuZmuNonZS_3lOSM12Cut_3mu", dRS, weight, 0., 5., 500);
-       FillHist("dRmuZmuNonZL_3lOSM12Cut_3mu", dRL, weight, 0., 5., 500);
-       FillHist("dRmuZ_3lOSM12Cut_3mu", dRZmu, weight, 0., 5., 500);
-       FillHist("AbsdPhimuZmuNonZS_3lOSM12Cut_3mu", dPhiS, weight, 0., 3.15, 200);
-       FillHist("AbsdPhimuZmuNonZL_3lOSM12Cut_3mu", dPhiL, weight, 0., 3.15, 200);
-       FillHist("AbsdPhimuZ_3lOSM12Cut_3mu", dPhiZmu, weight, 0., 3.15, 200);
-
-       //M(3l)~90 events inspection
-       if(M3l>70 && M3l<100){
-         FillHist("dRmuZmuNonZS_3lOSM12M3lCut_3mu", dRS, weight, 0., 5., 500);
-         FillHist("dRmuZmuNonZL_3lOSM12M3lCut_3mu", dRL, weight, 0., 5., 500);
-         FillHist("dRmuZ_3lOSM12M3lCut_3mu", dRZmu, weight, 0., 5., 500);
-         FillHist("AbsdPhimuZmuNonZS_3lOSM12M3lCut_3mu", dPhiS, weight, 0., 3.15, 200);
-         FillHist("AbsdPhimuZmuNonZL_3lOSM12M3lCut_3mu", dPhiL, weight, 0., 3.15, 200);
-         FillHist("AbsdPhimuZ_3lOSM12M3lCut_3mu", dPhiZmu, weight, 0., 3.15, 200);
-       }
-       /*-----------------------------------------------------------------------------------------------------------------------*/
-      
-       //After removing 3l~90GeV peak
-       if(fabs(M3l-90)>10){
-         FillHist("PTmu1_3lOSM12M3l90Cut_3mu", muonColl.at(0).Pt(), weight, 0., 200., 200);
-         FillHist("PTmu2_3lOSM12M3l90Cut_3mu", muonColl.at(1).Pt(), weight, 0., 200., 200);
-         FillHist("PTmu3_3lOSM12M3l90Cut_3mu", muonColl.at(2).Pt(), weight, 0., 200., 200);
-         FillHist("Etamu1_3lOSM12M3l90Cut_3mu", muonColl.at(0).Eta(), weight, -5., 5., 100);
-         FillHist("Etamu2_3lOSM12M3l90Cut_3mu", muonColl.at(1).Eta(), weight, -5., 5., 100);
-         FillHist("Etamu3_3lOSM12M3l90Cut_3mu", muonColl.at(2).Eta(), weight, -5., 5., 100);
-    
-         FillHist("Nj_3lOSM12M3l90Cut_3mu", jetColl.size(), weight, 0., 10., 10);
-         FillHist("NlVeto_3lOSM12M3l90Cut_3mu", muonVetoColl.size()+electronVetoColl.size(), weight, 0., 10., 10);
-         FillHist("NeVeto_3lOSM12M3l90Cut_3mu", electronVetoColl.size(), weight, 0., 10., 10);
-         FillHist("NmuVeto_3lOSM12M3l90Cut_3mu", muonVetoColl.size(), weight, 0., 10., 10);
-         FillHist("MET_3lOSM12M3l90Cut_3mu", met, weight, 0., 200., 200); 
-         FillHist("Nb_3lOSM12M3l90Cut_3mu", bjetColl.size(), weight, 0., 10., 10);
-         FillHist("dRmumu_OSSS1_3lOSM12M3l90Cut_3mu", muonColl.at(IdxOS).DeltaR(muonColl.at(IdxSS1)), weight, 0., 5., 500);
-         FillHist("dRmumu_OSSS2_3lOSM12M3l90Cut_3mu", muonColl.at(IdxOS).DeltaR(muonColl.at(IdxSS2)), weight, 0., 5., 500);
-         FillHist("Mmumu_OSSS1_3lOSM12M3l90Cut_3mu", (muonColl.at(IdxOS)+muonColl.at(IdxSS1)).M(), weight, 0., 200., 200);
-         FillHist("Mmumu_OSSS2_3lOSM12M3l90Cut_3mu", (muonColl.at(IdxOS)+muonColl.at(IdxSS2)).M(), weight, 0., 200., 200);
-         FillHist("M3mu_3lOSM12M3l90Cut_3mu", (muonColl.at(IdxOS)+muonColl.at(IdxSS1)+muonColl.at(IdxSS2)).M(), weight, 0., 500., 500);
-       }
-
-     }
-
-     //ttZ peak test : ttZ cross section && Fake Control with b present
-//     Reg_3ljb: ;
+     }      
 
    }
    if(DiMuon_analysis){
@@ -665,14 +529,14 @@ return;
   
 
 
-void Mar2017_3l4j_TriLepComp::EndCycle()throw( LQError ){
+void Mar2017_FakeCR_Zljets::EndCycle()throw( LQError ){
   
   Message("In EndCycle" , INFO);
 
 }
 
 
-void Mar2017_3l4j_TriLepComp::BeginCycle() throw( LQError ){
+void Mar2017_FakeCR_Zljets::BeginCycle() throw( LQError ){
   
   Message("In begin Cycle", INFO);
   
@@ -692,14 +556,14 @@ void Mar2017_3l4j_TriLepComp::BeginCycle() throw( LQError ){
   
 }
 
-Mar2017_3l4j_TriLepComp::~Mar2017_3l4j_TriLepComp() {
+Mar2017_FakeCR_Zljets::~Mar2017_FakeCR_Zljets() {
   
-  Message("In Mar2017_3l4j_TriLepComp Destructor" , INFO);
+  Message("In Mar2017_FakeCR_Zljets Destructor" , INFO);
 //  if(!k_isdata)delete reweightPU;
   
 }
 
-void Mar2017_3l4j_TriLepComp::FillCutFlow(TString cut, float weight){
+void Mar2017_FakeCR_Zljets::FillCutFlow(TString cut, float weight){
   
   if(GetHist("cutflow_W") && GetHist("cutflow_N")){
     GetHist("cutflow_W")->Fill(cut,weight);
@@ -707,29 +571,33 @@ void Mar2017_3l4j_TriLepComp::FillCutFlow(TString cut, float weight){
   }
   else{
     if(!GetHist("cutflow_W")){
-      AnalyzerCore::MakeHistograms("cutflow_W", 6, 0., 6.);
+      AnalyzerCore::MakeHistograms("cutflow_W", 8, 0., 8.);
       GetHist("cutflow_W")->GetXaxis()->SetBinLabel(1,"NoCut");
       GetHist("cutflow_W")->GetXaxis()->SetBinLabel(2,"TriggerCut");
       GetHist("cutflow_W")->GetXaxis()->SetBinLabel(3,"EventCut");
       GetHist("cutflow_W")->GetXaxis()->SetBinLabel(4,"VertexCut");
       GetHist("cutflow_W")->GetXaxis()->SetBinLabel(5,"3lCut");
       GetHist("cutflow_W")->GetXaxis()->SetBinLabel(6,"bVeto");
+      GetHist("cutflow_W")->GetXaxis()->SetBinLabel(7,"M(#mu#mu)>4");
+      GetHist("cutflow_W")->GetXaxis()->SetBinLabel(8,"|M(#mu#mu)-MZ|<10");
     }
     if(!GetHist("cutflow_N")){
-      AnalyzerCore::MakeHistograms("cutflow_N", 6, 0., 6.);
+      AnalyzerCore::MakeHistograms("cutflow_N", 8, 0., 8.);
       GetHist("cutflow_N")->GetXaxis()->SetBinLabel(1,"NoCut");
       GetHist("cutflow_N")->GetXaxis()->SetBinLabel(2,"TriggerCut");
       GetHist("cutflow_N")->GetXaxis()->SetBinLabel(3,"EventCut");
       GetHist("cutflow_N")->GetXaxis()->SetBinLabel(4,"VertexCut");
       GetHist("cutflow_N")->GetXaxis()->SetBinLabel(5,"3lCut");
       GetHist("cutflow_N")->GetXaxis()->SetBinLabel(6,"bVeto");
+      GetHist("cutflow_N")->GetXaxis()->SetBinLabel(7,"M(#mu#mu)>4");
+      GetHist("cutflow_N")->GetXaxis()->SetBinLabel(8,"|M(#mu#mu)-MZ|<10");
     }
   }
 }
 
 
 
-void Mar2017_3l4j_TriLepComp::BeginEvent( )throw( LQError ){
+void Mar2017_FakeCR_Zljets::BeginEvent( )throw( LQError ){
 
   Message("In BeginEvent() " , DEBUG);
 
@@ -737,7 +605,7 @@ void Mar2017_3l4j_TriLepComp::BeginEvent( )throw( LQError ){
 }
 
 
-void Mar2017_3l4j_TriLepComp::MakeHistograms(){
+void Mar2017_FakeCR_Zljets::MakeHistograms(){
   //// Additional plots to make
     
   maphist.clear();
@@ -788,14 +656,14 @@ void Mar2017_3l4j_TriLepComp::MakeHistograms(){
 
   Message("Made histograms", INFO);
   // **
-  // *  Remove//Overide this Mar2017_3l4j_TriLepCompCore::MakeHistograms() to make new hists for your analysis
+  // *  Remove//Overide this Mar2017_FakeCR_ZljetsCore::MakeHistograms() to make new hists for your analysis
   // **
   
 }
 
 
 
-void Mar2017_3l4j_TriLepComp::ClearOutputVectors() throw(LQError) {
+void Mar2017_FakeCR_Zljets::ClearOutputVectors() throw(LQError) {
 
   // This function is called before every execute event (NO need to call this yourself.
   

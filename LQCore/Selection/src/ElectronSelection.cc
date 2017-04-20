@@ -203,6 +203,9 @@ void ElectronSelection::Selection(std::vector<KElectron>& leptonColl , bool m_de
       if(m_debug)cout << "Selection: Fail Conversion Cut" << endl;
     }
 
+    //d0 Significance
+    if(apply_dxysigmin && !(fabs(el->dxySig()) >= dxySig_min)) pass_selection = false;
+    if(apply_dxysigmax && !(fabs(el->dxySig()) <  dxySig_max)) pass_selection = false;
 
 
     if(apply_BESepCut){

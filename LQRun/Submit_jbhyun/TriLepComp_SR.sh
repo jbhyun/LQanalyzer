@@ -2,19 +2,20 @@
 
 ########################################################################
 ## MC / DATA
-runMC=false
-runData=true
+runMC=true
+runData=false
 
 
 ########################################################################
 ## RUN PARAMETERS
 
-AnalysisCode="Mar2017_3l4j_TriLepComp" 
+AnalysisCode="Apr2017_SignalRegion"
 #Stream="MuonEG"     
 #Stream="SingleMuon"     
 Stream="DoubleMuon"     
 #Stream="DoubleEG"
-runFake="True"
+runFake="False"
+runSignal="True"
 #Skim="SKTree_LeptonSkim"  ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
 #Skim="SKTree_DiLepSkim"  ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
 Skim="SKTree_TriLepSkim"  ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
@@ -25,15 +26,10 @@ LogLevel="INFO"
 QueueOption="fastq" 
 
 
-MCList="Analysis_bkg"
-#MCList="ZG2l"
-#MCList="SignalMajor_1e2mu"#MCList="SignalMajor_3mu"
-#MCList="SignalMajor_3mu"
-#MCList="DY"
-#MCList="CR_EMu_804"
-#MCList="Analysis_bkg_test"
-###Backgound : AllSample / Analysis_bkg / Analysis_bkg_test / QCD_mu
-###Signal    : Analysis_sig_All / Analysis_sig_1e2mu / Analysis_sig_3mu / tthwA_1e2mu / tthwA_3mu / Analysis_sig_test / Analysis_sig_test1
+#MCList="example"
+#MCList="Analysis_bkg"
+MCList="SignalMajor_All"
+###Signal    : "SignalMajor_All" "SignalMajor_1e2mu" "SignalMajor_3mu" "SignalMajor_1ta2mu" "SignalMajor_2l2mu"
 
 ########################################################################
 ## OUTPUT PATH CONFIG
@@ -65,6 +61,7 @@ else echo "Error: Period Set Wrongly"; exit 1;
 fi
 outputdir_period="${outputdir_lep}/${dir_period}/"
 outputdir_fake="${outputdir_period}Fakes/";
+outputdir_sig="${outputdir_period}Signals/";
 OutputDir=${outputdir_period}
 
 
@@ -75,6 +72,13 @@ then
   if [[ ! -d "${outputdir_fake}" ]]; then mkdir ${outputdir_fake}; echo "Made ${outputdir_fake}"; fi
   OutputDir=${outputdir_fake}
 fi
+if [[ ${runSignal} == "True" || ${runSignal} == "true" ]];
+then 
+  if [[ ${runMC} == "false" || ${runMC} == "False" ]]; then echo "runMC false but signal? exiting."; exit 1; fi
+  if [[ ! -d "${outputdir_sig}" ]]; then mkdir ${outputdir_sig}; echo "Made ${outputdir_sig}"; fi
+  OutputDir=${outputdir_sig}
+fi
+  
 
 
 if [[ $runData == 'false' || $runData == 'False' ]]; then Stream=""; fi

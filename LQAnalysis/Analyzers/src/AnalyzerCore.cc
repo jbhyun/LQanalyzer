@@ -1788,9 +1788,11 @@ void AnalyzerCore::PrintTruth(){
   
   cout << "=========================================================" << endl;
   cout << "truth size = " << truthColl.size() << endl;
-  cout << "index" << '\t' << "pdgid" << '\t' << "mother" << '\t' << "mother pid" << endl;
+  //cout << "index" << '\t' << "pdgid" << '\t' << "mother" << '\t' << "mother pid" << endl;
+  cout << "index" << '\t' << "pdgid" << '\t' << "MPid" << '\t' << "GenSt" << '\t' <<"Midx" << endl;
   for(int i=2; i<truthColl.size(); i++){
-    cout << i << '\t' << truthColl.at(i).PdgId() << '\t' << truthColl.at(i).IndexMother() << '\t' << truthColl.at( truthColl.at(i).IndexMother() ).PdgId() << endl;
+    //cout << i << '\t' << truthColl.at(i).PdgId() << '\t' << truthColl.at(i).IndexMother() << '\t' << truthColl.at( truthColl.at(i).IndexMother() ).PdgId() << endl;
+    cout << i << '\t' << truthColl.at(i).PdgId() << '\t' << truthColl.at( truthColl.at(i).IndexMother() ).PdgId() << '\t' << truthColl.at(i).GenStatus() << '\t' << truthColl.at(i).IndexMother() << endl;
   }
 
 }
@@ -2187,12 +2189,12 @@ void AnalyzerCore::WriteHists(){
     
     
     
-    if(mapit->first.Contains("closejet")){
-      if(!m_outputFile->GetDirectory( "closejet" )){
-	Dir = m_outputFile->mkdir("closejet");
+    if(mapit->first.Contains("Basic")){
+      if(!m_outputFile->GetDirectory( "Basic" )){
+	Dir = m_outputFile->mkdir("Basic");
 	m_outputFile->cd( Dir->GetName() );
       }
-      else  m_outputFile->cd("closejet");
+      else  m_outputFile->cd("Basic");
       mapit->second->Write();
       m_outputFile->cd();
     }
@@ -3340,8 +3342,171 @@ int AnalyzerCore::GetDaughterCandIdx(std::vector<snu::KMuon> PtlColl, TString Mo
       if     (Option.Contains("Lead")) return IdxLead;
       else if(Option.Contains("Subl")) return IdxSubl;
     }
-    
+    else if(WindowWidth<0 || Option.Contains("NoLimit")){
+      if     (Option.Contains("Lead")) return IdxLead;
+      else if(Option.Contains("Subl")) return IdxSubl;
+    }
   }
 
   return -1;
 };
+
+int AnalyzerCore::GetDaughterCandIdx(std::vector<snu::KJet> PtlColl, TString MotherPtl, float WindowWidth, TString Option){
+
+  float MotherMass=-1., mindM=9999.; int IdxLead=-1, IdxSubl=-1;
+
+  if     (MotherPtl=="Z") MotherMass=91.2; 
+  else if(MotherPtl=="W") MotherMass=80.4;
+  else return -1;
+
+  for(unsigned int i=0; i<PtlColl.size(); i++){
+    for(unsigned int j=i+1; j<PtlColl.size(); j++){
+      float Mass=(PtlColl.at(i)+PtlColl.at(j)).M();
+      if(fabs(Mass-MotherMass)<mindM) {mindM=fabs(Mass-MotherMass); IdxLead=i; IdxSubl=j;}
+    }
+  }
+  if(mindM<WindowWidth){
+    if     (Option.Contains("Lead")) return IdxLead;
+    else if(Option.Contains("Subl")) return IdxSubl;
+  }
+  else if(WindowWidth<0 || Option.Contains("NoLimit")){
+    if     (Option.Contains("Lead")) return IdxLead;
+    else if(Option.Contains("Subl")) return IdxSubl;
+  }
+
+  return -1;
+};
+
+
+
+double AnalyzerCore::TopPTReweight(std::vector<snu::KTruth> TruthColl){
+  //Reference: https://twiki.cern.ch/twiki/bin/view/CMS/TopPtReweighting
+  //This is coded for H+>WA CR, but this can be generally used for any kinds of decay of SM top pair events.
+  //Caution : This can be used for SM ttbar samples only. Though top pt disagreement is obseved in several generators,
+  //          but the SF are derived from Powheg+Pythia sample(Run2). So it is safe to use this only for Powheg ttbar.
+  //          And this MUST NOT be applied to single top sample and tops produced from BSM mechanism
+  //Current normalisation factor version : v8-0-6
+
+  double weight=1.;
+
+  for(std::vector<snu::KTruth>::iterator it_truth= TruthColl.begin(); it_truth!=TruthColl.end(); it_truth++){
+    if(fabs(it_truth->PdgId())==6 && fabs(it_truth->GenStatus())<30 && fabs(it_truth->GenStatus())>20){
+      weight*=exp(0.0615-0.0005*it_truth->Pt());
+    }
+  }
+  return sqrt(weight)*0.999777;
+
+}
+
+float AnalyzerCore::GenFilterEfficiency(TString SampleName){
+
+  if( isData ) return 1.;
+  else if( !(SampleName.Contains("3mu") || SampleName.Contains("1e2mu")) ) return 1.;
+
+  if     (SampleName.Contains("MHc90_MZp2" )) return 0.309;
+  else if(SampleName.Contains("MHc100_MZp2")) return 0.451;
+  else if(SampleName.Contains("MHc110_MZp2")) return 0.557;
+  else if(SampleName.Contains("MHc120_MZp2")) return 0.614;
+  else if(SampleName.Contains("MHc130_MZp2")) return 0.642;
+  else if(SampleName.Contains("MHc140_MZp2")) return 0.656;
+  else if(SampleName.Contains("MHc150_MZp2")) return 0.628;
+  else if(SampleName.Contains("MHc160_MZp2")) return 0.510;
+
+  else if(SampleName.Contains("MHc90_MZp5" )) return 0.275;
+  else if(SampleName.Contains("MHc100_MZp5")) return 0.445;
+  else if(SampleName.Contains("MHc110_MZp5")) return 0.546;
+  else if(SampleName.Contains("MHc120_MZp5")) return 0.603;
+  else if(SampleName.Contains("MHc130_MZp5")) return 0.637;
+  else if(SampleName.Contains("MHc140_MZp5")) return 0.650;
+  else if(SampleName.Contains("MHc150_MZp5")) return 0.631;
+  else if(SampleName.Contains("MHc160_MZp5")) return 0.504;
+
+  else if(SampleName.Contains("MHc90_MZp8" )) return 0.268;
+  else if(SampleName.Contains("MHc100_MZp8")) return 0.423;
+  else if(SampleName.Contains("MHc110_MZp8")) return 0.533;
+  else if(SampleName.Contains("MHc120_MZp8")) return 0.596;
+  else if(SampleName.Contains("MHc130_MZp8")) return 0.629;
+  else if(SampleName.Contains("MHc140_MZp8")) return 0.642;
+  else if(SampleName.Contains("MHc150_MZp8")) return 0.616;
+  else if(SampleName.Contains("MHc160_MZp8")) return 0.503;
+
+  else if(SampleName.Contains("MHc90_MA10" )) return 0.373;
+  else if(SampleName.Contains("MHc100_MA10")) return 0.380;
+  else if(SampleName.Contains("MHc110_MA10")) return 0.457;
+  else if(SampleName.Contains("MHc120_MA10")) return 0.501;
+  else if(SampleName.Contains("MHc130_MA10")) return 0.531;
+  else if(SampleName.Contains("MHc140_MA10")) return 0.550;
+  else if(SampleName.Contains("MHc150_MA10")) return 0.535;
+  else if(SampleName.Contains("MHc160_MA10")) return 0.436;
+
+  else if(SampleName.Contains("MHc90_MA10" )) return 0.373;
+  else if(SampleName.Contains("MHc100_MA10")) return 0.380;
+  else if(SampleName.Contains("MHc110_MA10")) return 0.457;
+  else if(SampleName.Contains("MHc120_MA10")) return 0.501;
+  else if(SampleName.Contains("MHc130_MA10")) return 0.531;
+  else if(SampleName.Contains("MHc140_MA10")) return 0.550;
+  else if(SampleName.Contains("MHc150_MA10")) return 0.535;
+  else if(SampleName.Contains("MHc160_MA10")) return 0.436;
+
+  else if(SampleName.Contains("MHc100_MA15")) return 0.464;
+  else if(SampleName.Contains("MHc110_MA15")) return 0.496;
+  else if(SampleName.Contains("MHc120_MA15")) return 0.528;
+  else if(SampleName.Contains("MHc130_MA15")) return 0.547;
+  else if(SampleName.Contains("MHc140_MA15")) return 0.558;
+  else if(SampleName.Contains("MHc150_MA15")) return 0.540;
+  else if(SampleName.Contains("MHc160_MA15")) return 0.440;
+
+  else if(SampleName.Contains("MHc100_MA20")) return 0.556;
+  else if(SampleName.Contains("MHc110_MA20")) return 0.564;
+  else if(SampleName.Contains("MHc120_MA20")) return 0.572;
+  else if(SampleName.Contains("MHc130_MA20")) return 0.576;
+  else if(SampleName.Contains("MHc140_MA20")) return 0.576;
+  else if(SampleName.Contains("MHc150_MA20")) return 0.554;
+  else if(SampleName.Contains("MHc160_MA20")) return 0.450;
+
+  else if(SampleName.Contains("MHc110_MA25")) return 0.620;
+  else if(SampleName.Contains("MHc120_MA25")) return 0.617;
+  else if(SampleName.Contains("MHc130_MA25")) return 0.613;
+  else if(SampleName.Contains("MHc140_MA25")) return 0.609;
+  else if(SampleName.Contains("MHc150_MA25")) return 0.577;
+  else if(SampleName.Contains("MHc160_MA25")) return 0.459;
+
+  else if(SampleName.Contains("MHc110_MA30")) return 0.648;
+  else if(SampleName.Contains("MHc120_MA30")) return 0.652;
+  else if(SampleName.Contains("MHc130_MA30")) return 0.644;
+  else if(SampleName.Contains("MHc140_MA30")) return 0.632;
+  else if(SampleName.Contains("MHc150_MA30")) return 0.594;
+  else if(SampleName.Contains("MHc160_MA30")) return 0.471;
+
+  else if(SampleName.Contains("MHc120_MA35")) return 0.672;
+  else if(SampleName.Contains("MHc130_MA35")) return 0.665;
+  else if(SampleName.Contains("MHc140_MA35")) return 0.649;
+  else if(SampleName.Contains("MHc150_MA35")) return 0.612;
+  else if(SampleName.Contains("MHc160_MA35")) return 0.485;
+
+
+  return 1.;
+
+}
+
+
+float AnalyzerCore::SignalNorm(TString SampleName, float Xsec){
+
+  //Normalise xsec(tt)*[2*Br(t>bH+)*Br(H+>AW)*Br(A>mumu)] to required value.
+
+  if( isData ) return 1.;
+  if( !(SampleName.Contains("TTToHcToWA") || SampleName.Contains("TTToHcToWZp")) ) return 1.;
+
+  float weight=Xsec/20.;
+  //20 is current default xsec value for all signal samples
+  //At Xsec, we have N*2*[Xsec/(20*2/14%)] =N*Xsec/20*14%
+
+  //Branching fraction weights to each channels
+  if     (SampleName.Contains("1e2mu"))  weight*=0.1464;
+  else if(SampleName.Contains("3mu"))    weight*=0.1464;
+  else if(SampleName.Contains("1ta2mu")) weight*=0.1464;
+  else if(SampleName.Contains("2l2mu"))  weight*=0.1061;
+
+  return weight;
+
+}

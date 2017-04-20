@@ -18,6 +18,15 @@
 
 
 //Jihwan Bhyun Modification///////////
+#pragma link C++ class Apr2017_SignalRegion+;
+#pragma link C++ class Apr2017_ZGto4lTest_ee+;
+#pragma link C++ class Mar2017_FakeCR_Zljets+;
+#pragma link C++ class Mar2017_FakeCR_Zbjets+;
+#pragma link C++ class Mar2017_WZControl+;
+#pragma link C++ class Mar2017_TriLepComp_3lb+;
+#pragma link C++ class Mar2017_ZZControl+;
+#pragma link C++ class Mar2017_TopPTRWSumCalc+;
+#pragma link C++ class Mar2017_TruthShouter+;
 #pragma link C++ class Mar2017_Validation+;
 #pragma link C++ class Mar2017_3l4j_ZGto4lTest+;
 #pragma link C++ class Mar2017_3l4j_TriLepComp+;

@@ -9,11 +9,8 @@ runData=true
 ########################################################################
 ## RUN PARAMETERS
 
-AnalysisCode="Mar2017_3l4j_TriLepComp" 
-#Stream="MuonEG"     
-#Stream="SingleMuon"     
+AnalysisCode="Mar2017_FakeCR_Zbjets" 
 Stream="DoubleMuon"     
-#Stream="DoubleEG"
 runFake="True"
 #Skim="SKTree_LeptonSkim"  ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
 #Skim="SKTree_DiLepSkim"  ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
@@ -26,9 +23,10 @@ QueueOption="fastq"
 
 
 MCList="Analysis_bkg"
-#MCList="ZG2l"
+#MCList="SignalMajor_All"
 #MCList="SignalMajor_1e2mu"#MCList="SignalMajor_3mu"
 #MCList="SignalMajor_3mu"
+#MCList="SignalMajor_2l2mu"
 #MCList="DY"
 #MCList="CR_EMu_804"
 #MCList="Analysis_bkg_test"

@@ -9,7 +9,7 @@ runData=true
 ########################################################################
 ## RUN PARAMETERS
 
-AnalysisCode="Mar2017_3l4j_TriLepComp" 
+AnalysisCode="Mar2017_TriLepComp_3lb"
 #Stream="MuonEG"     
 #Stream="SingleMuon"     
 Stream="DoubleMuon"     
@@ -21,11 +21,12 @@ Skim="SKTree_TriLepSkim"  ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepS
 DataPeriod="ALL"
 #job_logstep=1000
 LogLevel="INFO"
-#QueueOption="longq" 
-QueueOption="fastq" 
+QueueOption="longq" 
+#QueueOption="fastq" 
 
 
 MCList="Analysis_bkg"
+#MCList="CR_4lep"
 #MCList="ZG2l"
 #MCList="SignalMajor_1e2mu"#MCList="SignalMajor_3mu"
 #MCList="SignalMajor_3mu"

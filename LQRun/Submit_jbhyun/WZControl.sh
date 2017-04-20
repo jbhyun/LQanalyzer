@@ -9,11 +9,8 @@ runData=true
 ########################################################################
 ## RUN PARAMETERS
 
-AnalysisCode="Mar2017_3l4j_TriLepComp" 
-#Stream="MuonEG"     
-#Stream="SingleMuon"     
+AnalysisCode="Mar2017_WZControl" 
 Stream="DoubleMuon"     
-#Stream="DoubleEG"
 runFake="True"
 #Skim="SKTree_LeptonSkim"  ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
 #Skim="SKTree_DiLepSkim"  ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat

@@ -2,38 +2,26 @@
 
 ########################################################################
 ## MC / DATA
-runMC=false
-runData=true
+runMC=true
+runData=false
 
 
 ########################################################################
 ## RUN PARAMETERS
 
-AnalysisCode="Mar2017_3l4j_TriLepComp" 
-#Stream="MuonEG"     
-#Stream="SingleMuon"     
-Stream="DoubleMuon"     
-#Stream="DoubleEG"
-runFake="True"
+AnalysisCode="Mar2017_TopPTRWSumCalc"
+Stream="MuonEG"
+runFake="False"
+Skim="FLATCAT"  ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
 #Skim="SKTree_LeptonSkim"  ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
-#Skim="SKTree_DiLepSkim"  ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
-Skim="SKTree_TriLepSkim"  ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
 DataPeriod="ALL"
 #job_logstep=1000
 LogLevel="INFO"
-#QueueOption="longq" 
-QueueOption="fastq" 
+QueueOption="longq" 
+#QueueOption="fastq" 
 
 
-MCList="Analysis_bkg"
-#MCList="ZG2l"
-#MCList="SignalMajor_1e2mu"#MCList="SignalMajor_3mu"
-#MCList="SignalMajor_3mu"
-#MCList="DY"
-#MCList="CR_EMu_804"
-#MCList="Analysis_bkg_test"
-###Backgound : AllSample / Analysis_bkg / Analysis_bkg_test / QCD_mu
-###Signal    : Analysis_sig_All / Analysis_sig_1e2mu / Analysis_sig_3mu / tthwA_1e2mu / tthwA_3mu / Analysis_sig_test / Analysis_sig_test1
+MCList="TT"
 
 ########################################################################
 ## OUTPUT PATH CONFIG

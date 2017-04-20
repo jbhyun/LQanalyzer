@@ -9,7 +9,7 @@ runData=true
 ########################################################################
 ## RUN PARAMETERS
 
-AnalysisCode="Mar2017_3l4j_TriLepComp" 
+AnalysisCode="Mar2017_ZZControl" 
 #Stream="MuonEG"     
 #Stream="SingleMuon"     
 Stream="DoubleMuon"     
@@ -25,7 +25,10 @@ LogLevel="INFO"
 QueueOption="fastq" 
 
 
-MCList="Analysis_bkg"
+MCList="CR_4lep"
+#MCList="ggH"
+#MCList="CR_4lep_ZGtestAdd"
+#MCList="WWG"
 #MCList="ZG2l"
 #MCList="SignalMajor_1e2mu"#MCList="SignalMajor_3mu"
 #MCList="SignalMajor_3mu"

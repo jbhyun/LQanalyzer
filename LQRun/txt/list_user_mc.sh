@@ -4,7 +4,7 @@
 ### SAMPLE LIST ########## 
 #######################
 
-declare -a example=("tthwA_1ta2mu_hc130A30" )
+declare -a example=('ttZ' )
 declare -a AllSample=('WJets' 'DYJets_10to50' 'DYJets' 'SingleTop_s' 'SingleTbar_t' 'SingleTop_t' 'SingleTbar_tW' 'SingleTop_tW' 'TT_powheg' 'ZZ' 'WZ' 'WW' 'WGtoLNuG' 'WGtoLNuEE' 'WGtoLNuMM' 'ZGto2LG' 'ttH_nonbb' 'ttH_bb' 'ttW' 'ttZ') 
 
 
@@ -20,13 +20,22 @@ declare -a ZG2l=("ZGto2LG" "WGtoLNuG")
 declare -a TT=('TT_powheg') #"TTJets_aMC") 
 
 #Analysis Background
-declare -a Analysis_bkg=('WZTo3LNu_amcatnlo' 'ZZTo4L_powheg' 'ttWToLNu' 'ttZToLL_M-1to10' 'ttZ' 'ttH_nonbb' 'WWW' 'WWZ' 'WZZ' 'ZZZ')
+declare -a Analysis_bkg=('WZTo3LNu_powheg' 'ZZTo4L_powheg' "ggZZto2e2mu" "ggZZto2e2tau" "ggZZto2mu2tau" "ggZZto4e" "ggZZto4mu" "ggZZto4tau" "ZGto2LG" 'ttWToLNu' 'ttZToLL_M-1to10' 'ttZ' 'tZq' 'ttH_nonbb' 'WWW' 'WWZ' 'WZZ' 'ZZZ' "vbhHtoZZ" "ggHtoZZ")
+
 
 #Dilepton Validation
 declare -a CR_DiLep=('DYJets_10to50' 'DYJets' 'SingleTbar_tW_noHadron' 'SingleTop_tW_noHadron' 'TT_powheg' 'WZ' 'ZZ' 'WWTo2L2Nu' 'ZGto2LG')
-declare -a CR_EMu=('DYJets_10to50' 'DYJets' 'SingleTbar_tW_noHadron' 'SingleTop_tW_noHadron' 'TT_powheg' 'WZ' 'ZZ' 'WWTo2L2Nu' 'ZGto2LG')
+declare -a CR_EMu=('WJets' 'DYJets_10to50' 'DYJets' 'SingleTbar_tW_noHadron' 'SingleTop_tW_noHadron' 'WZ' 'ZZ' 'WWTo2L2Nu' 'ZGto2LG')
+#declare -a CR_EMu=('DYJets_10to50' 'DYJets' 'SingleTbar_tW_noHadron' 'SingleTop_tW_noHadron' 'TT_powheg' 'WZ' 'ZZ' 'WWTo2L2Nu' 'ZGto2LG')
 declare -a CR_MuMu_fast=('DYJets_10to50' 'DYJets')
 declare -a CR_EE_fast=('DYJets_10to50' 'DYJets')
+
+#4lepton CR
+#declare -a CR_4lep=("ZZTo4L_powheg" "ggZZto2e2mu" "ggZZto2e2tau" "ggZZto2mu2tau" "ggZZto4e" "ggZZto4mu" "ggZZto4tau" "ttZToLL_M-1to10" "ttZToLL_M-10" "vbhHtoZZ" "ggHtoZZ" "ttH_nonbb" "ZZZ" "WZZ" "WWZ")
+declare -a CR_4lep=("ZZTo4L_powheg" "ggZZto2e2mu" "ggZZto2e2tau" "ggZZto2mu2tau" "ggZZto4e" "ggZZto4mu" "ggZZto4tau" "ttZToLL_M-1to10" "ttZ" "vbhHtoZZ" "ggHtoZZ" "ttH_nonbb" "ZZZ" "WZZ" "WWZ" "WZG" "ZGto2LG")
+declare -a CR_4lep_ZGtestAdd=("WZG" "ZGto2LG")
+declare -a WWG=("WWG")
+declare -a ggH=("ggHtoZZ")
 
 #Btag Efficiency Measurement
 declare -a BtagEffSample=('TT_powheg')
