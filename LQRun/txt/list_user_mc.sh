@@ -16,6 +16,7 @@ declare -a AllSample=('WJets' 'DYJets_10to50' 'DYJets' 'SingleTop_s' 'SingleTbar
 #Single Process
 declare -a ST=('SingleTop_s' 'SingleTbar_t' 'SingleTop_t' 'SingleTbar_tW_noHadron' 'SingleTop_tW_noHadron')
 declare -a DY=('DYJets_10to50' "DYJets") 
+declare -a DYMG=("DYJets_MG")
 declare -a ZZ4l=("ZZTo4L_powheg") 
 declare -a ZG2l=("ZGto2LG" "WGtoLNuG") 
 declare -a TT=('TT_powheg') #"TTJets_aMC") 
@@ -26,7 +27,7 @@ declare -a Analysis_bkg=('WZTo3LNu_powheg' 'ZZTo4L_powheg' "ggZZto2e2mu" "ggZZto
 
 #Dilepton Validation
 declare -a CR_DiLep=('DYJets_10to50' 'DYJets' 'SingleTbar_tW_noHadron' 'SingleTop_tW_noHadron' 'TT_powheg' 'WZ' 'ZZ' 'WWTo2L2Nu' 'ZGto2LG')
-declare -a CR_EMu=('WJets' 'DYJets_10to50' 'DYJets' 'SingleTbar_tW_noHadron' 'SingleTop_tW_noHadron' 'WZ' 'ZZ' 'WWTo2L2Nu' 'ZGto2LG')
+declare -a CR_EMu=('WJets' 'DYJets_10to50' 'DYJets' 'SingleTbar_tW_noHadron' 'SingleTop_tW_noHadron' 'WZ' 'ZZ' 'WWTo2L2Nu' 'ZGto2LG' "WGtoLNuG")
 #declare -a CR_EMu=('DYJets_10to50' 'DYJets' 'SingleTbar_tW_noHadron' 'SingleTop_tW_noHadron' 'TT_powheg' 'WZ' 'ZZ' 'WWTo2L2Nu' 'ZGto2LG')
 declare -a CR_MuMu_fast=('DYJets_10to50' 'DYJets')
 declare -a CR_EE_fast=('DYJets_10to50' 'DYJets')
@@ -42,6 +43,12 @@ declare -a ggH=("ggHtoZZ")
 declare -a BtagEffSample=('TT_powheg')
 #declare -a BtagEffSample=('TTJets_aMC' "DYJets")
 
+#ID, Trigger Efficiency Measurement
+declare -a IDSample=('DYJets_MG' )
+declare -a TrigSample=('TT_powheg' 'DYJets_MG' 'DYJets_10to50' )
+declare -a TrigDiLepClosure=('TT_powheg' 'DYJets_MG' 'DYJets_10to50' )
+declare -a TrigTriLepClosure=('WZTo3LNu_powheg' 'ttZ' 'ZZTo4L_powheg' )
+declare -a FR_Prompt=('WJets' 'DYJets_10to50' 'DYJets' 'TT_powheg')
 #####################################################################################
 
 

@@ -82,17 +82,105 @@ void Jan2017_3l4j_TrigInfoCheck::ExecuteEvents()throw( LQError ){
    if(emumu_analysis) {analysis_trigger="HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v";}
    else if(trimu_analysis) analysis_trigger="HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_v";
 
-   if(!PassTrigger("HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v")) FillHist("NFail_HLT_Mu8_Ele23", 0.5, 1, 0., 1., 1);
-   if(PassTrigger("HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v"))  FillHist("NPass_HLT_Mu8_Ele23", 0.5, 1, 0., 1., 1);
-   if(!PassTrigger("HLT_Mu12_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v"))FillHist("NFail_HLT_Mu12_Ele23", 0.5, 1, 0., 1., 1);
-   if(PassTrigger("HLT_Mu12_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v")) FillHist("NPass_HLT_Mu12_Ele23", 0.5, 1, 0., 1., 1);
-   if(!PassTrigger("HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_v"))            FillHist("NFail_HLT_Mu17_Mu8", 0.5, 1, 0., 1., 1);
-   if(PassTrigger("HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_v"))             FillHist("NPass_HLT_Mu17_Mu8", 0.5, 1, 0., 1., 1);
- 
+     eventbase->GetElectronSel()->SetID(BaseSelection::ELECTRON_POG_TIGHT);
+     eventbase->GetElectronSel()->SetPt(30.);                eventbase->GetElectronSel()->SetEta(2.5);
+     eventbase->GetElectronSel()->SetBETrRegIncl(false);
+     eventbase->GetElectronSel()->SetRelIsoType("Default");  eventbase->GetElectronSel()->SetRelIsoBEMax(0.0588, 0.0571);//2016 80X tuned WP
+     eventbase->GetElectronSel()->SetdxyBEMax(0.05, 0.1);    eventbase->GetElectronSel()->SetdzBEMax(0.05, 0.1);//Not in ID, but additional safe WP
+     eventbase->GetElectronSel()->SetdxySigMax(3.);
+   std::vector<snu::KElectron> electronPOGTIPColl; eventbase->GetElectronSel()->Selection(electronPOGTIPColl);
+     eventbase->GetMuonSel()->SetID(BaseSelection::MUON_POG_TIGHT);
+     eventbase->GetMuonSel()->SetPt(27.);                    eventbase->GetMuonSel()->SetEta(2.4);
+     eventbase->GetMuonSel()->SetBSdxy(0.05);                eventbase->GetMuonSel()->SetdxySigMax(3.);
+     eventbase->GetMuonSel()->SetRelIsoType("PFRelIso04");   eventbase->GetMuonSel()->SetRelIso(0.1);
+   std::vector<snu::KMuon> muonColl; eventbase->GetMuonSel()->Selection(muonColl,false);
+/*
+   if(electronPOGTIPColl.size()!=2) return;
+   if(!PassTrigger("HLT_Ele27_WPTight_Gsf_v")) return;
+   if(electronPOGTIPColl.at(0).DeltaR(electronPOGTIPColl.at(1))<0.3) return;
+*/
+   /*
+   //Partial Save Test
+   if(!PassTrigger("HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v")){
+     int Nmatched=0;
+     if(electronPOGTIPColl.at(0).TriggerMatched("HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v")) Nmatched++;
+     if(electronPOGTIPColl.at(1).TriggerMatched("HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v")) Nmatched++;
+     FillHist("NMatched", Nmatched, weight, 0., 3., 3);
+   }
+   else FillHist("NMatched", 2., weight, 0., 3., 3);
+   //Result: No partial saving. Trig object only saved for fired trigger. i.e. both leg fired
+   */  
+/*   
+   //P(DilepLeg|SiglTrig)=?1 Test
+   if(electronPOGTIPColl.at(0).TriggerMatched("HLT_Ele27_WPTight_Gsf_v") && electronPOGTIPColl.at(1).TriggerMatched("HLT_Ele27_WPTight_Gsf_v")){
+     if(PassTrigger("HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v")) FillHist("PassCount", 1., weight, 0., 2., 2);
+     else FillHist("PassCount", 0., weight, 0., 2., 2);
+        
+     if(PassTrigger("HLT_Ele12_CaloIdL_TrackIdL_IsoVL_v")) FillHist("CountEle12", 0., weight, 0., 1., 1);
+   }
+   //7.7E3 out of 904E3 fails -> ~8.5/2 % per leg
+*/   
 
 
-   //
+/*   
+   //DiMuTest
+   if(muonColl.size()!=2) return;
+   if(muonColl.at(0).DeltaR(muonColl.at(1))<0.3) return;
+   if(!PassTrigger("HLT_IsoMu24_v")) return;
+   if(muonColl.at(0).TriggerMatched("HLT_IsoMu24_v") && muonColl.at(1).TriggerMatched("HLT_IsoMu24_v") ){
+     if(PassTrigger("HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_v") || PassTrigger("HLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_v")) FillHist("PassCount_mu", 1., weight, 0., 2., 2);
+     else FillHist("PassCount_mu", 0., weight, 0., 2., 2);
 
+   }
+   // 300 tou of 2.2E6 -> ~5E-5 per leg
+*/
+
+/*
+   //MuLeg Info Save Check
+   if( !(electronPOGTIPColl.size()==1 && muonColl.size()==1) ) return;
+   if( muonColl.at(0).DeltaR(electronPOGTIPColl.at(0))<0.3 ) return;
+   if( !(electronPOGTIPColl.at(0).Pt()>30) ) return;
+//   if( !electronPOGTIPColl.at(0).TriggerMatched("HLT_Ele27_WPTight_Gsf_v") ) return; 
+
+
+
+   if( !(PassTrigger("HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v") 
+         ||PassTrigger("HLT_Mu12_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v") 
+         ||PassTrigger("HLT_Mu12_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ_v")) ) return;
+
+    FillHist("Count", 0., weight, 0., 3., 3);
+   if( electronPOGTIPColl.at(0).TriggerMatched("HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v")
+      || electronPOGTIPColl.at(0).TriggerMatched("HLT_Mu12_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v")
+      || electronPOGTIPColl.at(0).TriggerMatched("HLT_Mu12_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ_v") ) FillHist("Count", 1., weight, 0., 3., 3);
+
+   if( muonColl.at(0).TriggerMatched("HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v")
+      || muonColl.at(0).TriggerMatched("HLT_Mu12_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v")
+      || muonColl.at(0).TriggerMatched("HLT_Mu12_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ_v") ) FillHist("Count", 2., weight, 0., 3., 3);
+
+   if( ( muonColl.at(0).TriggerMatched("HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v")
+      || muonColl.at(0).TriggerMatched("HLT_Mu12_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v")
+      || muonColl.at(0).TriggerMatched("HLT_Mu12_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ_v") )
+      && muonColl.at(0).TriggerMatched("HLT_IsoMu24_v") ){
+       FillHist("NewCount", 0., weight, 0., 3., 3);
+      if(electronPOGTIPColl.at(0).TriggerMatched("HLT_Ele27_WPTight_Gsf_v")){
+       FillHist("NewCount", 1., weight, 0., 3., 3);
+      }
+   }
+
+       FillHist("Tr_Nmu_HNID1_Pt", 0., weight, 0., 1., 1);
+       //if( PassTrigger("HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v")
+       //   || PassTrigger("HLT_Mu12_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v") ){
+
+       if( muonColl.at(0).TriggerMatched("HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v")
+          || muonColl.at(0).TriggerMatched("HLT_Mu12_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v")
+          || muonColl.at(0).TriggerMatched("HLT_Mu12_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ_v") ){
+          FillHist("Tr_Nmu_HNID1MuLeg_Pt", 0., weight, 0., 1., 1);
+       }
+
+   //MuE trig without dz filter is not saved for trigger objects
+*/
+
+//   if(DataPeriod<=5 PassTrigger("HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v")
    //PassTrigger Uses BeginWith so don't stick to exact name
 
 ////   float trigger_ps_weight=1, weight_trigger_sf=1;

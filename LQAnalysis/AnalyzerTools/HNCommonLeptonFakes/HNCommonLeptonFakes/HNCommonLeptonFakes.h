@@ -180,5 +180,6 @@ class HNCommonLeptonFakes {
   std::vector<double> dXYMins, RelIsoMaxs;
   int n_Loose_not_Tight;
 
+  float getFakeRate_Ele_hwatmp(float ElePt, float EleEta);
 };
 #endif

@@ -1,6 +1,7 @@
 ncuts 16
 webpage https://twiki.cern.ch/twiki/bin/view/CMS/CutBasedElectronIdentificationRun2
 | ID                            |  ptmin  | |etamax| |  isomax03_b   | isomax03_e | IsTight(POG)  | IsMedium(POG)  | IsLoose(POG) | IsVeto(POG)   | |dxymax_b|  | |dxymax_e| |  |dzmax_b| |  |dzmax_e| | GsfCtfScPix | convveto | |dxysigmin|  |  |dxysigmax|  |
+| ELECTRON_POGT_HWAIP           |  10.,   |  2.5     |    0.0588     |   0.0571   | true          | false          |  false       | false         | 0.05        |   0.05     |   0.1      |  0.1       | false       | true      | 0.,         | 3.            |
 | ELECTRON_NOCUT                | 0.      | 8.       |   1000.       | 1000.      | false         | false          |  false       | false         | 10000.      | 10000.     | 1000.      | 1000.      | false       | true     |  999.         | 999.         |      
 | ELECTRON16_HN_TIGHT           | 10.     | 2.5      |   0.0588      | 0.0571     | true          | false          |  false       | false         | 0.05    | 0.10  | 0.10   | 0.20       | true        | true     |  999.         | 999.         |
 | ELECTRON16_HN_TIGHT_DXYSIG    | 10.     | 2.5      |   0.0588      | 0.0571     | true          | false          |  false       | false         | 0.05    | 0.10  | 0.10   | 0.20       | true        | true     |  999.         | 3.           |

@@ -49,6 +49,10 @@ void HNCommonLeptonFakes::InitialiseFake(){
   TFile* file_prompt  = TFile::Open( (lqdir + "/data/Fake/"+getenv("yeartag")+"/PromptRate13TeV_2016_opt.root").c_str());
   CheckFile(file_prompt);
 
+  //TFile* file_fake_hwatmp = TFile::Open( (lqdir + "/data/Fake/"+getenv("yeartag")+"/FR_HWAtmp.root").c_str());
+  //CheckFile(file_fake_hwatmp);
+
+
   //==== Trilep
   //==== Using Large dXYSig muons
   TFile* file_trilep_fake = TFile::Open( (lqdir + "/data/Fake/"+getenv("yeartag")+"/Trilep_Muon_FakeRate_RunBCDEFGH_rereco.root").c_str());
@@ -216,6 +220,8 @@ void HNCommonLeptonFakes::InitialiseFake(){
   _2DEfficiencyMap_Double["fake_el_eff_ELECTRON_HN_HIGHDXY_TIGHT_dxy"] = dynamic_cast<TH2D*>((file_fake->Get("FakeRate_ELECTRON_HN_HIGHDXY_TIGHT_eldxy")));
   
 
+
+  //_2DEfficiencyMap_Double["FR_Eff_Isop05atPOGTIPIsop5Ele17_Pt40_PtEta"] = dynamic_cast<TH2D*>((file_fake_hwatmp->Get("FR_Eff_Isop05atPOGTIPIsop5Ele17_Pt40_PtEta")));
     
   //==== Trilep
   //==== Using Large dXYSig muons
@@ -284,6 +290,9 @@ void HNCommonLeptonFakes::InitialiseFake(){
 
   file_trilep_prompt_GH->Close();
   delete file_trilep_prompt_GH;
+
+  //file_fake_hwatmp->Close();
+  //delete file_fake_hwatmp;
 
   // Now we can close the file:   
   origDir->cd();
@@ -994,6 +1003,33 @@ float HNCommonLeptonFakes::get_trilepton_mmm_eventweight(bool geterr, std::vecto
 
 }
 
+//float HNCommonLeptonFakes::getFakeRate_Ele_hwatmp(float ElePt, float EleEta){
+//
+//  map<TString,TH2D*>::const_iterator mapit_FR = _2DEfficiencyMap_Double.find("FR_Eff_Isop05atPOGTIPIsop5Ele17_Pt40_PtEta");
+//
+//
+//  if( mapit_FR==_2DEfficiencyMap_Double.end()){
+//    NoHist("FR_Eff_Isop05atPOGTIPIsop5Ele17_Pt40_PtEta");
+//    return 0.;
+//  }
+//  else{
+//    TDirectory* origDir = gDirectory;
+//
+//    TDirectory* tempDir = getTemporaryDirectory();
+//    tempDir->cd();
+//    TH2D *hist_FR = (TH2D*)mapit_FR->second->Clone();
+//
+//    origDir->cd();
+//
+//    int binx = hist_FR->FindBin(ElePt, fabs(EleEta));
+//    return hist_FR->GetBinError(binx);
+//
+//  }
+//
+//  return 0.;
+//
+//}
+
 /*###############################################################
 ##      DIMUON FAKE FUNCTIONS
 ############################################################### *
@@ -1159,10 +1195,12 @@ float HNCommonLeptonFakes::get_eventweight(bool geterr, std::vector<TLorentzVect
     }
     //==== If not, it's an electron
     else{
-      fr.push_back( getFakeRate_electronEta(0, lep_pt.at(i), lep_eta.at(i), elcut));
-      pr.push_back( getEfficiency_electron(0, lep_pt.at(i), lep_eta.at(i)) );
-      fr_err.push_back( getFakeRate_electronEta(1, lep_pt.at(i), lep_eta.at(i),  elcut));
-      pr_err.push_back( getEfficiency_electron(1, lep_pt.at(i), lep_eta.at(i)) );
+//      fr.push_back( getFakeRate_electronEta(0, lep_pt.at(i), lep_eta.at(i), elcut));
+//      pr.push_back( getEfficiency_electron(0, lep_pt.at(i), lep_eta.at(i)) );
+//      fr_err.push_back( getFakeRate_electronEta(1, lep_pt.at(i), lep_eta.at(i),  elcut));
+//      pr_err.push_back( getEfficiency_electron(1, lep_pt.at(i), lep_eta.at(i)) );
+      fr.push_back( getFakeRate_Ele_hwatmp(lep_pt.at(i), lep_eta.at(i)));
+     
     }
   }
 

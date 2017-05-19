@@ -18,6 +18,9 @@
 
 
 //Jihwan Bhyun Modification///////////
+#pragma link C++ class May2017_FakeRateProd+;
+#pragma link C++ class May2017_TmpIDTrigSF+;
+#pragma link C++ class May2017_ObjectEff+;
 #pragma link C++ class Apr2017_SignalRegion+;
 #pragma link C++ class Apr2017_ZGto4lTest_ee+;
 #pragma link C++ class Mar2017_FakeCR_Zljets+;

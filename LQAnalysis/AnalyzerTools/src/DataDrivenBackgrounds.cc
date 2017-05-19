@@ -379,8 +379,9 @@ float DataDrivenBackgrounds::Get_DataDrivenWeight(bool geterr, std::vector<snu::
 
   std::vector<TLorentzVector> muons=MakeTLorentz(k_muons);
   std::vector<TLorentzVector> electrons=MakeTLorentz(k_electrons);
-  TString elkey = GetElFRKey(elidloose, elid, elmethod);
-  this_weight =m_fakeobj->get_eventweight(geterr, muons, muid, electrons, elkey , isT);
+//  TString elkey = GetElFRKey(elidloose, elid, elmethod);
+//  this_weight =m_fakeobj->get_eventweight(geterr, muons, muid, electrons, elkey , isT);
+  this_weight =m_fakeobj->get_eventweight(geterr, muons, muid, electrons, "" , isT);
 
   return this_weight;
 }

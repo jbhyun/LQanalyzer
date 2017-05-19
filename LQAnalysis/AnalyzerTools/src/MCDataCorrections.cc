@@ -639,40 +639,7 @@ double MCDataCorrections::GetEffDEG2(snu::KElectron el){
 
 //==== Trigger Scale Factor, by "leg-by-leg" strategy
 
-double MCDataCorrections::TriggerEfficiencyLegByLeg(std::vector<snu::KElectron> el, std::vector<snu::KMuon> mu, int TriggerCategory, int DataOrMC, int direction){
 
-  if(k_period < 0) {
-    /// If k_period < 0 then using ALL data periods and use weighted SF                                                                                                        
-
-    double lumi_periodB = 5.929001722;
-    double lumi_periodC = 2.645968083;
-    double lumi_periodD = 4.35344881;
-    double lumi_periodE = 4.049732039;
-    double lumi_periodF = 3.157020934;
-    double lumi_periodG = 7.549615806;
-    double lumi_periodH = 8.545039549 + 0.216782873;
-    double total_lumi = (lumi_periodB+lumi_periodC+lumi_periodD+lumi_periodE+lumi_periodF+lumi_periodG+lumi_periodH);
-
-    double WeightBtoF = (lumi_periodB+lumi_periodC+lumi_periodD+lumi_periodE+lumi_periodF)/total_lumi;
-    double WeightGtoH = (lumi_periodG+lumi_periodH)/total_lumi;
-    double Eff_bf = TriggerEfficiencyLegByLegPeriodDependant(el, mu, TriggerCategory, 1, DataOrMC, direction);
-    double Eff_gh = TriggerEfficiencyLegByLegPeriodDependant(el, mu, TriggerCategory, 7, DataOrMC, direction);
-
-    double Eff_weight = WeightBtoF*Eff_bf + WeightGtoH*Eff_gh;
-    //cout << "[MCDataCorrections::TriggerEfficiencyLegByLeg] WeightBtoF = " << WeightBtoF << endl;
-    //cout << "[MCDataCorrections::TriggerEfficiencyLegByLeg] WeightGtoH = " << WeightGtoH << endl;
-    //cout << "[MCDataCorrections::TriggerEfficiencyLegByLeg] Eff_bf = " << Eff_bf << endl;
-    //cout << "[MCDataCorrections::TriggerEfficiencyLegByLeg] Eff_gh = " << Eff_gh << endl;
-
-    return Eff_weight;
-  }
-  return TriggerEfficiencyLegByLegPeriodDependant(el, mu, TriggerCategory, k_period, DataOrMC, direction);
-
-}
-
-double MCDataCorrections::TriggerEfficiencyLegByLegPeriodDependant(std::vector<snu::KElectron> el, std::vector<snu::KMuon> mu, int TriggerCategory, int catperiod, int DataOrMC, int direction){
-
-//==== Trigger Scale Factor, by "leg-by-leg" strategy
 
 double MCDataCorrections::TriggerEfficiencyLegByLeg(std::vector<snu::KElectron> el, std::vector<snu::KMuon> mu, int TriggerCategory, int DataOrMC, int direction){
 
