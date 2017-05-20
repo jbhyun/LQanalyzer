@@ -3595,3 +3595,766 @@ std::vector<snu::KMuon> AnalyzerCore::sort_muons_ptorder(std::vector<snu::KMuon>
 
 
 
+//Jihwan Bhyun Modification//////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////
+
+
+std::vector<snu::KJet> AnalyzerCore::SelBJets(std::vector<snu::KJet>& jetColl,TString level){
+//Gets Jetcollection as argument and selects Btagged jet in the collection and returns the b tagged jet collection
+//If argument jetcoll is in Pt order, then by the algorithm returned bjetcoll will also be in Pt order
+   std::vector<snu::KJet> bjetColl;
+   for(unsigned int i=0; i<jetColl.size(); i++){
+     if(level.Contains("Loose")){ if(jetColl.at(i).BJetTaggerValue(KJet::CSVv2) > 0.5426) bjetColl.push_back(jetColl.at(i));}
+     if(level.Contains("Medium")){ if(jetColl.at(i).BJetTaggerValue(KJet::CSVv2) > 0.8484) bjetColl.push_back(jetColl.at(i));}
+     if(level.Contains("Tight")){ if(jetColl.at(i).BJetTaggerValue(KJet::CSVv2) > 0.9535) bjetColl.push_back(jetColl.at(i));}
+   }
+   return bjetColl;
+}
+
+
+std::vector<snu::KJet> AnalyzerCore::SelLightJets(std::vector<snu::KJet>& jetColl, TString level){
+
+    std::vector<snu::KJet> ljetColl;
+    for(vector<KJet>::iterator itj=jetColl.begin(); itj!=jetColl.end(); ++itj){
+      if(level.Contains("Loose")){ if(itj->BJetTaggerValue(KJet::CSVv2)<0.5426) ljetColl.push_back((*itj));}
+      if(level.Contains("Medium")){ if(itj->BJetTaggerValue(KJet::CSVv2)<0.8484) ljetColl.push_back((*itj));}
+      if(level.Contains("Tight")){ if(itj->BJetTaggerValue(KJet::CSVv2)<0.9535) ljetColl.push_back((*itj));}
+    }
+    return ljetColl;
+}
+
+std::vector<int> AnalyzerCore::GetSFBJetIdx(std::vector<snu::KJet>& jetColl,TString level){
+   std::vector<int> bIdxColl;
+   for(unsigned int i=0; i<jetColl.size(); i++){
+     if(level.Contains("Medium")){ if(IsBTagged(jetColl.at(i),snu::KJet::CSVv2,snu::KJet::Medium)){ bIdxColl.push_back(i); }}
+   }
+   for(unsigned int i=0; i<jetColl.size(); i++){
+     if(level.Contains("Tight")){ if(IsBTagged(jetColl.at(i),snu::KJet::CSVv2,snu::KJet::Tight)){ bIdxColl.push_back(i); }}
+   }
+
+   return bIdxColl;
+}
+
+
+std::vector<int> AnalyzerCore::GetSFLJetIdx(std::vector<snu::KJet>& jetColl, std::vector<int>& bIdxColl,TString level){
+   std::vector<int> ljIdxColl;
+   if(jetColl.size()<bIdxColl.size()){ cout<<"[Error] Input Wrong to GetSFLJetIdx"<<endl; return ljIdxColl;}
+   for(unsigned int i=0; i<jetColl.size(); i++){
+     bool trig=true;
+     for(int j=0; j<bIdxColl.size(); j++){ if(bIdxColl.at(j)==i) trig=false; }
+     if(trig) ljIdxColl.push_back(i);
+   }
+   return ljIdxColl;
+}
+
+std::vector<snu::KElectron> AnalyzerCore::SelEndcapElectrons(std::vector<snu::KElectron>& electronColl){
+//19. Jul. 2016, Used for data validation
+//selects endcap electrons of the electron collection
+   std::vector<snu::KElectron> eECColl;
+   for(unsigned int i=0; i<electronColl.size(); i++){
+     if(fabs(electronColl.at(i).Eta())>1.479) eECColl.push_back(electronColl.at(i));
+   }
+   return eECColl;
+}
+
+
+int AnalyzerCore::SumCharge(std::vector<snu::KMuon>& MuonColl){
+    int Q=0;
+    for(unsigned int i=0; i<MuonColl.size(); i++){Q+=MuonColl.at(i).Charge();}
+    return Q;
+}
+
+
+int AnalyzerCore::TriMuChargeIndex(std::vector<snu::KMuon>& MuonColl, TString charge){
+    //First Choose 2SS, 1OS muons(++- or --+) SS means 2 of them having same sign, OS means 1 of them having different sign from others.
+    // charge="OS" will return the index of muon that having different charge from other 2,
+    // charge="SS1" will return the index of first muon that having same sign
+    // charge="SS2" will return the index of second muon that having same sign
+    int totQ=0, n=0, ns=0;
+    for(unsigned int i=0; i<MuonColl.size(); i++){totQ+=MuonColl.at(i).Charge();}
+
+    if(charge.Contains("OS")){
+      if(totQ==1) {
+         for(unsigned int j=0; j<MuonColl.size(); j++) {if(MuonColl.at(j).Charge()==-1) n=j;}
+      }
+      if(totQ==-1){
+         for(unsigned int j=0; j<MuonColl.size(); j++) {if(MuonColl.at(j).Charge()==1) n=j;}
+      }
+    }
+    if(charge.Contains("SS1")){
+      if(totQ==1){
+         for(unsigned int j=0; j<MuonColl.size(); j++){
+             if(MuonColl.at(j).Charge()==1) {ns+=1; if(ns==1) n=j;}
+         }
+      }
+      if(totQ==-1){
+         for(unsigned int j=0; j<MuonColl.size(); j++){
+             if(MuonColl.at(j).Charge()==-1) {ns+=1; if(ns==1) n=j;}
+         }
+      }
+    }
+    if(charge.Contains("SS2")){
+       if(totQ==1){
+          for(unsigned int j=0; j<MuonColl.size(); j++){
+             if(MuonColl.at(j).Charge()==1) {ns+=1; if(ns==2) n=j;}
+          }
+       }
+       if(totQ==-1){
+          for(unsigned int j=0; j<MuonColl.size(); j++){
+             if(MuonColl.at(j).Charge()==-1) {ns+=1; if(ns==2) n=j;}
+          }
+       }
+    }
+    return n;
+}
+
+double AnalyzerCore::GetvPz(snu::KParticle v, snu::KElectron e, int pm){
+     double RecoPz=0;
+     double X=80.4*80.4/2+e.Px()*v.Px()+e.Py()*v.Py();
+     double D=e.E()*e.E()*(X*X-v.Pt()*v.Pt()*e.Pt()*e.Pt());
+     if(pm==1) {if(D>=0) {double RecoPzv1 = (e.Pz()*X+sqrt(D))/(e.Pt()*e.Pt()); RecoPz=RecoPzv1;}
+                if(D<0)  {double RecoPzv1 = (e.Pz()*X)/(e.Pt()*e.Pt()); RecoPz=RecoPzv1;}
+               }
+     if(pm==2) {if(D>=0) {double RecoPzv2 = (e.Pz()*X-sqrt(D))/(e.Pt()*e.Pt()); RecoPz=RecoPzv2;}
+                if(D<0)  {double RecoPzv2 = (e.Pz()*X)/(e.Pt()*e.Pt()); RecoPz=RecoPzv2;}
+               }
+     return RecoPz;
+}
+
+double AnalyzerCore::GetvPz(snu::KParticle v, snu::KMuon mu, int pm){
+     double RecoPz=0;
+     double X=80.4*80.4/2+mu.Px()*v.Px()+mu.Py()*v.Py();
+     double D=mu.E()*mu.E()*(X*X-v.Pt()*v.Pt()*mu.Pt()*mu.Pt());
+     if(pm==1) {if(D>=0) {double RecoPzv1 = (mu.Pz()*X+sqrt(D))/(mu.Pt()*mu.Pt()); RecoPz=RecoPzv1;}
+                if(D<0)  {double RecoPzv1 = (mu.Pz()*X)/(mu.Pt()*mu.Pt()); RecoPz=RecoPzv1;}
+               }
+     if(pm==2) {if(D>=0) {double RecoPzv2 = (mu.Pz()*X-sqrt(D))/(mu.Pt()*mu.Pt()); RecoPz=RecoPzv2;}
+                if(D<0)  {double RecoPzv2 = (mu.Pz()*X)/(mu.Pt()*mu.Pt()); RecoPz=RecoPzv2;}
+               }
+     return RecoPz;
+}
+
+double AnalyzerCore::GetAngle(snu::KElectron e, snu::KMuon mu){
+    TVector3 v1,v2;
+    v1.SetPtEtaPhi(e.Pt(), e.Eta(), e.Phi());  v2.SetPtEtaPhi(mu.Pt(), mu.Eta(), mu.Phi());
+    double angle=v1.Angle(v2);
+    return angle;
+}
+
+double AnalyzerCore::GetAngle(snu::KMuon mu1, snu::KMuon mu2){
+    TVector3 v1,v2;
+    v1.SetPtEtaPhi(mu1.Pt(), mu1.Eta(), mu1.Phi());  v2.SetPtEtaPhi(mu2.Pt(), mu2.Eta(), mu2.Phi());
+    double angle=v1.Angle(v2);
+    return angle;
+}
+
+double AnalyzerCore::GetAngle(snu::KElectron e, snu::KJet j){
+    TVector3 v1,v2;
+    v1.SetPtEtaPhi(e.Pt(), e.Eta(), e.Phi());  v2.SetPtEtaPhi(j.Pt(), j.Eta(), j.Phi());
+    double angle=v1.Angle(v2);
+    return angle;
+}
+
+double AnalyzerCore::GetAngle(snu::KMuon mu, snu::KJet j){
+    TVector3 v1,v2;
+    v1.SetPtEtaPhi(mu.Pt(), mu.Eta(), mu.Phi());  v2.SetPtEtaPhi(j.Pt(), j.Eta(), j.Phi());
+    double angle=v1.Angle(v2);
+    return angle;
+}
+
+double AnalyzerCore::GetAngle(snu::KJet j1, snu::KJet j2){
+    TVector3 v1,v2;
+    v1.SetPtEtaPhi(j1.Pt(), j1.Eta(), j1.Phi());  v2.SetPtEtaPhi(j2.Pt(), j2.Eta(), j2.Phi());
+    double angle=v1.Angle(v2);
+    return angle;
+}
+
+
+//std::vector<snu::KJet> AnalyzerCore::GetTopBasicJets(/*std::vector<snu::KMuon>& muonColl, std::vector<snu::KElectron>& electronColl*/){
+//    //// Jet Selection for Topfitter Unclustered energy estimation
+//    //// Jets with minimum cuts are selected. PT should be>10GeV : https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuidePATTools
+//    //// Lepton Veto part in Dr.Yu's function is deleted. since we are estimating unclustered energy. We don't need to abandon jets because of leptons
+//    //// Unclustered energy should be Detector level definition not User analysis level definition; i.e. unclE=-sumjet-sumlep-met but the jets, leps are not user defines jet, leps but detector level(meaning datasetlevel) reconstructed jets, leps(wonder I need to include tau) 
+//    //// 
+//
+//    std::vector<snu::KJet> jetColl;
+//
+//    eventbase->GetJetSel()->SetID(BaseSelection::PFJET_LOOSE);
+//    eventbase->GetJetSel()->SetPt(10.);
+//    eventbase->GetJetSel()->SetEta(3.5);//Basically we need till eta=5 but this is the limit of SKtree
+//    eventbase->GetJetSel()->Selection(jetColl);
+////    eventbase->GetJetSel()->JetSelectionLeptonVeto(jetColl, muonColl, electronColl);
+//
+//    return jetColl;
+//}
+
+
+double AnalyzerCore::dPtRel(snu::KTruth T, snu::KElectron e){
+    double X=fabs(e.Pt()-T.Pt())/T.Pt();
+    return X;
+}
+
+double AnalyzerCore::dPtRel(snu::KTruth T, snu::KMuon mu){
+    double X=fabs(mu.Pt()-T.Pt())/T.Pt();
+    return X;
+}
+
+double AnalyzerCore::dPtRel(snu::KTruth T, snu::KJet j){
+    double X=fabs(j.Pt()-T.Pt())/T.Pt();
+    return X;
+}
+
+
+int AnalyzerCore::GenMatchedIdx(snu::KTruth T, std::vector<snu::KMuon>& MuonColl){
+    //Usage: Returns index of the muon in Muoncoll that matches Truth object T
+    //Algo: Make a collecton passing minimum cut : dRmax=0.05, dPtRelmax=0.2 
+    //**Here I consider dR more imp. => dPtRel is relatively looser.
+    //if none, return index -1, if 1, return the index
+    //if ambiguous, select one with minimum dRRel relative to dRmaxcut + dPtRel relative to dPtRelmax
+    std::vector<int> muCandIdxColl;
+    int muFinalCandIdx;
+    double tmp, score, dRoCut, dPtReloCut; //oCut:over Cut
+
+    for( int i=0; i<MuonColl.size(); i++){
+      if((T.DeltaR(MuonColl.at(i))<0.1)&&(dPtRel(T,MuonColl.at(i))<0.2)) muCandIdxColl.push_back(i);
+    }
+    if(muCandIdxColl.size()==0) muFinalCandIdx=-1;
+    else if(muCandIdxColl.size()==1) muFinalCandIdx=muCandIdxColl.at(0);
+    else if(muCandIdxColl.size()>1){
+       for( int i=0; i<muCandIdxColl.size(); i++){
+          dRoCut=T.DeltaR(MuonColl.at(muCandIdxColl.at(i)))/0.05;
+          dPtReloCut=dPtRel(T,MuonColl.at(muCandIdxColl.at(i)))/0.2;
+          tmp=dRoCut+dPtReloCut;
+          if(i==0) {muFinalCandIdx=muCandIdxColl.at(i); score=dRoCut+dPtReloCut;}
+          else if(tmp<score) {muFinalCandIdx=muCandIdxColl.at(i); score=tmp;}
+       }
+    }
+
+    return muFinalCandIdx;
+}
+
+int AnalyzerCore::GenMatchedIdx(snu::KTruth T, std::vector<snu::KElectron>& ElectronColl){
+    //Usage: Returns index of the electtron in Electroncoll that matches Truth object T
+    //Algo: Make a collecton passing minimum cut : dRmax=0.05, dPtRelmax=0.2 
+    //**Here I consider dR more imp. => dPtRel is relatively looser.
+    //if none, return index -1, if 1, return the index
+    //if ambiguous, select one with minimum dRRel relative to dRmaxcut + dPtRel relative to dPtRelmax
+    std::vector<int> eCandIdxColl;
+    int eFinalCandIdx;
+    double tmp, score, dRoCut, dPtReloCut; //oCut:over Cut
+
+    for( int i=0; i<ElectronColl.size(); i++){
+      if((T.DeltaR(ElectronColl.at(i))<0.1)&&(dPtRel(T,ElectronColl.at(i))<0.2)) eCandIdxColl.push_back(i);
+    }
+    if(eCandIdxColl.size()==0) eFinalCandIdx=-1;
+    else if(eCandIdxColl.size()==1) eFinalCandIdx=eCandIdxColl.at(0);
+    else if(eCandIdxColl.size()>1){
+       for( int i=0; i<eCandIdxColl.size(); i++){
+          dRoCut=T.DeltaR(ElectronColl.at(eCandIdxColl.at(i)))/0.05;
+          dPtReloCut=dPtRel(T,ElectronColl.at(eCandIdxColl.at(i)))/0.2;
+          tmp=dRoCut+dPtReloCut;
+          if(i==0) {eFinalCandIdx=eCandIdxColl.at(i); score=dRoCut+dPtReloCut;}
+          else if(tmp<score) {eFinalCandIdx=eCandIdxColl.at(i); score=tmp;}
+       }
+    }
+
+    return eFinalCandIdx;
+}
+
+int AnalyzerCore::GenMatchedIdx(snu::KTruth T, std::vector<snu::KJet>& JetColl){
+    //Usage: Returns index of the jet in Jetcoll that matches Truth object T
+    //Algo: Make a collecton passing minimum cut : dRmax=0.5, dPtRelmax=0.2 
+    //**Here I consider dR more imp. => dPtRel is relatively looser.
+    //if none, return index -1, if 1, return the index
+    //if ambiguous, select one with minimum dRRel relative to dRmaxcut + dPtRel relative to dPtRelmax
+    std::vector<int> bjCandIdxColl;
+    std::vector<int> ljCandIdxColl;
+    int jFinalCandIdx;
+    double tmp, score, dRoCut, dPtReloCut; //oCut:over Cut
+
+    for( int i=0; i<JetColl.size(); i++){
+      if((T.DeltaR(JetColl.at(i))<0.5)&&(dPtRel(T,JetColl.at(i))<0.7)){
+         if(JetColl.at(i).IsBTagged(KJet::CSVv2,KJet::Medium)) bjCandIdxColl.push_back(i);
+         else ljCandIdxColl.push_back(i);
+      }
+    }
+
+    //B Matcher Algo
+    if(fabs(T.PdgId())==5){
+      if((bjCandIdxColl.size()==0)&&(ljCandIdxColl.size()==0)) jFinalCandIdx=-1;
+      else if((bjCandIdxColl.size()==0)&&(ljCandIdxColl.size()==1)) jFinalCandIdx=ljCandIdxColl.at(0);
+      else if((bjCandIdxColl.size()==0)){// 0 bjCandColl , >1 ljCandColl
+         for( int i=0; i<ljCandIdxColl.size(); i++){
+            dRoCut=T.DeltaR(JetColl.at(ljCandIdxColl.at(i)))/0.5;
+            dPtReloCut=dPtRel(T,JetColl.at(ljCandIdxColl.at(i)))/0.7;
+            tmp=dRoCut+dPtReloCut;
+            if(i==0) {jFinalCandIdx=ljCandIdxColl.at(i); score=dRoCut+dPtReloCut;}
+            else if(tmp<score) {jFinalCandIdx=ljCandIdxColl.at(i); score=tmp;}
+         }
+      }
+      else if(bjCandIdxColl.size()==1) jFinalCandIdx=bjCandIdxColl.at(0);
+      else {//>1 bjCand, & any # ljCand
+         for( int i=0; i<bjCandIdxColl.size(); i++){
+            dRoCut=T.DeltaR(JetColl.at(bjCandIdxColl.at(i)))/0.5;
+            dPtReloCut=dPtRel(T,JetColl.at(bjCandIdxColl.at(i)))/0.7;
+            tmp=dRoCut+dPtReloCut;
+            if(i==0) {jFinalCandIdx=bjCandIdxColl.at(i); score=dRoCut+dPtReloCut;}
+            else if(tmp<score) {jFinalCandIdx=bjCandIdxColl.at(i); score=tmp;}
+         }
+      }
+   }//B matcher Algo
+   //light jet matcher
+   else{
+     if(ljCandIdxColl.size()==0) jFinalCandIdx=-1;
+     else if(ljCandIdxColl.size()==1) jFinalCandIdx=ljCandIdxColl.at(0);
+     else{
+         for( int i=0; i<ljCandIdxColl.size(); i++){
+            dRoCut=T.DeltaR(JetColl.at(ljCandIdxColl.at(i)))/0.5;
+            dPtReloCut=dPtRel(T,JetColl.at(ljCandIdxColl.at(i)))/0.7;
+            tmp=dRoCut+dPtReloCut;
+            if(i==0) {jFinalCandIdx=ljCandIdxColl.at(i); score=dRoCut+dPtReloCut;}
+            else if(tmp<score) {jFinalCandIdx=ljCandIdxColl.at(i); score=tmp;}
+         }
+     }
+   }//light jet matcher
+
+    return jFinalCandIdx;
+}
+
+
+bool AnalyzerCore::GenDecayInfo(std::vector<snu::KTruth>& truthColl, TString Decaymode){
+//Usage: TString: 3lv ; return true if hc decays 3l+v, false if hc decays 2mu+2j (in genlevel)
+//                trimu: return true if final state is 3mu+MET+4j (in genlevel)
+//                emumu: return true if final state is e+2mu+MET+4j (in genlevel)
+//Algorithm: Based on information that we set t>hc b, tx>b W- => w+ is always from hc, so if we check whether w+ decay leptonically or hadronically then we know whether hc decay leptonically or hadronically
+//          +I checked that for this sample there is no additional W which is not originated from signal process but NLO effect. all the W+ are from hc. Checked that with code for all events.
+
+   bool trigger=false;
+
+   if(Decaymode=="3lv"){
+      for(int i=truthColl.size()-1; i>=0; i--){
+         if(truthColl.at(i).IndexMother()==-1) continue;
+           int pid=truthColl.at(i).PdgId();
+           int MotherIdx=truthColl.at(i).IndexMother();
+           int Motherpid=truthColl.at(MotherIdx).PdgId();
+//         cout<<i<<" PID: "<<truthColl.at(i).PdgId()<<" GenStatus: "<<truthColl.at(i).GenStatus()<<" MotherIdx: "<<MotherIdx<<" MotherPID: "<<Motherpid<<" Pt: "<<truthColl.at(i).Pt()<<endl;
+
+           //For algorithm, read description on headline.
+           if(Motherpid==24){
+              if(fabs(pid)<10) trigger=false;
+              else if(fabs(pid)<20) trigger=true;//else if->fabs(pid)>10 is auto-included
+           }
+      }
+   }
+
+   if(Decaymode=="trimu"){
+      for(int i=truthColl.size()-1; i>=0; i--){
+         if(truthColl.at(i).IndexMother()==-1) continue;
+           int pid=truthColl.at(i).PdgId();
+           int MotherIdx=truthColl.at(i).IndexMother();
+           int Motherpid=truthColl.at(MotherIdx).PdgId();
+
+           if((fabs(Motherpid)==24)&&(fabs(pid)==13)) trigger=true;
+      }
+   }
+
+   if(Decaymode=="emumu"){
+      for(int i=truthColl.size()-1; i>=0; i--){
+         if(truthColl.at(i).IndexMother()==-1) continue;
+           int pid=truthColl.at(i).PdgId();
+           int MotherIdx=truthColl.at(i).IndexMother();
+           int Motherpid=truthColl.at(MotherIdx).PdgId();
+
+           if((fabs(Motherpid)==24)&&(fabs(pid)==11)) trigger=true;
+      }
+   }
+
+  return trigger;
+}
+
+
+int AnalyzerCore::GetGenMatchedSigIndex(std::vector<snu::KTruth>& truthColl, std::vector<snu::KMuon>& muonColl, std::vector<snu::KElectron>& electronColl, std::vector<snu::KJet>& jetColl, TString PtlName, float weight){
+// Possible PtlName list : "mum_A", "mup_A", "e_W" , "mu_W", "j1_W", "j2_W", "b_t" , "bx_tx" 
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+////Gen Matching//////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////
+
+//Truth Objects/////////
+   int count=0;
+   snu::KTruth b_t, bx_tx, mum_A, mup_A; // Doesn't dep. on decaymode
+   snu::KTruth e_W, ve_W, mu_W, vmu_W, j1_W, j2_W;//dep. on decaymode
+//   snu::KTruth tmpj1_W_tx, tmpj2_W_tx;
+   bool Decay3lv=false, emumu_gen=false, trimu_gen=false;
+   bool emumu=false, trimu=false;
+   int mum_Ai, mup_Ai, e_Wi, mu_Wi, j1_Wi, j2_Wi, b_ti, bx_txi;
+
+   if((muonColl.size()==2)&&(electronColl.size()==1)) emumu=true;
+   else if((muonColl.size()==3)&&(electronColl.size()==0)) trimu=true;
+
+
+   for(unsigned int i=0; i<truthColl.size(); i++){
+     if(truthColl.at(i).IndexMother()==-1) continue;
+     int pid=truthColl.at(i).PdgId();
+     int MotherIdx=truthColl.at(i).IndexMother();
+     int Motherpid=truthColl.at(MotherIdx).PdgId();
+//     if(truthColl.at(MotherIdx).IndexMother()==-1) continue;
+//     int GrmaIdx=truthColl.at(MotherIdx).IndexMother();
+//     int Grmapid=truthColl.at(GrmaIdx).PdgId();
+//     Actually ^ is not needed since we only generated H+ not H- > W+ from H+ && W- from tx
+     //H+ side(t side); t> b H+ > b (A w+)
+     if(Motherpid==6){
+       if(pid==5) b_t=truthColl.at(i);
+     }
+     else if(Motherpid==36){
+       if(pid==13) mum_A=truthColl.at(i);
+       else if(pid==-13) mup_A=truthColl.at(i);
+     }
+     else if(Motherpid==24){
+       if((fabs(pid)>10)&&(fabs(pid)<20)){
+         Decay3lv=true;
+         if(pid==-11) {e_W=truthColl.at(i); emumu_gen=true;}
+         else if(pid==-13) {mu_W=truthColl.at(i); trimu_gen=true;}
+         else if(pid==12) ve_W=truthColl.at(i);
+         else if(pid==14) vmu_W=truthColl.at(i);
+       }
+       else if(fabs(pid)<10){
+         Decay3lv=false;
+         if(count==0) j1_W=truthColl.at(i);
+         else j2_W=truthColl.at(i);
+         count++;
+       }
+     }
+
+     //tx side ; tx>bx w-
+     else if(Motherpid==-6){
+         if(pid==-5) bx_tx=truthColl.at(i);
+     }
+     else if(Motherpid==-24){
+       if((fabs(pid)>10)&&(fabs(pid)<20)){
+         if(pid==11) {e_W=truthColl.at(i); emumu_gen=true;}
+         else if(pid==13) {mu_W=truthColl.at(i); trimu_gen=true;}
+         else if(pid==-12) ve_W=truthColl.at(i);
+         else if(pid==-14) vmu_W=truthColl.at(i);
+       }
+       else if(fabs(pid)<10){
+         if(count==0) j1_W=truthColl.at(i);
+         else j2_W=truthColl.at(i);
+         count++;
+       }
+     }
+
+   }
+
+
+//Gen-Reco Matching/////////
+   //if((emumu)&&(emumu_gen)){
+   if(emumu){
+      if(Decay3lv){
+        //top-H+ side
+        mum_Ai=GenMatchedIdx(mum_A, muonColl);  mup_Ai=GenMatchedIdx(mup_A, muonColl);
+        if(emumu_gen){e_Wi=GenMatchedIdx(e_W, electronColl);} else e_Wi=-1;
+        b_ti=GenMatchedIdx(b_t, jetColl);
+
+        //tx side
+        bx_txi=GenMatchedIdx(bx_tx, jetColl);
+        j1_Wi=GenMatchedIdx(j1_W, jetColl);  j2_Wi=GenMatchedIdx(j2_W, jetColl);
+     }
+     else{
+        //top-H+ side
+        mum_Ai=GenMatchedIdx(mum_A, muonColl); mup_Ai=GenMatchedIdx(mup_A, muonColl);
+        b_ti=GenMatchedIdx(b_t, jetColl);
+        j1_Wi=GenMatchedIdx(j1_W, jetColl); j2_Wi=GenMatchedIdx(j2_W, jetColl);
+
+        //tx side
+        bx_txi=GenMatchedIdx(bx_tx, jetColl);
+        if(emumu_gen){ e_Wi=GenMatchedIdx(e_W, electronColl);} else e_Wi=-1;
+     }
+
+     //Filtering and cutflows
+     FillHist("Basic_GenMatchFlow_emu", 0, weight, 0., 6., 6);//Nocut
+     if((mum_Ai!=-1)&&(mup_Ai!=-1)){ FillHist("Basic_GenMatchFlow_emu", 1, weight, 0., 6., 6);//step1
+        if(e_Wi!=-1){ FillHist("Basic_GenMatchFlow_emu", 2, weight, 0., 6., 6);//step2
+           if(mum_Ai!=mup_Ai){ FillHist("Basic_GenMatchFlow_emu", 3, weight, 0., 6., 6);
+             if((j1_Wi!=-1)&&(j2_Wi!=-1)){ FillHist("Basic_GenMatchFlow_emu", 4, weight, 0., 6., 6);//step3
+                if((bx_txi!=-1)&&(b_ti!=-1)) FillHist("Basic_GenMatchFlow_emu", 5, weight, 0., 6., 6);//step4
+             }
+           }
+        }
+     }
+
+     if     (PtlName=="mum_A") return mum_Ai;
+     else if(PtlName=="mup_A") return mup_Ai;
+     else if(PtlName=="e_W")   return e_Wi;
+     else if(PtlName=="mu_W")  return -1;
+     else if(PtlName=="j1_W")  return j1_Wi;
+     else if(PtlName=="j2_W")  return j2_Wi;
+     else if(PtlName=="b_t")   return b_ti;
+     else if(PtlName=="bx_tx") return bx_txi;
+   }
+   else if(trimu){
+      if(Decay3lv){
+        //top-H+ side
+        mum_Ai=GenMatchedIdx(mum_A, muonColl); mup_Ai=GenMatchedIdx(mup_A, muonColl);
+        if(trimu_gen){ mu_Wi=GenMatchedIdx(mu_W, muonColl);} else mu_Wi=-1;
+        b_ti=GenMatchedIdx(b_t, jetColl);
+
+        //tx side
+        bx_txi=GenMatchedIdx(bx_tx, jetColl);
+        j1_Wi=GenMatchedIdx(j1_W, jetColl); j2_Wi=GenMatchedIdx(j2_W, jetColl);
+     }
+     else{
+        //top-H+ side
+        mum_Ai=GenMatchedIdx(mum_A, muonColl); mup_Ai=GenMatchedIdx(mup_A, muonColl);
+        b_ti=GenMatchedIdx(b_t, jetColl);
+        j1_Wi=GenMatchedIdx(j1_W, jetColl); j2_Wi=GenMatchedIdx(j2_W, jetColl);
+
+        //tx side
+        bx_txi=GenMatchedIdx(bx_tx, jetColl);
+        if(trimu_gen){ mu_Wi=GenMatchedIdx(mu_W, muonColl);} else mu_Wi=-1;
+     }
+
+     //Filtering and cutflows
+     FillHist("Basic_GenMatchFlow_3mu", 0, weight, 0., 7., 7);//Nocut
+     if((mum_Ai!=-1)&&(mup_Ai!=-1)){ FillHist("Basic_GenMatchFlow_3mu", 1, weight, 0., 7., 7);//step1
+        if(mu_Wi!=-1){ FillHist("Basic_GenMatchFlow_3mu", 2, weight, 0., 7., 7);//step2
+          if(mum_Ai!=mup_Ai){ FillHist("Basic_GenMatchFlow_3mu", 3, weight, 0., 7., 7);
+            if((mu_Wi!=mum_Ai)&&(mu_Wi!=mup_Ai)){ FillHist("Basic_GenMatchFlow_3mu", 4, weight, 0., 7., 7);
+               if((j1_Wi!=-1)&&(j2_Wi!=-1)){ FillHist("Basic_GenMatchFlow_3mu", 5, weight, 0., 7., 7);//step3
+                  if((bx_txi!=-1)&&(b_ti!=-1)) FillHist("Basic_GenMatchFlow_3mu", 6, weight, 0., 7., 7);//step4
+               }
+            }
+         }
+       }
+     }
+     if     (PtlName=="mum_A") return mum_Ai;
+     else if(PtlName=="mup_A") return mup_Ai;
+     else if(PtlName=="e_W")   return -1;
+     else if(PtlName=="mu_W")  return mu_Wi;
+     else if(PtlName=="j1_W")  return j1_Wi;
+     else if(PtlName=="j2_W")  return j2_Wi;
+     else if(PtlName=="b_t")   return b_ti;
+     else if(PtlName=="bx_tx") return bx_txi;
+   }//
+
+//////////////////////////////////////////////////////////////////////////////////////
+return -1;
+//End of function
+}
+
+int AnalyzerCore::NPromptLeptons(std::vector<snu::KTruth>& truthColl, TString Option){
+  
+  int NPromptLepton_Tot=0, NPromptLepton_EW=0, NPromptLepton_BSM=0;
+  bool InAcceptance=Option.Contains("InAcceptance");
+  for(unsigned int i=0; i<truthColl.size(); i++){
+    if(truthColl.at(i).IndexMother() < 0 ) continue;
+    int pid=truthColl.at(i).PdgId(), mpid=truthColl.at(truthColl.at(i).IndexMother()).PdgId();
+   
+    if(fabs(pid)==11 || fabs(pid)==13){
+      if(!InAcceptance){
+        if     (fabs(mpid)==23 || fabs(mpid)==24) NPromptLepton_EW++;
+        else if(fabs(mpid)==32 || fabs(mpid)==36) NPromptLepton_BSM++;//For H+>AW analysis
+      }
+      else{
+        if(truthColl.at(i).Pt()<10) continue;
+        if((fabs(truthColl.at(i).Eta())>2.4 && fabs(pid)==13) || (fabs(truthColl.at(i).Eta())>2.5 && fabs(pid)==11)){
+          continue;
+        }
+        if     (fabs(mpid)==23 || fabs(mpid)==24) NPromptLepton_EW++;
+        else if(fabs(mpid)==32 || fabs(mpid)==36) NPromptLepton_BSM++;//For H+>AW analysis
+      }
+    }
+  }
+  NPromptLepton_Tot=NPromptLepton_EW+NPromptLepton_BSM;
+
+  if     (Option.Contains("EW"))  return NPromptLepton_EW;
+  else if(Option.Contains("BSM")) return NPromptLepton_BSM;
+
+  return NPromptLepton_Tot;
+}
+
+
+//template <class Ptl> int AnalyzerCore::GetDaughterCandIdx(std::vector<Ptl> PtlColl, TString MotherPtl, float WindowWidth, TString Option){
+int AnalyzerCore::GetDaughterCandIdx(std::vector<snu::KMuon> PtlColl, TString MotherPtl, float WindowWidth, TString Option){
+
+  if(MotherPtl=="Z"){
+    float mindM=9999.; int IdxLead=-1, IdxSubl=-1;
+    for(unsigned int i=0; i<PtlColl.size(); i++){
+      for(unsigned int j=i+1; j<PtlColl.size(); j++){
+        float Mass=(PtlColl.at(i)+PtlColl.at(j)).M();
+        if(PtlColl.at(i).Charge()==PtlColl.at(j).Charge()) continue;
+        if(fabs(Mass-91.2)<mindM) {mindM=fabs(Mass-91.2); IdxLead=i; IdxSubl=j;}
+      }
+    }
+    if(mindM<WindowWidth){
+      if     (Option.Contains("Lead")) return IdxLead;
+      else if(Option.Contains("Subl")) return IdxSubl;
+    }
+    else if(WindowWidth<0 || Option.Contains("NoLimit")){
+      if     (Option.Contains("Lead")) return IdxLead;
+      else if(Option.Contains("Subl")) return IdxSubl;
+    }
+  }
+
+  return -1;
+};
+
+int AnalyzerCore::GetDaughterCandIdx(std::vector<snu::KJet> PtlColl, TString MotherPtl, float WindowWidth, TString Option){
+
+  float MotherMass=-1., mindM=9999.; int IdxLead=-1, IdxSubl=-1;
+
+  if     (MotherPtl=="Z") MotherMass=91.2; 
+  else if(MotherPtl=="W") MotherMass=80.4;
+  else return -1;
+
+  for(unsigned int i=0; i<PtlColl.size(); i++){
+    for(unsigned int j=i+1; j<PtlColl.size(); j++){
+      float Mass=(PtlColl.at(i)+PtlColl.at(j)).M();
+      if(fabs(Mass-MotherMass)<mindM) {mindM=fabs(Mass-MotherMass); IdxLead=i; IdxSubl=j;}
+    }
+  }
+  if(mindM<WindowWidth){
+    if     (Option.Contains("Lead")) return IdxLead;
+    else if(Option.Contains("Subl")) return IdxSubl;
+  }
+  else if(WindowWidth<0 || Option.Contains("NoLimit")){
+    if     (Option.Contains("Lead")) return IdxLead;
+    else if(Option.Contains("Subl")) return IdxSubl;
+  }
+
+  return -1;
+};
+
+
+
+double AnalyzerCore::TopPTReweight(std::vector<snu::KTruth> TruthColl){
+  //Reference: https://twiki.cern.ch/twiki/bin/view/CMS/TopPtReweighting
+  //This is coded for H+>WA CR, but this can be generally used for any kinds of decay of SM top pair events.
+  //Caution : This can be used for SM ttbar samples only. Though top pt disagreement is obseved in several generators,
+  //          but the SF are derived from Powheg+Pythia sample(Run2). So it is safe to use this only for Powheg ttbar.
+  //          And this MUST NOT be applied to single top sample and tops produced from BSM mechanism
+  //Current normalisation factor version : v8-0-6
+
+  double weight=1.;
+
+  for(std::vector<snu::KTruth>::iterator it_truth= TruthColl.begin(); it_truth!=TruthColl.end(); it_truth++){
+    if(fabs(it_truth->PdgId())==6 && fabs(it_truth->GenStatus())<30 && fabs(it_truth->GenStatus())>20){
+      weight*=exp(0.0615-0.0005*it_truth->Pt());
+    }
+  }
+  return sqrt(weight)*0.999777;
+
+}
+
+float AnalyzerCore::GenFilterEfficiency(TString SampleName){
+
+  if( isData ) return 1.;
+  else if( !(SampleName.Contains("3mu") || SampleName.Contains("1e2mu")) ) return 1.;
+
+  if     (SampleName.Contains("MHc90_MZp2" )) return 0.309;
+  else if(SampleName.Contains("MHc100_MZp2")) return 0.451;
+  else if(SampleName.Contains("MHc110_MZp2")) return 0.557;
+  else if(SampleName.Contains("MHc120_MZp2")) return 0.614;
+  else if(SampleName.Contains("MHc130_MZp2")) return 0.642;
+  else if(SampleName.Contains("MHc140_MZp2")) return 0.656;
+  else if(SampleName.Contains("MHc150_MZp2")) return 0.628;
+  else if(SampleName.Contains("MHc160_MZp2")) return 0.510;
+
+  else if(SampleName.Contains("MHc90_MZp5" )) return 0.275;
+  else if(SampleName.Contains("MHc100_MZp5")) return 0.445;
+  else if(SampleName.Contains("MHc110_MZp5")) return 0.546;
+  else if(SampleName.Contains("MHc120_MZp5")) return 0.603;
+  else if(SampleName.Contains("MHc130_MZp5")) return 0.637;
+  else if(SampleName.Contains("MHc140_MZp5")) return 0.650;
+  else if(SampleName.Contains("MHc150_MZp5")) return 0.631;
+  else if(SampleName.Contains("MHc160_MZp5")) return 0.504;
+
+  else if(SampleName.Contains("MHc90_MZp8" )) return 0.268;
+  else if(SampleName.Contains("MHc100_MZp8")) return 0.423;
+  else if(SampleName.Contains("MHc110_MZp8")) return 0.533;
+  else if(SampleName.Contains("MHc120_MZp8")) return 0.596;
+  else if(SampleName.Contains("MHc130_MZp8")) return 0.629;
+  else if(SampleName.Contains("MHc140_MZp8")) return 0.642;
+  else if(SampleName.Contains("MHc150_MZp8")) return 0.616;
+  else if(SampleName.Contains("MHc160_MZp8")) return 0.503;
+
+  else if(SampleName.Contains("MHc90_MA10" )) return 0.373;
+  else if(SampleName.Contains("MHc100_MA10")) return 0.380;
+  else if(SampleName.Contains("MHc110_MA10")) return 0.457;
+  else if(SampleName.Contains("MHc120_MA10")) return 0.501;
+  else if(SampleName.Contains("MHc130_MA10")) return 0.531;
+  else if(SampleName.Contains("MHc140_MA10")) return 0.550;
+  else if(SampleName.Contains("MHc150_MA10")) return 0.535;
+  else if(SampleName.Contains("MHc160_MA10")) return 0.436;
+
+  else if(SampleName.Contains("MHc90_MA10" )) return 0.373;
+  else if(SampleName.Contains("MHc100_MA10")) return 0.380;
+  else if(SampleName.Contains("MHc110_MA10")) return 0.457;
+  else if(SampleName.Contains("MHc120_MA10")) return 0.501;
+  else if(SampleName.Contains("MHc130_MA10")) return 0.531;
+  else if(SampleName.Contains("MHc140_MA10")) return 0.550;
+  else if(SampleName.Contains("MHc150_MA10")) return 0.535;
+  else if(SampleName.Contains("MHc160_MA10")) return 0.436;
+
+  else if(SampleName.Contains("MHc100_MA15")) return 0.464;
+  else if(SampleName.Contains("MHc110_MA15")) return 0.496;
+  else if(SampleName.Contains("MHc120_MA15")) return 0.528;
+  else if(SampleName.Contains("MHc130_MA15")) return 0.547;
+  else if(SampleName.Contains("MHc140_MA15")) return 0.558;
+  else if(SampleName.Contains("MHc150_MA15")) return 0.540;
+  else if(SampleName.Contains("MHc160_MA15")) return 0.440;
+
+  else if(SampleName.Contains("MHc100_MA20")) return 0.556;
+  else if(SampleName.Contains("MHc110_MA20")) return 0.564;
+  else if(SampleName.Contains("MHc120_MA20")) return 0.572;
+  else if(SampleName.Contains("MHc130_MA20")) return 0.576;
+  else if(SampleName.Contains("MHc140_MA20")) return 0.576;
+  else if(SampleName.Contains("MHc150_MA20")) return 0.554;
+  else if(SampleName.Contains("MHc160_MA20")) return 0.450;
+
+  else if(SampleName.Contains("MHc110_MA25")) return 0.620;
+  else if(SampleName.Contains("MHc120_MA25")) return 0.617;
+  else if(SampleName.Contains("MHc130_MA25")) return 0.613;
+  else if(SampleName.Contains("MHc140_MA25")) return 0.609;
+  else if(SampleName.Contains("MHc150_MA25")) return 0.577;
+  else if(SampleName.Contains("MHc160_MA25")) return 0.459;
+
+  else if(SampleName.Contains("MHc110_MA30")) return 0.648;
+  else if(SampleName.Contains("MHc120_MA30")) return 0.652;
+  else if(SampleName.Contains("MHc130_MA30")) return 0.644;
+  else if(SampleName.Contains("MHc140_MA30")) return 0.632;
+  else if(SampleName.Contains("MHc150_MA30")) return 0.594;
+  else if(SampleName.Contains("MHc160_MA30")) return 0.471;
+
+  else if(SampleName.Contains("MHc120_MA35")) return 0.672;
+  else if(SampleName.Contains("MHc130_MA35")) return 0.665;
+  else if(SampleName.Contains("MHc140_MA35")) return 0.649;
+  else if(SampleName.Contains("MHc150_MA35")) return 0.612;
+  else if(SampleName.Contains("MHc160_MA35")) return 0.485;
+
+
+  return 1.;
+
+}
+
+
+float AnalyzerCore::SignalNorm(TString SampleName, float Xsec){
+
+  //Normalise xsec(tt)*[2*Br(t>bH+)*Br(H+>AW)*Br(A>mumu)] to required value.
+
+  if( isData ) return 1.;
+  if( !(SampleName.Contains("TTToHcToWA") || SampleName.Contains("TTToHcToWZp")) ) return 1.;
+
+  float weight=Xsec/20.;
+  //20 is current default xsec value for all signal samples
+  //At Xsec, we have N*2*[Xsec/(20*2/14%)] =N*Xsec/20*14%
+
+  //Branching fraction weights to each channels
+  if     (SampleName.Contains("1e2mu"))  weight*=0.1464;
+  else if(SampleName.Contains("3mu"))    weight*=0.1464;
+  else if(SampleName.Contains("1ta2mu")) weight*=0.1464;
+  else if(SampleName.Contains("2l2mu"))  weight*=0.1061;
+
+  return weight;
+
+}

@@ -3,70 +3,75 @@
 ########################
 ### SAMPLE LIST ########## 
 #######################
-declare -a hnfail=('HNMumEp_50' 'HNMumEp_500' 'HNMumEp_60' 'HNMumMum_100' 'HNMumMum_1100' 'HNMumMum_1500' 'HNMumMum_200' 'HNMumMum_40' 'HNMumMum_50' 'HNMumMum_500' 'HNMumMum_60' 'HNMoriondLL_Tchannel_MumMum_100' 'HNMoriondLL_Tchannel_MumMum_1100' 'HNMoriondLL_Tchannel_MumMum_200' 'HNMoriondLL_Tchannel_MumMum_500' 'HNMumMup_100' 'HNMumMup_1100' 'HNMumMup_1500' 'HNMumMup_200' 'HNMumMup_40' 'HNMumMup_50' 'HNMumMup_500' 'HNMumMup_60' 'HNMupEm_100' 'HNMupEm_1100' 'HNMupEm_1500' 'HNMupEm_200' 'HNMupEm_40' 'HNMupEm_50' 'HNMupEm_500' 'HNMupEm_60' 'HNMupEp_100')
 
-declare -a hn_mme=('HN_SSSF_MuMuE_1000' 'HN_SSSF_MuMuE_100' 'HN_SSSF_MuMuE_10' 'HN_SSSF_MuMuE_150' 'HN_SSSF_MuMuE_200' 'HN_SSSF_MuMuE_20' 'HN_SSSF_MuMuE_300' 'HN_SSSF_MuMuE_30' 'HN_SSSF_MuMuE_400' 'HN_SSSF_MuMuE_40' 'HN_SSSF_MuMuE_500' 'HN_SSSF_MuMuE_50' 'HN_SSSF_MuMuE_5' 'HN_SSSF_MuMuE_60' 'HN_SSSF_MuMuE_700' 'HN_SSSF_MuMuE_70' 'HN_SSSF_MuMuE_90')
-declare -a qcdbc=('qcd_15to20_bctoe' 'qcd_170to250_bctoe' 'qcd_20to30_bctoe' 'qcd_250toinf_bctoe' 'qcd_30to80_bctoe' 'qcd_80to170_bctoe')
-
-
-declare -a hn_ll_ee2=('HN_t_ch_EmEm_100_official' 'HN_t_ch_EmEm_1100_official' 'HN_t_ch_EmEm_200_official' 'HN_t_ch_EmEm_500_official' 'HN_t_ch_EpEp_100_official' 'HN_t_ch_EpEp_1100_official' 'HN_t_ch_EpEp_200_official' 'HN_t_ch_EpEp_500_official' 'HNpair_ElEl_WR5000_Zp1000_HN100_official' 'HNpair_ElEl_WR5000_Zp1000_HN200_official' 'HNpair_ElEl_WR5000_Zp1000_HN300_official' 'HNpair_ElEl_WR5000_Zp1000_HN400_official' 'HNpair_ElEl_WR5000_Zp1500_HN100_official' 'HNpair_ElEl_WR5000_Zp1500_HN200_official' 'HNpair_ElEl_WR5000_Zp1500_HN300_official' 'HNpair_ElEl_WR5000_Zp1500_HN400_official' 'HNpair_ElEl_WR5000_Zp1500_HN500_official' 'HNpair_ElEl_WR5000_Zp1500_HN600_official' 'HNpair_ElEl_WR5000_Zp1500_HN700_official' 'HNpair_ElEl_WR5000_Zp2000_HN100_official' 'HNpair_ElEl_WR5000_Zp2000_HN200_official' 'HNpair_ElEl_WR5000_Zp2000_HN300_official' 'HNpair_ElEl_WR5000_Zp2000_HN400_official' 'HNpair_ElEl_WR5000_Zp2000_HN500_official' 'HNpair_ElEl_WR5000_Zp2000_HN600_official' 'HNpair_ElEl_WR5000_Zp2000_HN700_official' 'HNpair_ElEl_WR5000_Zp2000_HN800_official' 'HNpair_ElEl_WR5000_Zp2000_HN900_official' 'HNpair_ElEl_WR5000_Zp2500_HN1000_official' 'HNpair_ElEl_WR5000_Zp2500_HN100_official' 'HNpair_ElEl_WR5000_Zp2500_HN1100_official' 'HNpair_ElEl_WR5000_Zp2500_HN1200_official' 'HNpair_ElEl_WR5000_Zp2500_HN200_official' 'HNpair_ElEl_WR5000_Zp2500_HN300_official' 'HNpair_ElEl_WR5000_Zp2500_HN400_official' 'HNpair_ElEl_WR5000_Zp2500_HN500_official' 'HNpair_ElEl_WR5000_Zp2500_HN600_official' 'HNpair_ElEl_WR5000_Zp2500_HN700_official' 'HNpair_ElEl_WR5000_Zp2500_HN800_official' 'HNpair_ElEl_WR5000_Zp2500_HN900_official' 'HNpair_ElEl_WR5000_Zp3000_HN1000_official' 'HNpair_ElEl_WR5000_Zp3000_HN100_official' 'HNpair_ElEl_WR5000_Zp3000_HN1100_official' 'HNpair_ElEl_WR5000_Zp3000_HN1200_official' 'HNpair_ElEl_WR5000_Zp3000_HN1300_official' 'HNpair_ElEl_WR5000_Zp3000_HN1400_official' 'HNpair_ElEl_WR5000_Zp3000_HN200_official' 'HNpair_ElEl_WR5000_Zp3000_HN300_official' 'HNpair_ElEl_WR5000_Zp3000_HN400_official' 'HNpair_ElEl_WR5000_Zp3000_HN500_official' 'HNpair_ElEl_WR5000_Zp3000_HN600_official' 'HNpair_ElEl_WR5000_Zp3000_HN700_official' 'HNpair_ElEl_WR5000_Zp3000_HN800_official' 'HNpair_ElEl_WR5000_Zp3000_HN900_official' 'HNpair_ElEl_WR5000_Zp4000_HN1000_official' 'HNpair_ElEl_WR5000_Zp4000_HN100_official' 'HNpair_ElEl_WR5000_Zp4000_HN1100_official' 'HNpair_ElEl_WR5000_Zp4000_HN1200_official' 'HNpair_ElEl_WR5000_Zp4000_HN1300_official' 'HNpair_ElEl_WR5000_Zp4000_HN1400_official' 'HNpair_ElEl_WR5000_Zp4000_HN1500_official' 'HNpair_ElEl_WR5000_Zp4000_HN1700_official' 'HNpair_ElEl_WR5000_Zp4000_HN1800_official' 'HNpair_ElEl_WR5000_Zp4000_HN1900_official' 'HNpair_ElEl_WR5000_Zp4000_HN200_official' 'HNpair_ElEl_WR5000_Zp4000_HN300_official' 'HNpair_ElEl_WR5000_Zp4000_HN400_official' 'HNpair_ElEl_WR5000_Zp4000_HN500_official' 'HNpair_ElEl_WR5000_Zp4000_HN600_official' 'HNpair_ElEl_WR5000_Zp4000_HN700_official' 'HNpair_ElEl_WR5000_Zp4000_HN800_official' 'HNpair_ElEl_WR5000_Zp4000_HN900_official' 'HNpair_ElEl_WR5000_Zp500_HN100_official' 'HNpair_ElEl_WR5000_Zp500_HN200_official' 'HNpair_ElEl_WR5000_Zp750_HN100_official' 'HNpair_ElEl_WR5000_Zp750_HN200_official' 'HNpair_ElEl_WR5000_Zp750_HN300_official'  'HNEmEm_100' 'HNEmEm_1100' 'HNEmEm_1500' 'HNEmEm_200' 'HNEmEm_40' 'HNEmEm_50' 'HNEmEm_500' 'HNEmEm_60' 'HNEmEp_100' 'HNEmEp_1100' 'HNEmEp_1500' 'HNEmEp_200' 'HNEmEp_40' 'HNEmEp_50' 'HNEmEp_500' 'HNEmEp_60' 'HNEpEm_100' 'HNEpEm_1100' 'HNEpEm_1500' 'HNEpEm_200' 'HNEpEm_40' 'HNEpEm_50' 'HNEpEm_500' 'HNEpEm_60' 'HNEpEp_100' 'HNEpEp_1100' 'HNEpEp_1500' 'HNEpEp_200' 'HNEpEp_40' 'HNEpEp_50' 'HNEpEp_500' 'HNEpEp_60' )
-
-declare -a hn_ll_ee1=( 'HNEmEm_100' 'HNEmEm_1100' 'HNEmEm_1500' 'HNEmEm_200' 'HNEmEm_40' 'HNEmEm_50' 'HNEmEm_500' 'HNEmEm_60' 'HNEmEp_100' 'HNEmEp_1100' 'HNEmEp_1500' 'HNEmEp_200' 'HNEmEp_40' 'HNEmEp_50' 'HNEmEp_500' 'HNEmEp_60' 'HNEpEm_100' 'HNEpEm_1100' 'HNEpEm_1500' 'HNEpEm_200' 'HNEpEm_40' 'HNEpEm_50' 'HNEpEm_500' 'HNEpEm_60' 'HNEpEp_100' 'HNEpEp_1100' 'HNEpEp_1500' 'HNEpEp_200' 'HNEpEp_40' 'HNEpEp_50' 'HNEpEp_500' 'HNEpEp_60' )                                                                                                                                           
+declare -a example=('ttZ' )
+declare -a AllSample=('WJets' 'DYJets_10to50' 'DYJets' 'SingleTop_s' 'SingleTbar_t' 'SingleTop_t' 'SingleTbar_tW' 'SingleTop_tW' 'TT_powheg' 'ZZ' 'WZ' 'WW' 'WGtoLNuG' 'WGtoLNuEE' 'WGtoLNuMM' 'ZGto2LG' 'ttH_nonbb' 'ttH_bb' 'ttW' 'ttZ') 
 
 
-declare -a hn_pair_all=('HNpair_ElEl_WR5000_Zp1000_HN100_official' 'HNpair_ElEl_WR5000_Zp1000_HN200_official' 'HNpair_ElEl_WR5000_Zp1000_HN300_official' 'HNpair_ElEl_WR5000_Zp1000_HN400_official' 'HNpair_ElEl_WR5000_Zp1500_HN100_official' 'HNpair_ElEl_WR5000_Zp1500_HN200_official' 'HNpair_ElEl_WR5000_Zp1500_HN300_official' 'HNpair_ElEl_WR5000_Zp1500_HN400_official' 'HNpair_ElEl_WR5000_Zp1500_HN500_official' 'HNpair_ElEl_WR5000_Zp1500_HN600_official' 'HNpair_ElEl_WR5000_Zp1500_HN700_official' 'HNpair_ElEl_WR5000_Zp2000_HN100_official' 'HNpair_ElEl_WR5000_Zp2000_HN200_official' 'HNpair_ElEl_WR5000_Zp2000_HN300_official' 'HNpair_ElEl_WR5000_Zp2000_HN400_official' 'HNpair_ElEl_WR5000_Zp2000_HN500_official' 'HNpair_ElEl_WR5000_Zp2000_HN600_official' 'HNpair_ElEl_WR5000_Zp2000_HN700_official' 'HNpair_ElEl_WR5000_Zp2000_HN800_official' 'HNpair_ElEl_WR5000_Zp2000_HN900_official' 'HNpair_ElEl_WR5000_Zp2500_HN1000_official' 'HNpair_ElEl_WR5000_Zp2500_HN100_official' 'HNpair_ElEl_WR5000_Zp2500_HN1100_official' 'HNpair_ElEl_WR5000_Zp2500_HN1200_official' 'HNpair_ElEl_WR5000_Zp2500_HN200_official' 'HNpair_ElEl_WR5000_Zp2500_HN300_official' 'HNpair_ElEl_WR5000_Zp2500_HN400_official' 'HNpair_ElEl_WR5000_Zp2500_HN500_official' 'HNpair_ElEl_WR5000_Zp2500_HN600_official' 'HNpair_ElEl_WR5000_Zp2500_HN700_official' 'HNpair_ElEl_WR5000_Zp2500_HN800_official' 'HNpair_ElEl_WR5000_Zp2500_HN900_official' 'HNpair_ElEl_WR5000_Zp3000_HN1000_official' 'HNpair_ElEl_WR5000_Zp3000_HN100_official' 'HNpair_ElEl_WR5000_Zp3000_HN1100_official' 'HNpair_ElEl_WR5000_Zp3000_HN1200_official' 'HNpair_ElEl_WR5000_Zp3000_HN1300_official' 'HNpair_ElEl_WR5000_Zp3000_HN1400_official' 'HNpair_ElEl_WR5000_Zp3000_HN200_official' 'HNpair_ElEl_WR5000_Zp3000_HN300_official' 'HNpair_ElEl_WR5000_Zp3000_HN400_official' 'HNpair_ElEl_WR5000_Zp3000_HN500_official' 'HNpair_ElEl_WR5000_Zp3000_HN600_official' 'HNpair_ElEl_WR5000_Zp3000_HN700_official' 'HNpair_ElEl_WR5000_Zp3000_HN800_official' 'HNpair_ElEl_WR5000_Zp3000_HN900_official' 'HNpair_ElEl_WR5000_Zp4000_HN1000_official' 'HNpair_ElEl_WR5000_Zp4000_HN100_official' 'HNpair_ElEl_WR5000_Zp4000_HN1100_official' 'HNpair_ElEl_WR5000_Zp4000_HN1200_official' 'HNpair_ElEl_WR5000_Zp4000_HN1300_official' 'HNpair_ElEl_WR5000_Zp4000_HN1400_official' 'HNpair_ElEl_WR5000_Zp4000_HN1500_official' 'HNpair_ElEl_WR5000_Zp4000_HN1700_official' 'HNpair_ElEl_WR5000_Zp4000_HN1800_official' 'HNpair_ElEl_WR5000_Zp4000_HN1900_official' 'HNpair_ElEl_WR5000_Zp4000_HN200_official' 'HNpair_ElEl_WR5000_Zp4000_HN300_official' 'HNpair_ElEl_WR5000_Zp4000_HN400_official' 'HNpair_ElEl_WR5000_Zp4000_HN500_official' 'HNpair_ElEl_WR5000_Zp4000_HN600_official' 'HNpair_ElEl_WR5000_Zp4000_HN700_official' 'HNpair_ElEl_WR5000_Zp4000_HN800_official' 'HNpair_ElEl_WR5000_Zp4000_HN900_official' 'HNpair_ElEl_WR5000_Zp500_HN100_official' 'HNpair_ElEl_WR5000_Zp500_HN200_official' 'HNpair_ElEl_WR5000_Zp750_HN100_official' 'HNpair_ElEl_WR5000_Zp750_HN200_official' 'HNpair_ElEl_WR5000_Zp750_HN300_official' 'HNpair_MuMu_WR5000_Zp1000_HN100_official' 'HNpair_MuMu_WR5000_Zp1000_HN200_official' 'HNpair_MuMu_WR5000_Zp1000_HN300_official' 'HNpair_MuMu_WR5000_Zp1000_HN400_official' 'HNpair_MuMu_WR5000_Zp1500_HN100_official' 'HNpair_MuMu_WR5000_Zp1500_HN200_official' 'HNpair_MuMu_WR5000_Zp1500_HN300_official' 'HNpair_MuMu_WR5000_Zp1500_HN400_official' 'HNpair_MuMu_WR5000_Zp1500_HN500_official' 'HNpair_MuMu_WR5000_Zp1500_HN600_official' 'HNpair_MuMu_WR5000_Zp1500_HN700_official' 'HNpair_MuMu_WR5000_Zp2000_HN100_official' 'HNpair_MuMu_WR5000_Zp2000_HN200_official' 'HNpair_MuMu_WR5000_Zp2000_HN300_official' 'HNpair_MuMu_WR5000_Zp2000_HN400_official' 'HNpair_MuMu_WR5000_Zp2000_HN500_official' 'HNpair_MuMu_WR5000_Zp2000_HN600_official' 'HNpair_MuMu_WR5000_Zp2000_HN700_official' 'HNpair_MuMu_WR5000_Zp2000_HN800_official' 'HNpair_MuMu_WR5000_Zp2000_HN900_official' 'HNpair_MuMu_WR5000_Zp2500_HN1000_official' 'HNpair_MuMu_WR5000_Zp2500_HN100_official' 'HNpair_MuMu_WR5000_Zp2500_HN1100_official' 'HNpair_MuMu_WR5000_Zp2500_HN1200_official' 'HNpair_MuMu_WR5000_Zp2500_HN200_official' 'HNpair_MuMu_WR5000_Zp2500_HN300_official' 'HNpair_MuMu_WR5000_Zp2500_HN400_official' 'HNpair_MuMu_WR5000_Zp2500_HN500_official' 'HNpair_MuMu_WR5000_Zp2500_HN600_official' 'HNpair_MuMu_WR5000_Zp2500_HN700_official' 'HNpair_MuMu_WR5000_Zp2500_HN800_official' 'HNpair_MuMu_WR5000_Zp2500_HN900_official' 'HNpair_MuMu_WR5000_Zp3000_HN1000_official' 'HNpair_MuMu_WR5000_Zp3000_HN100_official' 'HNpair_MuMu_WR5000_Zp3000_HN1100_official' 'HNpair_MuMu_WR5000_Zp3000_HN1200_official' 'HNpair_MuMu_WR5000_Zp3000_HN1300_official' 'HNpair_MuMu_WR5000_Zp3000_HN1400_official' 'HNpair_MuMu_WR5000_Zp3000_HN200_official' 'HNpair_MuMu_WR5000_Zp3000_HN300_official' 'HNpair_MuMu_WR5000_Zp3000_HN400_official' 'HNpair_MuMu_WR5000_Zp3000_HN500_official' 'HNpair_MuMu_WR5000_Zp3000_HN600_official' 'HNpair_MuMu_WR5000_Zp3000_HN700_official' 'HNpair_MuMu_WR5000_Zp3000_HN800_official' 'HNpair_MuMu_WR5000_Zp3000_HN900_official' 'HNpair_MuMu_WR5000_Zp4000_HN1000_official' 'HNpair_MuMu_WR5000_Zp4000_HN100_official' 'HNpair_MuMu_WR5000_Zp4000_HN1100_official' 'HNpair_MuMu_WR5000_Zp4000_HN1200_official' 'HNpair_MuMu_WR5000_Zp4000_HN1300_official' 'HNpair_MuMu_WR5000_Zp4000_HN1400_official' 'HNpair_MuMu_WR5000_Zp4000_HN1500_official' 'HNpair_MuMu_WR5000_Zp4000_HN1600_official' 'HNpair_MuMu_WR5000_Zp4000_HN1700_official' 'HNpair_MuMu_WR5000_Zp4000_HN1800_official' 'HNpair_MuMu_WR5000_Zp4000_HN1900_official' 'HNpair_MuMu_WR5000_Zp4000_HN200_official' 'HNpair_MuMu_WR5000_Zp4000_HN300_official' 'HNpair_MuMu_WR5000_Zp4000_HN400_official' 'HNpair_MuMu_WR5000_Zp4000_HN500_official' 'HNpair_MuMu_WR5000_Zp4000_HN600_official' 'HNpair_MuMu_WR5000_Zp4000_HN700_official' 'HNpair_MuMu_WR5000_Zp4000_HN800_official' 'HNpair_MuMu_WR5000_Zp4000_HN900_official' 'HNpair_MuMu_WR5000_Zp500_HN100_official' 'HNpair_MuMu_WR5000_Zp500_HN200_official' 'HNpair_MuMu_WR5000_Zp750_HN100_official' 'HNpair_MuMu_WR5000_Zp750_HN200_official' 'HNpair_MuMu_WR5000_Zp750_HN300_official')
+
+#####################################################################################
+#Background#################
+#####################################################################################
+
+#Single Process
+declare -a ST=('SingleTop_s' 'SingleTbar_t' 'SingleTop_t' 'SingleTbar_tW_noHadron' 'SingleTop_tW_noHadron')
+declare -a DY=('DYJets_10to50' "DYJets") 
+declare -a DYMG=("DYJets_MG")
+declare -a ZZ4l=("ZZTo4L_powheg") 
+declare -a ZG2l=("ZGto2LG" "WGtoLNuG") 
+declare -a TT=('TT_powheg') #"TTJets_aMC") 
+
+#Analysis Background
+declare -a Analysis_bkg=('WZTo3LNu_powheg' 'ZZTo4L_powheg' "ggZZto2e2mu" "ggZZto2e2tau" "ggZZto2mu2tau" "ggZZto4e" "ggZZto4mu" "ggZZto4tau" "ZGto2LG" 'ttWToLNu' 'ttZToLL_M-1to10' 'ttZ' 'tZq' 'ttH_nonbb' 'WWW' 'WWZ' 'WZZ' 'ZZZ' "vbhHtoZZ" "ggHtoZZ")
 
 
-declare -a hn_pair_ee=('HNpair_ElEl_WR5000_Zp1000_HN100_official' 'HNpair_ElEl_WR5000_Zp1000_HN200_official' 'HNpair_ElEl_WR5000_Zp1000_HN300_official' 'HNpair_ElEl_WR5000_Zp1000_HN400_official' 'HNpair_ElEl_WR5000_Zp1500_HN100_official' 'HNpair_ElEl_WR5000_Zp1500_HN200_official' 'HNpair_ElEl_WR5000_Zp1500_HN300_official' 'HNpair_ElEl_WR5000_Zp1500_HN400_official' 'HNpair_ElEl_WR5000_Zp1500_HN500_official' 'HNpair_ElEl_WR5000_Zp1500_HN600_official' 'HNpair_ElEl_WR5000_Zp1500_HN700_official' 'HNpair_ElEl_WR5000_Zp2000_HN100_official' 'HNpair_ElEl_WR5000_Zp2000_HN200_official' 'HNpair_ElEl_WR5000_Zp2000_HN300_official' 'HNpair_ElEl_WR5000_Zp2000_HN400_official' 'HNpair_ElEl_WR5000_Zp2000_HN500_official' 'HNpair_ElEl_WR5000_Zp2000_HN600_official' 'HNpair_ElEl_WR5000_Zp2000_HN700_official' 'HNpair_ElEl_WR5000_Zp2000_HN800_official' 'HNpair_ElEl_WR5000_Zp2000_HN900_official' 'HNpair_ElEl_WR5000_Zp2500_HN1000_official' 'HNpair_ElEl_WR5000_Zp2500_HN100_official' 'HNpair_ElEl_WR5000_Zp2500_HN1100_official' 'HNpair_ElEl_WR5000_Zp2500_HN1200_official' 'HNpair_ElEl_WR5000_Zp2500_HN200_official' 'HNpair_ElEl_WR5000_Zp2500_HN300_official' 'HNpair_ElEl_WR5000_Zp2500_HN400_official' 'HNpair_ElEl_WR5000_Zp2500_HN500_official' 'HNpair_ElEl_WR5000_Zp2500_HN600_official' 'HNpair_ElEl_WR5000_Zp2500_HN700_official' 'HNpair_ElEl_WR5000_Zp2500_HN800_official' 'HNpair_ElEl_WR5000_Zp2500_HN900_official' 'HNpair_ElEl_WR5000_Zp3000_HN1000_official' 'HNpair_ElEl_WR5000_Zp3000_HN100_official' 'HNpair_ElEl_WR5000_Zp3000_HN1100_official' 'HNpair_ElEl_WR5000_Zp3000_HN1200_official' 'HNpair_ElEl_WR5000_Zp3000_HN1300_official' 'HNpair_ElEl_WR5000_Zp3000_HN1400_official' 'HNpair_ElEl_WR5000_Zp3000_HN200_official' 'HNpair_ElEl_WR5000_Zp3000_HN300_official' 'HNpair_ElEl_WR5000_Zp3000_HN400_official' 'HNpair_ElEl_WR5000_Zp3000_HN500_official' 'HNpair_ElEl_WR5000_Zp3000_HN600_official' 'HNpair_ElEl_WR5000_Zp3000_HN700_official' 'HNpair_ElEl_WR5000_Zp3000_HN800_official' 'HNpair_ElEl_WR5000_Zp3000_HN900_official' 'HNpair_ElEl_WR5000_Zp4000_HN1000_official' 'HNpair_ElEl_WR5000_Zp4000_HN100_official' 'HNpair_ElEl_WR5000_Zp4000_HN1100_official' 'HNpair_ElEl_WR5000_Zp4000_HN1200_official' 'HNpair_ElEl_WR5000_Zp4000_HN1300_official' 'HNpair_ElEl_WR5000_Zp4000_HN1400_official' 'HNpair_ElEl_WR5000_Zp4000_HN1500_official' 'HNpair_ElEl_WR5000_Zp4000_HN1700_official' 'HNpair_ElEl_WR5000_Zp4000_HN1800_official' 'HNpair_ElEl_WR5000_Zp4000_HN1900_official' 'HNpair_ElEl_WR5000_Zp4000_HN200_official' 'HNpair_ElEl_WR5000_Zp4000_HN300_official' 'HNpair_ElEl_WR5000_Zp4000_HN400_official' 'HNpair_ElEl_WR5000_Zp4000_HN500_official' 'HNpair_ElEl_WR5000_Zp4000_HN600_official' 'HNpair_ElEl_WR5000_Zp4000_HN700_official' 'HNpair_ElEl_WR5000_Zp4000_HN800_official' 'HNpair_ElEl_WR5000_Zp4000_HN900_official' 'HNpair_ElEl_WR5000_Zp500_HN100_official' 'HNpair_ElEl_WR5000_Zp500_HN200_official' 'HNpair_ElEl_WR5000_Zp750_HN100_official' 'HNpair_ElEl_WR5000_Zp750_HN200_official' 'HNpair_ElEl_WR5000_Zp750_HN300_official')
-declare -a hn_pair_mm=('HNpair_MuMu_WR5000_Zp1000_HN100_official' 'HNpair_MuMu_WR5000_Zp1000_HN200_official' 'HNpair_MuMu_WR5000_Zp1000_HN300_official' 'HNpair_MuMu_WR5000_Zp1000_HN400_official' 'HNpair_MuMu_WR5000_Zp1500_HN100_official' 'HNpair_MuMu_WR5000_Zp1500_HN200_official' 'HNpair_MuMu_WR5000_Zp1500_HN300_official' 'HNpair_MuMu_WR5000_Zp1500_HN400_official' 'HNpair_MuMu_WR5000_Zp1500_HN500_official' 'HNpair_MuMu_WR5000_Zp1500_HN600_official' 'HNpair_MuMu_WR5000_Zp1500_HN700_official' 'HNpair_MuMu_WR5000_Zp2000_HN100_official' 'HNpair_MuMu_WR5000_Zp2000_HN200_official' 'HNpair_MuMu_WR5000_Zp2000_HN300_official' 'HNpair_MuMu_WR5000_Zp2000_HN400_official' 'HNpair_MuMu_WR5000_Zp2000_HN500_official' 'HNpair_MuMu_WR5000_Zp2000_HN600_official' 'HNpair_MuMu_WR5000_Zp2000_HN700_official' 'HNpair_MuMu_WR5000_Zp2000_HN800_official' 'HNpair_MuMu_WR5000_Zp2000_HN900_official' 'HNpair_MuMu_WR5000_Zp2500_HN1000_official' 'HNpair_MuMu_WR5000_Zp2500_HN100_official' 'HNpair_MuMu_WR5000_Zp2500_HN1100_official' 'HNpair_MuMu_WR5000_Zp2500_HN1200_official' 'HNpair_MuMu_WR5000_Zp2500_HN200_official' 'HNpair_MuMu_WR5000_Zp2500_HN300_official' 'HNpair_MuMu_WR5000_Zp2500_HN400_official' 'HNpair_MuMu_WR5000_Zp2500_HN500_official' 'HNpair_MuMu_WR5000_Zp2500_HN600_official' 'HNpair_MuMu_WR5000_Zp2500_HN700_official' 'HNpair_MuMu_WR5000_Zp2500_HN800_official' 'HNpair_MuMu_WR5000_Zp2500_HN900_official' 'HNpair_MuMu_WR5000_Zp3000_HN1000_official' 'HNpair_MuMu_WR5000_Zp3000_HN100_official' 'HNpair_MuMu_WR5000_Zp3000_HN1100_official' 'HNpair_MuMu_WR5000_Zp3000_HN1200_official' 'HNpair_MuMu_WR5000_Zp3000_HN1300_official' 'HNpair_MuMu_WR5000_Zp3000_HN1400_official' 'HNpair_MuMu_WR5000_Zp3000_HN200_official' 'HNpair_MuMu_WR5000_Zp3000_HN300_official' 'HNpair_MuMu_WR5000_Zp3000_HN400_official' 'HNpair_MuMu_WR5000_Zp3000_HN500_official' 'HNpair_MuMu_WR5000_Zp3000_HN600_official' 'HNpair_MuMu_WR5000_Zp3000_HN700_official' 'HNpair_MuMu_WR5000_Zp3000_HN800_official' 'HNpair_MuMu_WR5000_Zp3000_HN900_official' 'HNpair_MuMu_WR5000_Zp4000_HN1000_official' 'HNpair_MuMu_WR5000_Zp4000_HN100_official' 'HNpair_MuMu_WR5000_Zp4000_HN1100_official' 'HNpair_MuMu_WR5000_Zp4000_HN1200_official' 'HNpair_MuMu_WR5000_Zp4000_HN1300_official' 'HNpair_MuMu_WR5000_Zp4000_HN1400_official' 'HNpair_MuMu_WR5000_Zp4000_HN1500_official' 'HNpair_MuMu_WR5000_Zp4000_HN1600_official' 'HNpair_MuMu_WR5000_Zp4000_HN1700_official' 'HNpair_MuMu_WR5000_Zp4000_HN1800_official' 'HNpair_MuMu_WR5000_Zp4000_HN1900_official' 'HNpair_MuMu_WR5000_Zp4000_HN200_official' 'HNpair_MuMu_WR5000_Zp4000_HN300_official' 'HNpair_MuMu_WR5000_Zp4000_HN400_official' 'HNpair_MuMu_WR5000_Zp4000_HN500_official' 'HNpair_MuMu_WR5000_Zp4000_HN600_official' 'HNpair_MuMu_WR5000_Zp4000_HN700_official' 'HNpair_MuMu_WR5000_Zp4000_HN800_official' 'HNpair_MuMu_WR5000_Zp4000_HN900_official' 'HNpair_MuMu_WR5000_Zp500_HN100_official' 'HNpair_MuMu_WR5000_Zp500_HN200_official' 'HNpair_MuMu_WR5000_Zp750_HN100_official' 'HNpair_MuMu_WR5000_Zp750_HN200_official' 'HNpair_MuMu_WR5000_Zp750_HN300_official')
-declare -a example=("WW" "WZ" "HNMupMup_100" "DYJets")
+#Dilepton Validation
+declare -a CR_DiLep=('DYJets_10to50' 'DYJets' 'SingleTbar_tW_noHadron' 'SingleTop_tW_noHadron' 'TT_powheg' 'WZ' 'ZZ' 'WWTo2L2Nu' 'ZGto2LG')
+declare -a CR_EMu=('WJets' 'DYJets_10to50' 'DYJets' 'SingleTbar_tW_noHadron' 'SingleTop_tW_noHadron' 'WZ' 'ZZ' 'WWTo2L2Nu' 'ZGto2LG' "WGtoLNuG")
+#declare -a CR_EMu=('DYJets_10to50' 'DYJets' 'SingleTbar_tW_noHadron' 'SingleTop_tW_noHadron' 'TT_powheg' 'WZ' 'ZZ' 'WWTo2L2Nu' 'ZGto2LG')
+declare -a CR_MuMu_fast=('DYJets_10to50' 'DYJets')
+declare -a CR_EE_fast=('DYJets_10to50' 'DYJets')
 
-declare -a tmplist=('WpWp_qcd_madgraph' 'ZG_llG_MCatNLO' 'ZZ_llnunu_powheg' 'ZZ_llqq_MCatNLO' 'ZZ_llll_MCatNLO' 'ZZ_llll_powheg' 'ZZ_pythia8' 'ttHnobb_Powheg' 'ttHtobb_Powheg')
+#4lepton CR
+#declare -a CR_4lep=("ZZTo4L_powheg" "ggZZto2e2mu" "ggZZto2e2tau" "ggZZto2mu2tau" "ggZZto4e" "ggZZto4mu" "ggZZto4tau" "ttZToLL_M-1to10" "ttZToLL_M-10" "vbhHtoZZ" "ggHtoZZ" "ttH_nonbb" "ZZZ" "WZZ" "WWZ")
+declare -a CR_4lep=("ZZTo4L_powheg" "ggZZto2e2mu" "ggZZto2e2tau" "ggZZto2mu2tau" "ggZZto4e" "ggZZto4mu" "ggZZto4tau" "ttZToLL_M-1to10" "ttZ" "vbhHtoZZ" "ggHtoZZ" "ttH_nonbb" "ZZZ" "WZZ" "WWZ" "WZG" "ZGto2LG")
+declare -a CR_4lep_ZGtestAdd=("WZG" "ZGto2LG")
+declare -a WWG=("WWG")
+declare -a ggH=("ggHtoZZ")
 
-declare -a tmpall_mc=('TTJets_aMC' 'WJets' 'WW'  'WZ' 'ZZ' 'DYJets' )
+#Btag Efficiency Measurement
+declare -a BtagEffSample=('TT_powheg')
+#declare -a BtagEffSample=('TTJets_aMC' "DYJets")
 
-declare -a hn=('DYJets_10to50'  'DYJets' 'WW' 'ZZ' 'WZ' 'TTJets_MG')
-
-declare -a pu_dilepton_list=('DYJets_10to50' 'DYJets' 'WJets' 'TT_powheg'  'SingleTop_s' 'SingleTbar_t' 'SingleTop_t'  'SingleTbar_tW' 'SingleTop_tW' 'WGtoLNuG'  'ZGto2LG' 'WZTo3LNu_powheg' 'ZZTo4L_powheg' 'DYJets_MG_10to50' 'DYJets_MG' 'TTJets_aMC' )
-
-declare -a hntmp=('TTTT' 'TG' 'TTG' 'ttWToLNu' 'ttZToLL_M-1to10' 'ttZToLL_M-10'  'tZq' 'ggHtoWW' 'ggHtoZZ' 'WWG' 'WZG' 'WZto2L2Q_amcatnlo' 'ZZTo2L2Nu_Powheg' 'ZZTo2L2Q_Powheg' 'ggZZto2e2mu' 'ggZZto2e2nu' 'ggZZto2e2tau'  'ggZZto4e' 'ggWWto2L2Nu' 'ww_ds'  )
-
-declare -a hn_eetmp=('DYJets_10to50' 'DYJets' 'WJets' 'WpWpEWK' 'WpWpQCD' 'TT_powheg'  'SingleTop_s' 'SingleTbar_t' 'SingleTop_t'  'SingleTbar_tW' 'SingleTop_tW' 'WWW' 'ttW' 'ttZ' 'ttH_nonbb' 'ttH_bb' 'ZZZ' 'WZZ'  'VBF_HToMuMu' 'WGtoLNuG'  'ZGto2LG' 'WZTo3LNu_powheg' 'ZZTo4L_powheg'  'WWTo2L2Nu' 'WWToLNuQQ' 'QCD_DoubleEMEnriched_30-40_mgg80toinf' 'QCD_DoubleEMEnriched_30-inf_mgg40to80' 'QCD_DoubleEMEnriched_40-inf_mgg80toinf' 'TTTT' 'TG' 'TTG' 'ttWToLNu' 'ttZToLL_M-1to10' 'ttZToLL_M-10'  'tZq' 'ggHtoWW' 'ggHtoZZ' 'WWG' 'WZG' 'WZto2L2Q_amcatnlo' 'ZZTo2L2Nu_Powheg' 'ZZTo2L2Q_Powheg' 'ggZZto2e2mu' 'ggZZto2e2nu' 'ggZZto2e2tau'  'ggZZto4e' 'ggWWto2L2Nu' 'ww_ds'  )
-
-declare -a sktmp=('DYJets' 'WJets' 'TT_powheg')
-
-declare -a hn_ee_sig=('WpWpEWK' 'WpWpQCD'  'ZZZ' 'WZZ'  'ww_ds'  'ggZZto4e' 'WZTo3LNu_powheg' 'ZZTo4L_powheg'  'ggHtoZZ'  'WWG' 'WZG'    'ttWToLNu' 'ttZToLL_M-1to10' 'ttZToLL_M-10'  'tZq' 'ggHtoWW' )
-declare -a hn_ee_sigcf=('DYJets' 'TT_powheg' 'WWTo2L2Nu' )
-
-declare -a hn_ee_type=('DYJets' 'TT_powheg' 'WJets' 'ZGto2LG' 'QCD_Pt-30to50_EMEnriched')
+#ID, Trigger Efficiency Measurement
+declare -a IDSample=('DYJets_MG' )
+declare -a TrigSample=('TT_powheg' 'DYJets_MG' 'DYJets_10to50' )
+declare -a TrigDiLepClosure=('TT_powheg' 'DYJets_MG' 'DYJets_10to50' )
+declare -a TrigTriLepClosure=('WZTo3LNu_powheg' 'ttZ' 'ZZTo4L_powheg' )
+declare -a FR_Prompt=('WJets' 'DYJets_10to50' 'DYJets' 'TT_powheg')
+#####################################################################################
 
 
-declare -a tmp=(
-'DYJets_MG'
-'GG_HToMuMu' 
-'SingleTop_t'
-'TTJets_aMC'
-'TTLL_powheg'
-'ttZToLL_M-10'
-'WWTo2L2Nu_DS'
-'ZGto2LG' )
+#####################################################################################
+##Signal###############
+#####################################################################################
+declare -a SignalMajor_All=("TTToHcToWA_1e2mu_MHc100_MA15" "TTToHcToWA_1e2mu_MHc110_MA30" "TTToHcToWA_1e2mu_MHc160_MA15" "TTToHcToWA_1e2mu_MHc160_MA30" "TTToHcToWZp_1e2mu_MHc160_MZp5" "TTToHcToWZp_1e2mu_MHc90_MZp5" "TTToHcToWA_3mu_MHc100_MA15" "TTToHcToWA_3mu_MHc110_MA30" "TTToHcToWA_3mu_MHc160_MA15" "TTToHcToWA_3mu_MHc160_MA30" "TTToHcToWZp_3mu_MHc160_MZp5" "TTToHcToWZp_3mu_MHc90_MZp5" "TTToHcToWA_1ta2mu_MHc100_MA15" "TTToHcToWA_1ta2mu_MHc110_MA30" "TTToHcToWA_1ta2mu_MHc160_MA15" "TTToHcToWA_1ta2mu_MHc160_MA30" "TTToHcToWZp_1ta2mu_MHc160_MZp5" "TTToHcToWZp_1ta2mu_MHc90_MZp5" "TTToHcToWA_2l2mu_MHc100_MA15" "TTToHcToWA_2l2mu_MHc110_MA30" "TTToHcToWA_2l2mu_MHc160_MA15" "TTToHcToWA_2l2mu_MHc160_MA30" "TTToHcToWZp_2l2mu_MHc160_MZp5" "TTToHcToWZp_2l2mu_MHc90_MZp5")
 
-declare -a tmp2=(
-'HNEpMup_100' 
-'HNEpMup_1100' 
-'HNEpMup_1500' 
-'HNEpMup_200' 
-'HNEpMup_40' 
-'HNEpMup_500' 
-'HNEpMup_50' 
-'HNEpMup_60' 
-'HNMoriondLL_Tchannel_EpMup_100' 
-'HNMoriondLL_Tchannel_EpMup_1100' 
-'HNMoriondLL_Tchannel_EpMup_200' 
-'HNMoriondLL_Tchannel_EpMup_500' 
-'HN_MuMuMu_1000'
-'HN_MuMuMu_10'
-'HN_MuMuMu_150'
-'HN_MuMuMu_20'
-'HN_MuMuMu_200'
- )
+
+declare -a SignalMajor_1e2mu=("TTToHcToWA_1e2mu_MHc100_MA15" "TTToHcToWA_1e2mu_MHc110_MA30" "TTToHcToWA_1e2mu_MHc160_MA15" "TTToHcToWA_1e2mu_MHc160_MA30" "TTToHcToWZp_1e2mu_MHc160_MZp5" "TTToHcToWZp_1e2mu_MHc90_MZp5") 
+declare -a SignalMajor_3mu=("TTToHcToWA_3mu_MHc100_MA15" "TTToHcToWA_3mu_MHc110_MA30" "TTToHcToWA_3mu_MHc160_MA15" "TTToHcToWA_3mu_MHc160_MA30" "TTToHcToWZp_3mu_MHc160_MZp5" "TTToHcToWZp_3mu_MHc90_MZp5")
+declare -a SignalMajor_1tamu=("TTToHcToWA_1ta2mu_MHc100_MA15" "TTToHcToWA_1ta2mu_MHc110_MA30" "TTToHcToWA_1ta2mu_MHc160_MA15" "TTToHcToWA_1ta2mu_MHc160_MA30" "TTToHcToWZp_1ta2mu_MHc160_MZp5" "TTToHcToWZp_1ta2mu_MHc90_MZp5") 
+declare -a SignalMajor_2l2mu=("TTToHcToWA_2l2mu_MHc100_MA15" "TTToHcToWA_2l2mu_MHc110_MA30" "TTToHcToWA_2l2mu_MHc160_MA15" "TTToHcToWA_2l2mu_MHc160_MA30" "TTToHcToWZp_2l2mu_MHc160_MZp5" "TTToHcToWZp_2l2mu_MHc90_MZp5")
+#####################################################################################
+
+
+#####################################################################################
+##Just in Case####
+#####################################################################################
+
+#DataValidation-SingleE
+declare -a Validation_SEle=("WJets_MCatNLO" "WG_lnuG_madgraph" "TT_MG5" "ZG_llG_MCatNLO" "WW_pythia8" "DY10to50_MCatNLO" "DY50plus_MCatNLO" 'QCD_em15to20_pythia8' 'QCD_em20to30_pythia8' 'QCD_em50to80_pythia8' 'QCD_em80to120_pythia8' 'QCD_em120to170_pythia8' 'QCD_em170to300_pythia8' 'QCD_20to30_bcToE_pythia8' 'QCD_30to80_bcToE_pythia8' 'QCD_80to170_bcToE_pythia8' 'QCD_170to250_bcToE_pythia8' 'QCD_250toInf_bcToE_pythia8') 
+
+#MuMubj Test
+declare -a MuMubj_bkg=("TT_powheg" "DY50plus_MCatNLO" "DY10to50_MCatNLO" "singletop_tbar_Powheg" "singletop_s_MCatNLO" "singletop_tW_Powheg" "singletop_tbarW_Powheg" "singletop_t_Powheg" "TTG_MCatNLO" "ttZToLLNuNu_MCatNLO" "ttWJetsToLNu_MCatNLO" "ttZToQQ_MCatNLO" "ttHnobb_Powheg" "WZ_lllnu_MCatNLO" "WZ_llqq_MCatNLO" "WW_pythia8" "ZZ_llll_MCatNLO" "ZG_llG_MCatNLO" "ZZ_llqq_MCatNLO")
+#####################################################################################
