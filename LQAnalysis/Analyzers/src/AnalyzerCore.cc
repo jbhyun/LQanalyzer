@@ -3522,10 +3522,11 @@ vector<snu::KElectron> AnalyzerCore::GetTruePrompt(vector<snu::KElectron> electr
       }
       else{
 	
-	bool ismatched = electrons.at(i).MCMatched();                                                                                                                                                                         
-// TruthMatched(electrons.at(i),  keep_chargeflip);
+	bool ismatched = TruthMatched(electrons.at(i),  keep_chargeflip);                                                                                                                            
+	//electrons.at(i).MCMatched();                                                                                                                                                                         
+	// TruthMatched(electrons.at(i),  keep_chargeflip);
 	//electrons.at(i).MCMatched();
-	
+	if(electrons.at(i).MCFromTau()) ismatched=false;
 	if(keepfake&&keep_chargeflip) prompt_electrons.push_back(electrons.at(i));
 	else if(keep_chargeflip&& ismatched) prompt_electrons.push_back(electrons.at(i));
 	else if(keepfake&&! MCIsCF(electrons.at(i))) prompt_electrons.push_back(electrons.at(i)); 
