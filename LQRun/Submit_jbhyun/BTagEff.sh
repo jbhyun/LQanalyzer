@@ -15,11 +15,11 @@ Skim="SKTree_LeptonSkim" ###"Lepton" ### "Lepton"(single lepton skim)/"DiLep"(di
 DataPeriod="ALL"        ###  "C" = period C only   "ALL" or "CtoD"  = period C+D
 job_logstep=1000
 LogLevel="INFO"
-#QueueOption="fastq"
-QueueOption="longq"
+QueueOption="fastq"
+#QueueOption="longq"
 
-MCList="DY"
-#MCList="BtagEffSample"
+#MCList="DY"
+MCList="BtagEffSample"
 #MCList="Analysis_bkg"
 #MCList="SignalMajor_All"
 ###Backgound : AllSample / Analysis_bkg / Analysis_bkg_test / QCD_mu

@@ -163,7 +163,8 @@ void ElectronSelection::Selection(std::vector<KElectron>& leptonColl , bool m_de
 
     // ID cut
     if(apply_ID){
-      if(GetString(k_id).Contains("POG")) ElectronID = PassID(*el, k_id);
+      if     (GetString(k_id).Contains("POG"))             ElectronID = PassID(*el, k_id);
+      else if(GetString(k_id).Contains("ELECTRON_HN_MVA")) ElectronID = PassID(*el, k_id);
       else ElectronID = PassUserID( *el,GetString(k_id) , GetString(k_id), apply_chargeconst, apply_convcut,relIsoBarrel_max,relIsoEndcap_max,dxyBarrel_max,dxyEndcap_max,dzBarrel_max,dzEndcap_max, 999.,999.);
 
       if(!ElectronID) {
@@ -646,8 +647,10 @@ bool ElectronSelection::PassID(snu::KElectron el, ID id){
   else if( id == ELECTRON_POG_LOOSE  && el.SNUID()<10   ){pass_selection = false; if(debug){ cout << "Failloose " << endl;}}
   else if( id == ELECTRON_POG_MEDIUM && el.SNUID()<100  ){pass_selection = false; if(debug){ cout << "Fail medium"<< endl;}}
   else if( id == ELECTRON_POG_TIGHT  && el.SNUID()<1000 ){pass_selection = false; if(debug){ cout << "Fail tight" << endl;}}
-  else if( id == ELECTRON_POG_MVA_WP80 && (!el.PassNotrigMVAMedium()) ){ pass_selection = false; }
-  else if( id == ELECTRON_POG_MVA_WP90 && (!el.PassNotrigMVATight())  ){ pass_selection = false; }
+  else if( id == ELECTRON_POG_MVA_WP90 && (!el.PassNotrigMVAMedium()) ){ pass_selection = false; }
+  else if( id == ELECTRON_POG_MVA_WP80 && (!el.PassNotrigMVATight())  ){ pass_selection = false; }
+  else if( id == ELECTRON_HN_MVA_LOOSE && (!el.PassTrigMVAHNLoose())  ){ pass_selection = false; }
+  else if( id == ELECTRON_HN_MVA_TIGHT && (!el.PassTrigMVAHNTight())  ){ pass_selection = false; }
 
   return pass_selection;
 

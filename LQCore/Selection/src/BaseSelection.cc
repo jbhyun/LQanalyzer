@@ -77,6 +77,8 @@ TString BaseSelection::GetString(ID id){
   if ( id == ELECTRON_HN_VETO) return "ELECTRON_HN_VETO";
   if ( id == ELECTRON_HN_FAKELOOSE) return "ELECTRON_HN_FAKELOOSE";
   if ( id == ELECTRON_HN_FAKELOOSE_NOD0) return "ELECTRON_HN_FAKELOOSE_NODO";
+  if ( id == ELECTRON_HN_MVA_LOOSE) return "ELECTRON_HN_MVA_LOOSE";
+  if ( id == ELECTRON_HN_MVA_TIGHT) return "ELECTRON_HN_MVA_TIGHT";
   if ( id == ELECTRON_HN_TIGHT) return  "ELECTRON_HN_TIGHT";
   if ( id == ELECTRON_TOP_VETO) return  "ELECTRON_TOP_VETO";
   if ( id == ELECTRON_TOP_LOOSE) return  "ELECTRON_TOP_LOOSE";

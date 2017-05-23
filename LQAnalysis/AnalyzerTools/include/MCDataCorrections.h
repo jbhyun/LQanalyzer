@@ -80,6 +80,9 @@ class MCDataCorrections{
   double TriggerEfficiencyLegByLeg(std::vector<snu::KElectron> el, std::vector<snu::KMuon> mu, int TriggerCategory, int DataOrMC, int direction=0);
   double TriggerEfficiencyLegByLegPeriodDependant(std::vector<snu::KElectron> el, std::vector<snu::KMuon> mu, int TriggerCategory, int catperiod, int DataOrMC, int direction=0);
   double TriggerEfficiency_DiMuon_passing_DoubleMuonTrigger(snu::KMuon mu1, snu::KMuon mu2, TString leg1, TString leg2, int DataOrMC, int catperiod);
+
+  double TriggerSFFullLumi_LegByLeg( std::vector<snu::KElectron> EleColl, std::vector<snu::KMuon> MuColl, TString TrigName, TString EleID, TString MuID, TString Option="");
+  std::vector<TString> GetTrigSFKeys(TString MuID, TString EleID, TString TrigName);
   
   
 

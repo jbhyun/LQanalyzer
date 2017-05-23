@@ -196,6 +196,26 @@ void May2017_ObjectEff::ExecuteEvents()throw( LQError ){
      eventbase->GetElectronSel()->SetdxySigMax(3.);
    std::vector<snu::KElectron> electronMVATColl; eventbase->GetElectronSel()->Selection(electronMVATColl);
    
+     eventbase->GetElectronSel()->SetID(BaseSelection::ELECTRON_POG_MVA_WP80);
+     eventbase->GetElectronSel()->SetHLTSafeCut("CaloIdL_TrackIdL_IsoVL");
+     eventbase->GetElectronSel()->SetPt(25.);                eventbase->GetElectronSel()->SetEta(2.5);
+     eventbase->GetElectronSel()->SetBETrRegIncl(false);
+     eventbase->GetElectronSel()->SetRelIsoType("Default");  eventbase->GetElectronSel()->SetRelIsoBEMax(0.0588, 0.0571);
+     eventbase->GetElectronSel()->SetdxyBEMax(0.01, 0.01);   eventbase->GetElectronSel()->SetdzBEMax(0.1, 0.2);
+     eventbase->GetElectronSel()->SetdxySigMax(3.);
+//     eventbase->GetElectronSel()->SetApplyConvVeto(true);
+   std::vector<snu::KElectron> electronNewMVATColl; eventbase->GetElectronSel()->Selection(electronNewMVATColl);
+
+     eventbase->GetElectronSel()->SetID(BaseSelection::ELECTRON_HN_MVA_TIGHT);
+     eventbase->GetElectronSel()->SetHLTSafeCut("CaloIdL_TrackIdL_IsoVL");
+     eventbase->GetElectronSel()->SetPt(25.);                eventbase->GetElectronSel()->SetEta(2.5);
+     eventbase->GetElectronSel()->SetBETrRegIncl(false);
+     eventbase->GetElectronSel()->SetRelIsoType("Default");  eventbase->GetElectronSel()->SetRelIsoBEMax(0.05, 0.05);
+     eventbase->GetElectronSel()->SetdxyBEMax(0.01, 0.01);   eventbase->GetElectronSel()->SetdzBEMax(0.04, 0.04);
+     eventbase->GetElectronSel()->SetdxySigMax(3.);
+     eventbase->GetElectronSel()->SetCheckCharge(true);      eventbase->GetElectronSel()->SetApplyConvVeto(true);
+   std::vector<snu::KElectron> electronHNMVATColl; eventbase->GetElectronSel()->Selection(electronHNMVATColl);
+
 
    std::vector<snu::KElectron> electronNull;
 
@@ -317,12 +337,14 @@ void May2017_ObjectEff::ExecuteEvents()throw( LQError ){
      FillHist("IDeff_Ne", 1., Nfake*weight, 0., 2., 2);
 
      //N_IDpass - Numerator, 
-     int Nfake_POGM=0,   Nfake_POGT=0,   Nfake_POGTIP=0,   Nfake_POGTIPQ=0;
-     int Nprompt_POGM=0, Nprompt_POGT=0, Nprompt_POGTIP=0, Nprompt_POGTIPQ=0;
+     int Nfake_POGM=0,   Nfake_POGT=0,   Nfake_POGTIP=0,   Nfake_POGTIPQ=0,   Nfake_NewMVAT=0,   Nfake_HNMVAT=0;
+     int Nprompt_POGM=0, Nprompt_POGT=0, Nprompt_POGTIP=0, Nprompt_POGTIPQ=0, Nprompt_NewMVAT=0, Nprompt_HNMVAT=0;
      for(int i=0; i<electronPOGMColl.size(); i++){ if(electronPOGMColl.at(i).MCIsPrompt()){Nprompt_POGM++;} else{Nfake_POGM++;} }
      for(int i=0; i<electronPOGTColl.size(); i++){ if(electronPOGTColl.at(i).MCIsPrompt()){Nprompt_POGT++;} else{Nfake_POGT++;} }
      for(int i=0; i<electronPOGTIPColl.size(); i++){ if(electronPOGTIPColl.at(i).MCIsPrompt()){Nprompt_POGTIP++;} else{Nfake_POGTIP++;} }
      for(int i=0; i<electronPOGTIPQColl.size(); i++){ if(electronPOGTIPQColl.at(i).MCIsPrompt()){Nprompt_POGTIPQ++;} else{Nfake_POGTIPQ++;} }
+     for(int i=0; i<electronNewMVATColl.size(); i++){ if(electronNewMVATColl.at(i).MCIsPrompt()){Nprompt_NewMVAT++;} else{Nfake_NewMVAT++;} }
+     for(int i=0; i<electronHNMVATColl.size(); i++){ if(electronHNMVATColl.at(i).MCIsPrompt()){Nprompt_HNMVAT++;} else{Nfake_HNMVAT++;} }
 
      int Nfake_MVAT=0;
      int Nprompt_MVAT=0;
@@ -338,12 +360,16 @@ void May2017_ObjectEff::ExecuteEvents()throw( LQError ){
      FillHist("IDeff_NIDp", 2., Nprompt_POGTIP*weight, 0., 10., 10);
      FillHist("IDeff_NIDp", 3., Nprompt_POGTIPQ*weight, 0., 10., 10);
      FillHist("IDeff_NIDp", 4., Nprompt_MVAT*weight, 0., 10., 10);
+     FillHist("IDeff_NIDp", 5., Nprompt_NewMVAT*weight, 0., 10., 10);
+     FillHist("IDeff_NIDp", 6., Nprompt_HNMVAT*weight, 0., 10., 10);
 
      FillHist("IDeff_NIDf", 0., Nfake_POGM*weight, 0., 10., 10);
      FillHist("IDeff_NIDf", 1., Nfake_POGT*weight, 0., 10., 10);
      FillHist("IDeff_NIDf", 2., Nfake_POGTIP*weight, 0., 10., 10);
      FillHist("IDeff_NIDf", 3., Nfake_POGTIPQ*weight, 0., 10., 10);
      FillHist("IDeff_NIDf", 4., Nfake_MVAT*weight, 0., 10., 10);
+     FillHist("IDeff_NIDf", 5., Nfake_NewMVAT*weight, 0., 10., 10);
+     FillHist("IDeff_NIDf", 6., Nfake_HNMVAT*weight, 0., 10., 10);
 
    }
    if(TriMu_analysis){
