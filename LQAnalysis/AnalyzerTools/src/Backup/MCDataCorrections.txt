@@ -383,6 +383,280 @@ double MCDataCorrections::TriggerScaleFactor( vector<snu::KElectron> el, vector<
 }
 
 
+double MCDataCorrections::TriggerSFFullLumi_LegByLeg( vector<snu::KElectron> EleColl, vector<snu::KMuon> MuColl, TString TrigName, TString EleID, TString MuID, TString Option){
+  //For people who doesn't consider using partial dataset and partial period SF.
+  //And for whom prefers lumi weighted way to random period approach.
+  //Option : 1. SystUp  : Systematic uncertainty + / SystDown : Systematic Uncertainty down (Not implemented yet)
+  //         2. MCEff   : return MC efficiency of the trigger for the lepton selection
+  //            DataEff : return Data efficiency of the trigger for the lepton selection
+  //            (Defalt is to return scale factor, not the trigger efficiency)
+ /* 
+  int SystDirection=0;
+  if     (Option.Contains("SystUp"))   SystDirection=1;
+  else if(Option.Contains("SystDown")) SystDirection=-1; 
+
+  std::vector<TString> KeyVector=GetTrigSFKeys(MuID, EleID, TrigName);
+
+  if(TrigName.Contains("HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v")){
+
+    if(KeyVector.size()!=4){ return 0.;} //ID+TrigName Did not match 
+
+    if(EleColl.size()==1 && MuColl.size()==1){
+      TString Leg1DataEffSrcName=KeyVector.at(0), Leg1MCEffSrcName=KeyVector.at(1);
+      TString Leg2DataEffSrcName=KeyVector.at(2), Leg2MCEffSrcName=KeyVector.at(3);
+
+      if( !(CheckCorrectionHist(Leg1DataEffSrcName) && CheckCorrectionHist(Leg1MCEffSrcName)
+            && CheckCorrectionHist(Leg2DataEffSrcName) && CheckCorrectionHist(Leg2MCEffSrcName)) ) return 0.;
+
+      float EffMuBd_down=8., EffMuBd_up=200., EffEleBd_down=23., EffEleBd_up=200.;
+      float mupt=MuColl.at(0).MiniAODPt(), elpt=EleColl.at(0).Pt();
+      float mueta=EleColl.at(0).Eta(),     eleta=EleColl.at(0).Eta();
+
+      //efficiency below threshold is too uncertain. Do not apply SF below threshold
+      if(mupt<EffMuBd_down) { return 1.;} else if(mupt>EffMuBd_up){ mupt=EffMuBd_up-1.; }
+      if(elpt<EffEleBd_down){ return 1.;} else if(elpt>EffEleBd_up){ elpt=EffEleBd_up-1.; }
+
+
+      float MuLegEff_Data=1., MuLegEff_MC=1., EleLegEff_Data=1., EleLegEff_MC=1.;
+      MuLegEff_Data  = GetCorrectionHist(Leg1DataEffSrcName)->GetBinContent( GetCorrectionHist(Leg1DataEffSrcName)->FindBin(mupt, mueta));
+      MuLegEff_MC    = GetCorrectionHist(Leg1MCEffSrcName)  ->GetBinContent( GetCorrectionHist(Leg1MCEffSrcName)  ->FindBin(mupt, mueta));
+      EleLegEff_Data = GetCorrectionHist(Leg2DataEffSrcName)->GetBinContent( GetCorrectionHist(Leg2DataEffSrcName)->FindBin(elpt, eleta));
+      EleLegEff_MC   = GetCorrectionHist(Leg2MCEffSrcName)  ->GetBinContent( GetCorrectionHist(Leg2MCEffSrcName)  ->FindBin(elpt, eleta));
+
+      float DataEff=1., MCEff=1.;
+      DataEff=MuLegEff_Data*EleLegEff_Data;
+      MCEff  =MuLegEff_MC*EleLegEff_MC;
+      
+      if     (Option.Contains("MCEff"))   return MCEff;
+      else if(Option.Contains("DataEff")) return DataEff;
+
+      if(MCEff==0.) return 0.;
+      
+      return DataEff/MCEff;
+
+    }//Mu8Ele23 1e1mu ends
+    else if(EleColl.size()==1 && MuColl.size()==2){
+      TString Leg1DataEffSrcName=KeyVector.at(0), Leg1MCEffSrcName=KeyVector.at(1);
+      TString Leg2DataEffSrcName=KeyVector.at(2), Leg2MCEffSrcName=KeyVector.at(3);
+
+      if( !(  CheckCorrectionHist(Leg1DataEffSrcName) && CheckCorrectionHist(Leg1MCEffSrcName)
+           && CheckCorrectionHist(Leg2DataEffSrcName) && CheckCorrectionHist(Leg2MCEffSrcName) ) ) return 0.;
+
+      float EffMuBd_down=8., EffMuBd_up=200., EffEleBd_down=23., EffEleBd_up=200.;
+      float mu1pt=MuColl.at(0).MiniAODPt(), mu2pt=MuColl.at(1).MiniAODPt(), elpt=EleColl.at(0).Pt();
+      float mu1eta=EleColl.at(0).Eta(),     mu2eta=MuColl.at(1).Eta(),      eleta=EleColl.at(0).Eta();
+
+      //efficiency below threshold is too uncertain. Do not apply SF below threshold
+      if(mu1pt<EffMuBd_down){ return 1.;} else if(mu1pt>EffMuBd_up){ mu1pt=EffMuBd_up-1.; }
+      if(mu2pt<EffMuBd_down){ return 1.;} else if(mu2pt>EffMuBd_up){ mu2pt=EffMuBd_up-1.; }
+      if(elpt<EffEleBd_down){ return 1.;} else if(elpt>EffEleBd_up){ elpt=EffEleBd_up-1.; }
+
+
+      float Mu1LegEff_Data=1., Mu1LegEff_MC=1., Mu2LegEff_Data=1., Mu2LegEff_MC=1., EleLegEff_Data=1., EleLegEff_MC=1.;
+      Mu1LegEff_Data = GetCorrectionHist(Leg1DataEffSrcName)->GetBinContent( GetCorrectionHist(Leg1DataEffSrcName)->FindBin(mu1pt, mu1eta));
+      Mu1LegEff_MC   = GetCorrectionHist(Leg1MCEffSrcName)  ->GetBinContent( GetCorrectionHist(Leg1MCEffSrcName)  ->FindBin(mu1pt, mu1eta));
+      Mu2LegEff_Data = GetCorrectionHist(Leg1DataEffSrcName)->GetBinContent( GetCorrectionHist(Leg1DataEffSrcName)->FindBin(mu2pt, mu2eta));
+      Mu2LegEff_MC   = GetCorrectionHist(Leg1MCEffSrcName)  ->GetBinContent( GetCorrectionHist(Leg1MCEffSrcName)  ->FindBin(mu2pt, mu2eta));
+
+      EleLegEff_Data = GetCorrectionHist(Leg2DataEffSrcName)->GetBinContent( GetCorrectionHist(Leg1DataEffSrcName)->FindBin(elpt, eleta));
+      EleLegEff_MC   = GetCorrectionHist(Leg2MCEffSrcName)  ->GetBinContent( GetCorrectionHist(Leg1MCEffSrcName)  ->FindBin(elpt, eleta));
+
+      float DataEff=1., MCEff=1.;
+      DataEff= EleLegEff_Data*(1.-(1.-Mu1LegEff_Data)*(1.-Mu2LegEff_Data));
+      MCEff  = EleLegEff_MC*(1.-(1.-Mu1LegEff_MC)*(1.-Mu2LegEff_MC));
+      
+      if(MCEff==0.) return 0.;
+      
+      if     (Option.Contains("MCEff"))   return MCEff;
+      else if(Option.Contains("DataEff")) return DataEff;
+
+      return DataEff/MCEff;
+
+    }//Mu8Ele23 1e2mu ends
+  }//Mu8Ele23 Trigger ends
+  else if(TrigName.Contains("HLT_Mu12_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ_v")){
+
+    if(KeyVector.size()!=6){ return 0.;} //ID+TrigName Did not match for some list. Since KeyVectorSize=2*Nfilter;
+
+    if(EleColl.size()==1 && MuColl.size()==1){
+      TString Leg1DataEffSrcName=KeyVector.at(0), Leg1MCEffSrcName=KeyVector.at(1);
+      TString Leg2DataEffSrcName=KeyVector.at(2), Leg2MCEffSrcName=KeyVector.at(3);
+      TString DzDataEffSrcName  =KeyVector.at(4), DzMCEffSrcName  =KeyVector.at(5);
+
+      if( !(  CheckCorrectionHist(Leg1DataEffSrcName) && CheckCorrectionHist(Leg1MCEffSrcName)
+           && CheckCorrectionHist(Leg2DataEffSrcName) && CheckCorrectionHist(Leg2MCEffSrcName)
+           && CheckCorrectionHist(DzDataEffSrcName)   && CheckCorrectionHist(DzMCEffSrcName)  ) ) return 0.;
+
+      float EffMuBd_down=12., EffMuBd_up=200., EffEleBd_down=23., EffEleBd_up=200.;
+      float mupt=MuColl.at(0).MiniAODPt(), elpt=EleColl.at(0).Pt();
+      float mueta=EleColl.at(0).Eta(),     eleta=EleColl.at(0).Eta();
+
+      //efficiency below threshold is too uncertain. Do not apply SF below threshold
+      if(mupt<EffMuBd_down) { return 1.;} else if(mupt>EffMuBd_up){ mupt=EffMuBd_up-1.; }
+      if(elpt<EffEleBd_down){ return 1.;} else if(elpt>EffEleBd_up){ elpt=EffEleBd_up-1.; }
+
+
+      float MuLegEff_Data=1., MuLegEff_MC=1., EleLegEff_Data=1., EleLegEff_MC=1., DzEff_Data=1., DzEff_MC=1.;
+      MuLegEff_Data  = GetCorrectionHist(Leg1DataEffSrcName)->GetBinContent( GetCorrectionHist(Leg1DataEffSrcName)->FindBin(mupt, mueta));
+      MuLegEff_MC    = GetCorrectionHist(Leg1MCEffSrcName)  ->GetBinContent( GetCorrectionHist(Leg1MCEffSrcName)  ->FindBin(mupt, mueta));
+      EleLegEff_Data = GetCorrectionHist(Leg2DataEffSrcName)->GetBinContent( GetCorrectionHist(Leg2DataEffSrcName)->FindBin(elpt, eleta));
+      EleLegEff_MC   = GetCorrectionHist(Leg2MCEffSrcName)  ->GetBinContent( GetCorrectionHist(Leg2MCEffSrcName)  ->FindBin(elpt, eleta));
+      DzEff_Data     = GetCorrectionHist(DzDataEffSrcName)  ->GetBinContent( GetCorrectionHist(DzDataEffSrcName)  ->FindBin(mueta, eleta));
+      DzEff_MC       = GetCorrectionHist(DzMCEffSrcName)    ->GetBinContent( GetCorrectionHist(DzMCEffSrcName)    ->FindBin(mueta, eleta));
+
+
+      float DataEff=1., MCEff=1.;
+      DataEff = MuLegEff_Data*EleLegEff_Data*DzEff_Data;
+      MCEff   = MuLegEff_MC*EleLegEff_MC*DzEff_MC;
+      
+      if(MCEff==0.) return 0.;
+
+      if     (Option.Contains("MCEff"))   return MCEff;
+      else if(Option.Contains("DataEff")) return DataEff;
+      
+      return DataEff/MCEff;
+
+    }//Mu12Ele23Dz 1e1mu ends
+    else if(EleColl.size()==1 && MuColl.size()==2){
+      TString Leg1DataEffSrcName=KeyVector.at(0), Leg1MCEffSrcName=KeyVector.at(1);
+      TString Leg2DataEffSrcName=KeyVector.at(2), Leg2MCEffSrcName=KeyVector.at(3);
+      TString DzDataEffSrcName  =KeyVector.at(4), DzMCEffSrcName  =KeyVector.at(5);
+
+      if( !(  CheckCorrectionHist(Leg1DataEffSrcName) && CheckCorrectionHist(Leg1MCEffSrcName)
+           && CheckCorrectionHist(Leg2DataEffSrcName) && CheckCorrectionHist(Leg2MCEffSrcName)
+           && CheckCorrectionHist(DzDataEffSrcName)   && CheckCorrectionHist(DzMCEffSrcName)   ) ) return 0.;
+
+      float EffMuBd_down=12., EffMuBd_up=200., EffEleBd_down=23., EffEleBd_up=200.;
+      float mu1pt=MuColl.at(0).MiniAODPt(), mu2pt=MuColl.at(1).MiniAODPt(), elpt=EleColl.at(0).Pt();
+      float mu1eta=EleColl.at(0).Eta(),     mu2eta=MuColl.at(1).Eta(),      eleta=EleColl.at(0).Eta();
+
+      //efficiency below threshold is too uncertain. Do not apply SF below threshold
+      if(mu1pt<EffMuBd_down){ return 1.;} else if(mu1pt>EffMuBd_up){ mu1pt=EffMuBd_up-1.; }
+      if(mu2pt<EffMuBd_down){ return 1.;} else if(mu2pt>EffMuBd_up){ mu2pt=EffMuBd_up-1.; }
+      if(elpt<EffEleBd_down){ return 1.;} else if(elpt>EffEleBd_up){ elpt=EffEleBd_up-1.; }
+
+
+      float Mu1LegEff_Data=1., Mu1LegEff_MC=1., Mu2LegEff_Data=1., Mu2LegEff_MC=1., EleLegEff_Data=1., EleLegEff_MC=1.;
+      float DzEffMu1Ele_Data=1., DzEffMu1Ele_MC=1., DzEffMu2Ele_Data=1., DzEffMu2Ele_MC=1.;
+      Mu1LegEff_Data = GetCorrectionHist(Leg1DataEffSrcName)->GetBinContent( GetCorrectionHist(Leg1DataEffSrcName)->FindBin(mu1pt, mu1eta));
+      Mu1LegEff_MC   = GetCorrectionHist(Leg1MCEffSrcName)  ->GetBinContent( GetCorrectionHist(Leg1MCEffSrcName)  ->FindBin(mu1pt, mu1eta));
+      Mu2LegEff_Data = GetCorrectionHist(Leg1DataEffSrcName)->GetBinContent( GetCorrectionHist(Leg1DataEffSrcName)->FindBin(mu2pt, mu2eta));
+      Mu2LegEff_MC   = GetCorrectionHist(Leg1MCEffSrcName)  ->GetBinContent( GetCorrectionHist(Leg1MCEffSrcName)  ->FindBin(mu2pt, mu2eta));
+
+      EleLegEff_Data = GetCorrectionHist(Leg2DataEffSrcName)->GetBinContent( GetCorrectionHist(Leg1DataEffSrcName)->FindBin(elpt, eleta));
+      EleLegEff_MC   = GetCorrectionHist(Leg2MCEffSrcName)  ->GetBinContent( GetCorrectionHist(Leg1MCEffSrcName)  ->FindBin(elpt, eleta));
+
+      DzEffMu1Ele_Data= GetCorrectionHist(DzDataEffSrcName) ->GetBinContent( GetCorrectionHist(DzDataEffSrcName) ->FindBin(mu1eta, eleta));
+      DzEffMu1Ele_MC  = GetCorrectionHist(DzMCEffSrcName)   ->GetBinContent( GetCorrectionHist(DzMCEffSrcName)   ->FindBin(mu1eta, eleta));
+      DzEffMu2Ele_Data= GetCorrectionHist(DzDataEffSrcName) ->GetBinContent( GetCorrectionHist(DzDataEffSrcName) ->FindBin(mu2eta, eleta));
+      DzEffMu2Ele_MC  = GetCorrectionHist(DzMCEffSrcName)   ->GetBinContent( GetCorrectionHist(DzMCEffSrcName)   ->FindBin(mu2eta, eleta));
+
+
+
+      float DataEff=1., MCEff=1.;
+      DataEff= EleLegEff_Data*(1.-(1.-Mu1LegEff_Data*DzEffMu1Ele_Data)*(1.-Mu2LegEff_Data*DzEffMu2Ele_Data));
+      MCEff  = EleLegEff_MC*(1.-(1.-Mu1LegEff_MC*DzEffMu1Ele_MC)*(1.-Mu2LegEff_MC*DzEffMu2Ele_MC));
+
+      if     (Option.Contains("MCEff"))   return MCEff;
+      else if(Option.Contains("DataEff")) return DataEff;
+      
+      if(MCEff==0.) return 0.;
+      
+      return DataEff/MCEff;
+
+    }//Mu12Ele23Dz 1e2mu ends
+  }//Mu12Ele23Dz Trigger ends
+  else if(TrigName.Contains("HLT_Mu17_TrkIsoVVL_Mu8ORTkMu8_TrkIsoVVL_DZ_v")){
+  
+    if(MuID.Contains("HN_TRI_TIGHT")){
+      //Lumi uncertainty is 2~3%. There's no point calculating with more numbers
+      float Lumi_BtoF=20.13, Lumi_GtoH=16.31, TotalLumi=36.44;
+      float SF_bf=TriggerScaleFactorPeriodDependant(EleColl, MuColl, TrigName, SystDirection, 1);
+      float SF_gh=TriggerScaleFactorPeriodDependant(EleColl, MuColl, TrigName, SystDirection, 7);
+  
+      float SF_weight = SF_bf*Lumi_BtoF/TotalLumi + SF_gh*Lumi_GtoH/TotalLumi;
+
+
+      return SF_weight;
+    }
+
+  }
+   */ 
+  return 1.;
+
+}
+
+
+
+
+std::vector<TString> MCDataCorrections::GetTrigSFKeys(TString MuID, TString EleID, TString TrigName){
+ /* 
+  //Types of SF related data: 1. DataEff, 2. MCEff, 3. SF (Sigl Lep Trigger)
+  TString LabelEffData="", LabelEffMC="", LabelSF="";
+
+  //Types of SF related data: 1. Leg1Data, 2. Leg1MC, 3. Leg2Data 4. Leg2MC, 5. DzData 6. DzMC (DiLep Trigger)
+  TString LabelEffLeg1Data="", LabelEffLeg2Data="", LabelEffLeg1MC="", LabelEffLeg2MC="", LabelEffDzData="", LabelEffDzMC="";
+  std::vector<TString> KeyVectors;
+
+  bool SiglLepTrig=false, DiLepTrig=false;
+
+  if(TrigName.Contains("HLT_IsoMu24") || TrigName.Contains("HLT_IsoTkMu24")){
+    if(MuID=="MUON_POG_TIGHT"){
+      LabelEffData="MUON_MU24_TRIGGER_DATA_EFF", LabelEffMC="MUON_MU24_TRIGGER_MC_EFF", LabelSF="MUON_MU24_TRIGGER";
+      SiglLepTrig=true;
+    }
+  }
+  else if(TrigName.Contains("HLT_Ele25_eta2p1_WPTight_Gsf")){
+    if(EleID=="ELECTRON_POG_TIGHT"){
+      LabelSF="ELECTRON_ELE25_TRIGGER_SF";
+      SiglLepTrig=true;
+    }
+  }
+  else if(TrigName.Contains("HLT_Ele27_WPTight_Gsf")){
+    if(EleID=="ELECTRON_POG_TIGHT"){
+      LabelSF="ELECTRON_ELE27_TRIGGER_SF";
+      SiglLepTrig=true;
+    }
+  }
+  else if(TrigName.Contains("HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v")){
+    if(EleID=="ELECTRON_HWA_TEST1" && MuID=="HN_TRI_TEST1"){
+      LabelEffLeg2Data="MU8ELE23_TRIGGEREFF_ELE23_DATA", LabelEffLeg2MC="MU8ELE23_TRIGGEREFF_ELE23_MC";
+      LabelEffLeg1Data="MU8ELE23_TRIGGEREFF_MU8_DATA",   LabelEffLeg1MC="MU8ELE23_TRIGGEREFF_MU8_MC";
+      DiLepTrig=true;
+    }
+  }
+  else if(TrigName.Contains("HLT_Mu12_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ_v")){
+    if(EleID=="ELECTRON_HWA_TEST1" && MuID=="HN_TRI_TEST1"){
+      LabelEffLeg2Data="MU8ELE23_TRIGGEREFF_ELE23_DATA", LabelEffLeg2MC="MU8ELE23_TRIGGEREFF_ELE23_MC";
+      LabelEffLeg1Data="MU8ELE23_TRIGGEREFF_MU8_DATA",   LabelEffLeg1MC="MU8ELE23_TRIGGEREFF_MU8_MC";
+      LabelEffDzData="MU8ELE23_TRIGGEREFF_DZ_DATA",      LabelEffDzMC="MU8ELE23_TRIGGEREFF_DZ_MC";
+      DiLepTrig=true;
+    }
+  }
+
+
+  if(SiglLepTrig){
+    KeyVectors.push_back(LabelEffData);
+    KeyVectors.push_back(LabelEffMC);
+    KeyVectors.push_back(LabelSF);
+  }
+  else if(DiLepTrig){
+    KeyVectors.push_back(LabelEffLeg1Data);
+    KeyVectors.push_back(LabelEffLeg1MC);
+    KeyVectors.push_back(LabelEffLeg2Data);
+    KeyVectors.push_back(LabelEffLeg2MC);
+    KeyVectors.push_back(LabelEffDzData);
+    KeyVectors.push_back(LabelEffDzMC);
+  }
+
+  return KeyVectors;
+*/
+
+  std::vector<TString> KeyVectors;
+  return KeyVectors;
+}
+
+
 
 double MCDataCorrections::TriggerScaleFactorPeriodDependant( vector<snu::KElectron> el, vector<snu::KMuon> mu,  TString trigname, int cat_period, int direction){
 
@@ -504,6 +778,8 @@ double MCDataCorrections::TriggerScaleFactorPeriodDependant( vector<snu::KElectr
 
 
 }
+
+
 
 double  MCDataCorrections::GetDoubleEGTriggerEff(vector<snu::KElectron> el){
   

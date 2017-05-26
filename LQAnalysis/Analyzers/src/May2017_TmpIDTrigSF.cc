@@ -72,7 +72,7 @@ void May2017_TmpIDTrigSF::ExecuteEvents()throw( LQError ){
 
    bool EleIDSF=false, EMuTrigSF=false, MuIDSF=false, MuTrigSF=false;
    bool MuonLeg=false, EleLeg=false, DZeff=false, MCClosure_2l=false, MCClosure_3l=false;
-   bool CorrelationStudy=false, EleEffbyMu=false, MuEffbyEle=false, MuEffbyMu=false; 
+   bool CorrelationStudy=false, EleEffbyMu=false, MuEffbyEle=false, MuEffbyMu=false;
    for(int i=0; i<k_flags.size(); i++){
      if     (k_flags.at(i).Contains("EleIDSF"))          EleIDSF=true;
      else if(k_flags.at(i).Contains("EMuTrigSF"))        EMuTrigSF=true;

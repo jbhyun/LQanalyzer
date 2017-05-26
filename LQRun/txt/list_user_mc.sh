@@ -29,8 +29,8 @@ declare -a Analysis_bkg=('WZTo3LNu_powheg' 'ZZTo4L_powheg' "ggZZto2e2mu" "ggZZto
 declare -a CR_DiLep=('DYJets_10to50' 'DYJets' 'SingleTbar_tW_noHadron' 'SingleTop_tW_noHadron' 'TT_powheg' 'WZ' 'ZZ' 'WWTo2L2Nu' 'ZGto2LG')
 declare -a CR_EMu=('WJets' 'DYJets_10to50' 'DYJets' 'SingleTbar_tW_noHadron' 'SingleTop_tW_noHadron' 'WZ' 'ZZ' 'WWTo2L2Nu' 'ZGto2LG' "WGtoLNuG")
 #declare -a CR_EMu=('DYJets_10to50' 'DYJets' 'SingleTbar_tW_noHadron' 'SingleTop_tW_noHadron' 'TT_powheg' 'WZ' 'ZZ' 'WWTo2L2Nu' 'ZGto2LG')
-declare -a CR_MuMu_fast=('DYJets_10to50' 'DYJets')
-declare -a CR_EE_fast=('DYJets_10to50' 'DYJets')
+declare -a CR_MuMu_fast=('DYJets_10to50' 'DYJets' 'TT_powheg')
+declare -a CR_EE_fast=('DYJets_10to50' 'DYJets' 'TT_powheg')
 
 #4lepton CR
 #declare -a CR_4lep=("ZZTo4L_powheg" "ggZZto2e2mu" "ggZZto2e2tau" "ggZZto2mu2tau" "ggZZto4e" "ggZZto4mu" "ggZZto4tau" "ttZToLL_M-1to10" "ttZToLL_M-10" "vbhHtoZZ" "ggHtoZZ" "ttH_nonbb" "ZZZ" "WZZ" "WWZ")

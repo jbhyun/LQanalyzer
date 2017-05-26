@@ -118,7 +118,7 @@ float BTagSFUtil::JetTagEfficiency(int JetFlavor, float JetPt, float JetEta) {
   if (abs(JetFlavor)==5) return TagEfficiencyB(JetPt, JetEta);
   else if (abs(JetFlavor)==4) return TagEfficiencyC(JetPt, JetEta);
   else return TagEfficiencyLight(JetPt, JetEta);
-
+  
 }
 
 
