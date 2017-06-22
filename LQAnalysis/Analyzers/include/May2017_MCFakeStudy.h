@@ -1,15 +1,15 @@
-#ifndef May2017_ObjectEff_h
-#define May2017_ObjectEff_h
+#ifndef May2017_MCFakeStudy_h
+#define May2017_MCFakeStudy_h
 
 #include "AnalyzerCore.h"
 
 
-class May2017_ObjectEff : public AnalyzerCore {
+class May2017_MCFakeStudy : public AnalyzerCore {
 
  public:
   //// constructors                                                                                                                                                             
-  May2017_ObjectEff();
-  ~May2017_ObjectEff();
+  May2017_MCFakeStudy();
+  ~May2017_MCFakeStudy();
 
   /// Functions from core
   virtual void BeginCycle() throw( LQError );
@@ -22,11 +22,10 @@ class May2017_ObjectEff : public AnalyzerCore {
   void MakeHistograms();
   void FillCutFlow(TString cut, float w);
 
-  int NPromptFake_Ele(std::vector<snu::KElectron> EleColl, TString Option);
   int NPromptFake_Ele(std::vector<snu::KElectron> EleColl, std::vector<snu::KTruth> TruthColl, TString Option);
-  int NPromptFake_Mu(std::vector<snu::KMuon> MuColl, TString Option);
   int NPromptFake_Mu(std::vector<snu::KMuon> MuColl, std::vector<snu::KTruth> TruthColl, TString Option);
   bool IsConvCand(snu::KElectron Ele, std::vector<snu::KTruth> TruthColl, TString Option="");
+  int StepPassed(std::vector<snu::KMuon> MuColl, std::vector<snu::KElectron> EleColl, std::vector<snu::KJet> JetColl, std::vector<snu::KJet> BJetColl, float MET, TString Option="");
 
 
  private:
@@ -39,6 +38,6 @@ class May2017_ObjectEff : public AnalyzerCore {
   std::vector<snu::KElectron> out_electrons;
 
 
-  ClassDef ( May2017_ObjectEff, 1);
+  ClassDef ( May2017_MCFakeStudy, 1);
 };
 #endif

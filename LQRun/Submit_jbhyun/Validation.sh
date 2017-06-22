@@ -10,14 +10,14 @@ runData=false
 ## RUN PARAMETERS
 
 AnalysisCode="Mar2017_Validation"
-Stream="SingleMuon"     
-#Stream="SingleElectron"
+#Stream="SingleMuon"     
+Stream="SingleElectron"
 #Stream="DoubleMuon"     
 #Stream="DoubleEG"
 #Stream="MuonEG"
 runFake="False"
-#Skim="SKTree_LeptonSkim"  ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
-Skim="SKTree_DiLepSkim"  ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
+Skim="SKTree_LeptonSkim"  ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
+#Skim="SKTree_DiLepSkim"  ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
 #Skim="SKTree_TriLepSkim"  ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
 DataPeriod="ALL"
 #job_logstep=1000
@@ -26,12 +26,14 @@ LogLevel="INFO"
 QueueOption="fastq" 
 #RunningMode="DoubleMu_analysis,SiglMuTrig"
 #RunningMode="DoubleEle_analysis,SiglEleTrig"
-RunningMode="EMu_analysis,SiglMuTrig"
+#RunningMode="EMu_analysis,SiglMuTrig"
+RunningMode="SingleEle_analysis,SiglEleTrig"
 
 
 #MCList="CR_MuMu_fast"
 #MCList="CR_EE_fast"
-MCList="CR_DiLep"
+#MCList="CR_DiLep"
+MCList="FR_Prompt"
 #MCList="CR_EMu"
 #MCList="TT"
 

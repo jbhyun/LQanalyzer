@@ -432,5 +432,25 @@ class AnalyzerCore : public LQCycleBase {
   float  GenFilterEfficiency(TString SampleName);
   float  SignalNorm(TString SampleName, float Xsec);
 
+
+
+  int GenMatchedIdx(snu::KElectron El, std::vector<snu::KTruth>& truthColl);
+  int GenMatchedIdx(snu::KMuon Mu, std::vector<snu::KTruth>& truthColl);
+  int GenMatchedIdx(snu::KJet Jet, std::vector<snu::KTruth>& TruthColl);
+  int FirstNonSelfMotherIdx(int TruthIdx, std::vector<snu::KTruth>& TruthColl);
+  int LastSelfMotherIdx(int TruthIdx, std::vector<snu::KTruth>& TruthColl);
+  bool HasHadronicAncestor(int TruthIdx, std::vector<snu::KTruth>& TruthColl);
+  int GetLeptonType(int TruthIdx, std::vector<snu::KTruth>& TruthColl, TString Option="");
+  int GetLeptonType(snu::KElectron El, std::vector<snu::KTruth>& TruthColl, TString Option="");
+  int GetLeptonType(snu::KMuon Mu, std::vector<snu::KTruth>& TruthColl, TString Option="");
+  bool IsJetConsistentPartonHadronMatch(snu::KJet Jet, std::vector<snu::KTruth>& KTruthColl, TString Option="BFlav");
+  bool HasEWLepInJet(snu::KJet Jet, std::vector<snu::KTruth>& TruthColl, TString Option="");
+  bool NearEWLep(snu::KElectron Ele, std::vector<snu::KTruth>& TruthColl, TString Option="");
+  std::vector<snu::KElectron> SkimLepColl(std::vector<snu::KElectron>& EleColl, std::vector<snu::KTruth>& TruthColl, TString Option="Prompt");
+  std::vector<snu::KMuon>     SkimLepColl(std::vector<snu::KMuon>& MuColl, std::vector<snu::KTruth>& TruthColl, TString Option="Prompt");
+  std::vector<snu::KJet>      SkimJetColl(std::vector<snu::KJet>& JetColl, std::vector<snu::KTruth>& TruthColl, TString Option="NoPr");
+
+  bool PassIDCriteria(snu::KElectron Ele, TString ID, TString Option="");
+  int NLeptonicBosonDecay(std::vector<snu::KTruth>& TruthColl);
 };
 #endif

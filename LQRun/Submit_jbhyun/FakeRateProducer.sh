@@ -2,7 +2,7 @@
 
 ########################################################################
 ## MC / DATA
-runMC=false
+runMC=true
 runData=true
 
 
@@ -21,7 +21,7 @@ job_logstep=1000
 LogLevel="INFO"
 #QueueOption="longq" 
 QueueOption="fastq" 
-RunningMode="EleFR"
+RunningMode="NormCheck" #"EleFR" "TrigSel"
 
 #MCList="SignalMajor_1e2mu"
 #MCList="SignalMajor_3mu"

@@ -70,12 +70,13 @@ void May2017_ObjectEff::ExecuteEvents()throw( LQError ){
    FillCutFlow("NoCut", weight*pileup_reweight);
 
 
-   bool TriMu_analysis=false, EMuMu_analysis=true, DiMuon_analysis=false, DiEle_analysis=false;
-   //bool TriMu_analysis=false, EMuMu_analysis=true, DiMuon_analysis=false, DiEle_analysis=false;
-   //bool TriMu_analysis=false, EMuMu_analysis=false, DiMuon_analysis=true, DiEle_analysis=false;
-   //bool TriMu_analysis=false, EMuMu_analysis=false, DiMuon_analysis=false, DiEle_analysis=true;
-
-   //bool FakeEstimation=false;
+   bool EleEff=false, MuEff=false, ConversionEff=false, MatchingEff=false;
+   for(int i=0; i<k_flags.size(); i++){
+     if     (k_flags.at(i).Contains("EleEff"))        EleEff=true;
+     else if(k_flags.at(i).Contains("MuEff"))         MuEff =true;
+     else if(k_flags.at(i).Contains("ConversionEff")) ConversionEff=true;
+     else if(k_flags.at(i).Contains("MatchingEff"))   MatchingEff=true;
+   }
 
     
    /***************************************************************************************
@@ -89,27 +90,6 @@ void May2017_ObjectEff::ExecuteEvents()throw( LQError ){
    weight*=trigger_ps_weight;
    FillHist("TriggerPSWeight", trigger_ps_weight, 1., 0., 1., 100);
 
-   //Trigger Path of Analysis
-   bool Pass_Trigger=false;
-   if(EMuMu_analysis){
-     //if( PassTrigger("HLT_IsoMu24_v") || PassTrigger("HLT_IsoTkMu24_v") ) Pass_Trigger=true;
-     if( PassTrigger("HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v")
-          || PassTrigger("HLT_Mu12_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v")
-          || PassTrigger("HLT_Mu12_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ_v") ) Pass_Trigger=true;
-   }
-   else if(TriMu_analysis){
-     //if( PassTrigger("HLT_IsoMu24_v") || PassTrigger("HLT_IsoTkMu24_v") ) Pass_Trigger=true;
-     //if( PassTrigger("HLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_DZ_v") ) Pass_Trigger=true;
-     if( PassTrigger("HLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_DZ_v")
-          || PassTrigger("HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_v") ) Pass_Trigger=true;
-   }
-   else if(DiMuon_analysis){
-     //if( PassTrigger("HLT_IsoMu24_v") || PassTrigger("HLT_IsoTkMu24_v") ) Pass_Trigger=true;
-     if( PassTrigger("HLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_DZ_v") ) Pass_Trigger=true;
-   }
-   else if(DiEle_analysis){
-     if( PassTrigger("HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v") ) Pass_Trigger=true;
-   }
 
    //Trigger Cut
    //if(!Pass_Trigger) return;
@@ -135,32 +115,47 @@ void May2017_ObjectEff::ExecuteEvents()throw( LQError ){
    //Intended for Code speed boosting up.
      eventbase->GetMuonSel()->SetPt(10.);                    eventbase->GetMuonSel()->SetEta(2.4);
    std::vector<snu::KMuon> muonPreColl; eventbase->GetMuonSel()->Selection(muonPreColl, true);
-     eventbase->GetElectronSel()->SetPt(25.);                eventbase->GetElectronSel()->SetEta(2.5);
+    eventbase->GetElectronSel()->SetPt(25.);                eventbase->GetElectronSel()->SetEta(2.5);
      eventbase->GetElectronSel()->SetBETrRegIncl(false);
    std::vector<snu::KElectron> electronPreColl; eventbase->GetElectronSel()->Selection(electronPreColl);
-     if     (TriMu_analysis) { if( !(muonPreColl.size()>=1)     ) return; }
-     else if(EMuMu_analysis) { if( !(electronPreColl.size()>=1) ) return; }
+   //  if     (MuEff ) { if( !(muonPreColl.size()>=1)     ) return; }
+   //  else if(EleEff) { if( !(electronPreColl.size()>=1) ) return; }
    /**********************************************************************************************************/
 
+   //Muon ID's to Test
      eventbase->GetMuonSel()->SetID(BaseSelection::MUON_POG_LOOSE);
      eventbase->GetMuonSel()->SetPt(10.);                    eventbase->GetMuonSel()->SetEta(2.4);
-     eventbase->GetMuonSel()->SetRelIsoType("PFRelIso04");   eventbase->GetMuonSel()->SetRelIso(0.25);
-   std::vector<snu::KMuon> muonPOGLColl; eventbase->GetMuonSel()->Selection(muonPOGLColl, true);
-     eventbase->GetMuonSel()->SetID(BaseSelection::MUON_POG_LOOSE);
-     eventbase->GetMuonSel()->SetPt(10.);                    eventbase->GetMuonSel()->SetEta(2.4);
-     eventbase->GetMuonSel()->SetRelIsoType("PFRelIso04");   eventbase->GetMuonSel()->SetRelIso(0.6);
+     eventbase->GetMuonSel()->SetRelIsoType("PFRelIso04");   eventbase->GetMuonSel()->SetRelIso(0.4);
    std::vector<snu::KMuon> muonVetoColl; eventbase->GetMuonSel()->Selection(muonVetoColl, true);
      eventbase->GetMuonSel()->SetID(BaseSelection::MUON_POG_TIGHT);
      eventbase->GetMuonSel()->SetPt(10.);                    eventbase->GetMuonSel()->SetEta(2.4);
-     eventbase->GetMuonSel()->SetBSdxy(0.05);                eventbase->GetMuonSel()->SetdxySigMax(3.);
-     eventbase->GetMuonSel()->SetRelIsoType("PFRelIso04");   eventbase->GetMuonSel()->SetRelIso(0.4);
-   std::vector<snu::KMuon> muonLooseColl; eventbase->GetMuonSel()->Selection(muonLooseColl, true);
+     eventbase->GetMuonSel()->SetRelIsoType("PFRelIso04");   eventbase->GetMuonSel()->SetRelIso(0.15);
+   std::vector<snu::KMuon> muonPOGTColl; eventbase->GetMuonSel()->Selection(muonPOGTColl, true);
      eventbase->GetMuonSel()->SetID(BaseSelection::MUON_POG_TIGHT);
      eventbase->GetMuonSel()->SetPt(10.);                    eventbase->GetMuonSel()->SetEta(2.4);
+     eventbase->GetMuonSel()->SetRelIsoType("PFRelIso04");   eventbase->GetMuonSel()->SetRelIso(0.4);
      eventbase->GetMuonSel()->SetBSdxy(0.05);                eventbase->GetMuonSel()->SetdxySigMax(3.);
+   std::vector<snu::KMuon> muonHN1FakeLColl; eventbase->GetMuonSel()->Selection(muonHN1FakeLColl, true);
+     eventbase->GetMuonSel()->SetID(BaseSelection::MUON_POG_TIGHT);
+     eventbase->GetMuonSel()->SetPt(10.);                    eventbase->GetMuonSel()->SetEta(2.4);
      eventbase->GetMuonSel()->SetRelIsoType("PFRelIso04");   eventbase->GetMuonSel()->SetRelIso(0.1);
-   std::vector<snu::KMuon> muonTightColl; eventbase->GetMuonSel()->Selection(muonTightColl,true);
+     eventbase->GetMuonSel()->SetBSdxy(0.05);                eventbase->GetMuonSel()->SetdxySigMax(3.);
+   std::vector<snu::KMuon> muonHN1FakeTColl; eventbase->GetMuonSel()->Selection(muonHN1FakeTColl, true);
+     eventbase->GetMuonSel()->SetID(BaseSelection::MUON_POG_TIGHT);
+     eventbase->GetMuonSel()->SetPt(10.);                    eventbase->GetMuonSel()->SetEta(2.4);
+     eventbase->GetMuonSel()->SetRelIsoType("PFRelIso04");   eventbase->GetMuonSel()->SetRelIso(0.4);
+     eventbase->GetMuonSel()->SetBSdxy(0.01);                eventbase->GetMuonSel()->SetdxySigMax(3.);
+     eventbase->GetMuonSel()->SetBSdz(0.1);
+   std::vector<snu::KMuon> muonHN2FakeLColl; eventbase->GetMuonSel()->Selection(muonHN2FakeLColl, true);
+     eventbase->GetMuonSel()->SetID(BaseSelection::MUON_POG_TIGHT);
+     eventbase->GetMuonSel()->SetPt(10.);                    eventbase->GetMuonSel()->SetEta(2.4);
+     eventbase->GetMuonSel()->SetRelIsoType("PFRelIso04");   eventbase->GetMuonSel()->SetRelIso(0.1);
+     eventbase->GetMuonSel()->SetBSdxy(0.01);                eventbase->GetMuonSel()->SetdxySigMax(3.);
+     eventbase->GetMuonSel()->SetBSdz(0.1);
+   std::vector<snu::KMuon> muonHN2FakeTColl; eventbase->GetMuonSel()->Selection(muonHN2FakeTColl, true);
 
+
+   //Electron ID's to Test
      eventbase->GetElectronSel()->SetID(BaseSelection::ELECTRON_POG_MEDIUM);
      eventbase->GetElectronSel()->SetPt(25.);                eventbase->GetElectronSel()->SetEta(2.5);
      eventbase->GetElectronSel()->SetBETrRegIncl(false);
@@ -185,26 +180,56 @@ void May2017_ObjectEff::ExecuteEvents()throw( LQError ){
      eventbase->GetElectronSel()->SetRelIsoType("Default");  eventbase->GetElectronSel()->SetRelIsoBEMax(0.0588, 0.0571);//2016 80X tuned WP
      eventbase->GetElectronSel()->SetdxyBEMax(0.05, 0.1);    eventbase->GetElectronSel()->SetdzBEMax(0.05, 0.1);//Not in ID, but additional safe WP
      eventbase->GetElectronSel()->SetdxySigMax(3.);
+     eventbase->GetElectronSel()->SetApplyConvVeto(true);
+   std::vector<snu::KElectron> electronPOGTIPConvColl; eventbase->GetElectronSel()->Selection(electronPOGTIPConvColl);
+
+     eventbase->GetElectronSel()->SetID(BaseSelection::ELECTRON_POG_TIGHT);
+     eventbase->GetElectronSel()->SetPt(25.);                eventbase->GetElectronSel()->SetEta(2.5);
+     eventbase->GetElectronSel()->SetBETrRegIncl(false);
+     eventbase->GetElectronSel()->SetRelIsoType("Default");  eventbase->GetElectronSel()->SetRelIsoBEMax(0.0588, 0.0571);//2016 80X tuned WP
+     eventbase->GetElectronSel()->SetdxyBEMax(0.05, 0.1);    eventbase->GetElectronSel()->SetdzBEMax(0.05, 0.1);//Not in ID, but additional safe WP
+     eventbase->GetElectronSel()->SetdxySigMax(3.);
      eventbase->GetElectronSel()->SetCheckCharge(true);
    std::vector<snu::KElectron> electronPOGTIPQColl; eventbase->GetElectronSel()->Selection(electronPOGTIPQColl);
 
 
+     eventbase->GetElectronSel()->SetID(BaseSelection::ELECTRON_POG_MVA_WP90);
+     eventbase->GetElectronSel()->SetHLTSafeCut("CaloIdL_TrackIdL_IsoVL");
      eventbase->GetElectronSel()->SetPt(25.);                eventbase->GetElectronSel()->SetEta(2.5);
      eventbase->GetElectronSel()->SetBETrRegIncl(false);
-     eventbase->GetElectronSel()->SetRelIsoType("Default");  eventbase->GetElectronSel()->SetRelIsoBEMax(0.0588, 0.0571);
-     eventbase->GetElectronSel()->SetdxyBEMax(0.01, 0.01);   eventbase->GetElectronSel()->SetdzBEMax(0.1, 0.2);
+     eventbase->GetElectronSel()->SetRelIsoType("Default");  eventbase->GetElectronSel()->SetRelIsoBEMax(0.1, 0.1);
+     eventbase->GetElectronSel()->SetdxyBEMax(0.05, 0.05);   eventbase->GetElectronSel()->SetdzBEMax(0.1, 0.1);
      eventbase->GetElectronSel()->SetdxySigMax(3.);
-   std::vector<snu::KElectron> electronMVATColl; eventbase->GetElectronSel()->Selection(electronMVATColl);
-   
+     eventbase->GetElectronSel()->SetApplyConvVeto(true);
+   std::vector<snu::KElectron> electronMVAMColl; eventbase->GetElectronSel()->Selection(electronMVAMColl);
      eventbase->GetElectronSel()->SetID(BaseSelection::ELECTRON_POG_MVA_WP80);
      eventbase->GetElectronSel()->SetHLTSafeCut("CaloIdL_TrackIdL_IsoVL");
      eventbase->GetElectronSel()->SetPt(25.);                eventbase->GetElectronSel()->SetEta(2.5);
      eventbase->GetElectronSel()->SetBETrRegIncl(false);
-     eventbase->GetElectronSel()->SetRelIsoType("Default");  eventbase->GetElectronSel()->SetRelIsoBEMax(0.0588, 0.0571);
-     eventbase->GetElectronSel()->SetdxyBEMax(0.01, 0.01);   eventbase->GetElectronSel()->SetdzBEMax(0.1, 0.2);
+     eventbase->GetElectronSel()->SetRelIsoType("Default");  eventbase->GetElectronSel()->SetRelIsoBEMax(0.1, 0.1);
+     eventbase->GetElectronSel()->SetdxyBEMax(0.05, 0.05);   eventbase->GetElectronSel()->SetdzBEMax(0.1, 0.1);
      eventbase->GetElectronSel()->SetdxySigMax(3.);
-//     eventbase->GetElectronSel()->SetApplyConvVeto(true);
-   std::vector<snu::KElectron> electronNewMVATColl; eventbase->GetElectronSel()->Selection(electronNewMVATColl);
+     eventbase->GetElectronSel()->SetApplyConvVeto(true);
+   std::vector<snu::KElectron> electronMVATColl; eventbase->GetElectronSel()->Selection(electronMVATColl);
+     eventbase->GetElectronSel()->SetID(BaseSelection::ELECTRON_POG_MVA_WP90);
+     eventbase->GetElectronSel()->SetHLTSafeCut("CaloIdL_TrackIdL_IsoVL");
+     eventbase->GetElectronSel()->SetPt(25.);                eventbase->GetElectronSel()->SetEta(2.5);
+     eventbase->GetElectronSel()->SetBETrRegIncl(false);
+     eventbase->GetElectronSel()->SetRelIsoType("Default");  eventbase->GetElectronSel()->SetRelIsoBEMax(0.1, 0.1);
+     eventbase->GetElectronSel()->SetdxyBEMax(0.05, 0.05);   eventbase->GetElectronSel()->SetdzBEMax(0.1, 0.1);
+     eventbase->GetElectronSel()->SetdxySigMax(3.);
+     eventbase->GetElectronSel()->SetApplyConvVeto(true);    eventbase->GetElectronSel()->SetCheckCharge(true);
+   std::vector<snu::KElectron> electronMVAMQColl; eventbase->GetElectronSel()->Selection(electronMVAMQColl);
+     eventbase->GetElectronSel()->SetID(BaseSelection::ELECTRON_POG_MVA_WP80);
+     eventbase->GetElectronSel()->SetHLTSafeCut("CaloIdL_TrackIdL_IsoVL");
+     eventbase->GetElectronSel()->SetPt(25.);                eventbase->GetElectronSel()->SetEta(2.5);
+     eventbase->GetElectronSel()->SetBETrRegIncl(false);
+     eventbase->GetElectronSel()->SetRelIsoType("Default");  eventbase->GetElectronSel()->SetRelIsoBEMax(0.1, 0.1);
+     eventbase->GetElectronSel()->SetdxyBEMax(0.05, 0.05);   eventbase->GetElectronSel()->SetdzBEMax(0.1, 0.1);
+     eventbase->GetElectronSel()->SetdxySigMax(3.);
+     eventbase->GetElectronSel()->SetApplyConvVeto(true);    eventbase->GetElectronSel()->SetCheckCharge(true);
+   std::vector<snu::KElectron> electronMVATQColl; eventbase->GetElectronSel()->Selection(electronMVATQColl);
+
 
      eventbase->GetElectronSel()->SetID(BaseSelection::ELECTRON_HN_MVA_TIGHT);
      eventbase->GetElectronSel()->SetHLTSafeCut("CaloIdL_TrackIdL_IsoVL");
@@ -219,11 +244,11 @@ void May2017_ObjectEff::ExecuteEvents()throw( LQError ){
 
    std::vector<snu::KElectron> electronNull;
 
-     eventbase->GetJetSel()->SetID(BaseSelection::PFJET_LOOSE);
-     eventbase->GetJetSel()->SetPt(25.);                     eventbase->GetJetSel()->SetEta(2.4);
-     //eventbase->GetJetSel()->SetPileUpJetID(true,"Loose");
-     bool LeptonVeto=true;
-   std::vector<snu::KJet> jetColl; eventbase->GetJetSel()->Selection(jetColl, LeptonVeto, muonLooseColl, electronPOGMColl);
+   //  eventbase->GetJetSel()->SetID(BaseSelection::PFJET_LOOSE);
+   //  eventbase->GetJetSel()->SetPt(25.);                     eventbase->GetJetSel()->SetEta(2.4);
+   //  //eventbase->GetJetSel()->SetPileUpJetID(true,"Loose");
+   //  bool LeptonVeto=true;
+   //std::vector<snu::KJet> jetColl; eventbase->GetJetSel()->Selection(jetColl, LeptonVeto, muonLooseColl, electronPOGMColl);
 
 
 
@@ -233,8 +258,8 @@ void May2017_ObjectEff::ExecuteEvents()throw( LQError ){
    //std::vector<snu::KJet> bjetColl2a; for(int i=0; i<bIdxColl.size(); i++) {bjetColl2a.push_back(jetColl.at(bIdxColl.at(i)));}
    //std::vector<snu::KJet> ljetColl2a; for(int i=0; i<ljIdxColl.size(); i++){ljetColl2a.push_back(jetColl.at(ljIdxColl.at(i)));}
 
-   std::vector<snu::KJet> bjetColl = SelBJets(jetColl, "Medium");
-   std::vector<snu::KJet> ljetColl = SelLightJets(jetColl, "Medium");
+   //std::vector<snu::KJet> bjetColl = SelBJets(jetColl, "Medium");
+   //std::vector<snu::KJet> ljetColl = SelLightJets(jetColl, "Medium");
 
    double met = eventbase->GetEvent().PFMETType1();
    double met_x = eventbase->GetEvent().PFMETType1x();
@@ -245,7 +270,7 @@ void May2017_ObjectEff::ExecuteEvents()throw( LQError ){
    //snu::KParticle v[4]; v[0].SetPx(met_x); v[0].SetPy(met_y);
    //                     v[1].SetPx(met_x); v[1].SetPy(met_y);
 
-   int nbjets=bjetColl.size(); int njets=jetColl.size(); const int nljets=ljetColl.size();//njets-nbjets;//number of light jets
+   //int nbjets=bjetColl.size(); int njets=jetColl.size(); const int nljets=ljetColl.size();//njets-nbjets;//number of light jets
    int Nvtx=eventbase->GetEvent().nVertices();
 
 
@@ -326,69 +351,451 @@ void May2017_ObjectEff::ExecuteEvents()throw( LQError ){
 /************************************************************************************/
 
 
-   if(EMuMu_analysis){
+   if(EleEff){
 
-     int Nfake=0, Nprompt=0;
- 
-     for(int i=0; i<electronPreColl.size(); i++){ if(electronPreColl.at(i).MCIsPrompt()){Nprompt++;} else{Nfake++;} }
+     //Np/f All - Denominator, 0:Prompt, 1:Fake
+     int Nprompt_All     = NPromptFake_Ele(electronPreColl,truthColl,"Prompt");
+     int Nfake_All       = NPromptFake_Ele(electronPreColl,truthColl,"Fake");
 
-     //Np/f - Denominator, 0:Prompt, 1:Fake
-     FillHist("IDeff_Ne", 0., Nprompt*weight, 0., 2., 2);
-     FillHist("IDeff_Ne", 1., Nfake*weight, 0., 2., 2);
+     FillHist("IDeff_NEle", 0., Nprompt_All*weight, 0., 2., 2);
+     FillHist("IDeff_NEle", 1., Nfake_All*weight, 0., 2., 2);
 
+
+     
      //N_IDpass - Numerator, 
-     int Nfake_POGM=0,   Nfake_POGT=0,   Nfake_POGTIP=0,   Nfake_POGTIPQ=0,   Nfake_NewMVAT=0,   Nfake_HNMVAT=0;
-     int Nprompt_POGM=0, Nprompt_POGT=0, Nprompt_POGTIP=0, Nprompt_POGTIPQ=0, Nprompt_NewMVAT=0, Nprompt_HNMVAT=0;
-     for(int i=0; i<electronPOGMColl.size(); i++){ if(electronPOGMColl.at(i).MCIsPrompt()){Nprompt_POGM++;} else{Nfake_POGM++;} }
-     for(int i=0; i<electronPOGTColl.size(); i++){ if(electronPOGTColl.at(i).MCIsPrompt()){Nprompt_POGT++;} else{Nfake_POGT++;} }
-     for(int i=0; i<electronPOGTIPColl.size(); i++){ if(electronPOGTIPColl.at(i).MCIsPrompt()){Nprompt_POGTIP++;} else{Nfake_POGTIP++;} }
-     for(int i=0; i<electronPOGTIPQColl.size(); i++){ if(electronPOGTIPQColl.at(i).MCIsPrompt()){Nprompt_POGTIPQ++;} else{Nfake_POGTIPQ++;} }
-     for(int i=0; i<electronNewMVATColl.size(); i++){ if(electronNewMVATColl.at(i).MCIsPrompt()){Nprompt_NewMVAT++;} else{Nfake_NewMVAT++;} }
-     for(int i=0; i<electronHNMVATColl.size(); i++){ if(electronHNMVATColl.at(i).MCIsPrompt()){Nprompt_HNMVAT++;} else{Nfake_HNMVAT++;} }
+     int Nprompt_POGM    = NPromptFake_Ele(electronPOGMColl,truthColl,"Prompt");
+     int Nprompt_POGT    = NPromptFake_Ele(electronPOGTColl,truthColl,"Prompt");
+     int Nprompt_POGTIP  = NPromptFake_Ele(electronPOGTIPColl,truthColl,"Prompt");
+     int Nprompt_POGTIPQ = NPromptFake_Ele(electronPOGTIPQColl,truthColl,"Prompt");
+     int Nprompt_MVAM    = NPromptFake_Ele(electronMVAMColl,truthColl,"Prompt");
+     int Nprompt_MVAMQ   = NPromptFake_Ele(electronMVAMQColl,truthColl,"Prompt");
+     int Nprompt_MVAT    = NPromptFake_Ele(electronMVATColl,truthColl,"Prompt");
+     int Nprompt_MVATQ   = NPromptFake_Ele(electronMVATQColl,truthColl,"Prompt");
+     int Nprompt_HNMVAT  = NPromptFake_Ele(electronHNMVATColl,truthColl,"Prompt");
 
-     int Nfake_MVAT=0;
-     int Nprompt_MVAT=0;
+     int Nfake_POGM    = NPromptFake_Ele(electronPOGMColl,truthColl,"Fake");
+     int Nfake_POGT    = NPromptFake_Ele(electronPOGTColl,truthColl,"Fake");
+     int Nfake_POGTIP  = NPromptFake_Ele(electronPOGTIPColl,truthColl,"Fake");
+     int Nfake_POGTIPQ = NPromptFake_Ele(electronPOGTIPQColl,truthColl,"Fake");
+     int Nfake_MVAM    = NPromptFake_Ele(electronMVAMColl,truthColl,"Fake");
+     int Nfake_MVAMQ   = NPromptFake_Ele(electronMVAMQColl,truthColl,"Fake");
+     int Nfake_MVAT    = NPromptFake_Ele(electronMVATColl,truthColl,"Fake");
+     int Nfake_MVATQ   = NPromptFake_Ele(electronMVATQColl,truthColl,"Fake");
+     int Nfake_HNMVAT  = NPromptFake_Ele(electronHNMVATColl,truthColl,"Fake");
 
-     for(int i=0; i<electronMVATColl.size(); i++){
-       if(electronMVATColl.at(i).PassTrigMVATight() && electronMVATColl.at(i).IsTrigMVAValid() ){
-         if(electronMVATColl.at(i).MCIsPrompt()){Nprompt_MVAT++;} else{Nfake_MVAT++;}
+
+     FillHist("IDeff_NEleIDp", 0., Nprompt_POGM*weight, 0., 10., 10);
+     FillHist("IDeff_NEleIDp", 1., Nprompt_POGT*weight, 0., 10., 10);
+     FillHist("IDeff_NEleIDp", 2., Nprompt_POGTIP*weight, 0., 10., 10);
+     FillHist("IDeff_NEleIDp", 3., Nprompt_POGTIPQ*weight, 0., 10., 10);
+     FillHist("IDeff_NEleIDp", 4., Nprompt_MVAM*weight, 0., 10., 10);
+     FillHist("IDeff_NEleIDp", 5., Nprompt_MVAMQ*weight, 0., 10., 10);
+     FillHist("IDeff_NEleIDp", 6., Nprompt_MVAT*weight, 0., 10., 10);
+     FillHist("IDeff_NEleIDp", 7., Nprompt_MVATQ*weight, 0., 10., 10);
+     FillHist("IDeff_NEleIDp", 8., Nprompt_HNMVAT*weight, 0., 10., 10);
+
+     FillHist("IDeff_NEleIDf", 0., Nfake_POGM*weight, 0., 10., 10);
+     FillHist("IDeff_NEleIDf", 1., Nfake_POGT*weight, 0., 10., 10);
+     FillHist("IDeff_NEleIDf", 2., Nfake_POGTIP*weight, 0., 10., 10);
+     FillHist("IDeff_NEleIDf", 3., Nfake_POGTIPQ*weight, 0., 10., 10);
+     FillHist("IDeff_NEleIDf", 4., Nfake_MVAM*weight, 0., 10., 10);
+     FillHist("IDeff_NEleIDf", 5., Nfake_MVAMQ*weight, 0., 10., 10);
+     FillHist("IDeff_NEleIDf", 6., Nfake_MVAT*weight, 0., 10., 10);
+     FillHist("IDeff_NEleIDf", 7., Nfake_MVATQ*weight, 0., 10., 10);
+     FillHist("IDeff_NEleIDf", 8., Nfake_HNMVAT*weight, 0., 10., 10);
+
+
+     for(int i=0; i<electronPreColl.size(); i++){
+       int LeptonType=GetLeptonType(electronPreColl.at(i), truthColl);
+       if(LeptonType==1 || LeptonType==3){
+         FillHist("IDeff_NElep_PtEta", electronPreColl.at(i).Pt(), fabs(electronPreColl.at(i).Eta()), weight, 0., 200., 20, 0., 2.5, 5);
+         if(PassIDCriteria(electronPreColl.at(i), "HNMVATIPQ")){
+           FillHist("IDeff_NEleIDp_HN_PtEta", electronPreColl.at(i).Pt(), fabs(electronPreColl.at(i).Eta()), weight, 0., 200., 20, 0., 2.5, 5);
+         }
+         if(PassIDCriteria(electronPreColl.at(i), "POGMVAMIP")){
+           FillHist("IDeff_NEleIDp_POGMVA_PtEta", electronPreColl.at(i).Pt(), fabs(electronPreColl.at(i).Eta()), weight, 0., 200., 20, 0., 2.5, 5);
+         }
+       }
+       else if(LeptonType<0 || LeptonType>=4){
+          FillHist("IDeff_NElef_PtEta", electronPreColl.at(i).Pt(), fabs(electronPreColl.at(i).Eta()), weight, 0., 200., 20, 0., 2.5, 5);
+         if(PassIDCriteria(electronPreColl.at(i), "HNMVATIPQ")){
+           FillHist("IDeff_NEleIDf_HN_PtEta", electronPreColl.at(i).Pt(), fabs(electronPreColl.at(i).Eta()), weight, 0., 200., 20, 0., 2.5, 5);
+         }
+         if(PassIDCriteria(electronPreColl.at(i), "POGMVAMIP")){
+           FillHist("IDeff_NEleIDf_POGMVA_PtEta", electronPreColl.at(i).Pt(), fabs(electronPreColl.at(i).Eta()), weight, 0., 200., 20, 0., 2.5, 5);
+         }
        }
      }
+   }
+   if(MuEff){
+
+     //Np/f All - Denominator, 0:Prompt, 1:Fake
+     int Nprompt_All     = NPromptFake_Mu(muonPreColl,truthColl,"BSM");
+     int Nfake_All       = NPromptFake_Mu(muonPreColl,truthColl,"Fake");
+
+
+     FillHist("IDeff_NMu", 0., Nprompt_All*weight, 0., 2., 2);
+     FillHist("IDeff_NMu", 1., Nfake_All*weight, 0., 2., 2);
+
      
-     FillHist("IDeff_NIDp", 0., Nprompt_POGM*weight, 0., 10., 10);
-     FillHist("IDeff_NIDp", 1., Nprompt_POGT*weight, 0., 10., 10);
-     FillHist("IDeff_NIDp", 2., Nprompt_POGTIP*weight, 0., 10., 10);
-     FillHist("IDeff_NIDp", 3., Nprompt_POGTIPQ*weight, 0., 10., 10);
-     FillHist("IDeff_NIDp", 4., Nprompt_MVAT*weight, 0., 10., 10);
-     FillHist("IDeff_NIDp", 5., Nprompt_NewMVAT*weight, 0., 10., 10);
-     FillHist("IDeff_NIDp", 6., Nprompt_HNMVAT*weight, 0., 10., 10);
+     //N_IDpass - Numerator, 
+     int Nprompt_Veto     = NPromptFake_Mu(muonVetoColl,truthColl,"BSM");
+     int Nprompt_POGT     = NPromptFake_Mu(muonPOGTColl,truthColl,"BSM");
+     int Nprompt_HN1FakeL = NPromptFake_Mu(muonHN1FakeLColl,truthColl,"BSM");
+     int Nprompt_HN1FakeT = NPromptFake_Mu(muonHN1FakeTColl,truthColl,"BSM");
+     int Nprompt_HN2FakeL = NPromptFake_Mu(muonHN2FakeLColl,truthColl,"BSM");
+     int Nprompt_HN2FakeT = NPromptFake_Mu(muonHN2FakeTColl,truthColl,"BSM");
 
-     FillHist("IDeff_NIDf", 0., Nfake_POGM*weight, 0., 10., 10);
-     FillHist("IDeff_NIDf", 1., Nfake_POGT*weight, 0., 10., 10);
-     FillHist("IDeff_NIDf", 2., Nfake_POGTIP*weight, 0., 10., 10);
-     FillHist("IDeff_NIDf", 3., Nfake_POGTIPQ*weight, 0., 10., 10);
-     FillHist("IDeff_NIDf", 4., Nfake_MVAT*weight, 0., 10., 10);
-     FillHist("IDeff_NIDf", 5., Nfake_NewMVAT*weight, 0., 10., 10);
-     FillHist("IDeff_NIDf", 6., Nfake_HNMVAT*weight, 0., 10., 10);
+     int Nfake_Veto     = NPromptFake_Mu(muonVetoColl,truthColl,"Fake");
+     int Nfake_POGT     = NPromptFake_Mu(muonPOGTColl,truthColl,"Fake");
+     int Nfake_HN1FakeL = NPromptFake_Mu(muonHN1FakeLColl,truthColl,"Fake");
+     int Nfake_HN1FakeT = NPromptFake_Mu(muonHN1FakeTColl,truthColl,"Fake");
+     int Nfake_HN2FakeL = NPromptFake_Mu(muonHN2FakeLColl,truthColl,"Fake");
+     int Nfake_HN2FakeT = NPromptFake_Mu(muonHN2FakeTColl,truthColl,"Fake");
+
+
+     FillHist("IDeff_NMuIDp", 0., Nprompt_Veto*weight, 0., 10., 10);
+     FillHist("IDeff_NMuIDp", 1., Nprompt_POGT*weight, 0., 10., 10);
+     FillHist("IDeff_NMuIDp", 2., Nprompt_HN1FakeL*weight, 0., 10., 10);
+     FillHist("IDeff_NMuIDp", 3., Nprompt_HN1FakeT*weight, 0., 10., 10);
+     FillHist("IDeff_NMuIDp", 4., Nprompt_HN2FakeL*weight, 0., 10., 10);
+     FillHist("IDeff_NMuIDp", 5., Nprompt_HN2FakeT*weight, 0., 10., 10);
+
+     FillHist("IDeff_NMuIDf", 0., Nfake_Veto*weight, 0., 10., 10);
+     FillHist("IDeff_NMuIDf", 1., Nfake_POGT*weight, 0., 10., 10);
+     FillHist("IDeff_NMuIDf", 2., Nfake_HN1FakeL*weight, 0., 10., 10);
+     FillHist("IDeff_NMuIDf", 3., Nfake_HN1FakeT*weight, 0., 10., 10);
+     FillHist("IDeff_NMuIDf", 4., Nfake_HN2FakeL*weight, 0., 10., 10);
+     FillHist("IDeff_NMuIDf", 5., Nfake_HN2FakeT*weight, 0., 10., 10);
 
    }
-   if(TriMu_analysis){
+   if(ConversionEff){
+
+     if(k_sample_name.Contains("ZG")){
+
+       //PrintTruth();
+       //cout<<HardPhotonIdx<<endl;
+  
+       int Nconv_All        = 0;
+       int Nconv_POGM       = 0;
+       int Nconv_POGT       = 0;
+       int Nconv_POGTIP     = 0;
+       int Nconv_POGTIPConv = 0;
+       int Nconv_POGTIPQ    = 0;
+       int Nconv_MVAM       = 0;
+       int Nconv_MVAMQ      = 0;
+       int Nconv_MVAT       = 0;
+       int Nconv_MVATQ      = 0;
+       int Nconv_HNMVAT     = 0;
+  
+       for(int i=0; i<electronPreColl.size(); i++)       { if(IsConvCand(electronPreColl.at(i), truthColl))        Nconv_All++; }
+       for(int i=0; i<electronPOGMColl.size(); i++)      { if(IsConvCand(electronPOGMColl.at(i), truthColl))       Nconv_POGM++; }
+       for(int i=0; i<electronPOGTColl.size(); i++)      { if(IsConvCand(electronPOGTColl.at(i), truthColl))       Nconv_POGT++; }
+       for(int i=0; i<electronPOGTIPColl.size(); i++)    { if(IsConvCand(electronPOGTIPColl.at(i), truthColl))     Nconv_POGTIP++; }
+       for(int i=0; i<electronPOGTIPConvColl.size(); i++){ if(IsConvCand(electronPOGTIPConvColl.at(i), truthColl)) Nconv_POGTIPConv++; }
+       for(int i=0; i<electronPOGTIPQColl.size(); i++)   { if(IsConvCand(electronPOGTIPQColl.at(i), truthColl))    Nconv_POGTIPQ++; }
+       for(int i=0; i<electronMVAMColl.size(); i++)      { if(IsConvCand(electronMVAMColl.at(i), truthColl))       Nconv_MVAM++; }
+       for(int i=0; i<electronMVAMQColl.size(); i++)     { if(IsConvCand(electronMVAMQColl.at(i), truthColl))      Nconv_MVAMQ++; }
+       for(int i=0; i<electronMVATColl.size(); i++)      { if(IsConvCand(electronMVATColl.at(i), truthColl))       Nconv_MVAT++; }
+       for(int i=0; i<electronMVATQColl.size(); i++)     { if(IsConvCand(electronMVAMQColl.at(i), truthColl))      Nconv_MVATQ++; }
+       for(int i=0; i<electronHNMVATColl.size(); i++)    { if(IsConvCand(electronHNMVATColl.at(i), truthColl))     Nconv_HNMVAT++; }
+  
+       //N all conversion ele
+       FillHist("IDeff_NEleConv", 0., Nconv_All*weight, 0., 1., 1);
+  
+       //After ID
+       FillHist("IDeff_NEleIDConv", 0., Nconv_POGM*weight, 0., 10., 10);
+       FillHist("IDeff_NEleIDConv", 1., Nconv_POGT*weight, 0., 10., 10);
+       FillHist("IDeff_NEleIDConv", 2., Nconv_POGTIP*weight, 0., 10., 10);
+       FillHist("IDeff_NEleIDConv", 3., Nconv_POGTIPConv*weight, 0., 10., 10);
+       FillHist("IDeff_NEleIDConv", 4., Nconv_POGTIPQ*weight, 0., 10., 10);
+       FillHist("IDeff_NEleIDConv", 5., Nconv_MVAM*weight, 0., 10., 10);
+       FillHist("IDeff_NEleIDConv", 6., Nconv_MVAMQ*weight, 0., 10., 10);
+       FillHist("IDeff_NEleIDConv", 7., Nconv_MVAT*weight, 0., 10., 10);
+       FillHist("IDeff_NEleIDConv", 8., Nconv_MVATQ*weight, 0., 10., 10);
+       FillHist("IDeff_NEleIDConv", 9., Nconv_HNMVAT*weight, 0., 10., 10);
+  
+     }//Endof Zgamma
+   }//End of Conversion Study
+   if(MatchingEff){
+     
+
+     /**************************************************
+     **ELECTRON MATCHING EFF STUDY
+     **************************************************/
+     for(int j=0; j<electronPreColl.size(); j++){
+   
+       int LeptonType=0;
+       int MatchedTruthIdx   = GenMatchedIdx(electronPreColl.at(j),truthColl);
+       int LastSelfIdx       = LastSelfMotherIdx(MatchedTruthIdx,truthColl);
+       int MotherIdx         = FirstNonSelfMotherIdx(MatchedTruthIdx, truthColl);
+       int LastSelfMIdx      = LastSelfMotherIdx(MotherIdx,truthColl);
+       int GrMotherIdx       = FirstNonSelfMotherIdx(MotherIdx, truthColl);
+       int MPID=-1, GrMPID=-1;
+         if(MotherIdx!=-1)   MPID=truthColl.at(MotherIdx).PdgId();
+         if(GrMotherIdx!=-1) GrMPID=truthColl.at(GrMotherIdx).PdgId();
+     
+       if     (MatchedTruthIdx==-1) LeptonType=-1;
+       else if(fabs(MPID)>50)       LeptonType=-2;
+       else if(fabs(MPID)==15){
+                if(truthColl.at(MotherIdx).GenStatus()==2){
+                  if(fabs(GrMPID)==23 || fabs(GrMPID)==24) LeptonType=3;
+                  else if(truthColl.at(LastSelfMIdx).GenStatus()>20 && truthColl.at(LastSelfMIdx).GenStatus()<30) LeptonType=3;
+                  else if(fabs(GrMPID)>50)                 LeptonType=-3;
+                }
+                else                                       LeptonType=3;//Assigned to remove margin but do we need this?
+              }
+       else if(fabs(MPID)==23 || fabs(MPID)==24 ) LeptonType=1;
+       else if(fabs(MPID)==36 || fabs(MPID)==32 ) LeptonType=2;
+       else if(truthColl.at(LastSelfIdx).GenStatus()>20 && truthColl.at(LastSelfIdx).GenStatus()<30) LeptonType=5;
+       else LeptonType=4;
+     
+       if(LeptonType==0){
+     //    PrintTruth();
+     //    cout<<"Idx "<<MatchedTruthIdx<<" MIdx_ "<<MotherIdx<<" _MIdx "<<LastSelfMIdx<<" GrMIdx "<<GrMotherIdx<<" MPID "<<MPID<<" GPID "<<GrMPID<<" LepType "<<LeptonType<<endl;
+       }
+       FillHist("LepType", LeptonType, weight, -10., 10., 20);
+
+       if(MatchedTruthIdx!=-1) FillHist("dRgenTele", truthColl.at(MatchedTruthIdx).DeltaR(electronPreColl.at(j)), weight, 0., 0.02, 2000);
+       if(LeptonType==1) FillHist("dRgenTele_Type1", truthColl.at(MatchedTruthIdx).DeltaR(electronPreColl.at(j)), weight, 0., 0.02, 2000);
+       if(LeptonType==3) FillHist("dRgenTele_Type3", truthColl.at(MatchedTruthIdx).DeltaR(electronPreColl.at(j)), weight, 0., 0.02, 2000);
+       if(LeptonType==5) FillHist("dRgenTele_Type5", truthColl.at(MatchedTruthIdx).DeltaR(electronPreColl.at(j)), weight, 0., 0.02, 2000);
+       if(LeptonType==-2) FillHist("dRgenTele_TypeM2", truthColl.at(MatchedTruthIdx).DeltaR(electronPreColl.at(j)), weight, 0., 0.02, 2000);
+       if(LeptonType==-3) FillHist("dRgenTele_TypeM3", truthColl.at(MatchedTruthIdx).DeltaR(electronPreColl.at(j)), weight, 0., 0.02, 2000);
+   
+       float dR=999.;
+       for(int i=2; i<truthColl.size(); i++){
+         if(truthColl.at(i).IndexMother()<0 )  continue;
+         if(truthColl.at(i).GenStatus()!=1)    continue;
+         if(fabs(truthColl.at(i).PdgId())!=11) continue;
+      
+         if(truthColl.at(i).DeltaR(electronPreColl.at(j))<dR){ dR=truthColl.at(i).DeltaR(electronPreColl.at(j));}
+       }
+       if(LeptonType==-1){
+         FillHist("dRgenTele_TypeM1_bW", dR, weight, 0.1, 5.1, 500);
+         if(dR<0.4){
+           FillHist("IDeff_NEle_TypeM1dR04", 0., weight, 0., 2., 2);
+           if(electronPreColl.at(j).PassTight() && electronPreColl.at(j).PFRelIso(0.3)<0.05 && electronPreColl.at(j).dxy()<0.05 && electronPreColl.at(j).dz()<0.1 && electronPreColl.at(j).dxySig()<3. ) FillHist("IDeff_NEleID_TypeM1dR04", 0., weight, 0., 2., 2);
+         }
+         else{
+           FillHist("IDeff_NEle_TypeM1dR04", 1., weight, 0., 2., 2);
+           if(electronPreColl.at(j).PassTight() && electronPreColl.at(j).PFRelIso(0.3)<0.05 && electronPreColl.at(j).dxy()<0.05 && electronPreColl.at(j).dz()<0.1 && electronPreColl.at(j).dxySig()<3. ) FillHist("IDeff_NEleID_TypeM1dR04", 1., weight, 0., 2., 2);
+         }
+       }
+       if(MatchedTruthIdx!=-1) FillHist("dRgenTele_bW", truthColl.at(MatchedTruthIdx).DeltaR(electronPreColl.at(j)), weight, 0., 0.1, 10);
+       if(LeptonType==1) FillHist("dRgenTele_Type1_bW", truthColl.at(MatchedTruthIdx).DeltaR(electronPreColl.at(j)), weight, 0., 0.1, 10);
+       if(LeptonType==3) FillHist("dRgenTele_Type3_bW", truthColl.at(MatchedTruthIdx).DeltaR(electronPreColl.at(j)), weight, 0., 0.1, 10);
+       if(LeptonType==5) FillHist("dRgenTele_Type5_bW", truthColl.at(MatchedTruthIdx).DeltaR(electronPreColl.at(j)), weight, 0., 0.1, 10);
+       if(LeptonType==-2) FillHist("dRgenTele_TypeM2_bW", truthColl.at(MatchedTruthIdx).DeltaR(electronPreColl.at(j)), weight, 0., 0.1, 10);
+       if(LeptonType==-3) FillHist("dRgenTele_TypeM3_bW", truthColl.at(MatchedTruthIdx).DeltaR(electronPreColl.at(j)), weight, 0., 0.1, 10);
+
+     }//End of ElePrecoll loop(EleMatchingStudy)
+
+     for(int j=0; j<electronPOGTIPColl.size(); j++){
+   
+       int LeptonType=0;
+       int MatchedTruthIdx   = GenMatchedIdx(electronPOGTIPColl.at(j),truthColl);
+       int LastSelfIdx       = LastSelfMotherIdx(MatchedTruthIdx,truthColl);
+       int MotherIdx         = FirstNonSelfMotherIdx(MatchedTruthIdx, truthColl);
+       int LastSelfMIdx      = LastSelfMotherIdx(MotherIdx,truthColl);
+       int GrMotherIdx       = FirstNonSelfMotherIdx(MotherIdx, truthColl);
+       int MPID=-1, GrMPID=-1;
+         if(MotherIdx!=-1)   MPID=truthColl.at(MotherIdx).PdgId();
+         if(GrMotherIdx!=-1) GrMPID=truthColl.at(GrMotherIdx).PdgId();
+     
+       if     (MatchedTruthIdx==-1) LeptonType=-1;
+       else if(fabs(MPID)>50)       LeptonType=-2;
+       else if(fabs(MPID)==15){
+                if(truthColl.at(MotherIdx).GenStatus()==2){
+                  if(fabs(GrMPID)==23 || fabs(GrMPID)==24) LeptonType=3;
+                  else if(truthColl.at(LastSelfMIdx).GenStatus()>20 && truthColl.at(LastSelfMIdx).GenStatus()<30) LeptonType=3;
+                  else if(fabs(GrMPID)>50)                 LeptonType=-3;
+                }
+                else                                       LeptonType=3;//Assigned to remove margin but do we need this?
+              }
+       else if(fabs(MPID)==23 || fabs(MPID)==24 ) LeptonType=1;
+       else if(fabs(MPID)==36 || fabs(MPID)==32 ) LeptonType=2;
+       else if(truthColl.at(LastSelfIdx).GenStatus()>20 && truthColl.at(LastSelfIdx).GenStatus()<30) LeptonType=5;
+       else LeptonType=4;
+     
+       if(LeptonType==0){
+     //    PrintTruth();
+     //    cout<<"Idx "<<MatchedTruthIdx<<" MIdx_ "<<MotherIdx<<" _MIdx "<<LastSelfMIdx<<" GrMIdx "<<GrMotherIdx<<" MPID "<<MPID<<" GPID "<<GrMPID<<" LepType "<<LeptonType<<endl;
+       }
+       FillHist("LepType_POGT", LeptonType, weight, -10., 10., 20);
+
+       if(MatchedTruthIdx!=-1) FillHist("dRgenTele_POGT", truthColl.at(MatchedTruthIdx).DeltaR(electronPOGTIPColl.at(j)), weight, 0., 0.02, 2000);
+       if(LeptonType==1) FillHist("dRgenTele_Type1_POGT", truthColl.at(MatchedTruthIdx).DeltaR(electronPOGTIPColl.at(j)), weight, 0., 0.02, 2000);
+       if(LeptonType==3) FillHist("dRgenTele_Type3_POGT", truthColl.at(MatchedTruthIdx).DeltaR(electronPOGTIPColl.at(j)), weight, 0., 0.02, 2000);
+       if(LeptonType==5) FillHist("dRgenTele_Type5_POGT", truthColl.at(MatchedTruthIdx).DeltaR(electronPOGTIPColl.at(j)), weight, 0., 0.02, 2000);
+       if(LeptonType==-2) FillHist("dRgenTele_TypeM2_POGT", truthColl.at(MatchedTruthIdx).DeltaR(electronPOGTIPColl.at(j)), weight, 0., 0.02, 2000);
+       if(LeptonType==-3) FillHist("dRgenTele_TypeM3_POGT", truthColl.at(MatchedTruthIdx).DeltaR(electronPOGTIPColl.at(j)), weight, 0., 0.02, 2000);
+   
+       float dR=999.;
+       for(int i=2; i<truthColl.size(); i++){
+         if(truthColl.at(i).IndexMother()<0 )  continue;
+         if(truthColl.at(i).GenStatus()!=1)    continue;
+         if(fabs(truthColl.at(i).PdgId())!=11) continue;
+      
+         if(truthColl.at(i).DeltaR(electronPOGTIPColl.at(j))<dR){ dR=truthColl.at(i).DeltaR(electronPOGTIPColl.at(j));}
+       }
+       if(LeptonType==-1){
+         FillHist("dRgenTele_TypeM1_bW_POGT", dR, weight, 0.1, 5.1, 500);
+         if(dR<0.4){
+           FillHist("IDeff_NEle_TypeM1dR04_POGT", 0., weight, 0., 2., 2);
+         }
+         else{
+           FillHist("IDeff_NEle_TypeM1dR04_POGT", 1., weight, 0., 2., 2);
+         }
+       }
+       if(MatchedTruthIdx!=-1) FillHist("dRgenTele_bW_POGT", truthColl.at(MatchedTruthIdx).DeltaR(electronPOGTIPColl.at(j)), weight, 0., 0.1, 10);
+       if(LeptonType==1) FillHist("dRgenTele_Type1_bW_POGT", truthColl.at(MatchedTruthIdx).DeltaR(electronPOGTIPColl.at(j)), weight, 0., 0.1, 10);
+       if(LeptonType==3) FillHist("dRgenTele_Type3_bW_POGT", truthColl.at(MatchedTruthIdx).DeltaR(electronPOGTIPColl.at(j)), weight, 0., 0.1, 10);
+       if(LeptonType==5) FillHist("dRgenTele_Type5_bW_POGT", truthColl.at(MatchedTruthIdx).DeltaR(electronPOGTIPColl.at(j)), weight, 0., 0.1, 10);
+       if(LeptonType==-2) FillHist("dRgenTele_TypeM2_bW_POGT", truthColl.at(MatchedTruthIdx).DeltaR(electronPOGTIPColl.at(j)), weight, 0., 0.1, 10);
+       if(LeptonType==-3) FillHist("dRgenTele_TypeM3_bW_POGT", truthColl.at(MatchedTruthIdx).DeltaR(electronPOGTIPColl.at(j)), weight, 0., 0.1, 10);
+
+     }//End of ElePrecoll loop(EleMatchingStudy)
 
 
-   }
-   if(DiMuon_analysis){
+
+     /**************************************************
+     **MUON MATCHING EFF STUDY
+     **************************************************/
+     for(int j=0; j<muonPreColl.size(); j++){
+
+   
+       int LeptonType=0;
+       int MatchedTruthIdx   = GenMatchedIdx(muonPreColl.at(j),truthColl);
+       int LastSelfIdx       = LastSelfMotherIdx(MatchedTruthIdx,truthColl);
+       int MotherIdx         = FirstNonSelfMotherIdx(MatchedTruthIdx, truthColl);
+       int LastSelfMIdx      = LastSelfMotherIdx(MotherIdx,truthColl);
+       int GrMotherIdx       = FirstNonSelfMotherIdx(MotherIdx, truthColl);
+       int MPID=-1, GrMPID=-1;
+         if(MotherIdx!=-1)   MPID=truthColl.at(MotherIdx).PdgId();
+         if(GrMotherIdx!=-1) GrMPID=truthColl.at(GrMotherIdx).PdgId();
+     
+       if     (MatchedTruthIdx==-1) LeptonType=-1;
+       else if(fabs(MPID)>50)       LeptonType=-2;
+       else if(fabs(MPID)==15){
+                if(truthColl.at(MotherIdx).GenStatus()==2){
+                  if(fabs(GrMPID)==23 || fabs(GrMPID)==24) LeptonType=3;
+                  else if(truthColl.at(LastSelfMIdx).GenStatus()>20 && truthColl.at(LastSelfMIdx).GenStatus()<30) LeptonType=3;
+                  else if(fabs(GrMPID)>50)                 LeptonType=-3;
+                }
+                else                                       LeptonType=3;//Assigned to remove margin but do we need this?
+              }
+       else if(fabs(MPID)==23 || fabs(MPID)==24 ) LeptonType=1;
+       else if(fabs(MPID)==36 || fabs(MPID)==32 ) LeptonType=2;
+       else if(truthColl.at(LastSelfIdx).GenStatus()>20 && truthColl.at(LastSelfIdx).GenStatus()<30) LeptonType=5;
+       else LeptonType=4;
+     
+       if(LeptonType==0){
+     //    PrintTruth();
+     //    cout<<"Idx "<<MatchedTruthIdx<<" MIdx_ "<<MotherIdx<<" _MIdx "<<LastSelfMIdx<<" GrMIdx "<<GrMotherIdx<<" MPID "<<MPID<<" GPID "<<GrMPID<<" LepType "<<LeptonType<<endl;
+       }
+       FillHist("LepType", LeptonType, weight, -10., 10., 20);
+
+       if(MatchedTruthIdx!=-1) FillHist("dRgenTmu", truthColl.at(MatchedTruthIdx).DeltaR(muonPreColl.at(j)), weight, 0., 0.02, 2000);
+       if(LeptonType==1) FillHist("dRgenTmu_Type1", truthColl.at(MatchedTruthIdx).DeltaR(muonPreColl.at(j)), weight, 0., 0.02, 2000);
+       if(LeptonType==3) FillHist("dRgenTmu_Type3", truthColl.at(MatchedTruthIdx).DeltaR(muonPreColl.at(j)), weight, 0., 0.02, 2000);
+       if(LeptonType==5) FillHist("dRgenTmu_Type5", truthColl.at(MatchedTruthIdx).DeltaR(muonPreColl.at(j)), weight, 0., 0.02, 2000);
+       if(LeptonType==-2) FillHist("dRgenTmu_TypeM2", truthColl.at(MatchedTruthIdx).DeltaR(muonPreColl.at(j)), weight, 0., 0.02, 2000);
+       if(LeptonType==-3) FillHist("dRgenTmu_TypeM3", truthColl.at(MatchedTruthIdx).DeltaR(muonPreColl.at(j)), weight, 0., 0.02, 2000);
+   
+       float dR=999.;
+       for(int i=2; i<truthColl.size(); i++){
+         if(truthColl.at(i).IndexMother()<0 )  continue;
+         if(truthColl.at(i).GenStatus()!=1)    continue;
+         if(fabs(truthColl.at(i).PdgId())!=13) continue;
+      
+         if(truthColl.at(i).DeltaR(muonPreColl.at(j))<dR){ dR=truthColl.at(i).DeltaR(muonPreColl.at(j));}
+       }
+       if(LeptonType==-1){
+         FillHist("dRgenTmu_TypeM1_bW", dR, weight, 0.1, 5.1, 500);
+         if(dR<0.4){
+           FillHist("IDeff_NMu_TypeM1dR04", 0., weight, 0., 2., 2);
+           if(muonPreColl.at(j).IsTight() && muonPreColl.at(j).RelIso04()<0.15) FillHist("IDeff_NMuID_TypeM1dR04", 0., weight, 0., 2., 2);
+         }
+         else{
+           FillHist("IDeff_NMu_TypeM1dR04", 1., weight, 0., 2., 2);
+           if(muonPreColl.at(j).IsTight() && muonPreColl.at(j).RelIso04()<0.15) FillHist("IDeff_NMuID_TypeM1dR04", 1., weight, 0., 2., 2);
+         }
+       }
+       if(MatchedTruthIdx!=-1) FillHist("dRgenTmu_bW", truthColl.at(MatchedTruthIdx).DeltaR(muonPreColl.at(j)), weight, 0., 0.1, 10);
+       if(LeptonType==1) FillHist("dRgenTmu_Type1_bW", truthColl.at(MatchedTruthIdx).DeltaR(muonPreColl.at(j)), weight, 0., 0.1, 10);
+       if(LeptonType==3) FillHist("dRgenTmu_Type3_bW", truthColl.at(MatchedTruthIdx).DeltaR(muonPreColl.at(j)), weight, 0., 0.1, 10);
+       if(LeptonType==5) FillHist("dRgenTmu_Type5_bW", truthColl.at(MatchedTruthIdx).DeltaR(muonPreColl.at(j)), weight, 0., 0.1, 10);
+       if(LeptonType==-2) FillHist("dRgenTmu_TypeM2_bW", truthColl.at(MatchedTruthIdx).DeltaR(muonPreColl.at(j)), weight, 0., 0.1, 10);
+       if(LeptonType==-3) FillHist("dRgenTmu_TypeM3_bW", truthColl.at(MatchedTruthIdx).DeltaR(muonPreColl.at(j)), weight, 0., 0.1, 10);
 
 
-   }
-   if(DiEle_analysis){
+
+     }//End of MuonPreColl Loop(Muon Matching Study)
 
 
-   }
+     //dRdist due to ID(POGT - PFMUON) Bias Test
+     for(int j=0; j<muonPOGTColl.size(); j++){
+   
+       int LeptonType=0;
+       int MatchedTruthIdx   = GenMatchedIdx(muonPOGTColl.at(j),truthColl);
+       int LastSelfIdx       = LastSelfMotherIdx(MatchedTruthIdx,truthColl);
+       int MotherIdx         = FirstNonSelfMotherIdx(MatchedTruthIdx, truthColl);
+       int LastSelfMIdx      = LastSelfMotherIdx(MotherIdx,truthColl);
+       int GrMotherIdx       = FirstNonSelfMotherIdx(MotherIdx, truthColl);
+       int MPID=-1, GrMPID=-1;
+         if(MotherIdx!=-1)   MPID=truthColl.at(MotherIdx).PdgId();
+         if(GrMotherIdx!=-1) GrMPID=truthColl.at(GrMotherIdx).PdgId();
+     
+       if     (MatchedTruthIdx==-1) LeptonType=-1;
+       else if(fabs(MPID)>50)       LeptonType=-2;
+       else if(fabs(MPID)==15){
+                if(truthColl.at(MotherIdx).GenStatus()==2){
+                  if(fabs(GrMPID)==23 || fabs(GrMPID)==24) LeptonType=3;
+                  else if(truthColl.at(LastSelfMIdx).GenStatus()>20 && truthColl.at(LastSelfMIdx).GenStatus()<30) LeptonType=3;
+                  else if(fabs(GrMPID)>50)                 LeptonType=-3;
+                }
+                else                                       LeptonType=3;//Assigned to remove margin but do we need this?
+              }
+       else if(fabs(MPID)==23 || fabs(MPID)==24 ) LeptonType=1;
+       else if(fabs(MPID)==36 || fabs(MPID)==32 ) LeptonType=2;
+       else if(truthColl.at(LastSelfIdx).GenStatus()>20 && truthColl.at(LastSelfIdx).GenStatus()<30) LeptonType=5;
+       else LeptonType=4;
+     
+       if(LeptonType==0){
+     //    PrintTruth();
+     //    cout<<"Idx "<<MatchedTruthIdx<<" MIdx_ "<<MotherIdx<<" _MIdx "<<LastSelfMIdx<<" GrMIdx "<<GrMotherIdx<<" MPID "<<MPID<<" GPID "<<GrMPID<<" LepType "<<LeptonType<<endl;
+       }
+       FillHist("LepType_POGT", LeptonType, weight, -10., 10., 20);
 
+       if(MatchedTruthIdx!=-1) FillHist("dRgenTmu_POGT", truthColl.at(MatchedTruthIdx).DeltaR(muonPOGTColl.at(j)), weight, 0., 0.02, 2000);
+       if(LeptonType==1) FillHist("dRgenTmu_Type1_POGT", truthColl.at(MatchedTruthIdx).DeltaR(muonPOGTColl.at(j)), weight, 0., 0.02, 2000);
+       if(LeptonType==3) FillHist("dRgenTmu_Type3_POGT", truthColl.at(MatchedTruthIdx).DeltaR(muonPOGTColl.at(j)), weight, 0., 0.02, 2000);
+       if(LeptonType==5) FillHist("dRgenTmu_Type5_POGT", truthColl.at(MatchedTruthIdx).DeltaR(muonPOGTColl.at(j)), weight, 0., 0.02, 2000);
+       if(LeptonType==-2) FillHist("dRgenTmu_TypeM2_POGT", truthColl.at(MatchedTruthIdx).DeltaR(muonPOGTColl.at(j)), weight, 0., 0.02, 2000);
+       if(LeptonType==-3) FillHist("dRgenTmu_TypeM3_POGT", truthColl.at(MatchedTruthIdx).DeltaR(muonPOGTColl.at(j)), weight, 0., 0.02, 2000);
+   
+       float dR=999.;
+       for(int i=2; i<truthColl.size(); i++){
+         if(truthColl.at(i).IndexMother()<0 )  continue;
+         if(truthColl.at(i).GenStatus()!=1)    continue;
+         if(fabs(truthColl.at(i).PdgId())!=13) continue;
+      
+         if(truthColl.at(i).DeltaR(muonPOGTColl.at(j))<dR){ dR=truthColl.at(i).DeltaR(muonPOGTColl.at(j));}
+       }
+       if(MatchedTruthIdx!=-1) FillHist("dRgenTmu_bW_POGT", truthColl.at(MatchedTruthIdx).DeltaR(muonPOGTColl.at(j)), weight, 0., 0.1, 10);
+       if(LeptonType==-1) FillHist("dRgenTmu_TypeM1_bW_POGT", dR, weight, 0.1, 5.1, 50);
+       if(LeptonType==1) FillHist("dRgenTmu_Type1_bW_POGT", truthColl.at(MatchedTruthIdx).DeltaR(muonPOGTColl.at(j)), weight, 0., 0.1, 10);
+       if(LeptonType==3) FillHist("dRgenTmu_Type3_bW_POGT", truthColl.at(MatchedTruthIdx).DeltaR(muonPOGTColl.at(j)), weight, 0., 0.1, 10);
+       if(LeptonType==5) FillHist("dRgenTmu_Type5_bW_POGT", truthColl.at(MatchedTruthIdx).DeltaR(muonPOGTColl.at(j)), weight, 0., 0.1, 10);
+       if(LeptonType==-2) FillHist("dRgenTmu_TypeM2_bW_POGT", truthColl.at(MatchedTruthIdx).DeltaR(muonPOGTColl.at(j)), weight, 0., 0.1, 10);
+       if(LeptonType==-3) FillHist("dRgenTmu_TypeM3_bW_POGT", truthColl.at(MatchedTruthIdx).DeltaR(muonPOGTColl.at(j)), weight, 0., 0.1, 10);
 
+     }//End of MuonTightColl Loop(MuonMatching EffStudy)
 
+   }//End of MatchingEff Study 
+ 
 /////////////////////////////////////////////////////////////////////////////////// 
-
 
 return;
 }// End of execute event loop
@@ -428,6 +835,120 @@ May2017_ObjectEff::~May2017_ObjectEff() {
 //  if(!k_isdata)delete reweightPU;
   
 }
+
+int May2017_ObjectEff::NPromptFake_Ele(std::vector<snu::KElectron> EleColl, TString Option){
+
+   int Nprompt=0, Nfake=0;
+
+   bool ReturnPrompt=false, ReturnFake=false;
+   if     (Option.Contains("Prompt")) ReturnPrompt=true;
+   else if(Option.Contains("Fake"))   ReturnFake=true;
+
+   for(int i=0; i<EleColl.size(); i++){ if(EleColl.at(i).MCIsPrompt()){Nprompt++;} else{Nfake++;} }
+
+   if     (ReturnPrompt) return Nprompt;
+   else if(ReturnFake)   return Nfake;
+
+   return 0.;
+  
+}
+
+
+int May2017_ObjectEff::NPromptFake_Mu(std::vector<snu::KMuon> MuColl, TString Option){
+
+   int Nprompt=0, Nfake=0;
+
+   bool ReturnPrompt=false, ReturnFake=false;
+   if     (Option.Contains("Prompt")) ReturnPrompt=true;
+   else if(Option.Contains("Fake"))   ReturnFake=true;
+
+   for(int i=0; i<MuColl.size(); i++){ if(MuColl.at(i).MCIsPrompt()){Nprompt++;} else{Nfake++;} }
+
+   if     (ReturnPrompt) return Nprompt;
+   else if(ReturnFake)   return Nfake;
+
+   return 0.;
+  
+}
+
+int May2017_ObjectEff::NPromptFake_Mu(std::vector<snu::KMuon> MuColl, std::vector<snu::KTruth> truthColl, TString Option){
+
+   int Nprompt=0, Nfake=0;
+
+   bool ReturnPrompt=false, ReturnFake=false, ReturnBSM=false;
+   if     (Option.Contains("Prompt")) ReturnPrompt=true;
+   else if(Option.Contains("Fake"))   ReturnFake=true;
+   else if(Option.Contains("BSM"))    ReturnBSM=true;
+
+   for(int i=0; i<MuColl.size(); i++){
+     int MuType=GetLeptonType(MuColl.at(i), truthColl);
+
+     if(!ReturnBSM){
+       if     (MuType==1) Nprompt++;
+       else if(MuType<0) Nfake++;
+       else if(MuType==2) Nprompt++;
+     }
+     else if(ReturnBSM && MuType==2) Nprompt++;
+     
+   }
+
+   if     (ReturnPrompt || ReturnBSM) return Nprompt;
+   else if(ReturnFake)   return Nfake;
+
+   return 0.;
+  
+}
+
+int May2017_ObjectEff::NPromptFake_Ele(std::vector<snu::KElectron> EleColl, std::vector<snu::KTruth> truthColl, TString Option){
+
+   int Nprompt=0, Nfake=0;
+
+   bool ReturnPrompt=false, ReturnFake=false;
+   if     (Option.Contains("Prompt")) ReturnPrompt=true;
+   else if(Option.Contains("Fake"))   ReturnFake=true;
+
+   for(int i=0; i<EleColl.size(); i++){
+     int EleType=GetLeptonType(EleColl.at(i), truthColl);
+
+     if     (EleType==1) Nprompt++;
+     else if(EleType<0) Nfake++;
+     else if(EleType==2) Nprompt++;
+   }
+
+   if     (ReturnPrompt) return Nprompt;
+   else if(ReturnFake)   return Nfake;
+
+   return 0.;
+  
+}
+
+
+
+bool May2017_ObjectEff::IsConvCand(snu::KElectron Ele, std::vector<snu::KTruth> TruthColl, TString Option){
+
+  bool IsConversionCandidate=false;
+  int EleType=GetLeptonType(Ele, TruthColl);
+  int HardPhotonIdx=-1;
+  if(EleType==1 || fabs(EleType)==2 || fabs(EleType)==3 ) return false; 
+
+  for(int i=2; i<TruthColl.size(); i++){
+
+    int pid=TruthColl.at(i).PdgId();
+    int midx=TruthColl.at(i).IndexMother();
+    int mpid=TruthColl.at(midx).PdgId();
+    int GenSt=TruthColl.at(i).GenStatus();
+
+    if( fabs(pid)==22 && ((GenSt>20 && GenSt<30) || GenSt==1 ) ) HardPhotonIdx=i;
+  }
+  if(HardPhotonIdx<2) return false;
+  
+  if(TruthColl.at(HardPhotonIdx).DeltaR(Ele)<0.4) IsConversionCandidate=true;
+
+  return IsConversionCandidate;
+
+}
+
+
 
 void May2017_ObjectEff::FillCutFlow(TString cut, float weight){
   

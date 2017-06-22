@@ -70,9 +70,11 @@ void May2017_FakeRateProd::ExecuteEvents()throw( LQError ){
    FillCutFlow("NoCut", weight*pileup_reweight);
 
 
-   bool EleFR=false;
+   bool EleFR=false, TrigSel=false, NormCheck=false;
    for(int i=0; i<k_flags.size(); i++){
-     if     (k_flags.at(i).Contains("EleFR"))   EleFR=true;
+     if     (k_flags.at(i).Contains("EleFR"))     EleFR     =true;
+     else if(k_flags.at(i).Contains("TrigSel"))   TrigSel   =true;
+     else if(k_flags.at(i).Contains("NormCheck")) NormCheck =true;
    }
 
     
@@ -81,20 +83,17 @@ void May2017_FakeRateProd::ExecuteEvents()throw( LQError ){
    ***************************************************************************************/
    //ListTriggersAvailable();
 
-   //Normalisation Lumi Setting
-   float trigger_ps_weight=1.;
-   if(!isData) trigger_ps_weight=WeightByTrigger("HLT_IsoMu24_v", TargetLumi);
-   weight*=trigger_ps_weight;
-   FillHist("TriggerPSWeight", trigger_ps_weight, 1., 0., 1., 100);
-
    //Trigger Path of Analysis
    bool Pass_Trigger=false;
-   if(EleFR){
-     //if( PassTrigger("HLT_Ele8_CaloIdL_TrackIdL_IsoVL_PFJet30_v") )  FillHist("TrCount", 0., weight, 0., 5., 5);//0.1M
-     //if( PassTrigger("HLT_Ele12_CaloIdL_TrackIdL_IsoVL_v") )         FillHist("TrCount", 1., weight, 0., 5., 5);//0.2M
-     //if( PassTrigger("HLT_Ele12_CaloIdL_TrackIdL_IsoVL_PFJet30_v") ) FillHist("TrCount", 2., weight, 0., 5., 5);//0.25M
-     //if( PassTrigger("HLT_Ele17_CaloIdL_TrackIdL_IsoVL_v") )         FillHist("TrCount", 3., weight, 0., 5., 5);//1M
-     //if( PassTrigger("HLT_Ele17_CaloIdL_TrackIdL_IsoVL_PFJet30_v") ) FillHist("TrCount", 4., weight, 0., 5., 5);//0.9M
+   float trigger_ps_weight=1.;
+   if(EleFR || NormCheck){
+     if( PassTrigger("HLT_Ele23_CaloIdL_TrackIdL_IsoVL_PFJet30_v") ) Pass_Trigger=true;
+     if(!isData) trigger_ps_weight=WeightByTrigger("HLT_Ele23_CaloIdL_TrackIdL_IsoVL_PFJet30_v", TargetLumi);
+   }
+   FillHist("TriggerPSWeight", trigger_ps_weight, 1., 0., 1., 100);
+   weight*=trigger_ps_weight;
+
+
      //HLT_Ele8_CaloIdL_TrackIdL_IsoVL_PFJet30_v   6.992 0.1M
      //HLT_Ele12_CaloIdL_TrackIdL_IsoVL_v          6.162 0.2M
      //HLT_Ele12_CaloIdL_TrackIdL_IsoVL_PFJet30_v 14.888 0.25M
@@ -102,35 +101,6 @@ void May2017_FakeRateProd::ExecuteEvents()throw( LQError ){
      //HLT_Ele17_CaloIdL_TrackIdL_IsoVL_PFJet30_v 58.896 0.9M
      //HLT_Ele23_CaloIdL_TrackIdL_IsoVL_v         16.43
      //HLT_Ele23_CaloIdL_TrackIdL_IsoVL_PFJet30_v 63.046
-
-     if( PassTrigger("HLT_Ele17_CaloIdL_TrackIdL_IsoVL_PFJet30_v")
-        || PassTrigger("HLT_Ele17_CaloIdL_TrackIdL_IsoVL_v")     ) Pass_Trigger=true;
-     
-
-
-     //if( PassTrigger("HLT_Ele12_CaloIdL_TrackIdL_IsoVL_v")
-     //    || PassTrigger("HLT_Ele17_CaloIdL_TrackIdL_IsoVL_v") ) Pass_Trigger=true;
-   }
-
-//   if(EMuMu_analysis){
-//     //if( PassTrigger("HLT_IsoMu24_v") || PassTrigger("HLT_IsoTkMu24_v") ) Pass_Trigger=true;
-//     if( PassTrigger("HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v")
-//          || PassTrigger("HLT_Mu12_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v")
-//          || PassTrigger("HLT_Mu12_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ_v") ) Pass_Trigger=true;
-//   }
-//   else if(TriMu_analysis){
-//     //if( PassTrigger("HLT_IsoMu24_v") || PassTrigger("HLT_IsoTkMu24_v") ) Pass_Trigger=true;
-//     //if( PassTrigger("HLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_DZ_v") ) Pass_Trigger=true;
-//     if( PassTrigger("HLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_DZ_v")
-//          || PassTrigger("HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_v") ) Pass_Trigger=true;
-//   }
-//   else if(DiMuon_analysis){
-//     //if( PassTrigger("HLT_IsoMu24_v") || PassTrigger("HLT_IsoTkMu24_v") ) Pass_Trigger=true;
-//     if( PassTrigger("HLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_DZ_v") ) Pass_Trigger=true;
-//   }
-//   else if(DiEle_analysis){
-//     if( PassTrigger("HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v") ) Pass_Trigger=true;
-//   }
 
    //Trigger Cut
    if(!Pass_Trigger) return;
@@ -144,7 +114,6 @@ void May2017_FakeRateProd::ExecuteEvents()throw( LQError ){
    //(vtx.ndof>4&&maxAbsZ<=0)||abs(vtx.z)<= 24)&&((maxd0 <=0)||abs(vtx.position.rho)<=2)&&!(vtx.isFake))
    if(!eventbase->GetEvent().HasGoodPrimaryVertex()) return; FillCutFlow("VertexCut", weight*pileup_reweight);
    
-   bool EleIDSF=false, EMuTrigSF=false, EleLeg=false, MuonLeg=false, DZeff=false;
 
 ///////Objects in Analysis/////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
@@ -157,11 +126,10 @@ void May2017_FakeRateProd::ExecuteEvents()throw( LQError ){
      eventbase->GetMuonSel()->SetID(BaseSelection::MUON_POG_LOOSE);
      eventbase->GetMuonSel()->SetPt(5.);                    eventbase->GetMuonSel()->SetEta(2.4);
    std::vector<snu::KMuon> muonPreColl; eventbase->GetMuonSel()->Selection(muonPreColl, false);
-     eventbase->GetElectronSel()->SetID(BaseSelection::ELECTRON_POG_LOOSE);
-     eventbase->GetElectronSel()->SetPt(10.);                eventbase->GetElectronSel()->SetEta(2.5);
+     eventbase->GetElectronSel()->SetPt(20.);                eventbase->GetElectronSel()->SetEta(2.5);
      eventbase->GetElectronSel()->SetBETrRegIncl(false);
    std::vector<snu::KElectron> electronPreColl; eventbase->GetElectronSel()->Selection(electronPreColl);
-     if(EleFR)    { if( !(electronPreColl.size()>=1) ) return; }
+     if(EleFR || TrigSel || NormCheck)    { if( !(electronPreColl.size()>=1) ) return; }
      FillCutFlow("PreSel", weight);
    /**********************************************************************************************************/
 
@@ -218,7 +186,7 @@ void May2017_FakeRateProd::ExecuteEvents()throw( LQError ){
    std::vector<snu::KElectron> electronNull;
 
      eventbase->GetJetSel()->SetID(BaseSelection::PFJET_LOOSE);
-     eventbase->GetJetSel()->SetPt(25.);                     eventbase->GetJetSel()->SetEta(2.4);
+     eventbase->GetJetSel()->SetPt(30.);                     eventbase->GetJetSel()->SetEta(2.4);
      //eventbase->GetJetSel()->SetPileUpJetID(true,"Loose");
      bool LeptonVeto=true;
    std::vector<snu::KJet> jetColl; eventbase->GetJetSel()->Selection(jetColl, LeptonVeto, muonLooseColl, electronVetoColl);
@@ -257,29 +225,30 @@ void May2017_FakeRateProd::ExecuteEvents()throw( LQError ){
 
    /*This part is for boosting up speed.. SF part takes rather longer time than expected*/
 
-/*   if(EventCand){
+   if(true){
      if(!isData){
-      //trigger_sf      = mcdata_correction->TriggerScaleFactor( electronColl, muonColl, "HLT_IsoMu24_v" );
+       if(NormCheck){
+       //trigger_sf      = mcdata_correction->TriggerScaleFactor( electronColl, muonColl, "HLT_IsoMu24_v" );
   
        id_weight_ele   = mcdata_correction->ElectronScaleFactor("ELECTRON_POG_TIGHT", electronColl);
        reco_weight_ele = mcdata_correction->ElectronRecoScaleFactor(electronColl);
   
-       id_weight_mu    = mcdata_correction->MuonScaleFactor("MUON_HN_TRI_TIGHT", muonColl);
+       //id_weight_mu    = mcdata_correction->MuonScaleFactor("MUON_HN_TRI_TIGHT", muonColl);
        //iso_weight_mu   = mcdata_correction->MuonISOScaleFactor("MUON_POG_TIGHT", muonColl);
-       trk_weight_mu   = mcdata_correction->MuonTrackingEffScaleFactor(muonColl);
-  
-       btag_sf         = BTagScaleFactor_1a(jetColl, snu::KJet::CSVv2, snu::KJet::Medium);
+       //trk_weight_mu   = mcdata_correction->MuonTrackingEffScaleFactor(muonColl);
+       //btag_sf         = BTagScaleFactor_1a(jetColl, snu::KJet::CSVv2, snu::KJet::Medium);
 
-       geneff_weight   = GenFilterEfficiency(k_sample_name);
-       gennorm_weight  = SignalNorm(k_sample_name, 200.);
+       //geneff_weight   = GenFilterEfficiency(k_sample_name);
+       //gennorm_weight  = SignalNorm(k_sample_name, 200.);
+       }
      }
      else{
        //Perfect Prompt Ratio Approximation applied.(p=1), Applicable to generic number, combination of leptons under premise of high prompt rate.
-       if(k_running_nonprompt){
-         fake_weight = m_datadriven_bkg->Get_DataDrivenWeight(false, muonLooseColl, "MUON_HN_TRI_TIGHT", muonLooseColl.size(), electronLooseColl, "ELECTRON_HN_LOWDXY_TIGHT", electronLooseColl.size());
-       }
+   //    if(k_running_nonprompt){
+   //      fake_weight = m_datadriven_bkg->Get_DataDrivenWeight(false, muonLooseColl, "MUON_HN_TRI_TIGHT", muonLooseColl.size(), electronLooseColl, "ELECTRON_HN_LOWDXY_TIGHT", electronLooseColl.size());
+//       }
      }
-   }*/
+   }
 
    weight *= id_weight_ele*reco_weight_ele*id_weight_mu*iso_weight_mu*trk_weight_mu*pileup_reweight*fake_weight*btag_sf*geneff_weight*gennorm_weight;
    /***************************************************************************************************/
@@ -301,8 +270,140 @@ void May2017_FakeRateProd::ExecuteEvents()throw( LQError ){
 //////////////////////////////////////////////////////////////////////////////////////
 /************************************************************************************/
 
+   if(TrigSel){
+     if(electronColl.size()!=1) return;
+     if(electronColl.at(0).Pt()<25) return;
+     float MTW = sqrt(2)*sqrt(met*electronColl.at(0).Pt()-met_x*electronColl.at(0).Px()-met_y*electronColl.at(0).Py());
+
+     if(PassTrigger("HLT_Ele17_CaloIdL_TrackIdL_IsoVL_v")){
+       FillHist("Count_e17", 0., weight, 0., 10., 10);//1: Ele25
+
+       if(jetColl.size()==1){
+         if( jetColl.at(0).Pt()>30 && jetColl.at(0).DeltaR(electronColl.at(0))>1.0 ){
+           FillHist("Count_e17", 1., weight, 0., 10., 10);//2: 1j away 30
+           if( met<30 && MTW<30 ) FillHist("Count_e17", 2., weight, 0., 10., 10);//FakeEnrich 1j30
+         }
+         if( jetColl.at(0).Pt()>40 && jetColl.at(0).DeltaR(electronColl.at(0))>1.0 ){
+           FillHist("Count_e17", 3., weight, 0., 10., 10);//2: 1j away 40
+           if( met<30 && MTW<30 ) FillHist("Count_e17", 4., weight, 0., 10., 10);//FakeEnrich 1j40
+         }
+         if( jetColl.at(0).Pt()>60 && jetColl.at(0).DeltaR(electronColl.at(0))>1.0 ){
+           FillHist("Count_e17", 5., weight, 0., 10., 10);//2: 1j away 60
+           if( met<30 && MTW<30 ) FillHist("Count_e17", 6., weight, 0., 10., 10);//FakeEnrich 1j60
+         }
+       }//1j 
+
+     }//End of Ele17 
+     if(PassTrigger("HLT_Ele17_CaloIdL_TrackIdL_IsoVL_PFJet30_v")){
+       FillHist("Count_e17j30", 0., weight, 0., 10., 10);//1: Ele25
+
+       if(jetColl.size()==1){
+         if( jetColl.at(0).Pt()>30 && jetColl.at(0).DeltaR(electronColl.at(0))>1.0 ){
+           FillHist("Count_e17j30", 1., weight, 0., 10., 10);//2: 1j away 30
+           if( met<30 && MTW<30 ) FillHist("Count_e17j30", 2., weight, 0., 10., 10);//FakeEnrich 1j30
+         }
+         if( jetColl.at(0).Pt()>40 && jetColl.at(0).DeltaR(electronColl.at(0))>1.0 ){
+           FillHist("Count_e17j30", 3., weight, 0., 10., 10);//2: 1j away 40
+           if( met<30 && MTW<30 ) FillHist("Count_e17j30", 4., weight, 0., 10., 10);//FakeEnrich 1j40
+         }
+         if( jetColl.at(0).Pt()>60 && jetColl.at(0).DeltaR(electronColl.at(0))>1.0 ){
+           FillHist("Count_e17j30", 5., weight, 0., 10., 10);//2: 1j away 60
+           if( met<30 && MTW<30 ) FillHist("Count_e17j30", 6., weight, 0., 10., 10);//FakeEnrich 1j60
+         }
+       }//1j 
+
+     }//End of Ele17Jet30 
+     if(PassTrigger("HLT_Ele23_CaloIdL_TrackIdL_IsoVL_v")){
+       FillHist("Count_e23", 0., weight, 0., 10., 10);//1: Ele25
+
+       if(jetColl.size()==1){
+         if( jetColl.at(0).Pt()>30 && jetColl.at(0).DeltaR(electronColl.at(0))>1.0 ){
+           FillHist("Count_e23", 1., weight, 0., 10., 10);//2: 1j away 30
+           if( met<30 && MTW<30 ) FillHist("Count_e23", 2., weight, 0., 10., 10);//FakeEnrich 1j30
+         }
+         if( jetColl.at(0).Pt()>40 && jetColl.at(0).DeltaR(electronColl.at(0))>1.0 ){
+           FillHist("Count_e23", 3., weight, 0., 10., 10);//2: 1j away 40
+           if( met<30 && MTW<30 ) FillHist("Count_e23", 4., weight, 0., 10., 10);//FakeEnrich 1j40
+         }
+         if( jetColl.at(0).Pt()>60 && jetColl.at(0).DeltaR(electronColl.at(0))>1.0 ){
+           FillHist("Count_e23", 5., weight, 0., 10., 10);//2: 1j away 60
+           if( met<30 && MTW<30 ) FillHist("Count_e23", 6., weight, 0., 10., 10);//FakeEnrich 1j60
+         }
+       }//1j 
+
+     }//End of Ele23 
+     if(PassTrigger("HLT_Ele23_CaloIdL_TrackIdL_IsoVL_PFJet30_v")){
+       FillHist("Count_e23j30", 0., weight, 0., 10., 10);//1: Ele25
+
+       if(jetColl.size()==1){
+         if( jetColl.at(0).Pt()>30 && jetColl.at(0).DeltaR(electronColl.at(0))>1.0 ){
+           FillHist("Count_e23j30", 1., weight, 0., 10., 10);//2: 1j away 30
+           if( met<30 && MTW<30 ) FillHist("Count_e23j30", 2., weight, 0., 10., 10);//FakeEnrich 1j30
+         }
+         if( jetColl.at(0).Pt()>40 && jetColl.at(0).DeltaR(electronColl.at(0))>1.0 ){
+           FillHist("Count_e23j30", 3., weight, 0., 10., 10);//2: 1j away 40
+           if( met<30 && MTW<30 ) FillHist("Count_e23j30", 4., weight, 0., 10., 10);//FakeEnrich 1j40
+         }
+         if( jetColl.at(0).Pt()>60 && jetColl.at(0).DeltaR(electronColl.at(0))>1.0 ){
+           FillHist("Count_e23j30", 5., weight, 0., 10., 10);//2: 1j away 60
+           if( met<30 && MTW<30 ) FillHist("Count_e23j30", 6., weight, 0., 10., 10);//FakeEnrich 1j60
+         }
+       }//1j 
+
+     }//End of Ele23Jet30
+
+   //170602 - Conclusion -Ele23Jet30 is the best.
+   //though for single lepton events other triggers as Ele17 may give better events, but for dijet topology lepton&jet events
+   //Ele23 Jet30 gives the most events. So I chose this trigger.
+    
+   }//End of TriggerChoice
+
+   if(NormCheck){
+     //1) High MTW region(MTW>70, MET>50) mostly includes W related events, no fakes
+     //   -a) For Norm check with 2)
+     //   -b) For NLO xsec check.
+     //2) DY+Jets events ; very clear for prescale check
+
+     if(electronColl.size()==1 && electronVetoColl.size()==1){
+       float MTW = sqrt(2)*sqrt(met*electronColl.at(0).Pt()-met_x*electronColl.at(0).Px()-met_y*electronColl.at(0).Py());
+
+       FillHist("MET_e23j30_e25", met, weight, 0., 300., 300);
+       if(met>30) FillHist("MTW_e23j30_e25met30", MTW, weight, 0., 200., 200);
+       if(jetColl.size()>0){
+         FillHist("MET_e23j30_e25gt1j", met, weight, 0., 300., 300);
+         if(met>30) FillHist("MTW_e23j30_e25met30gt1j", MTW, weight, 0., 200., 200);
+       }
+       if(met>30 && MTW>70){
+         FillHist("Count_NormCR", 0., weight, 0., 5., 5);
+         FillHist("MTW_e23j30_e25met30mtw70", MTW, weight, 50., 200., 150);
+         if(jetColl.size()==1){
+            if(jetColl.at(0).Pt()>30 && jetColl.at(0).DeltaR(electronColl.at(0))>1.0){
+              FillHist("Count_NormCR", 1., weight, 0., 5., 5);
+              FillHist("MTW_e23j30_e25met30mtw701j30", MTW, weight, 50., 200., 150);
+            }
+         }
+         if(jetColl.size()>0){
+            FillHist("Count_NormCR", 2., weight, 0., 5., 5);
+         }
+       }
+     }
+     if(electronColl.size()==2 && electronVetoColl.size()==2){
+       if( electronColl.at(0).Charge()!=electronColl.at(1).Charge()
+          && electronColl.at(0).Pt()>25. && electronColl.at(1).Pt()>10. 
+          && fabs((electronColl.at(0)+electronColl.at(1)).M()-91.2)<15. ){
+           FillHist("Mee_e23j30_e25e10", (electronColl.at(0)+electronColl.at(1)).M(), weight, 60., 120., 60);
+           FillHist("Count_NormCR", 3., weight, 0., 5., 5);
+         if(jetColl.size()>0){
+           FillHist("Mee_e23j30_e25e10gt1j", (electronColl.at(0)+electronColl.at(1)).M(), weight, 60., 120., 60);
+           FillHist("Count_NormCR", 4., weight, 0., 5., 5);
+         }
+       }
+     }//End of DY Count 
+     
+   }
 
    if(EleFR){
+
      //Normalisation Check
      if( electronColl.size()==2){
        if( electronColl.at(0).Charge()!=electronColl.at(1).Charge() ){

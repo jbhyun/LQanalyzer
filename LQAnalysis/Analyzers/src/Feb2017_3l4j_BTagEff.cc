@@ -167,8 +167,16 @@ void Feb2017_3l4j_BTagEff::ExecuteEvents()throw( LQError ){
      eventbase->GetJetSel()->SetID(BaseSelection::PFJET_LOOSE);
      eventbase->GetJetSel()->SetPt(20.);                     eventbase->GetJetSel()->SetEta(2.4);
    //eventbase->GetJetSel()->SetPileUpJetID(true,"Medium");
-     bool LeptonVeto=true;
-   std::vector<snu::KJet> jetColl; eventbase->GetJetSel()->Selection(jetColl, LeptonVeto, muonLooseColl, electronLooseColl);
+   //Version1
+   //  bool LeptonVeto=true;
+   //std::vector<snu::KJet> jetColl; eventbase->GetJetSel()->Selection(jetColl, LeptonVeto, muonLooseColl, electronLooseColl);
+   //Version2
+     bool LeptonVeto=false;
+   std::vector<snu::KJet> jetBefColl; eventbase->GetJetSel()->Selection(jetBefColl, LeptonVeto, muonLooseColl, electronLooseColl);
+   std::vector<snu::KJet> jetColl = SkimJetColl(jetBefColl, truthColl, "NoPrNoTau");
+   
+
+     
    //std::vector<snu::KJet> jetColl; eventbase->GetJetSel()->Selection(jetColl, LeptonVeto, muonColl, electronColl);
      eventbase->GetJetSel()->SetID(BaseSelection::PFJET_LOOSE);
      eventbase->GetJetSel()->SetPt(20.);                     eventbase->GetJetSel()->SetEta(2.4);

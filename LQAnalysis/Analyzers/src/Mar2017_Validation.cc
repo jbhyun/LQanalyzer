@@ -71,12 +71,13 @@ void Mar2017_Validation::ExecuteEvents()throw( LQError ){
    FillCutFlow("NoCut", weight*pileup_reweight);
 
 
-   bool DoubleEle_analysis=false, EMu_analysis=false, SingleMu_analysis=false, DoubleMu_analysis=false;
+   bool DoubleEle_analysis=false, EMu_analysis=false, SingleMu_analysis=false, DoubleMu_analysis=false, SingleEle_analysis=false;
    bool SiglMuTrig=false, SiglEleTrig=false, EMuTrig=false, DiMuTrig=false, DiEleTrig=false;
    for(int i=0; i<k_flags.size(); i++){
      if     (k_flags.at(i).Contains("DoubleEle_analysis")) DoubleEle_analysis=true;
      else if(k_flags.at(i).Contains("EMu_analysis"))       EMu_analysis      =true;
      else if(k_flags.at(i).Contains("SingleMu_analysis"))  SingleMu_analysis =true;
+     else if(k_flags.at(i).Contains("SingleEle_analysis")) SingleEle_analysis=true;
      else if(k_flags.at(i).Contains("DoubleMu_analysis"))  DoubleMu_analysis =true;
      else if(k_flags.at(i).Contains("SiglMuTrig"))         SiglMuTrig        =true;
      else if(k_flags.at(i).Contains("SiglEleTrig"))        SiglEleTrig       =true;
@@ -111,6 +112,12 @@ void Mar2017_Validation::ExecuteEvents()throw( LQError ){
    else if(SingleMu_analysis){
      if( PassTrigger("HLT_IsoMu24_v") || PassTrigger("HLT_IsoTkMu24_v") ) Pass_Trigger=true;
      if(!isData) trigger_ps_weight=WeightByTrigger("HLT_IsoMu24_v", TargetLumi);
+   }
+   else if(SingleEle_analysis){
+     if(SiglEleTrig){
+       if( PassTrigger("HLT_Ele27_WPTight_Gsf_v") ) Pass_Trigger=true;
+       if(!isData) trigger_ps_weight=WeightByTrigger("HLT_Ele27_WPTight_Gsf_v", TargetLumi);
+     }
    }
    else if(DoubleEle_analysis){
      if(DiEleTrig){
@@ -157,13 +164,23 @@ void Mar2017_Validation::ExecuteEvents()throw( LQError ){
   
    
    //POG IDs
-     eventbase->GetMuonSel()->SetID(BaseSelection::MUON_POG_LOOSE);
-     eventbase->GetMuonSel()->SetPt(10.);                    eventbase->GetMuonSel()->SetEta(2.4);
-     eventbase->GetMuonSel()->SetRelIsoType("PFRelIso04");   eventbase->GetMuonSel()->SetRelIso(0.25);//POG WP L
-   std::vector<snu::KMuon> muonLooseColl; eventbase->GetMuonSel()->Selection(muonLooseColl, true);//(muonColl, bool RochCorr, bool debug)
+     //eventbase->GetMuonSel()->SetID(BaseSelection::MUON_POG_LOOSE);
+     //eventbase->GetMuonSel()->SetPt(10.);                    eventbase->GetMuonSel()->SetEta(2.4);
+     //eventbase->GetMuonSel()->SetRelIsoType("PFRelIso04");   eventbase->GetMuonSel()->SetRelIso(0.25);//POG WP L
      eventbase->GetMuonSel()->SetID(BaseSelection::MUON_POG_TIGHT);
      eventbase->GetMuonSel()->SetPt(10.);                    eventbase->GetMuonSel()->SetEta(2.4);
-     eventbase->GetMuonSel()->SetRelIsoType("PFRelIso04");   eventbase->GetMuonSel()->SetRelIso(0.15);//POG WP L
+     eventbase->GetMuonSel()->SetBSdxy(0.05);                eventbase->GetMuonSel()->SetdxySigMax(3.);
+     eventbase->GetMuonSel()->SetRelIsoType("PFRelIso04");   eventbase->GetMuonSel()->SetRelIso(0.4);
+   std::vector<snu::KMuon> muonLooseColl; eventbase->GetMuonSel()->Selection(muonLooseColl, true);//(muonColl, bool RochCorr, bool debug)
+     //eventbase->GetMuonSel()->SetID(BaseSelection::MUON_POG_TIGHT);
+     //eventbase->GetMuonSel()->SetPt(10.);                    eventbase->GetMuonSel()->SetEta(2.4);
+     //eventbase->GetMuonSel()->SetRelIsoType("PFRelIso04");   eventbase->GetMuonSel()->SetRelIso(0.15);//POG WP L
+     eventbase->GetMuonSel()->SetID(BaseSelection::MUON_POG_TIGHT);
+     eventbase->GetMuonSel()->SetPt(5.);                    eventbase->GetMuonSel()->SetEta(2.4);
+     eventbase->GetMuonSel()->SetBSdxy(0.05);               eventbase->GetMuonSel()->SetdxySigMax(3.);
+     eventbase->GetMuonSel()->SetRelIsoType("PFRelIso04");  eventbase->GetMuonSel()->SetRelIso(0.1);
+   std::vector<snu::KMuon> muonTightColl; eventbase->GetMuonSel()->Selection(muonTightColl,false);
+
    std::vector<snu::KMuon> muonColl; eventbase->GetMuonSel()->Selection(muonColl, true);//(muonColl, bool RochCorr, bool debug)
 
    
@@ -189,7 +206,8 @@ void Mar2017_Validation::ExecuteEvents()throw( LQError ){
      eventbase->GetElectronSel()->SetID(BaseSelection::ELECTRON_POG_LOOSE);
      eventbase->GetElectronSel()->SetPt(10.);                eventbase->GetElectronSel()->SetEta(2.5);
      eventbase->GetElectronSel()->SetBETrRegIncl(false);
-     eventbase->GetElectronSel()->SetRelIsoType("Default");  eventbase->GetElectronSel()->SetRelIsoBEMax(0.0994, 0.107);//2016 80X tuned WP
+     eventbase->GetElectronSel()->SetRelIsoType("Default");  eventbase->GetElectronSel()->SetRelIsoBEMax(0.5, 0.5);//2016 80X tuned WP
+     //eventbase->GetElectronSel()->SetRelIsoType("Default");  eventbase->GetElectronSel()->SetRelIsoBEMax(0.0994, 0.107);//2016 80X tuned WP
      eventbase->GetElectronSel()->SetdxyBEMax(0.05, 0.1);    eventbase->GetElectronSel()->SetdzBEMax(0.1, 0.2);//Not in ID, but additional safe WP
    std::vector<snu::KElectron> electronLooseColl; eventbase->GetElectronSel()->Selection(electronLooseColl);
      eventbase->GetElectronSel()->SetID(BaseSelection::ELECTRON_POG_TIGHT);
@@ -201,8 +219,8 @@ void Mar2017_Validation::ExecuteEvents()throw( LQError ){
    std::vector<snu::KElectron> electronColl;      eventbase->GetElectronSel()->Selection(electronColl);
 
      eventbase->GetJetSel()->SetID(BaseSelection::PFJET_LOOSE);
-     eventbase->GetJetSel()->SetPt(25.);                     eventbase->GetJetSel()->SetEta(2.4);
-     //eventbase->GetJetSel()->SetPt(30.);                     eventbase->GetJetSel()->SetEta(2.4);
+     //eventbase->GetJetSel()->SetPt(25.);                     eventbase->GetJetSel()->SetEta(2.4);
+     eventbase->GetJetSel()->SetPt(30.);                     eventbase->GetJetSel()->SetEta(2.4);//ForFakeStudyValidation
      //eventbase->GetJetSel()->SetPileUpJetID(true,"Loose");
      bool LeptonVeto=true;
    std::vector<snu::KJet> jetColl; eventbase->GetJetSel()->Selection(jetColl, LeptonVeto, muonLooseColl, electronLooseColl);
@@ -246,6 +264,7 @@ void Mar2017_Validation::ExecuteEvents()throw( LQError ){
    /*This part is for boosting up speed.. SF part takes rather longer time than expected*/
    if     (DoubleMu_analysis) { if(muonLooseColl.size()>=2)                                EventCand=true; }
    else if(SingleMu_analysis) { if(muonLooseColl.size()>=2)                                EventCand=true; }
+   else if(SingleEle_analysis){ if(electronLooseColl.size()>=1)                            EventCand=true; }
    else if(DoubleEle_analysis){ if(electronLooseColl.size()>=2)                            EventCand=true; }
    else if(EMu_analysis)      { if(electronLooseColl.size()>=1 && muonLooseColl.size()>=1) EventCand=true; }
 
@@ -557,6 +576,34 @@ void Mar2017_Validation::ExecuteEvents()throw( LQError ){
 
 
    }//DoubleEle End
+   if(SingleEle_analysis){
+     if( electronLooseColl.size()!=1 ) return;
+     if( electronColl.size()!=1 ) return;
+     if( SiglEleTrig && !(electronColl.at(0).Pt()>30.) ) return;
+
+     float MTW = sqrt(2)*sqrt(met*electronColl.at(0).Pt()-met_x*electronColl.at(0).Px()-met_y*electronColl.at(0).Py());
+
+     FillHist("MET_e27_e30", met, weight, 0., 300., 300);
+     if(met>30) FillHist("MTW_e27_e30met30", MTW, weight, 0., 200., 200);
+     if(jetColl.size()>0){
+       FillHist("MET_e27_e30gt1j", met, weight, 0., 300., 300);
+       if(met>30) FillHist("MTW_e27_e30met30gt1j", MTW, weight, 0., 200., 200);
+     }
+     if(met>30 && MTW>70){
+       FillHist("Count_NormCR", 0., weight, 0., 5., 5);
+       FillHist("MTW_e27_e30met30mtw70", MTW, weight, 50., 200., 150);
+       if(jetColl.size()==1){
+          if(jetColl.at(0).Pt()>30 && jetColl.at(0).DeltaR(electronColl.at(0))>1.0){
+            FillHist("Count_NormCR", 1., weight, 0., 5., 5);
+            FillHist("MTW_e27_e30met30mtw701jdR01", MTW, weight, 50., 200., 150);
+          }
+       }
+       if(jetColl.size()>0){
+          FillHist("Count_NormCR", 2., weight, 0., 5., 5);
+       }
+     }
+
+   }
 
 
 

@@ -9,28 +9,30 @@ runData=false
 ########################################################################
 ## RUN PARAMETERS
 
-AnalysisCode="May2017_ObjectEff" 
-Stream="MuonEG"     
-#Stream="SingleElectron"     
+AnalysisCode="May2017_MCFakeStudy" 
+#Stream="SingleElectron"
 #Stream="DoubleMuon"     
 #Stream="DoubleEG"
-Skim="SKTree_LeptonSkim"  ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
+Stream="MuonEG"
+#Skim="SKTree_LeptonSkim"  ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
 #Skim="SKTree_DiLepSkim"  ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
+Skim="SKTree_TriLepSkim"  ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
 DataPeriod="ALL"
 #DataPeriod="H"
 job_logstep=1000
 LogLevel="INFO"
 #QueueOption="longq" 
 QueueOption="fastq" 
-RunningMode="EleEff,MuEff,ConversionEff"
+RunningMode="SigRegFake,EMuMu" #"BasicCompositionStudy" #"EleFake"
 
 #MCList="SignalMajor_1e2mu"
 #MCList="SignalMajor_3mu"
 #MCList="TT"
-#MCList="DYMG"
 #MCList="DY"
-#MCList="ObjEff"
+#MCList="MajorFakeSource"
+#MCList="Analysis_bkg"
 MCList="SignalMajor_All"
+#MCList="DYMG"
 #MCList="CR_EMu_804"
 #MCList="Analysis_bkg_test"
 ###Backgound : AllSample / Analysis_bkg / Analysis_bkg_test / QCD_mu
@@ -80,7 +82,7 @@ date >> CommandHist.txt
 
 
 if [[ $runData == 'false' || $runData == 'False' ]];
-  then nohup bash ${LQANALYZER_BIN_PATH}/submitSKTree.sh -b True -a ${AnalysisCode} -p ${DataPeriod} -s ${Skim} -list ${MCList} -o ${OutputDir} -d ${LogLevel} -q ${QueueOption} -userflag ${RunningMode}
+  then nohup bash ${LQANALYZER_BIN_PATH}/submitSKTree.sh -b True -a ${AnalysisCode} -p ${DataPeriod} -s ${Skim} -list ${MCList} -o ${OutputDir} -d ${LogLevel} -q ${QueueOption} -userflag ${RunningMode} 
   echo "nohup bash ${LQANALYZER_BIN_PATH}/submitSKTree.sh -b True -a ${AnalysisCode} -p ${DataPeriod} -s ${Skim} -list ${MCList} -o ${OutputDir} -d ${LogLevel} -q ${QueueOption} -userflag ${RunningMode}">> CommandHist.txt
 elif [[ $runMC == 'false' || $runMC == 'False' ]];
   then nohup bash ${LQANALYZER_BIN_PATH}/submitSKTree.sh -b True -a ${AnalysisCode} -S ${Stream} -p ${DataPeriod} -s ${Skim} -o ${OutputDir} -d ${LogLevel} -q ${QueueOption} -userflag ${RunningMode}
