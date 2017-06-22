@@ -94,7 +94,7 @@ SignalPlotsEE::SignalPlotsEE(TString name, int nel): StdPlots(name){
   map_sig["h_ht_central"]          = SetupHist("h_ht_central_"       + name,"ST central jets", 100, 0., 1000.,"HT_{cj} GeV");
   map_sig["h_ht_fc_ratio"]          = SetupHist("h_ht_fc_ratio_"       + name,"ST ratio", 100, 0., 1.,"HT (ratio)");
 
-
+  map_sig["h_eltype" ]          = SetupHist("h_eltype_"       + name,"Type", 45, 0., 45.,"El Type");
   map_sig["h_lt" ]          = SetupHist("h_lt_"       + name,"LT", 100., 0., 500.,"LT");
   map_sig["h_lt_ht" ]          = SetupHist("h_lt_ht_"       + name,"LT", 100., 0., 5.,"LT");
   map_sig["h_lt_forward" ]          = SetupHist("h_lt_forward_"       + name,"LT", 100., 0., 500.,"LT");
@@ -384,7 +384,9 @@ void SignalPlotsEE::Fill(snu::KEvent ev, std::vector<snu::KMuon>& muons, std::ve
   
 
   if(debug)cout<< "Plotting [2] " << endl;  
-  int nbjet=0;
+  int nbjetl=0;
+  int nbjetm=0;
+  int nbjett=0;
   /// use CSVM https://twiki.cern.ch/twiki/bin/viewauth/CMS/BTagPerformanceOP
   float leadjetmass=0.;
   float contramass(-999.);
@@ -839,6 +841,7 @@ void SignalPlotsEE::Fill(snu::KEvent ev, std::vector<snu::KMuon>& muons, std::ve
   
   //// Fillplots
   for(unsigned int i=0 ; i < electrons.size(); i++){
+    Fill("h_eltype",electrons.at(i).GetType(),weight);
     float dphi = fabs(TVector2::Phi_mpi_pi(electrons.at(i).Phi()- ev.METPhi(snu::KEvent::pfmet)));
     float MT = sqrt(2.* electrons.at(i).Et()*ev.PFMET() * (1 - cos( dphi)));
     if(i==0)     Fill("h_leadMTlepton",MT, weight);
@@ -915,7 +918,9 @@ void SignalPlotsEE::Fill(snu::KEvent ev, std::vector<snu::KMuon>& muons, std::ve
       }
     }
 
-    if(jets.at(j).IsBTagged(KJet::CSVv2, KJet::Medium)) nbjet++; 
+    if(jets.at(j).IsBTagged(KJet::CSVv2, KJet::Loose)) nbjetl++; 
+    if(jets.at(j).IsBTagged(KJet::CSVv2, KJet::Medium)) nbjetm++; 
+    if(jets.at(j).IsBTagged(KJet::CSVv2, KJet::Tight)) nbjett++; 
     for(unsigned int iel2=0 ; iel2 < electrons.size(); iel2++){
       float dphi =fabs(TVector2::Phi_mpi_pi(electrons.at(iel2).Phi()- jets.at(j).Phi()));
       Fill("h_lep_jet_dphi", dphi,weight);
@@ -961,6 +966,7 @@ void SignalPlotsEE::Fill(snu::KEvent ev, std::vector<snu::KMuon>& muons, std::ve
   int eta2=0.;
   float sumeta=0.;
   for(unsigned int iel2=0 ; iel2 < electrons.size(); iel2++){
+    
     sumeta=sumeta+electrons[iel2].Eta();
     int etareg=0.;
     if(electrons[iel2].Eta() < -2.1){
@@ -1038,7 +1044,9 @@ void SignalPlotsEE::Fill(snu::KEvent ev, std::vector<snu::KMuon>& muons, std::ve
   Fill("h_HT", ht,weight);
   Fill("h_ST", st,weight);
   Fill("h_PFMET2_ST",pow(ev.PFMET(),2.)/ st, weight);
-  Fill("h_Nbjets",nbjet, weight);
+  Fill("h_Nbjets_l",nbjetl, weight);
+  Fill("h_Nbjets_m",nbjetm, weight);
+  Fill("h_Nbjets_t",nbjett, weight);
   Fill("h_Njets",jets.size(), weight);
   Fill("h_Nfatjets",fatjets.size(), weight);
   //Fill("h_lt_met",lt/(),weight);  

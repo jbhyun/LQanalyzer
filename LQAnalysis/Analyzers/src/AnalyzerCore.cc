@@ -131,7 +131,6 @@ void AnalyzerCore::FillEventComparisonFile(TString label){
 
   ofile_tex.open(compfile.c_str());
   ofile_tex.setf(ios::fixed,ios::floatfield);
-  
   ofile_tex <<getenv("USER") << " " << eventbase->GetEvent().RunNumber() << " : " << eventbase->GetEvent().EventNumber() << endl;
 
 }
@@ -2188,7 +2187,7 @@ bool AnalyzerCore::ISCF(snu::KElectron el){
   if(el.GetType() == 4) return true;
   if(el.GetType() == 5)return true;
   if(el.GetType() == 6)return true;
-  if(el.GetType() == 13)return true;
+  if(el.GetType() == 13&&el.MCMatched())return true;
   if(el.GetType() == 19)return true;
   if(el.GetType() == 20)return true;
   if(el.GetType() == 21)return true;
@@ -2196,37 +2195,73 @@ bool AnalyzerCore::ISCF(snu::KElectron el){
 }
 
 bool AnalyzerCore::TruthMatched(snu::KElectron el, bool keepCF){
-  bool pass=true;
+  bool pass=false;
   if(!keepCF && ISCF(el)) return false;
+  if(keepCF && ISCF(el)) return true;
   if((keepCF && !ISCF(el)) || !keepCF) {
-    if(el.GetType() ==0) pass=false;
-    if(el.GetType() == 7) pass=false;
-    if(el.GetType() == 12) pass=false;
-    if(el.GetType() == 16) pass=false;                                                                                                                           
-    if(el.GetType() == 22) pass=false;                                                                                                                          
-    if(el.GetType() == 24) pass=false;
-    if(el.GetType() > 25) pass=false;
+    
+    if(el.GetType() ==1)   pass=true; /// Z/W
+    if(el.GetType() ==2)   pass=true; /// Z/W
+    if(el.GetType() ==3)   pass=true; /// Z/W 
+    if(el.GetType() == 11) pass=true; /// Tau
+    if(el.GetType() == 14) pass=true; /// Z*
+    if(el.GetType() == 15) pass=true; /// W*
+    if(el.GetType() == 17) pass=true; /// * CF
+    if(el.GetType() == 18) pass=true; /// * CF  
+    //if(el.GetType() == 23) pass=true;
+    if(el.GetType() == 35) pass=true;
+    if(el.GetType() == 40) pass=true;
+    if(el.GetType() == 16) pass=true;
   }
 
   return pass;
 }
 
+int AnalyzerCore::IsFakeEvent(vector<snu::KElectron> els ){
+  
+  if( ((k_sample_name.Contains("TT"))&&SameCharge(els))) return 2;
+  if( ((k_sample_name.Contains("DY"))&&SameCharge(els))) return 2;
+  if( ((k_sample_name.Contains("WJets"))&&els.size()==2)) return 2;
+  if( ((k_sample_name.Contains("qcd"))&&els.size()>0)) return els.size();
+  if( ((k_sample_name.Contains("QCD"))&&els.size()>1)) return els.size();
+  
+  return -1;
+
+}
+
+int  AnalyzerCore::IsFakeEvent(vector<snu::KMuon> mus ){
+
+  if( ((k_sample_name.Contains("TT"))&&SameCharge(mus))) return 2;
+  if( ((k_sample_name.Contains("DY"))&&SameCharge(mus))) return 2;
+  if( ((k_sample_name.Contains("WJets"))&&mus.size()==2)) return 2;
+  if( ((k_sample_name.Contains("qcd"))&&mus.size()>0)) return mus.size();
+  if( ((k_sample_name.Contains("QCD"))&&mus.size()>1)) return mus.size();
+
+  return -1;
+
+
+
+}
+
+
+bool AnalyzerCore::NonPrompt(snu::KElectron el){
+  
+  if(el.GetType() == 7) return true;
+  return false;
+
+}
+bool AnalyzerCore::NonPrompt(snu::KMuon mu){
+
+  if(mu.GetType() == 2) return true;
+  return false;
+
+}
+
+
 
 bool AnalyzerCore::TruthMatched(std::vector<snu::KElectron> el, bool tightdxy, bool allowCF){
   
-  bool pass=true;
-  for(unsigned int iel=0; iel <  el.size(); iel++){
-
-    if((allowCF && !ISCF(el[iel])) || !allowCF) {
-      if(el[iel].GetType() ==0) pass=false;
-      if(el[iel].GetType() == 7) pass=false;
-      if(el[iel].GetType() == 12) pass=false;
-      if(el[iel].GetType() == 16) pass=false; //?
-      if(el[iel].GetType() == 22) pass=false; // ?
-      if(el[iel].GetType() == 24) pass=false;
-      if(el[iel].GetType() > 25) pass=false;
-    }
-  }
+  bool pass=false;
   
   return pass;
 }
@@ -2235,20 +2270,18 @@ bool AnalyzerCore::TruthMatched(snu::KMuon mu){
 
   bool pass=false;
   
-  if(mu.GetType() ==0) pass=true;
   if(mu.GetType() ==1) pass=true;
-  if(mu.GetType() ==3) pass=true;
   if(mu.GetType() ==6) pass=true;
   if(mu.GetType() ==8) pass=true;
   if(mu.GetType() ==9) pass=true;
   if(mu.GetType() ==12) pass=true;
-  if(mu.GetType() ==24) pass=true;
-  if(mu.GetType() ==21) pass=true;
-  
+  if(mu.GetType() ==25) pass=true;  //// HAS CHANGED AFTER SKTREE were remade
+  //if(mu.GetType() ==28) pass=true;
+  // 23>?? 28?? sshould these be included?
   return pass;
 }
 
-float AnalyzerCore::GetVirtualMass(bool includeph){
+float AnalyzerCore::GetVirtualMass(int pdg, bool includenu, bool includeph){
   if(isData) return -999.;
   vector<KTruth> es1;
   for(unsigned int ig=0; ig < eventbase->GetTruth().size(); ig++){
@@ -2256,19 +2289,34 @@ float AnalyzerCore::GetVirtualMass(bool includeph){
     if(eventbase->GetTruth().at(ig).IndexMother() <= 0)continue;
     if(eventbase->GetTruth().at(ig).IndexMother() >= int(eventbase->GetTruth().size()))continue;
     
-    if(fabs(eventbase->GetTruth().at(ig).PdgId()) == 11){
+    if(fabs(eventbase->GetTruth().at(ig).PdgId()) == pdg){
       if(eventbase->GetTruth().at(ig).GenStatus() ==1){
         es1.push_back(eventbase->GetTruth().at(ig));
       }
     }
+    else   if(includenu){
+      if(fabs(eventbase->GetTruth().at(ig).PdgId()) == pdg+1){
+	if(eventbase->GetTruth().at(ig).GenStatus() ==1){
+	  es1.push_back(eventbase->GetTruth().at(ig));
+	}
+      }
+    }
+
     else if(includeph){
       if(eventbase->GetTruth().at(ig).GenStatus() ==1){
 	es1.push_back(eventbase->GetTruth().at(ig));
       }
     }
   }
+
   if(!includeph){
-    if(es1.size()==2){
+    if(!includenu){
+      if(es1.size()==2){
+	snu::KParticle ll = es1[0]  + es1[1];
+	return ll.M();
+      }
+    }
+    else  if(es1.size()==2){
       snu::KParticle ll = es1[0]  + es1[1];
       return ll.M();
     }
@@ -2284,6 +2332,10 @@ float AnalyzerCore::GetVirtualMass(bool includeph){
   return -999.;
 
 }
+
+
+
+
 float AnalyzerCore::GetVirtualMassConv(int cmindex,int nconvindx){
 
   if(isData) return -999.;
@@ -2332,11 +2384,15 @@ void AnalyzerCore::TruthPrintOut(){
   for(unsigned int ig=0; ig < eventbase->GetTruth().size(); ig++){
 
     if(eventbase->GetTruth().at(ig).IndexMother() <= 0)continue;
-    if(eventbase->GetTruth().at(ig).IndexMother() >= int(eventbase->GetTruth().size()))continue;
+    //if(eventbase->GetTruth().at(ig).IndexMother() >= int(eventbase->GetTruth().size()))continue;
     if (eventbase->GetTruth().at(ig).PdgId() == 2212)  cout << ig << " | " << eventbase->GetTruth().at(ig).PdgId() << "  |               |         |        |         |       |         |" << endl;
+    if(eventbase->GetTruth().at(ig).IndexMother() >= int(eventbase->GetTruth().size())){
+      cout << ig << " |  " <<  eventbase->GetTruth().at(ig).PdgId() << " |  " << eventbase->GetTruth().at(ig).GenStatus() << " |  ---  |   " << eventbase->GetTruth().at(ig).Eta() << " | " << eventbase->GetTruth().at(ig).Pt() << " | " << eventbase->GetTruth().at(ig).Phi()<< " |  --- |" << eventbase->GetTruth().at(ig).ReadStatusFlag(7) <<  endl;
 
-    cout << ig << " |  " <<  eventbase->GetTruth().at(ig).PdgId() << " |  " << eventbase->GetTruth().at(ig).GenStatus() << " |  " << eventbase->GetTruth().at(eventbase->GetTruth().at(ig).IndexMother()).PdgId()<< " |   " << eventbase->GetTruth().at(ig).Eta() << " | " << eventbase->GetTruth().at(ig).Pt() << " | " << eventbase->GetTruth().at(ig).Phi()<< " |   " << eventbase->GetTruth().at(ig).IndexMother()  << " " << eventbase->GetTruth().at(ig).ReadStatusFlag(7) <<  endl; 
-    
+    }
+    else{
+      cout << ig << " |  " <<  eventbase->GetTruth().at(ig).PdgId() << " |  " << eventbase->GetTruth().at(ig).GenStatus() << " |  " << eventbase->GetTruth().at(eventbase->GetTruth().at(ig).IndexMother()).PdgId()<< " |   " << eventbase->GetTruth().at(ig).Eta() << " | " << eventbase->GetTruth().at(ig).Pt() << " | " << eventbase->GetTruth().at(ig).Phi()<< " |   " << eventbase->GetTruth().at(ig).IndexMother()  << " " << eventbase->GetTruth().at(ig).ReadStatusFlag(7) <<  endl; 
+    }
   }
 
 }
@@ -3536,7 +3592,7 @@ vector<snu::KElectron> AnalyzerCore::GetTruePrompt(vector<snu::KElectron> electr
 	
 	bool ismatched = TruthMatched(electrons.at(i),  keep_chargeflip);                                                                                                                            
 	//electrons.at(i).MCMatched();                                                                                                                                                                         
-	// TruthMatched(electrons.at(i),  keep_chargeflip);
+	//TruthMatched(electrons.at(i),  keep_chargeflip);
 	//electrons.at(i).MCMatched();
 	if(electrons.at(i).MCFromTau()) ismatched=false;
 	if(keepfake&&keep_chargeflip) prompt_electrons.push_back(electrons.at(i));
@@ -3571,14 +3627,15 @@ vector<snu::KMuon> AnalyzerCore::GetTruePrompt(vector<snu::KMuon> muons, bool ke
 
   for(unsigned int i = 0; i < muons.size(); i++){
     if(!k_isdata){
-
+      
       if(keepfake) prompt_muons.push_back(muons.at(i));
-      else if(muons.at(i).MCMatched()) prompt_muons.push_back(muons.at(i));
-    }// Data
+      else if(TruthMatched(muons.at(i))) prompt_muons.push_back(muons.at(i));
+    }
+    // Data
     else prompt_muons.push_back(muons.at(i));
   }/// loop
   return prompt_muons;
-
+  
 }
 
 

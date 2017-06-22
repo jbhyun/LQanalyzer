@@ -4,3 +4,4 @@ webpage https://twiki.cern.ch/twiki/bin/viewauth/CMS/SWGuideMuonIdRun2
 | MUON_NOCUT             | 0.    | 8.       | 0.       | 1000.    | false        | false         |  false       | 999.     | 999.    | 999.    | 999.        | 999.        | false     |
 | MUON_HN_FAKELOOSEST    | 5.    | 2.4      | 0.       | 0.6      | true         | false         |  false       | 999.     | 0.5     | 50.     | 999.        | 999.        | true      |
 | MUON_POG_TIGHT_TEST    | 10.   | 2.4      | 0.       | 0.15     | true         | false         |  false       | 0.2      | 0.5     | 10.     | 999.        | 999.        | true      |
+
