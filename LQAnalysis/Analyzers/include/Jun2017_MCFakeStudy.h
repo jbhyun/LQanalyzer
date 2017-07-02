@@ -1,15 +1,15 @@
-#ifndef Mar2017_TruthShouter_h
-#define Mar2017_TruthShouter_h
+#ifndef Jun2017_MCFakeStudy_h
+#define Jun2017_MCFakeStudy_h
 
 #include "AnalyzerCore.h"
 
 
-class Mar2017_TruthShouter : public AnalyzerCore {
+class Jun2017_MCFakeStudy : public AnalyzerCore {
 
  public:
   //// constructors                                                                                                                                                             
-  Mar2017_TruthShouter();
-  ~Mar2017_TruthShouter();
+  Jun2017_MCFakeStudy();
+  ~Jun2017_MCFakeStudy();
 
   /// Functions from core
   virtual void BeginCycle() throw( LQError );
@@ -22,6 +22,13 @@ class Mar2017_TruthShouter : public AnalyzerCore {
   void MakeHistograms();
   void FillCutFlow(TString cut, float w);
 
+  int NPromptFake_Ele(std::vector<snu::KElectron> EleColl, std::vector<snu::KTruth> TruthColl, TString Option);
+  int NPromptFake_Mu(std::vector<snu::KMuon> MuColl, std::vector<snu::KTruth> TruthColl, TString Option);
+  bool IsConvCand(snu::KElectron Ele, std::vector<snu::KTruth> TruthColl, TString Option="");
+  int StepPassed(std::vector<snu::KMuon> MuColl, std::vector<snu::KElectron> EleColl, std::vector<snu::KJet> JetColl, std::vector<snu::KJet> BJetColl, float MET, TString Option="");
+  float ConeCorrectedPT(snu::KElectron Ele, float TightIsoCut);
+
+
  private:
   
   //
@@ -32,6 +39,6 @@ class Mar2017_TruthShouter : public AnalyzerCore {
   std::vector<snu::KElectron> out_electrons;
 
 
-  ClassDef ( Mar2017_TruthShouter, 1);
+  ClassDef ( Jun2017_MCFakeStudy, 1);
 };
 #endif

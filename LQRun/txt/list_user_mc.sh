@@ -18,7 +18,7 @@ declare -a ST=('SingleTop_s' 'SingleTbar_t' 'SingleTop_t' 'SingleTbar_tW_noHadro
 declare -a DY=('DYJets_10to50' "DYJets") 
 declare -a DYMG=("DYJets_MG")
 declare -a ZZ4l=("ZZTo4L_powheg") 
-declare -a ZG2l=("ZGto2LG" "WGtoLNuG") 
+declare -a ZG2l=("ZGto2LG") 
 declare -a TT=('TT_powheg' 'TTLL_powheg' 'TTLJ_powheg') #"TTJets_aMC") 
 declare -a TTLJ=('TTLJ_powheg') 
 #declare -a TT=('TT_powheg') #"TTJets_aMC") 
@@ -54,6 +54,14 @@ declare -a TrigDiLepClosure=('TT_powheg' 'DYJets_MG' 'DYJets_10to50' )
 declare -a TrigTriLepClosure=('WZTo3LNu_powheg' 'ttZ' 'ZZTo4L_powheg' )
 declare -a FR_Prompt=('WJets' 'DYJets_10to50' 'DYJets' 'TT_powheg' 'WW' 'WZ' 'ZZ')
 declare -a MajorFakeSource=('DYJets_10to50' 'DYJets' 'TT_powheg')
+declare -a FakeMeasRegSample=("qcd_15to20_bctoe" "qcd_20to30_bctoe" "qcd_30to80_bctoe" "qcd_80to170_bctoe" "qcd_170to250_bctoe" "qcd_250toinf_bctoe" "QCD_Pt-20to30_EMEnriched" "QCD_Pt-30to50_EMEnriched" "QCD_Pt-50to80_EMEnriched" "QCD_Pt-80to120_EMEnriched" "QCD_Pt-120to170_EMEnriched" "QCD_Pt-170to300_EMEnriched" "QCD_Pt-300toInf_EMEnriched")
+
+declare -a QCD_BCToE=("qcd_15to20_bctoe" "qcd_20to30_bctoe" "qcd_30to80_bctoe" "qcd_80to170_bctoe" "qcd_170to250_bctoe" "qcd_250toinf_bctoe")
+declare -a QCD_EM=("QCD_Pt-20to30_EMEnriched" "QCD_Pt-30to50_EMEnriched" "QCD_Pt-50to80_EMEnriched" "QCD_Pt-80to120_EMEnriched" "QCD_Pt-120to170_EMEnriched" "QCD_Pt-170to300_EMEnriched" "QCD_Pt-300toInf_EMEnriched")
+declare -a QCD_DoubleEM=("QCD_DoubleEMEnriched_30-40_mgg80toinf" "QCD_DoubleEMEnriched_30-inf_mgg40to80" "QCD_DoubleEMEnriched_40-inf_mgg80toinf") 
+declare -a QCD_Mu=("QCD_Pt-15to20_MuEnriched" "QCD_Pt-20to30_MuEnriched" "QCD_Pt-30to50_MuEnriched" "QCD_Pt-50to80_MuEnriched" "QCD_Pt-80to120_MuEnriched" "QCD_Pt-120to170_MuEnriched" "QCD_Pt-170to300_MuEnriched" "QCD_Pt-300to470_MuEnriched" "QCD_Pt-470to600_MuEnriched" "QCD_Pt-600to800_MuEnriched" "QCD_Pt-800to1000_MuEnriched" "QCD_Pt-1000toInf_MuEnriched")
+
+
 #####################################################################################
 
 

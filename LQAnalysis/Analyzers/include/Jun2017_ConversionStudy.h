@@ -1,15 +1,15 @@
-#ifndef Mar2017_TruthShouter_h
-#define Mar2017_TruthShouter_h
+#ifndef Jun2017_ConversionStudy_h
+#define Jun2017_ConversionStudy_h
 
 #include "AnalyzerCore.h"
 
 
-class Mar2017_TruthShouter : public AnalyzerCore {
+class Jun2017_ConversionStudy : public AnalyzerCore {
 
  public:
   //// constructors                                                                                                                                                             
-  Mar2017_TruthShouter();
-  ~Mar2017_TruthShouter();
+  Jun2017_ConversionStudy();
+  ~Jun2017_ConversionStudy();
 
   /// Functions from core
   virtual void BeginCycle() throw( LQError );
@@ -21,7 +21,13 @@ class Mar2017_TruthShouter : public AnalyzerCore {
   void InitialiseAnalysis() throw( LQError );
   void MakeHistograms();
   void FillCutFlow(TString cut, float w);
+  void FillTrigDist(TString cut, float w);
+  void GetGenMatchedSigIndex(std::vector<snu::KTruth>& truthColl, std::vector<snu::KMuon>& muonColl, std::vector<snu::KElectron>& electronColl, std::vector<snu::KJet>& jetColl, int mum_Ai, int mup_Ai, int e_Wi, int mu_Wi, int j1_Wi, int j2_Wi, int b_ti, int bx_txi, float weight);
 
+
+//  bool IsFinalPhotonSt23(std::vector<snu::KTruth> TruthColl);
+//  int GetPhotonType(int PhotonIdx, std::vector<snu::KTruth> TruthColl);
+//  bool IsHardPhotonConverted(std::vector<snu::KTruth> TruthColl);
  private:
   
   //
@@ -32,6 +38,6 @@ class Mar2017_TruthShouter : public AnalyzerCore {
   std::vector<snu::KElectron> out_electrons;
 
 
-  ClassDef ( Mar2017_TruthShouter, 1);
+  ClassDef ( Jun2017_ConversionStudy, 1);
 };
 #endif

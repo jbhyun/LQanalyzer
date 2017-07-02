@@ -42,59 +42,97 @@
 
 void Mar2017_TruthShouter::ExecuteEvents()throw( LQError ){
 
+   bool JustShout=false;
+   if(JustShout){
+     PrintTruth(); return;
+   }
 
-   //PrintTruth(); return;
+   bool TypeTest=true;
+   if(TypeTest){
+     if(!PassMETFilter()) return;
+     if(!eventbase->GetEvent().HasGoodPrimaryVertex()) return;
+     if(!isData) weight*=MCweight;
+     if(!k_isdata) { weight*=eventbase->GetEvent().PileUpWeight_Gold(snu::KEvent::central);}
 
+     
+   }
 
-   if(!PassMETFilter()) return;
-   if(!eventbase->GetEvent().HasGoodPrimaryVertex()) return;
-   if(!isData) weight*=MCweight;
-   if(!k_isdata) { weight*=eventbase->GetEvent().PileUpWeight_Gold(snu::KEvent::central);}
+   bool TopRelatedLeptonTypeTest=false;
+   if(TopRelatedLeptonTypeTest){
+     if(!PassMETFilter()) return;
+     if(!eventbase->GetEvent().HasGoodPrimaryVertex()) return;
+     if(!isData) weight*=MCweight;
+     if(!k_isdata) { weight*=eventbase->GetEvent().PileUpWeight_Gold(snu::KEvent::central);}
+  
+     std::vector<snu::KTruth> truthColl; eventbase->GetTruthSel()->Selection(truthColl);
+     for(int i=2; i<truthColl.size(); i++){
+       if(truthColl.at(i).IndexMother()<0) continue;
+       if(truthColl.at(i).GenStatus()!=1) continue; 
+       int fpid=fabs(truthColl.at(i).PdgId());
+       if( !(fpid==11 || fpid==13) ) continue;
 
-
-   std::vector<snu::KTruth> truthColl; eventbase->GetTruthSel()->Selection(truthColl);
-     eventbase->GetJetSel()->SetID(BaseSelection::PFJET_LOOSE);
-     eventbase->GetJetSel()->SetPt(25.);                     eventbase->GetJetSel()->SetEta(2.4);
-     bool LeptonVeto=false;
-   std::vector<snu::KMuon> NullMuon; std::vector<snu::KElectron> NullEle;
-   std::vector<snu::KJet> jetColl; eventbase->GetJetSel()->Selection(jetColl, LeptonVeto, NullMuon, NullEle);
-   std::vector<snu::KJet> JetCleanColl = SkimJetColl(jetColl, truthColl, "NoPrNoTau");
-   //How many jets are unmatched to a parton?
-   //How many matched jets have different matching from parton?
-   for(int i=0; i<JetCleanColl.size(); i++){
-     int JetHadFlav=JetCleanColl.at(i).HadronFlavour();
-     int MatchedIdx=GenMatchedIdx(JetCleanColl.at(i),truthColl);
-     FillHist("PartonMatchingFr", 0., weight, 0., 3., 3);
-     if(MatchedIdx==-1) FillHist("PartonMatchingFr", 1., weight, 0., 3., 3);
-     if(MatchedIdx==-2) FillHist("PartonMatchingFr", 2., weight, 0., 3., 3);
-
-     if(MatchedIdx<0) continue;
-     //Now only parton matched jets are remained
-
-     FillHist("PartHadMatchConsist", 0., weight, 0., 4., 4);
-     if(JetHadFlav==5) FillHist("PartHadMatchConsist_B", 0., weight, 0., 4., 4);
-     if(JetHadFlav==4) FillHist("PartHadMatchConsist_C", 0., weight, 0., 4., 4);
-     if(JetHadFlav==0) FillHist("PartHadMatchConsist_L", 0., weight, 0., 4., 4);
-
-     if(IsJetConsistentPartonHadronMatch(JetCleanColl.at(i), truthColl, "AllFlav")){
-       FillHist("PartHadMatchConsist", 1., weight, 0., 4., 4);
-       if(JetHadFlav==5) FillHist("PartHadMatchConsist_B", 1., weight, 0., 4., 4);
-       if(JetHadFlav==4) FillHist("PartHadMatchConsist_C", 1., weight, 0., 4., 4);
-       if(JetHadFlav==0) FillHist("PartHadMatchConsist_L", 1., weight, 0., 4., 4);
+       int LeptonType=GetLeptonType(i, truthColl);
+       FillHist("LeptonType", LeptonType, weight, -10., 10., 20);
+       if(LeptonType==0 || LeptonType==6){
+         PrintTruth();
+         cout<<"Idx "<<i<<" LepType "<<LeptonType<<endl;
+       }
      }
-     if(IsJetConsistentPartonHadronMatch(JetCleanColl.at(i), truthColl, "BFlav")){
-       FillHist("PartHadMatchConsist", 2., weight, 0., 4., 4);
-       if(JetHadFlav==5) FillHist("PartHadMatchConsist_B", 2., weight, 0., 4., 4);
-       if(JetHadFlav==4) FillHist("PartHadMatchConsist_C", 2., weight, 0., 4., 4);
-       if(JetHadFlav==0) FillHist("PartHadMatchConsist_L", 2., weight, 0., 4., 4);
-     }
-     if(IsJetConsistentPartonHadronMatch(JetCleanColl.at(i), truthColl, "Heavy")){
-       FillHist("PartHadMatchConsist", 3., weight, 0., 4., 4);
-       if(JetHadFlav==5) FillHist("PartHadMatchConsist_B", 3., weight, 0., 4., 4);
-       if(JetHadFlav==4) FillHist("PartHadMatchConsist_C", 3., weight, 0., 4., 4);
-       if(JetHadFlav==0) FillHist("PartHadMatchConsist_L", 3., weight, 0., 4., 4);
-     }
+   }
 
+
+   bool PartonJetMatchTest=false;
+   if(PartonJetMatchTest){
+     if(!PassMETFilter()) return;
+     if(!eventbase->GetEvent().HasGoodPrimaryVertex()) return;
+     if(!isData) weight*=MCweight;
+     if(!k_isdata) { weight*=eventbase->GetEvent().PileUpWeight_Gold(snu::KEvent::central);}
+  
+  
+     std::vector<snu::KTruth> truthColl; eventbase->GetTruthSel()->Selection(truthColl);
+       eventbase->GetJetSel()->SetID(BaseSelection::PFJET_LOOSE);
+       eventbase->GetJetSel()->SetPt(25.);                     eventbase->GetJetSel()->SetEta(2.4);
+       bool LeptonVeto=false;
+     std::vector<snu::KMuon> NullMuon; std::vector<snu::KElectron> NullEle;
+     std::vector<snu::KJet> jetColl; eventbase->GetJetSel()->Selection(jetColl, LeptonVeto, NullMuon, NullEle);
+     std::vector<snu::KJet> JetCleanColl = SkimJetColl(jetColl, truthColl, "NoPrNoTau");
+     //How many jets are unmatched to a parton?
+     //How many matched jets have different matching from parton?
+     for(int i=0; i<JetCleanColl.size(); i++){
+       int JetHadFlav=JetCleanColl.at(i).HadronFlavour();
+       int MatchedIdx=GenMatchedIdx(JetCleanColl.at(i),truthColl);
+       FillHist("PartonMatchingFr", 0., weight, 0., 3., 3);
+       if(MatchedIdx==-1) FillHist("PartonMatchingFr", 1., weight, 0., 3., 3);
+       if(MatchedIdx==-2) FillHist("PartonMatchingFr", 2., weight, 0., 3., 3);
+  
+       if(MatchedIdx<0) continue;
+       //Now only parton matched jets are remained
+  
+       FillHist("PartHadMatchConsist", 0., weight, 0., 4., 4);
+       if(JetHadFlav==5) FillHist("PartHadMatchConsist_B", 0., weight, 0., 4., 4);
+       if(JetHadFlav==4) FillHist("PartHadMatchConsist_C", 0., weight, 0., 4., 4);
+       if(JetHadFlav==0) FillHist("PartHadMatchConsist_L", 0., weight, 0., 4., 4);
+  
+       if(IsJetConsistentPartonHadronMatch(JetCleanColl.at(i), truthColl, "AllFlav")){
+         FillHist("PartHadMatchConsist", 1., weight, 0., 4., 4);
+         if(JetHadFlav==5) FillHist("PartHadMatchConsist_B", 1., weight, 0., 4., 4);
+         if(JetHadFlav==4) FillHist("PartHadMatchConsist_C", 1., weight, 0., 4., 4);
+         if(JetHadFlav==0) FillHist("PartHadMatchConsist_L", 1., weight, 0., 4., 4);
+       }
+       if(IsJetConsistentPartonHadronMatch(JetCleanColl.at(i), truthColl, "BFlav")){
+         FillHist("PartHadMatchConsist", 2., weight, 0., 4., 4);
+         if(JetHadFlav==5) FillHist("PartHadMatchConsist_B", 2., weight, 0., 4., 4);
+         if(JetHadFlav==4) FillHist("PartHadMatchConsist_C", 2., weight, 0., 4., 4);
+         if(JetHadFlav==0) FillHist("PartHadMatchConsist_L", 2., weight, 0., 4., 4);
+       }
+       if(IsJetConsistentPartonHadronMatch(JetCleanColl.at(i), truthColl, "Heavy")){
+         FillHist("PartHadMatchConsist", 3., weight, 0., 4., 4);
+         if(JetHadFlav==5) FillHist("PartHadMatchConsist_B", 3., weight, 0., 4., 4);
+         if(JetHadFlav==4) FillHist("PartHadMatchConsist_C", 3., weight, 0., 4., 4);
+         if(JetHadFlav==0) FillHist("PartHadMatchConsist_L", 3., weight, 0., 4., 4);
+       }
+  
+     }
    }
 
 /////////////////////////////////////////////////////////////////////////////////// 

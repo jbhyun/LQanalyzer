@@ -4391,6 +4391,7 @@ int AnalyzerCore::GenMatchedIdx(snu::KElectron El, std::vector<snu::KTruth>& tru
   return MatchedIdx;
 }
 
+
 int AnalyzerCore::GenMatchedIdx(snu::KMuon Mu, std::vector<snu::KTruth>& truthColl){
   //Find Matched Index within dR01; if ambiguous closest dR one chosen(Resolution way better than dPtRel)
   //Seed from RecoLepton
@@ -4409,6 +4410,7 @@ int AnalyzerCore::GenMatchedIdx(snu::KMuon Mu, std::vector<snu::KTruth>& truthCo
 
   return MatchedIdx;
 }
+
 
 int AnalyzerCore::GenMatchedIdx(snu::KJet Jet, std::vector<snu::KTruth>& TruthColl){
   //Seeding from jet, find parton matched to jet within dRmax;
@@ -4431,6 +4433,77 @@ int AnalyzerCore::GenMatchedIdx(snu::KJet Jet, std::vector<snu::KTruth>& TruthCo
   return MatchedIdx;
 }
 
+
+int AnalyzerCore::GetNearPhotonIdx(snu::KElectron Ele, std::vector<snu::KTruth>& TruthColl, TString Option){//1)
+
+  int NearPhotonIdx=-1;
+  bool OnlyHardPhoton=false;
+    if(Option=="Hard") OnlyHardPhoton=true;
+  float PTthreshold=10.;
+  float dRmax=0.2;//2)
+  float dRmin=999.;
+  for(int i=2; i<TruthColl.size(); i++){
+    if( TruthColl.at(i).IndexMother()<0   ) continue;
+    if( !(TruthColl.at(i).PdgId()==22 && (TruthColl.at(i).GenStatus()==1 || TruthColl.at(i).GenStatus()==23)) ) continue;
+    if( TruthColl.at(i).Pt()<PTthreshold  ) continue;
+    if( !(Ele.Pt()/TruthColl.at(i).Pt()>0.8 && Ele.Pt()/TruthColl.at(i).Pt()<1.2) ) continue;//3)
+    if( Ele.DeltaR(TruthColl.at(i))>dRmax ) continue;
+
+    if( TruthColl.at(i).GenStatus()==23 && !IsFinalPhotonSt23(TruthColl) ) continue;//4)
+    if( Ele.DeltaR(TruthColl.at(i))<dRmin ){ dRmin=Ele.DeltaR(TruthColl.at(i)); NearPhotonIdx=i; }
+  }
+
+  //if(NCount>1) return -2;
+  //When I tested with TT sample, double match case is order of 3E-4 times one matched. no need to consider. even before PT range cut
+
+  return NearPhotonIdx;
+//footnote
+//1) When checked with ZG sample with CBPOGT ElePt>25, Hardscattered photons, External conversion is only meaningful for electrons.
+//   Electron External Conversion~3000 Muon external conversion. This is in agreement with theoretical calculation that xsec~M^{-2} in asymmetric limit.
+//   ref. Arxiv:1110.1368v1
+//2) When checked with ZG sample with CBPOGT ElePt>25GeV, HardScatter Photons, Matching Eff~99.7% even when tested with dR01 cone.
+//   But just used conservative cone size.
+//3) When checked with ZG sample with CBPOGT ElePt>25GeV, HardScatter Photons, Matching Eff~99.5%
+//   External Conversion object's momentum is roughly symmetric with mother photon's momentum(similar fraction lower/upper than PT(G))
+//4) In some cases hard scattered photon(GenSt23) has no daughter like final state particles.
+}
+
+
+int AnalyzerCore::GetNearPhotonIdx(snu::KMuon Mu, std::vector<snu::KTruth>& TruthColl, TString Option){//1)
+
+  int NearPhotonIdx=-1;
+  bool OnlyHardPhoton=false;
+    if(Option=="Hard") OnlyHardPhoton=true;
+  float PTthreshold=10.;
+  float dRmax=0.2;//2)
+  float dRmin=999.;
+  for(int i=2; i<TruthColl.size(); i++){
+    if( TruthColl.at(i).IndexMother()<0   ) continue;
+    if( !(TruthColl.at(i).PdgId()==22 && (TruthColl.at(i).GenStatus()==1 || TruthColl.at(i).GenStatus()==23)) ) continue;
+    if( TruthColl.at(i).Pt()<PTthreshold  ) continue;
+    if( !(Mu.Pt()/TruthColl.at(i).Pt()>0.8 && Mu.Pt()/TruthColl.at(i).Pt()<1.2) ) continue;//3)
+    if( Mu.DeltaR(TruthColl.at(i))>dRmax ) continue;
+
+    if( TruthColl.at(i).GenStatus()==23 && !IsFinalPhotonSt23(TruthColl) ) continue;//4)
+    if( Mu.DeltaR(TruthColl.at(i))<dRmin ){ dRmin=Mu.DeltaR(TruthColl.at(i)); NearPhotonIdx=i; }
+  }
+
+  //if(NCount>1) return -2;
+  //When I tested with TT sample, double match case is order of 3E-4 times one matched. no need to consider. even before PT range cut
+
+  return NearPhotonIdx;
+//footnote
+//1) When checked with ZG sample with CBPOGT ElePt>25, Hardscattered photons, External conversion is only meaningful for electrons.
+//   Electron External Conversion~3000 Muon external conversion. This is in agreement with theoretical calculation that xsec~M^{-2} in asymmetric limit.
+//   ref. Arxiv:1110.1368v1
+//2) When checked with ZG sample with CBPOGT ElePt>25GeV, HardScatter Photons, Matching Eff~99.7% even when tested with dR01 cone.
+//   But just used conservative cone size.
+//3) When checked with ZG sample with CBPOGT ElePt>25GeV, HardScatter Photons, Matching Eff~99.5%
+//   External Conversion object's momentum is roughly symmetric with mother photon's momentum(similar fraction lower/upper than PT(G))
+//4) In some cases hard scattered photon(GenSt23) has no daughter like final state particles.
+}
+
+
 int AnalyzerCore::FirstNonSelfMotherIdx(int TruthIdx, std::vector<snu::KTruth>& TruthColl){
 
   if(TruthIdx<2) return -1;
@@ -4438,11 +4511,12 @@ int AnalyzerCore::FirstNonSelfMotherIdx(int TruthIdx, std::vector<snu::KTruth>& 
   int pid=TruthColl.at(TruthIdx).PdgId(), midx=TruthIdx;
   while(TruthColl.at(midx).PdgId()==pid){
     midx=TruthColl.at(midx).IndexMother();  
+    if(midx<0) break;
   }
 
   return midx;
-
 }
+
 
 int AnalyzerCore::LastSelfMotherIdx(int TruthIdx,std::vector<snu::KTruth>& TruthColl){
 
@@ -4452,16 +4526,16 @@ int AnalyzerCore::LastSelfMotherIdx(int TruthIdx,std::vector<snu::KTruth>& Truth
   while(TruthColl.at(midx).PdgId()==pid){
     currentidx=midx;
     midx=TruthColl.at(midx).IndexMother();  
+    if(midx<0) break;
   }
 
   return currentidx;
-
 }
 
+
 bool AnalyzerCore::HasHadronicAncestor(int TruthIdx, std::vector<snu::KTruth>& TruthColl){
-  //Returns true  if 1)has hadron mother, 2)has quark mother(1st nonself not hard scatter), 3)Incident protons
-  //        false if not true above or it's a hardscattered truth or invalid input(e.g. unmatched case)
-  //
+  //Returns true  if 1)has hadron mother, 2)has quark mother(!top, !hardScttr's mama) 3)Incident protons
+  //        false if 1)is hardscattered truth, 2)EW/H/BSM/t daughter, 3)not above, 4)invalid input(e.g. unmatched case)
   
   if(TruthIdx<0) return false;
   if(TruthIdx<2) return true;
@@ -4475,14 +4549,76 @@ bool AnalyzerCore::HasHadronicAncestor(int TruthIdx, std::vector<snu::KTruth>& T
     midx=FirstNonSelfMotherIdx(midx,TruthColl);
     MSt_orig=TruthColl.at(LastSelfMotherIdx(midx,TruthColl)).GenStatus();
     fmid=fabs(TruthColl.at(midx).PdgId());
-    if(  fmid==23 || fmid==24 || fmid==25 || fmid==36 || fmid==32 ){ HasPartonHadronAncestor=false; break; }
+    if(  fmid==23 || fmid==24 || fmid==25 || fmid==6 || fmid==36 || fmid==32 ){ HasPartonHadronAncestor=false; break; }
     if( (fmid==11 || fmid==13 || fmid==15 || fmid==22) && (MSt_orig>20 && MSt_orig<30)){ HasPartonHadronAncestor=false; break; }
     if( fmid>50 ) { HasPartonHadronAncestor=true; break; }
-    if( (fmid>=1 && fmid<=6) || fmid==21 ){ HasPartonHadronAncestor=true; break; }
+    if( (fmid>=1 && fmid<=5) || fmid==21 ){ HasPartonHadronAncestor=true; break; }
   }
 
   return HasPartonHadronAncestor;
 }
+
+
+bool AnalyzerCore::IsFinalPhotonSt23(std::vector<snu::KTruth> TruthColl){
+//In Some XG proc events, it seems there is status 23 photon, yet no status 1 photon and no other genparticle is daughter of this photon.
+//This is to check whether this is the case for the event.
+//And this is designed only for 1 hard photon case as W+G or Z+G or TT+G
+
+  bool IsFinalGammaStatus23 = false;
+  bool HasStatus23Photon    = false;
+  for(int i=2; i<TruthColl.size(); i++){
+    int fpid  = fabs(TruthColl.at(i).PdgId());
+    int GenSt = TruthColl.at(i).GenStatus();
+    int MPID_direct= TruthColl.at(TruthColl.at(i).IndexMother()).PdgId();
+    if( !((fpid!=22 && MPID_direct==22) || (fpid==22 && (GenSt==23||GenSt==1))) ) continue;
+
+    int LastSelfIdx  = LastSelfMotherIdx(i,TruthColl);
+    int LastSelfSt   = TruthColl.at(LastSelfIdx).GenStatus();
+    int MotherIdx    = FirstNonSelfMotherIdx(i,TruthColl);
+    int LastSelfMIdx=-1, MStatus_orig=-1;
+    if(MotherIdx!=-1){
+      LastSelfMIdx = LastSelfMotherIdx(MotherIdx,TruthColl);
+      MStatus_orig = TruthColl.at(LastSelfMIdx).GenStatus();
+    }
+
+    if(fpid==22){
+      if(GenSt==23) {HasStatus23Photon=true; IsFinalGammaStatus23=true;}
+      else if(GenSt==1 && LastSelfSt==23) {IsFinalGammaStatus23=false; break;}//a)
+    }
+    else if( MPID_direct==22 && MStatus_orig==23 ){ IsFinalGammaStatus23=false; break;}//b)
+  }
+
+  if(!HasStatus23Photon) return false;
+  
+  return IsFinalGammaStatus23;
+
+//**footnotes
+//a) The status 1 photon is end of the history of status 23 photon.
+//b) Some particle is daughter of status 23 photon.
+}
+
+
+bool AnalyzerCore::IsHardPhotonConverted(std::vector<snu::KTruth> TruthColl){
+
+  bool IsConverted=false;
+  for(int i=2; i<TruthColl.size(); i++){
+    int fpid  = fabs(TruthColl.at(i).PdgId());
+    int MPID_direct= TruthColl.at(TruthColl.at(i).IndexMother()).PdgId();
+    if( !(fpid!=22 && MPID_direct==22) ) continue;
+
+    int MotherIdx  = FirstNonSelfMotherIdx(i,TruthColl);
+    int LastSelfMIdx=-1, MStatus_orig=-1;
+    if(MotherIdx!=-1){
+      LastSelfMIdx = LastSelfMotherIdx(MotherIdx,TruthColl);
+      MStatus_orig = TruthColl.at(LastSelfMIdx).GenStatus();
+    }
+
+    if( MPID_direct==22 && MStatus_orig==23 ){ IsConverted=true; break; }
+  }
+
+  return IsConverted;
+}
+
 
 
 int AnalyzerCore::GetLeptonType(int TruthIdx, std::vector<snu::KTruth>& TruthColl, TString Option){
@@ -4518,8 +4654,7 @@ int AnalyzerCore::GetLeptonType(int TruthIdx, std::vector<snu::KTruth>& TruthCol
                              GrMStatus_last = TruthColl.at(GrMotherIdx).GenStatus();
                            }
  
-   
-  if     ( TruthIdx==-1 )                                       LeptonType=-1;
+  if     ( TruthIdx==-1 )                                       LeptonType= 0;
   else if( Status_orig>20 && Status_orig<30 )                   LeptonType= 1;//1)
   else if( fabs(MPID)==23 || fabs(MPID)==24 || fabs(MPID)==25 ) LeptonType= 1;
   else if( fabs(MPID)==36 || fabs(MPID)==32 )                   LeptonType= 2;
@@ -4528,24 +4663,26 @@ int AnalyzerCore::GetLeptonType(int TruthIdx, std::vector<snu::KTruth>& TruthCol
            if     ( fabs(GrMPID)==23 || fabs(GrMPID)==24 || fabs(GrMPID)==25 ) LeptonType= 3;
            else if( MStatus_orig>20  && MStatus_orig<30  )                     LeptonType= 3;//1)
            else if( HadronicOrigin )                                           LeptonType=-3;//2-a)
-           else if( fabs(GrMPID)==22  && GrMStatus_orig>20 && GrMStatus_orig<30 )                     LeptonType= 4;//2-b)
-           else if( fabs(GrMPID)==22 )                                                                LeptonType= 5;//2-c)
-           else if( (fabs(GrMPID)==11 || fabs(GrMPID)==13 || fabs(GrMPID)==15) && GrMStatus_last!=2 ) LeptonType= 5;//2-d)
-           else                                                                                       LeptonType= 6;
+           else if( fabs(GrMPID)==22  && GrMStatus_orig>20 && GrMStatus_orig<30 )                     LeptonType= 5;//2-b)
+           else if( fabs(GrMPID)==22 )                                                                LeptonType= 4;//2-c)
+           else if( (fabs(GrMPID)==11 || fabs(GrMPID)==13 || fabs(GrMPID)==15) && GrMStatus_last!=2 ) LeptonType= 4;//2-d)
+           else                                                                                       LeptonType= 0;
          }
   else if( fabs(MPID)==22 ){
-           if( MStatus_orig>20 && MStatus_orig<30 )                            LeptonType= 4;//3-a)
+           if( MStatus_orig>20 && MStatus_orig<30 )                            LeptonType= 5;//3-a)
            else if( HadronicOrigin )                                           LeptonType=-4;//3-b)
-           else if( fabs(GrMPID)==24 || fabs(GrMPID)==23 )                     LeptonType= 5;//3-c)
-           else if( fabs(GrMPID)==11 || fabs(GrMPID)==13 || fabs(GrMPID)==15 ) LeptonType= 5;//3-d)
-           else                                                                LeptonType= 6;
+           else if( fabs(GrMPID)==24 || fabs(GrMPID)==23 || fabs(GrMPID)==6  ) LeptonType= 4;//3-c)
+           else if( fabs(GrMPID)==11 || fabs(GrMPID)==13 || fabs(GrMPID)==15 ) LeptonType= 4;//3-d)
+           else                                                                LeptonType= 0;
          }
-  else if( (fabs(MPID)==11 || fabs(MPID)==13 || fabs(MPID)==15) && MStatus_last!=2 && !HadronicOrigin ) LeptonType= 5;//4-a)
-  else if( ((fabs(MPID)>=1 && fabs(MPID)<=6) || fabs(MPID)==21) && MStatus_last!=2 )                    LeptonType=-4;//4-b)
-  else LeptonType=6;
+  else if( (fabs(MPID)==11 || fabs(MPID)==13 || fabs(MPID)==15) && MStatus_last!=2 && !HadronicOrigin ) LeptonType= 4;//4-a)
+  else if( ((fabs(MPID)>=1 && fabs(MPID)<=5) || fabs(MPID)==21) && MStatus_last!=2 )                    LeptonType=-4;//4-b)
+  else if( fabs(MPID)==6 ) LeptonType=4;//4-c)
+  else LeptonType=0;
 
 
   return LeptonType;
+
 //**footnote
 //These are based on observation in DY,ZG,TT sample(DY,ZG:amcnlo+pythia, TT:powheg+pythia) for other PS generator, convention may differ.
 //1) In amcnlo generator, output of ME level generation does not have specific guage field mother. e.g. u u~ > l+ l- -> fabs(MID)=1
@@ -4573,6 +4710,10 @@ int AnalyzerCore::GetLeptonType(int TruthIdx, std::vector<snu::KTruth>& TruthCol
 
 
 int AnalyzerCore::GetLeptonType(snu::KElectron El, std::vector<snu::KTruth>& TruthColl, TString Option){
+//Type : 1:EWPrompt  /  2:Signal Daughter /  3:EWtau daughter / 4:Internal Conversion daughter from t/EWV/EWlep(Implicit,Explicit) / 5:Internal Conversion daughter from HardScatterPhoton
+//      -1:Unmatched & not EW Conversion candidate / -2:Hadron daughter / -3:Daughter of tau from hadron or parton / -4:Internal conversion daughter(implicit,explicit) having hadronic origin / -5:External conversion candidate(Hard scattered photon) / -6:External conversion from t/EWV/EWlep
+//      (-4:Daughter of Non-hard scattered photon & has parton or hadron ancestor OR implicit Conv from quark)
+//       0:Error / >0: Non-fake: Non-hadronic origin / <0 : Fakes: Hadronic origin or external conversion
 
   int LeptonType=0;
   int MatchedTruthIdx = GenMatchedIdx(El,TruthColl);
@@ -4582,12 +4723,16 @@ int AnalyzerCore::GetLeptonType(snu::KElectron El, std::vector<snu::KTruth>& Tru
   int GrMotherIdx     = FirstNonSelfMotherIdx(MotherIdx,TruthColl);
   int LastSelfGrMIdx  = LastSelfMotherIdx(GrMotherIdx,TruthColl);
 
+  int NearPhotonType=0, NearPhotonIdx=-1;
   int MPID=0, GrMPID=0;
   int Status_orig=0, MStatus_orig=0, MStatus_last=0, GrMStatus_orig=0, GrMStatus_last=0;
   bool HadronicOrigin = false;
     if(MatchedTruthIdx!=-1){ Status_orig    = TruthColl.at(LastSelfIdx).GenStatus();
                              HadronicOrigin = HasHadronicAncestor(MatchedTruthIdx, TruthColl);
-                           }                           
+                           }
+    else                   { NearPhotonIdx  = GetNearPhotonIdx(El, TruthColl);
+                             NearPhotonType = GetPhotonType(NearPhotonIdx, TruthColl);
+                           }
     if(   MotherIdx!=-1   ){ MPID         = TruthColl.at(MotherIdx).PdgId();
                              MStatus_orig = TruthColl.at(LastSelfMIdx).GenStatus();
                              MStatus_last = TruthColl.at(MotherIdx).GenStatus();
@@ -4596,10 +4741,8 @@ int AnalyzerCore::GetLeptonType(snu::KElectron El, std::vector<snu::KTruth>& Tru
                              GrMStatus_orig = TruthColl.at(LastSelfGrMIdx).GenStatus();
                              GrMStatus_last = TruthColl.at(GrMotherIdx).GenStatus();
                            }
- 
-   
-  if     ( MatchedTruthIdx==-1 )                                LeptonType=-1;
-  else if( Status_orig>20 && Status_orig<30 )                   LeptonType= 1;//1)
+
+  if     ( Status_orig>20 && Status_orig<30 )                   LeptonType= 1;//1)
   else if( fabs(MPID)==23 || fabs(MPID)==24 || fabs(MPID)==25 ) LeptonType= 1;
   else if( fabs(MPID)==36 || fabs(MPID)==32 )                   LeptonType= 2;
   else if( fabs(MPID)>50 )                                      LeptonType=-2;
@@ -4607,23 +4750,29 @@ int AnalyzerCore::GetLeptonType(snu::KElectron El, std::vector<snu::KTruth>& Tru
            if     ( fabs(GrMPID)==23 || fabs(GrMPID)==24 || fabs(GrMPID)==25 ) LeptonType= 3;
            else if( MStatus_orig>20  && MStatus_orig<30  )                     LeptonType= 3;//1)
            else if( HadronicOrigin )                                           LeptonType=-3;//2-a)
-           else if( fabs(GrMPID)==22  && GrMStatus_orig>20 && GrMStatus_orig<30 )                     LeptonType= 4;//2-b)
-           else if( fabs(GrMPID)==22 )                                                                LeptonType= 5;//2-c)
-           else if( (fabs(GrMPID)==11 || fabs(GrMPID)==13 || fabs(GrMPID)==15) && GrMStatus_last!=2 ) LeptonType= 5;//2-d)
-           else                                                                                       LeptonType= 6;
+           else if( fabs(GrMPID)==22  && GrMStatus_orig>20 && GrMStatus_orig<30 )                     LeptonType= 5;//2-b)
+           else if( fabs(GrMPID)==22 )                                                                LeptonType= 4;//2-c)
+           else if( (fabs(GrMPID)==11 || fabs(GrMPID)==13 || fabs(GrMPID)==15) && GrMStatus_last!=2 ) LeptonType= 4;//2-d)
+           else                                                                                       LeptonType= 0;
          }
   else if( fabs(MPID)==22 ){
-           if( MStatus_orig>20 && MStatus_orig<30 )                            LeptonType= 4;//3-a)
+           if( MStatus_orig>20 && MStatus_orig<30 )                            LeptonType= 5;//3-a)
            else if( HadronicOrigin )                                           LeptonType=-4;//3-b)
-           else if( fabs(GrMPID)==24 || fabs(GrMPID)==23 )                     LeptonType= 5;//3-c)
-           else if( fabs(GrMPID)==11 || fabs(GrMPID)==13 || fabs(GrMPID)==15 ) LeptonType= 5;//3-d)
-           else                                                                LeptonType= 6;
+           else if( fabs(GrMPID)==24 || fabs(GrMPID)==23 || fabs(GrMPID)==6  ) LeptonType= 4;//3-c)
+           else if( fabs(GrMPID)==11 || fabs(GrMPID)==13 || fabs(GrMPID)==15 ) LeptonType= 4;//3-d)
+           else                                                                LeptonType= 0;
          }
-  else if( (fabs(MPID)==11 || fabs(MPID)==13 || fabs(MPID)==15) && MStatus_last!=2 && !HadronicOrigin ) LeptonType= 5;//4-a)
-  else if( ((fabs(MPID)>=1 && fabs(MPID)<=6) || fabs(MPID)==21) && MStatus_last!=2 )                    LeptonType=-4;//4-b)
-  else LeptonType=6;
+  else if( MatchedTruthIdx==-1 ){
+           if     ( NearPhotonType<=0 ) LeptonType=-1;
+           else if( NearPhotonType==1 ) LeptonType=-5;
+           else if( NearPhotonType==2 ) LeptonType=-6;
+         }
+  else if( (fabs(MPID)==11 || fabs(MPID)==13 || fabs(MPID)==15) && MStatus_last!=2 && !HadronicOrigin ) LeptonType= 4;//4-a)
+  else if( ((fabs(MPID)>=1 && fabs(MPID)<=5) || fabs(MPID)==21) && MStatus_last!=2 )                    LeptonType=-4;//4-b)
+  else if( fabs(MPID)==6 ) LeptonType=4;//4-c)
+  else LeptonType=0;
 
-
+ 
   return LeptonType;
 //**footnote
 //These are based on observation in DY,ZG,TT sample(DY,ZG:amcnlo+pythia, TT:powheg+pythia) for other PS generator, convention may differ.
@@ -4639,6 +4788,7 @@ int AnalyzerCore::GetLeptonType(snu::KElectron El, std::vector<snu::KTruth>& Tru
 //          (Non hadronic origin since such case already counted before, gamma should be from non-hadronic source)
 //2-d) e.g. l>tata..+l.. , ta>l+2nu (Implicit tau conv. from non-hadronic lepton and decay) In implicit conv. GenStatus!=2
 //3-a) e.g. hard gamma>ll
+//3-a-2) e.g. hard Z>llG & G St1 Mother=Z
 //3-b) e.g. a) Had>gamma+X, gamma>ll+X (in PS+Had stage intermediate process is omitted you see just Had>Nphoton+Mhadrons+..)
 //          b) q>gamma+q, gamms>ll+X in jet fragmentation or radiations of tops.
 //          c) gluon>Ngamma+Mhadrons in jet fragmentation (Actually observed in samples)
@@ -4646,15 +4796,15 @@ int AnalyzerCore::GetLeptonType(snu::KElectron El, std::vector<snu::KTruth>& Tru
 //3-d) e.g. ta>ta+gamma, gamma>ll+X, tau not from hadron(e.g. pp>tata)
 //4-a) e.g. EW lep l, l>lll... just implicit conversion. 
 //4-b) e.g. q or g> Nlepton +MHadrons... in parton shower history
-//
-
 }
+
 
 int AnalyzerCore::GetLeptonType(snu::KMuon Mu, std::vector<snu::KTruth>& TruthColl, TString Option){
 //Type : 1:EWPrompt  /  2:Signal Daughter /  3:EWtau daughter /  4:HardScatterPhoton daughter /  5:Implicit or Explicit Converion from EW lepton, charged bosons / 6:Matched but unclassified
 //      -1:Unmatched / -2:Hadron daughter / -3:Daughter of tau from hadron or parton / -4:Implicit or Explicit Conversion but has hadronic origin
 //      (Daughter of Non-hard scattered photon & has parton or hadron ancestor OR implicit Conv from quark)
 //       0:Error / >0 :Non-hadronic origin / <0 : Hadronic origin
+
 
   int LeptonType=0;
   int MatchedTruthIdx = GenMatchedIdx(Mu,TruthColl);
@@ -4664,12 +4814,16 @@ int AnalyzerCore::GetLeptonType(snu::KMuon Mu, std::vector<snu::KTruth>& TruthCo
   int GrMotherIdx     = FirstNonSelfMotherIdx(MotherIdx,TruthColl);
   int LastSelfGrMIdx  = LastSelfMotherIdx(GrMotherIdx,TruthColl);
 
+  int NearPhotonType=0, NearPhotonIdx=-1;
   int MPID=0, GrMPID=0;
   int Status_orig=0, MStatus_orig=0, MStatus_last=0, GrMStatus_orig=0, GrMStatus_last=0;
   bool HadronicOrigin = false;
     if(MatchedTruthIdx!=-1){ Status_orig    = TruthColl.at(LastSelfIdx).GenStatus();
                              HadronicOrigin = HasHadronicAncestor(MatchedTruthIdx, TruthColl);
-                           }                           
+                           }
+    else                   { NearPhotonIdx  = GetNearPhotonIdx(Mu, TruthColl);
+                             NearPhotonType = GetPhotonType(NearPhotonIdx, TruthColl);
+                           }
     if(   MotherIdx!=-1   ){ MPID         = TruthColl.at(MotherIdx).PdgId();
                              MStatus_orig = TruthColl.at(LastSelfMIdx).GenStatus();
                              MStatus_last = TruthColl.at(MotherIdx).GenStatus();
@@ -4678,10 +4832,8 @@ int AnalyzerCore::GetLeptonType(snu::KMuon Mu, std::vector<snu::KTruth>& TruthCo
                              GrMStatus_orig = TruthColl.at(LastSelfGrMIdx).GenStatus();
                              GrMStatus_last = TruthColl.at(GrMotherIdx).GenStatus();
                            }
- 
-   
-  if     ( MatchedTruthIdx==-1 )                                LeptonType=-1;
-  else if( Status_orig>20 && Status_orig<30 )                   LeptonType= 1;//1)
+
+  if     ( Status_orig>20 && Status_orig<30 )                   LeptonType= 1;//1)
   else if( fabs(MPID)==23 || fabs(MPID)==24 || fabs(MPID)==25 ) LeptonType= 1;
   else if( fabs(MPID)==36 || fabs(MPID)==32 )                   LeptonType= 2;
   else if( fabs(MPID)>50 )                                      LeptonType=-2;
@@ -4689,23 +4841,29 @@ int AnalyzerCore::GetLeptonType(snu::KMuon Mu, std::vector<snu::KTruth>& TruthCo
            if     ( fabs(GrMPID)==23 || fabs(GrMPID)==24 || fabs(GrMPID)==25 ) LeptonType= 3;
            else if( MStatus_orig>20  && MStatus_orig<30  )                     LeptonType= 3;//1)
            else if( HadronicOrigin )                                           LeptonType=-3;//2-a)
-           else if( fabs(GrMPID)==22  && GrMStatus_orig>20 && GrMStatus_orig<30 )                     LeptonType= 4;//2-b)
-           else if( fabs(GrMPID)==22 )                                                                LeptonType= 5;//2-c)
-           else if( (fabs(GrMPID)==11 || fabs(GrMPID)==13 || fabs(GrMPID)==15) && GrMStatus_last!=2 ) LeptonType= 5;//2-d)
-           else                                                                                       LeptonType= 6;
+           else if( fabs(GrMPID)==22  && GrMStatus_orig>20 && GrMStatus_orig<30 )                     LeptonType= 5;//2-b)
+           else if( fabs(GrMPID)==22 )                                                                LeptonType= 4;//2-c)
+           else if( (fabs(GrMPID)==11 || fabs(GrMPID)==13 || fabs(GrMPID)==15) && GrMStatus_last!=2 ) LeptonType= 4;//2-d)
+           else                                                                                       LeptonType= 0;
          }
   else if( fabs(MPID)==22 ){
-           if( MStatus_orig>20 && MStatus_orig<30 )                            LeptonType= 4;//3-a)
+           if( MStatus_orig>20 && MStatus_orig<30 )                            LeptonType= 5;//3-a)
            else if( HadronicOrigin )                                           LeptonType=-4;//3-b)
-           else if( fabs(GrMPID)==24 || fabs(GrMPID)==23 )                     LeptonType= 5;//3-c)
-           else if( fabs(GrMPID)==11 || fabs(GrMPID)==13 || fabs(GrMPID)==15 ) LeptonType= 5;//3-d)
-           else                                                                LeptonType= 6;
+           else if( fabs(GrMPID)==24 || fabs(GrMPID)==23 || fabs(GrMPID)==6  ) LeptonType= 4;//3-c)
+           else if( fabs(GrMPID)==11 || fabs(GrMPID)==13 || fabs(GrMPID)==15 ) LeptonType= 4;//3-d)
+           else                                                                LeptonType= 0;
          }
-  else if( (fabs(MPID)==11 || fabs(MPID)==13 || fabs(MPID)==15) && MStatus_last!=2 && !HadronicOrigin ) LeptonType= 5;//4-a)
-  else if( ((fabs(MPID)>=1 && fabs(MPID)<=6) || fabs(MPID)==21) && MStatus_last!=2 )                    LeptonType=-4;//4-b)
-  else LeptonType=6;
+  else if( MatchedTruthIdx==-1 ){
+           if     ( NearPhotonType<=0 ) LeptonType=-1;
+           else if( NearPhotonType==1 ) LeptonType=-5;
+           else if( NearPhotonType==2 ) LeptonType=-6;
+         }
+  else if( (fabs(MPID)==11 || fabs(MPID)==13 || fabs(MPID)==15) && MStatus_last!=2 && !HadronicOrigin ) LeptonType= 4;//4-a)
+  else if( ((fabs(MPID)>=1 && fabs(MPID)<=5) || fabs(MPID)==21) && MStatus_last!=2 )                    LeptonType=-4;//4-b)
+  else if( fabs(MPID)==6 ) LeptonType=4;//4-c)
+  else LeptonType=0;
 
-
+ 
   return LeptonType;
 //**footnote
 //These are based on observation in DY,ZG,TT sample(DY,ZG:amcnlo+pythia, TT:powheg+pythia) for other PS generator, convention may differ.
@@ -4724,13 +4882,62 @@ int AnalyzerCore::GetLeptonType(snu::KMuon Mu, std::vector<snu::KTruth>& TruthCo
 //3-b) e.g. a) Had>gamma+X, gamma>ll+X (in PS+Had stage intermediate process is omitted you see just Had>Nphoton+Mhadrons+..)
 //          b) q>gamma+q, gamms>ll+X in jet fragmentation or radiations of tops.
 //          c) gluon>Ngamma+Mhadrons in jet fragmentation (Actually observed in samples)
-//3-c) e.g. W+>W+ gamma, gamma>ll+X , not yet observed in test sample but possible (upto radiation is observed so far)
+//3-c) e.g. W+>W+ gamma, or t>t+gamma, gamma>ll+X, not yet observed in test sample but possible (upto radiation is observed so far)
 //3-d) e.g. ta>ta+gamma, gamma>ll+X, tau not from hadron(e.g. pp>tata)
 //4-a) e.g. EW lep l, l>lll... jut implicit conversion. 
 //4-b) e.g. q or g> Nlepton +MHadrons... in parton shower history
-//
-
+//4-c) e.g. t>t+ll.. implicit conversion
 }
+
+
+int AnalyzerCore::GetPhotonType(int PhotonIdx, std::vector<snu::KTruth> TruthColl){
+//Type : 
+// 0: Invalid input or Error or HardScatter is input when hardscatter is not final state
+// 1: HardScatter / 2: Else prompt daughter(l,V,t)
+//-1: Reserved for unmatched(Not used now) / -2: Hadronic origin
+
+  if( PhotonIdx<2 ) return 0;
+  if( !(TruthColl.at(PhotonIdx).PdgId()==22 && (TruthColl.at(PhotonIdx).GenStatus()==1 || TruthColl.at(PhotonIdx).GenStatus()==23)) ) return 0;
+
+  if(TruthColl.at(PhotonIdx).GenStatus()==23){
+    if(IsFinalPhotonSt23(TruthColl)) return 1;
+    else                             return 0;
+  }//From this pt, only St1 Photon is treated.
+
+  int PhotonType=0;
+  int LastSelfIdx    = LastSelfMotherIdx(PhotonIdx,TruthColl);
+  int MotherIdx      = FirstNonSelfMotherIdx(PhotonIdx,TruthColl);
+  int fMPID=0, Status_orig=0;
+  bool HadronicOrigin = false;
+    if( PhotonIdx!=-1 ){ Status_orig    = TruthColl.at(LastSelfIdx).GenStatus();
+                         HadronicOrigin = HasHadronicAncestor(PhotonIdx, TruthColl);
+                       }                           
+    if( MotherIdx!=-1 ){ fMPID          = fabs(TruthColl.at(MotherIdx).PdgId()); }
+
+
+  if     (  Status_orig>20 && Status_orig<30   ) PhotonType= 1;//1)
+  else if(       fMPID==23 || fMPID==25        ) PhotonType= 1;//2)
+  else if( fMPID==24 || fMPID==6  || fMPID==37 ) PhotonType= 2;//3)
+  else if(           HadronicOrigin            ) PhotonType=-2;//4)
+  else if( fMPID==11 || fMPID==13 || fMPID==15 ) PhotonType= 2;//5)
+  else                                           PhotonType= 0;
+  
+  return PhotonType;
+//**footnote
+//1) In case of hard scattered photon, they may have history; GenSt=23>...>GenSt1, And depending on generator, their mother can be explicitly
+//  written in history as Z>GG St2 but sometimes their field mother is not designated for avoiding confusion of gauge symmetry.
+//  e.g. qq>llG instead of qq>Z>llG
+//  To cover all the case, first thing to check is original state of photon is hard scattered or not
+//2) Sometimes, if there is no correction on gamma is applied on PS step, photon's final state is 1 before any history.
+//   e.g. G;St=1, Mother=Z ; cannot find hard scatter Z / in such case only possibility is to check mother.
+//   But in some case, it is not obvious. because in PS step, charged ptls can radiate photons including bosons.
+//   So it is artificial to distinguish hard scattered photon and photon from PS step. And fraction of this case is not negilgible; very frequently observed.
+//3) top and charged bosons radiate photons, and some case the photon is very energetic.
+//4) This category does not include tops. Photons from hadrons and quarks. But predominantly, in most of the cases they are daughter of pi0.
+//   But rarely other mesons as eta, B, or even some quarks can also radiate energetic photons.
+//5) Photons radiated from lepton FSR, but sometimes they radiate quite energetic photons.
+}
+
 
 bool AnalyzerCore::IsJetConsistentPartonHadronMatch(snu::KJet Jet, std::vector<snu::KTruth>& TruthColl, TString Option){
 
@@ -4791,7 +4998,7 @@ bool AnalyzerCore::HasEWLepInJet(snu::KJet Jet, std::vector<snu::KTruth>& TruthC
 
 bool AnalyzerCore::NearEWLep(snu::KElectron Ele, std::vector<snu::KTruth>& TruthColl, TString Option){
 
-  int NearEWLep=false;
+  bool NearEWLep=false;
   bool InclEWTau=Option.Contains("InclTau");
   float PTthreshold=10.; //Intended for suppressing conversion fake;
   for(int i=2; i<TruthColl.size(); i++){
@@ -4817,24 +5024,62 @@ bool AnalyzerCore::NearEWLep(snu::KElectron Ele, std::vector<snu::KTruth>& Truth
 }
 
 
+bool AnalyzerCore::NearPhoton(snu::KElectron Ele, std::vector<snu::KTruth>& TruthColl, TString Option){//1)
+
+  bool NearPhoton=false;
+  bool OnlyHardPhoton=false;
+    if(Option=="Hard") OnlyHardPhoton=true;
+  float PTthreshold=10.;
+  float dRmax=0.2;//2)
+
+  for(int i=2; i<TruthColl.size(); i++){
+    if( TruthColl.at(i).IndexMother()<0   ) continue;
+    if( TruthColl.at(i).PdgId()!=22       ) continue;
+    if( !(TruthColl.at(i).GenStatus()==1 || TruthColl.at(i).GenStatus()==23) ) continue;
+    if( TruthColl.at(i).Pt()<PTthreshold  ) continue;
+    if( !(Ele.Pt()/TruthColl.at(i).Pt()>0.8 && Ele.Pt()/TruthColl.at(i).Pt()<1.2) ) continue;//3)
+    if( Ele.DeltaR(TruthColl.at(i))>dRmax ) continue;
+
+    if( GetPhotonType(i,TruthColl)>0      ){ NearPhoton=true; break; }
+  }
+
+  return NearPhoton;
+//footnote
+//1) When checked with ZG sample with CBPOGT ElePt>25, Hardscattered photons, External conversion is only meaningful for electrons.
+//   Electron External Conversion~3000 Muon external conversion. This is in agreement with theoretical calculation that xsec~M^{-2} in asymmetric limit.
+//   ref. Arxiv:1110.1368v1
+//2) When checked with ZG sample with CBPOGT ElePt>25GeV, HardScatter Photons, Matching Eff~99.7% even when tested with dR01 cone.
+//   But just used conservative cone size.
+//3) When checked with ZG sample with CBPOGT ElePt>25GeV, HardScatter Photons, Matching Eff~99.5%
+//   External Conversion object's momentum is roughly symmetric with mother photon's momentum(similar fraction lower/upper than PT(G))
+}
+
 
 std::vector<snu::KElectron> AnalyzerCore::SkimLepColl(std::vector<snu::KElectron>& EleColl, std::vector<snu::KTruth>& TruthColl, TString Option){
 
-  bool GetPrompt=false, GetHadFake=false, GetEWtau=false, GetNHConv=false;
-  if(Option.Contains("Prompt"))  GetPrompt  =true;
-  if(Option.Contains("HFake"))   GetHadFake =true;
-  if(Option.Contains("EWtau"))   GetEWtau   =true;
-  if(Option.Contains("NHConv"))  GetNHConv  =true;
-  if(     Option=="Fake"     )  {GetHadFake =true; GetNHConv=true;}
+  bool GetPrompt=false, GetHadFake=false, GetEWtau=false, GetNHIntConv=false, GetNHExtConv=false;
+  if(Option.Contains("Prompt"))          GetPrompt    =true;
+  if(Option.Contains("HFake"))           GetHadFake   =true;
+  if(Option.Contains("EWtau"))           GetEWtau     =true;
+  if(Option.Contains("NHConv"))         {GetNHIntConv =true; GetNHExtConv=true;}
+  else{ if(Option.Contains("NHIntConv")) GetNHIntConv =true;
+        if(Option.Contains("NHExtConv")) GetNHExtConv =true; }
+  if(     Option=="Fake"     )          {GetHadFake   =true; GetNHExtConv=true;}
 
 
   std::vector<snu::KElectron> ReturnVec;
   for(int i=0; i<EleColl.size(); i++){
+    //if(GetHadFake){
+      //if(NearEWLep(EleColl.at(i), TruthColl, "InclTau")) continue;
+      //if(NearPhoton(EleColl.at(i), TruthColl))           continue;
+    //}
+
     int LepType=GetLeptonType(EleColl.at(i), TruthColl);
-    if( GetPrompt  && (LepType==1 || LepType==2) ) ReturnVec.push_back(EleColl.at(i));
-    if( GetHadFake &&         LepType<0          ) ReturnVec.push_back(EleColl.at(i));
-    if( GetEWtau   &&         LepType==3         ) ReturnVec.push_back(EleColl.at(i));
-    if( GetNHConv  &&         LepType>=4         ) ReturnVec.push_back(EleColl.at(i));
+    if( GetPrompt    && (LepType==1 || LepType==2) ) ReturnVec.push_back(EleColl.at(i));
+    if( GetHadFake   && (LepType<0 && LepType>=-4) ) ReturnVec.push_back(EleColl.at(i));
+    if( GetEWtau     &&         LepType==3         ) ReturnVec.push_back(EleColl.at(i));
+    if( GetNHIntConv &&         LepType>=4         ) ReturnVec.push_back(EleColl.at(i));
+    if( GetNHExtConv &&         LepType<-4         ) ReturnVec.push_back(EleColl.at(i));
   }
 
   return ReturnVec;
@@ -4842,20 +5087,24 @@ std::vector<snu::KElectron> AnalyzerCore::SkimLepColl(std::vector<snu::KElectron
 
 std::vector<snu::KMuon> AnalyzerCore::SkimLepColl(std::vector<snu::KMuon>& MuColl, std::vector<snu::KTruth>& TruthColl, TString Option){
 
-  bool GetPrompt=false, GetHadFake=false, GetEWtau=false, GetNHConv=false;
-  if(Option.Contains("Prompt"))  GetPrompt  =true;
-  if(Option.Contains("HFake"))   GetHadFake =true;
-  if(Option.Contains("EWtau"))   GetEWtau   =true;
-  if(Option.Contains("NHConv"))  GetNHConv  =true;
-  if(     Option=="Fake"     )  {GetHadFake =true; GetNHConv=true;}
+  bool GetPrompt=false, GetHadFake=false, GetEWtau=false, GetNHIntConv=false, GetNHExtConv=false;
+  if(Option.Contains("Prompt"))          GetPrompt    =true;
+  if(Option.Contains("HFake"))           GetHadFake   =true;
+  if(Option.Contains("EWtau"))           GetEWtau     =true;
+  if(Option.Contains("NHConv"))         {GetNHIntConv =true; GetNHExtConv=true;}
+  else{ if(Option.Contains("NHIntConv")) GetNHIntConv =true;
+        if(Option.Contains("NHExtConv")) GetNHExtConv =true; }
+  if(     Option=="Fake"     )          {GetHadFake   =true; GetNHExtConv=true;}
+
 
   std::vector<snu::KMuon> ReturnVec;
   for(int i=0; i<MuColl.size(); i++){
     int LepType=GetLeptonType(MuColl.at(i), TruthColl);
-    if( GetPrompt  && (LepType==1 || LepType==2) ) ReturnVec.push_back(MuColl.at(i));
-    if( GetHadFake &&         LepType<0          ) ReturnVec.push_back(MuColl.at(i));
-    if( GetEWtau   &&         LepType==3         ) ReturnVec.push_back(MuColl.at(i));
-    if( GetNHConv  &&         LepType>=4         ) ReturnVec.push_back(MuColl.at(i));
+    if( GetPrompt    && (LepType==1 || LepType==2) ) ReturnVec.push_back(MuColl.at(i));
+    if( GetHadFake   && (LepType<0 && LepType>=-4) ) ReturnVec.push_back(MuColl.at(i));
+    if( GetEWtau     &&         LepType==3         ) ReturnVec.push_back(MuColl.at(i));
+    if( GetNHIntConv &&         LepType>=4         ) ReturnVec.push_back(MuColl.at(i));
+    if( GetNHExtConv &&         LepType<-4         ) ReturnVec.push_back(MuColl.at(i));
   }
 
   return ReturnVec;

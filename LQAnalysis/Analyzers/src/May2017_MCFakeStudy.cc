@@ -71,6 +71,7 @@ void May2017_MCFakeStudy::ExecuteEvents()throw( LQError ){
 
 
    bool EleFake=false, BasicCompositionStudy=false, SigRegFake=false, EMuMu=false, TriMu=false, MatchingTest=false;
+   bool PhotonCheck=false;
    for(int i=0; i<k_flags.size(); i++){
      if     (k_flags.at(i).Contains("EleFake"))    EleFake=true;
      else if(k_flags.at(i).Contains("BasicCompositionStudy")) BasicCompositionStudy=true;
@@ -78,6 +79,7 @@ void May2017_MCFakeStudy::ExecuteEvents()throw( LQError ){
      else if(k_flags.at(i).Contains("EMuMu"))      EMuMu=true;
      else if(k_flags.at(i).Contains("TriMu"))      TriMu=true;
      else if(k_flags.at(i).Contains("MatchingTest")) MatchingTest=true;
+     else if(k_flags.at(i).Contains("PhotonCheck")) PhotonCheck=true;
    }
 
     
@@ -1194,6 +1196,69 @@ void May2017_MCFakeStudy::ExecuteEvents()throw( LQError ){
 
      }//End of Jet Loop
    
+   }
+   if(PhotonCheck){
+     std::vector<snu::KElectron> FakeColl     = SkimLepColl(electronFakeLColl, truthColl, "Fake");
+     std::vector<snu::KElectron> PromptColl   = SkimLepColl(electronFakeLColl, truthColl, "Prompt");
+     std::vector<snu::KJet>      JetCleanColl = SkimJetColl(jetColl, truthColl, "NoPrNoTau");
+     int NPromptGenLepAll = NPromptLeptons(truthColl,"InclTau");
+     int NConversion      = NPromptLeptons(truthColl,"OnlyConv");
+     FillHist("NConv", NConversion, 1., -10., 10., 20);
+     FillHist("NprL", NPromptGenLepAll, 1., -10., 10., 20);
+
+
+//     if(NPromptGenLepAll==0){
+       for(int i=0; i<FakeColl.size(); i++){
+         for(int j=0; j<JetCleanColl.size(); j++){
+           if(FakeColl.at(i).DeltaR(JetCleanColl.at(j))<0.4){
+             
+/*
+             //Bjet
+             if(JetCleanColl.at(j).HadronFlavour()==5){
+  
+               if(FakeColl.at(i).PFRelIso(0.3)<0.0588){
+                 FillHist("FakeIDSumW_BJetPt_1D_0l", JetCleanColl.at(j).Pt(), weight, 0., 500., 20);
+               }
+             }
+             else if(JetCleanColl.at(j).HadronFlavour()==4){
+  
+               if(FakeColl.at(i).PFRelIso(0.3)<0.0588){
+                 FillHist("FakeIDSumW_CJetPt_1D_0l", JetCleanColl.at(j).Pt(), weight, 0., 500., 20);
+               }
+             }
+*/
+             if(JetCleanColl.at(j).HadronFlavour()==0){
+  
+               //Parametrisation in LeptonSource
+               int LepType=GetLeptonType(FakeColl.at(i),truthColl);
+               if(LepType==-1){
+                 int PhotoIdx=GetNearPhotonIdx(FakeColl.at(i), truthColl);
+                 if(PhotoIdx<0) FillHist("PhotoIdxType", PhotoIdx, weight, -2., 1., 3);
+                 else           FillHist("PhotoIdxType", 0., weight, -2., 1., 3);
+                 if(PhotoIdx>=0){
+                   int MotherIdx       = FirstNonSelfMotherIdx(PhotoIdx,truthColl);
+                   int GrMotherIdx     = FirstNonSelfMotherIdx(MotherIdx,truthColl);
+                   if(MotherIdx>=0){
+                     if(fabs(truthColl.at(MotherIdx).PdgId())<50){
+                       FillHist("MotherfPID", fabs(truthColl.at(MotherIdx).PdgId()), weight, 0., 50., 50);
+                     }
+                     else FillHist("MotherfPID", 49., weight, 0., 50., 50);
+                   }
+
+                   if(GrMotherIdx>=0){
+                     if(fabs(truthColl.at(GrMotherIdx).PdgId())<50){
+                       FillHist("GrMotherfPID", fabs(truthColl.at(GrMotherIdx).PdgId()), weight, 0., 50., 50);
+                     }
+                     else FillHist("GrMotherfPID", 49., weight, 0., 50., 50);
+                   }
+                 }
+               }//End of UnMatched Leptons
+             }//End of Light HadronFlav Jet
+           }//End of Jet-Fake Matched Case
+         }//End of JetLoop
+       }//End of FakeLoop
+  //   }//End of Gen 0lep case
+
    }
 
 

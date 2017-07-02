@@ -67,6 +67,7 @@ class BaseSelection {
     PHOTON_POG_LOOSE               = 40, 
     PHOTON_POG_MEDIUM              = 41, 
     PHOTON_POG_TIGHT               = 42,
+    ELECTRON_POGMVAWP90_FAKELOOSE  = 43,
   };
 
   Int_t ifid;

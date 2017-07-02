@@ -24,6 +24,8 @@
 
 //#endif // __CINT__
 //Jihwan Bhyun Modification///////////
+#pragma link C++ class Jun2017_MCFakeStudy+;
+#pragma link C++ class Jun2017_ConversionStudy+;
 #pragma link C++ class Jun2017_EleIDChoice+;
 #pragma link C++ class May2017_MCFakeStudy+;
 #pragma link C++ class May2017_FakeRateProd+;

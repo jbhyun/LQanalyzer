@@ -444,12 +444,18 @@ class AnalyzerCore : public LQCycleBase {
   int FirstNonSelfMotherIdx(int TruthIdx, std::vector<snu::KTruth>& TruthColl);
   int LastSelfMotherIdx(int TruthIdx, std::vector<snu::KTruth>& TruthColl);
   bool HasHadronicAncestor(int TruthIdx, std::vector<snu::KTruth>& TruthColl);
+  bool IsFinalPhotonSt23(std::vector<snu::KTruth> TruthColl);
+  bool IsHardPhotonConverted(std::vector<snu::KTruth> TruthColl);
   int GetLeptonType(int TruthIdx, std::vector<snu::KTruth>& TruthColl, TString Option="");
   int GetLeptonType(snu::KElectron El, std::vector<snu::KTruth>& TruthColl, TString Option="");
   int GetLeptonType(snu::KMuon Mu, std::vector<snu::KTruth>& TruthColl, TString Option="");
+  int GetPhotonType(int PhotonIdx, std::vector<snu::KTruth> TruthColl);
   bool IsJetConsistentPartonHadronMatch(snu::KJet Jet, std::vector<snu::KTruth>& KTruthColl, TString Option="BFlav");
   bool HasEWLepInJet(snu::KJet Jet, std::vector<snu::KTruth>& TruthColl, TString Option="");
   bool NearEWLep(snu::KElectron Ele, std::vector<snu::KTruth>& TruthColl, TString Option="");
+  bool NearPhoton(snu::KElectron Ele, std::vector<snu::KTruth>& TruthColl, TString Option="AllPhoton");
+  int GetNearPhotonIdx(snu::KElectron Ele, std::vector<snu::KTruth>& TruthColl, TString Option="AllPhoton");
+  int GetNearPhotonIdx(snu::KMuon Mu, std::vector<snu::KTruth>& TruthColl, TString Option="AllPhoton");
   std::vector<snu::KElectron> SkimLepColl(std::vector<snu::KElectron>& EleColl, std::vector<snu::KTruth>& TruthColl, TString Option="Prompt");
   std::vector<snu::KMuon>     SkimLepColl(std::vector<snu::KMuon>& MuColl, std::vector<snu::KTruth>& TruthColl, TString Option="Prompt");
   std::vector<snu::KJet>      SkimJetColl(std::vector<snu::KJet>& JetColl, std::vector<snu::KTruth>& TruthColl, TString Option="NoPr");
