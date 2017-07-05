@@ -27,6 +27,8 @@ class Jun2017_MCFakeStudy : public AnalyzerCore {
   bool IsConvCand(snu::KElectron Ele, std::vector<snu::KTruth> TruthColl, TString Option="");
   int StepPassed(std::vector<snu::KMuon> MuColl, std::vector<snu::KElectron> EleColl, std::vector<snu::KJet> JetColl, std::vector<snu::KJet> BJetColl, float MET, TString Option="");
   float ConeCorrectedPT(snu::KElectron Ele, float TightIsoCut);
+  int GetFakeLepSrcType(snu::KElectron Ele, std::vector<snu::KJet> JetColl);
+  int FakeRateMC(snu::KElectron Ele, TString Option);
 
 
  private:

@@ -23,7 +23,7 @@ job_logstep=1000
 LogLevel="INFO"
 #QueueOption="longq" 
 QueueOption="fastq" 
-RunningMode="EleFakeParam"
+RunningMode="EleFakeIDOpt" #"EleFakeParam"
 
 MCList="FakeMeasRegSample"
 
