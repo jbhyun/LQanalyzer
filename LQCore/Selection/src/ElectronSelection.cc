@@ -333,7 +333,7 @@ bool ElectronSelection::PassUserID(TString id, snu::KElectron el, vector<pair<TS
     }
     if(vids[idel].first == "IsHNTight(MVA)"){
       if(!pass_trigger_emulation)  {if(debug){ cout << "Fail MVA medium" << endl;} return false;}
-      if(!el.PassTrigMVAHNTight()){if(debug){ cout << "Fail MVA tight" << endl;} return false;}
+      if(!el.PassTrigMVAHNTightv4()){if(debug){ cout << "Fail MVA tight" << endl;} return false;}
     }
     if(vids[idel].first == "IsGENTTight"){
       if(!pass_trigger_emulation)  {if(debug){ cout << "Fail MVA medium" << endl;} return false;}
@@ -483,7 +483,7 @@ bool ElectronSelection::PassUserID(TString id, snu::KElectron el){
   if(checkisMVAHNLoose && !pass_trigger_emulation)  {pass_selection = false;if(debug){ cout << "Fail MVA medium" << endl;}}
   if(checkisMVAHNLoose && !el.PassTrigMVAHNLoose()){pass_selection = false;if(debug){ cout << "Fail MVA medium" << endl;}}
   if(checkisMVAHNTight && !pass_trigger_emulation)  {pass_selection = false;if(debug){ cout << "Fail MVA medium" << endl;}}
-  if(checkisMVAHNTight && !el.PassTrigMVAHNTight()){pass_selection = false;if(debug){ cout << "Fail MVA medium" << endl;}}
+  if(checkisMVAHNTight && !el.PassTrigMVAHNTightv4()){pass_selection = false;if(debug){ cout << "Fail MVA medium" << endl;}}
   if(checkisMVAGENTTight && !pass_trigger_emulation)  {pass_selection = false;if(debug){ cout << "Fail MVA medium" << endl;}}
   if(checkisMVAGENTTight && !el.PassTrigMVAGENTTight()){pass_selection = false;if(debug){ cout << "Fail MVA medium" << endl;}}
   
@@ -576,7 +576,7 @@ bool ElectronSelection::PassUserID(snu::KElectron el, TString id, TString el_id,
   }
   if(el_id == "IsHNTight(MVA)") {
     if(!pass_trigger_emulation)  {if(debug){cout << "Fail MVA tight" << endl;} return false;}
-    if(!el.PassTrigMVAHNTight()) {if(debug){cout << "Fail MVA tight" << endl;} return false;}
+    if(!el.PassTrigMVAHNTightv4()) {if(debug){cout << "Fail MVA tight" << endl;} return false;}
   }
   if(el_id == "IsHNLoose(MVA)") {
     if(!pass_trigger_emulation)  {if(debug){cout << "Fail MVA tight" << endl;} return false;}
@@ -668,7 +668,6 @@ bool ElectronSelection::PassID(snu::KElectron el, ID id){
     else if( fabs(el.Eta())<1.479 ){ if( el.MVA()<-0.1 ) pass_selection=false; }
     else if( fabs(el.Eta())<2.5   ){ if( el.MVA()<-0.3 ) pass_selection=false; }
   }
-
 
   return pass_selection;
 }
