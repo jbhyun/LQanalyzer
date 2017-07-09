@@ -89,6 +89,8 @@ TString BaseSelection::GetString(ID id){
   if ( id == ELECTRON_POG_LOOSE) return "ELECTRON_POG_LOOSE";
   if ( id == ELECTRON_POG_MEDIUM) return "ELECTRON_POG_MEDIUM";
   if ( id == ELECTRON_POG_TIGHT) return  "ELECTRON_POG_TIGHT";
+  if ( id == ELECTRON_HN_MVA_TEST170706 ) return "ELECTRON_HN_MVA_TEST170706";
+  if ( id == ELECTRON_HN_MVA_TEST170706LOOSE ) return "ELECTRON_HN_MVA_TEST170706LOOSE";
 
   
   cerr << "Did not find ID for object. Please enter TString of ID not enum" << endl;

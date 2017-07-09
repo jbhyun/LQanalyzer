@@ -23,9 +23,8 @@ job_logstep=1000
 LogLevel="INFO"
 #QueueOption="longq" 
 QueueOption="fastq" 
-RunningMode="EleFakeIDOpt" #"EleFakeParam"
-
-MCList="FakeMeasRegSample"
+RunningMode="FineTune" #"EleFakeIDOpt" #"EleFakeParam"
+MCList="QCD_EM" # #"TT" # #"MajorFakeSource" #"FakeMeasRegSample"
 
 ########################################################################
 ## OUTPUT PATH CONFIG

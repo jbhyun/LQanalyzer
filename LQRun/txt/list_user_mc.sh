@@ -18,9 +18,9 @@ declare -a DY=('DYJets_10to50' "DYJets")
 declare -a DYMG=("DYJets_MG")
 declare -a ZZ4l=("ZZTo4L_powheg") 
 declare -a ZG2l=("ZGto2LG") 
-declare -a TT=('TT_powheg' 'TTLL_powheg' 'TTLJ_powheg') #"TTJets_aMC") 
+#declare -a TT=('TT_powheg' 'TTLL_powheg' 'TTLJ_powheg') #"TTJets_aMC") 
 declare -a TTLJ=('TTLJ_powheg') 
-#declare -a TT=('TT_powheg') #"TTJets_aMC") 
+declare -a TT=('TT_powheg') #"TTJets_aMC") 
 
 #Analysis Background
 declare -a Analysis_bkg=('WZTo3LNu_powheg' 'ZZTo4L_powheg' "ZGto2LG" 'ttWToLNu' 'ttZToLL_M-1to10' 'ttZ' 'tZq' 'ttH_nonbb' 'WWW' 'WWZ' 'WZZ' 'ZZZ' "vbhHtoZZ" "ggHtoZZ")

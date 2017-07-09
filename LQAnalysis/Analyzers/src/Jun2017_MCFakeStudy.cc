@@ -70,11 +70,12 @@ void Jun2017_MCFakeStudy::ExecuteEvents()throw( LQError ){
    FillCutFlow("NoCut", weight*pileup_reweight);
 
 
-   bool EleFakeIDOpt=false, EleFakeParam=false, ClosureTest=false;
+   bool EleFakeIDOpt=false, EleFakeParam=false, ClosureTest=false, FineTune=false;
    for(int i=0; i<k_flags.size(); i++){
      if     (k_flags.at(i).Contains("EleFakeIDOpt")) EleFakeIDOpt=true;
      else if(k_flags.at(i).Contains("EleFakeParam")) EleFakeParam=true;
      else if(k_flags.at(i).Contains("ClosureTest"))  ClosureTest=true;
+     else if(k_flags.at(i).Contains("FineTune"))     FineTune=true;
    }
 
     
@@ -144,7 +145,7 @@ void Jun2017_MCFakeStudy::ExecuteEvents()throw( LQError ){
    //Electron ID's to Test
    //
      eventbase->GetElectronSel()->SetID(BaseSelection::ELECTRON_POG_LOOSE);
-     eventbase->GetElectronSel()->SetPt(10.);                eventbase->GetElectronSel()->SetEta(2.5);
+     eventbase->GetElectronSel()->SetPt(25.);                eventbase->GetElectronSel()->SetEta(2.5);
      eventbase->GetElectronSel()->SetBETrRegIncl(false);
      eventbase->GetElectronSel()->SetRelIsoType("Default");  eventbase->GetElectronSel()->SetRelIsoBEMax(0.5, 0.5);//2016 80X tuned WP
      eventbase->GetElectronSel()->SetdxyBEMax(0.05, 0.1);    eventbase->GetElectronSel()->SetdzBEMax(0.05, 0.1);//Not in ID, but additional safe WP
@@ -152,7 +153,7 @@ void Jun2017_MCFakeStudy::ExecuteEvents()throw( LQError ){
    std::vector<snu::KElectron> electronVetoColl; eventbase->GetElectronSel()->Selection(electronVetoColl);
 
      eventbase->GetElectronSel()->SetHLTSafeCut("CaloIdL_TrackIdL_IsoVL");
-     eventbase->GetElectronSel()->SetPt(10.);                eventbase->GetElectronSel()->SetEta(2.5);
+     eventbase->GetElectronSel()->SetPt(25.);                eventbase->GetElectronSel()->SetEta(2.5);
      eventbase->GetElectronSel()->SetBETrRegIncl(false);
      eventbase->GetElectronSel()->SetdxyBEMax(0.05, 0.05);   eventbase->GetElectronSel()->SetdzBEMax(0.1, 0.1);
      eventbase->GetElectronSel()->SetdxySigMax(3.);
@@ -161,7 +162,7 @@ void Jun2017_MCFakeStudy::ExecuteEvents()throw( LQError ){
 
      eventbase->GetElectronSel()->SetID(BaseSelection::ELECTRON_POGMVAWP90_FAKELOOSE);
      eventbase->GetElectronSel()->SetHLTSafeCut("CaloIdL_TrackIdL_IsoVL");
-     eventbase->GetElectronSel()->SetPt(10.);                eventbase->GetElectronSel()->SetEta(2.5);
+     eventbase->GetElectronSel()->SetPt(25.);                eventbase->GetElectronSel()->SetEta(2.5);
      eventbase->GetElectronSel()->SetBETrRegIncl(false);
      eventbase->GetElectronSel()->SetRelIsoType("Default");  eventbase->GetElectronSel()->SetRelIsoBEMax(0.4, 0.4);
      eventbase->GetElectronSel()->SetdxyBEMax(0.05, 0.05);   eventbase->GetElectronSel()->SetdzBEMax(0.1, 0.1);
@@ -171,7 +172,7 @@ void Jun2017_MCFakeStudy::ExecuteEvents()throw( LQError ){
 
      eventbase->GetElectronSel()->SetID(BaseSelection::ELECTRON_POG_MVA_WP90);
      eventbase->GetElectronSel()->SetHLTSafeCut("CaloIdL_TrackIdL_IsoVL");
-     eventbase->GetElectronSel()->SetPt(10.);                eventbase->GetElectronSel()->SetEta(2.5);
+     eventbase->GetElectronSel()->SetPt(25.);                eventbase->GetElectronSel()->SetEta(2.5);
      eventbase->GetElectronSel()->SetBETrRegIncl(false);
      eventbase->GetElectronSel()->SetRelIsoType("Default");  eventbase->GetElectronSel()->SetRelIsoBEMax(0.1, 0.1);
      eventbase->GetElectronSel()->SetdxyBEMax(0.05, 0.05);   eventbase->GetElectronSel()->SetdzBEMax(0.1, 0.1);
@@ -184,7 +185,7 @@ void Jun2017_MCFakeStudy::ExecuteEvents()throw( LQError ){
      eventbase->GetJetSel()->SetID(BaseSelection::PFJET_LOOSE);
      eventbase->GetJetSel()->SetPt(25.);                     eventbase->GetJetSel()->SetEta(2.4);
    //  //eventbase->GetJetSel()->SetPileUpJetID(true,"Loose");
-     bool LeptonVeto=true;
+     bool LeptonVeto=false;
      //bool LeptonVeto=false;
    std::vector<snu::KJet> jetColl; eventbase->GetJetSel()->Selection(jetColl, LeptonVeto, muonHN2FakeLColl, electronFakeLColl);
 
@@ -263,13 +264,12 @@ void Jun2017_MCFakeStudy::ExecuteEvents()throw( LQError ){
 
 
    if(EleFakeIDOpt){
-//     std::vector<snu::KElectron> FakeColl     = SkimLepColl(electronFakeLPreOptColl, truthColl, "HFake");
+     std::vector<snu::KElectron> FakeColl     = SkimLepColl(electronFakeLPreOptColl, truthColl, "HFake");
 //     std::vector<snu::KElectron> PromptColl   = SkimLepColl(electronFakeLPreOptColl, truthColl, "Prompt");
-     std::vector<snu::KElectron> FakeColl     = SkimLepColl(electronFakeLColl, truthColl, "HFake");
-     std::vector<snu::KElectron> PromptColl   = SkimLepColl(electronFakeLColl, truthColl, "Prompt");
+     std::vector<snu::KElectron> FakeLColl     = SkimLepColl(electronFakeLColl, truthColl, "HFake");
      std::vector<snu::KJet>      JetCleanColl = SkimJetColl(jetColl, truthColl, "NoPrNoTau");
-     int NPromptGenLepAll = NPromptLeptons(truthColl,"InclTau");
-     int NConversion      = NPromptLeptons(truthColl,"OnlyConv");
+     //int NPromptGenLepAll = NPromptLeptons(truthColl,"InclTau");
+     //int NConversion      = NPromptLeptons(truthColl,"OnlyConv");
      float HT=0; for(int i=0; i<JetCleanColl.size(); i++){ HT+=JetCleanColl.at(i).Pt(); }
 
      
@@ -279,6 +279,96 @@ void Jun2017_MCFakeStudy::ExecuteEvents()throw( LQError ){
 
      const int NPtEdges=7;
      float PtEdges[NPtEdges]={0., 25., 35., 50., 70., 100., 200.};
+
+
+     //2D Scanning MVA-Iso
+     for(int i=0; i<FakeColl.size(); i++){
+       FillHist("TrigCutCheck_Iso_SumW", FakeColl.at(i).PFRelIso(0.3), weight, 0., 1., 100);
+       FillHist("TrigCutCheck_MVA_SumW", FakeColl.at(i).MVA(), weight, 0., 1., 100);
+       if(FakeColl.at(i).TriggerMatched("HLT_Ele12_CaloIdL_TrackIdL_IsoVL_v")){
+         FillHist("TrigCutCheck_Iso_TrigSumW", FakeColl.at(i).PFRelIso(0.3), weight, 0., 1., 100);
+         FillHist("TrigCutCheck_MVA_TrigSumW", FakeColl.at(i).MVA(), weight, 0., 1., 100);
+       }
+
+       FillHist("NFakeHasNearJet", 0., weight, 0., 5., 5);
+       for(int j=0; j<JetCleanColl.size(); j++){
+         if(FakeColl.at(i).DeltaR(JetCleanColl.at(j))<0.4){
+           FillHist("NFakeHasNearJet", 1., weight, 0., 5., 5);
+
+           for(int it_iso=1; it_iso<NIsoCuts; it_iso++){
+             for(int it_mva=0; it_mva<NMVACuts-1; it_mva++){
+               if(FakeColl.at(i).PFRelIso(0.3)<IsoCuts[it_iso] && FakeColl.at(i).MVA()>MVACuts[it_mva]){
+                 FillHist("EleSumW_jMatch_ltIsoltMVA_FR2D", IsoCuts[it_iso-1], MVACuts[it_mva], weight, IsoCuts, NIsoCuts-1, MVACuts, NMVACuts-1);   
+                 if(PassIDCriteria(FakeColl.at(i), "POGMVAMIP")) FillHist("EleIDSumW_jMatch_ltIsoltMVA_FR2D", IsoCuts[it_iso-1], MVACuts[it_mva], weight, IsoCuts, NIsoCuts-1, MVACuts, NMVACuts-1);
+
+                 //Eta Inclusive
+                 if(JetCleanColl.at(j).HadronFlavour()==5){
+                   FillHist("NFakeHasNearBJet", 2., weight, 0., 5., 5);
+                   FillHist("EleSumW_BjMatch_ltIsoltMVA_FR2D", IsoCuts[it_iso-1], MVACuts[it_mva], weight, IsoCuts, NIsoCuts-1, MVACuts, NMVACuts-1);   
+                   if(PassIDCriteria(FakeColl.at(i), "POGMVAMIP")) FillHist("EleIDSumW_BjMatch_ltIsoltMVA_FR2D", IsoCuts[it_iso-1], MVACuts[it_mva], weight, IsoCuts, NIsoCuts-1, MVACuts, NMVACuts-1);
+                 }//End of B-nearjet loop
+                 if(JetCleanColl.at(j).HadronFlavour()==4){
+                   FillHist("NFakeHasNearCJet", 3., weight, 0., 5., 5);
+                   FillHist("EleSumW_CjMatch_ltIsoltMVA_FR2D", IsoCuts[it_iso-1], MVACuts[it_mva], weight, IsoCuts, NIsoCuts-1, MVACuts, NMVACuts-1);   
+                   if(PassIDCriteria(FakeColl.at(i), "POGMVAMIP")) FillHist("EleIDSumW_CjMatch_ltIsoltMVA_FR2D", IsoCuts[it_iso-1], MVACuts[it_mva], weight, IsoCuts, NIsoCuts-1, MVACuts, NMVACuts-1);
+                 }//End of C-near jet loop
+                 if(JetCleanColl.at(j).HadronFlavour()==0){
+                   FillHist("NFakeHasNearLJet", 4., weight, 0., 5., 5);
+                   FillHist("EleSumW_LjMatch_ltIsoltMVA_FR2D", IsoCuts[it_iso-1], MVACuts[it_mva], weight, IsoCuts, NIsoCuts-1, MVACuts, NMVACuts-1);
+                   if(PassIDCriteria(FakeColl.at(i), "POGMVAMIP")) FillHist("EleIDSumW_LjMatch_ltIsoltMVA_FR2D", IsoCuts[it_iso-1], MVACuts[it_mva], weight, IsoCuts, NIsoCuts-1, MVACuts, NMVACuts-1);
+                 }//End of L-near jet loop
+    
+                 //Barrel1
+                 if(fabs(FakeColl.at(i).Eta())<0.8){
+                   if(JetCleanColl.at(j).HadronFlavour()==5){
+                     FillHist("EleB1SumW_BjMatch_ltIsoltMVA_FR2D", IsoCuts[it_iso-1], MVACuts[it_mva], weight, IsoCuts, NIsoCuts-1, MVACuts, NMVACuts-1);   
+                     if(PassIDCriteria(FakeColl.at(i), "POGMVAMIP")) FillHist("EleB1IDSumW_BjMatch_ltIsoltMVA_FR2D", IsoCuts[it_iso-1], MVACuts[it_mva], weight, IsoCuts, NIsoCuts-1, MVACuts, NMVACuts-1);
+                   }//End of B-nearjet loop
+                   if(JetCleanColl.at(j).HadronFlavour()==4){
+                     FillHist("EleB1SumW_CjMatch_ltIsoltMVA_FR2D", IsoCuts[it_iso-1], MVACuts[it_mva], weight, IsoCuts, NIsoCuts-1, MVACuts, NMVACuts-1);   
+                     if(PassIDCriteria(FakeColl.at(i), "POGMVAMIP")) FillHist("EleB1IDSumW_CjMatch_ltIsoltMVA_FR2D", IsoCuts[it_iso-1], MVACuts[it_mva], weight, IsoCuts, NIsoCuts-1, MVACuts, NMVACuts-1);
+                   }//End of C-near jet loop
+                   if(JetCleanColl.at(j).HadronFlavour()==0){
+                     FillHist("EleB1SumW_LjMatch_ltIsoltMVA_FR2D", IsoCuts[it_iso-1], MVACuts[it_mva], weight, IsoCuts, NIsoCuts-1, MVACuts, NMVACuts-1);   
+                     if(PassIDCriteria(FakeColl.at(i), "POGMVAMIP")) FillHist("EleB1IDSumW_LjMatch_ltIsoltMVA_FR2D", IsoCuts[it_iso-1], MVACuts[it_mva], weight, IsoCuts, NIsoCuts-1, MVACuts, NMVACuts-1);
+                   }//End of L-near jet loop
+                 }
+                 else if(fabs(FakeColl.at(i).Eta())<1.479){//Barrel2
+                   if(JetCleanColl.at(j).HadronFlavour()==5){
+                     FillHist("EleB2SumW_BjMatch_ltIsoltMVA_FR2D", IsoCuts[it_iso-1], MVACuts[it_mva], weight, IsoCuts, NIsoCuts-1, MVACuts, NMVACuts-1);   
+                     if(PassIDCriteria(FakeColl.at(i), "POGMVAMIP")) FillHist("EleB2IDSumW_BjMatch_ltIsoltMVA_FR2D", IsoCuts[it_iso-1], MVACuts[it_mva], weight, IsoCuts, NIsoCuts-1, MVACuts, NMVACuts-1);
+                   }//End of B-nearjet loop
+                   if(JetCleanColl.at(j).HadronFlavour()==4){
+                     FillHist("EleB2SumW_CjMatch_ltIsoltMVA_FR2D", IsoCuts[it_iso-1], MVACuts[it_mva], weight, IsoCuts, NIsoCuts-1, MVACuts, NMVACuts-1);   
+                     if(PassIDCriteria(FakeColl.at(i), "POGMVAMIP")) FillHist("EleB2IDSumW_CjMatch_ltIsoltMVA_FR2D", IsoCuts[it_iso-1], MVACuts[it_mva], weight, IsoCuts, NIsoCuts-1, MVACuts, NMVACuts-1);
+                   }//End of C-near jet loop
+                   if(JetCleanColl.at(j).HadronFlavour()==0){
+                     FillHist("EleB2SumW_LjMatch_ltIsoltMVA_FR2D", IsoCuts[it_iso-1], MVACuts[it_mva], weight, IsoCuts, NIsoCuts-1, MVACuts, NMVACuts-1);   
+                     if(PassIDCriteria(FakeColl.at(i), "POGMVAMIP")) FillHist("EleB2IDSumW_LjMatch_ltIsoltMVA_FR2D", IsoCuts[it_iso-1], MVACuts[it_mva], weight, IsoCuts, NIsoCuts-1, MVACuts, NMVACuts-1);
+                   }//End of L-near jet loop
+                 }
+                 else if(fabs(FakeColl.at(i).Eta())<2.5){//EndCap
+                   if(JetCleanColl.at(j).HadronFlavour()==5){
+                     FillHist("EleESumW_BjMatch_ltIsoltMVA_FR2D", IsoCuts[it_iso-1], MVACuts[it_mva], weight, IsoCuts, NIsoCuts-1, MVACuts, NMVACuts-1);   
+                     if(PassIDCriteria(FakeColl.at(i), "POGMVAMIP")) FillHist("EleEIDSumW_BjMatch_ltIsoltMVA_FR2D", IsoCuts[it_iso-1], MVACuts[it_mva], weight, IsoCuts, NIsoCuts-1, MVACuts, NMVACuts-1);
+                   }//End of B-nearjet loop
+                   if(JetCleanColl.at(j).HadronFlavour()==4){
+                     FillHist("EleESumW_CjMatch_ltIsoltMVA_FR2D", IsoCuts[it_iso-1], MVACuts[it_mva], weight, IsoCuts, NIsoCuts-1, MVACuts, NMVACuts-1);   
+                     if(PassIDCriteria(FakeColl.at(i), "POGMVAMIP")) FillHist("EleEIDSumW_CjMatch_ltIsoltMVA_FR2D", IsoCuts[it_iso-1], MVACuts[it_mva], weight, IsoCuts, NIsoCuts-1, MVACuts, NMVACuts-1);
+                   }//End of C-near jet loop
+                   if(JetCleanColl.at(j).HadronFlavour()==0){
+                     FillHist("EleESumW_LjMatch_ltIsoltMVA_FR2D", IsoCuts[it_iso-1], MVACuts[it_mva], weight, IsoCuts, NIsoCuts-1, MVACuts, NMVACuts-1);   
+                     if(PassIDCriteria(FakeColl.at(i), "POGMVAMIP")) FillHist("EleEIDSumW_LjMatch_ltIsoltMVA_FR2D", IsoCuts[it_iso-1], MVACuts[it_mva], weight, IsoCuts, NIsoCuts-1, MVACuts, NMVACuts-1);
+                   }//End of L-near jet loop
+
+                 }
+               }//End of if Iso<Cut && MVA<Cut
+             }//End of MVACut loop
+           }//End of IsoCut Loop
+
+         }//End of Fake Matched Near Jet
+       }//End of Jet Loop
+     }//End of Fake Lepton Loop 
 
      
 //     for(int i=0; i<FakeColl.size(); i++){
@@ -293,74 +383,102 @@ void Jun2017_MCFakeStudy::ExecuteEvents()throw( LQError ){
      //So Cut values : (Though Need Fine Tune)
      //(0.4  FR) - B1 : -0.2, 0.15 / B2 : -0.1  0.14 / E  : -0.3  0.25
 
-     for(int i=0; i<FakeColl.size(); i++){
-       float PTCorr=ConeCorrectedPT(FakeColl.at(i), 0.1);
-       int FakeSrcType=GetFakeLepSrcType(FakeColl.at(i), JetCleanColl);
-       if(PTCorr<25.) continue;
+
+     for(int i=0; i<FakeLColl.size(); i++){
+       float PTCorr=ConeCorrectedPT(FakeLColl.at(i), 0.1);
+       int FakeSrcType=GetFakeLepSrcType(FakeLColl.at(i), JetCleanColl);
+
+       if(PTCorr<25) continue;
 
        FillHist("FakeSrcType", FakeSrcType, weight, -1., 4., 5);
-       if( fabs(FakeColl.at(i).Eta())<0.8 ){
+       if( fabs(FakeLColl.at(i).Eta())<0.8 ){
          //AllFakes
          FillHist("EleB1SumW_All_PT_FR1D", PTCorr, weight, PtEdges, NPtEdges-1);   
-         if(PassIDCriteria(FakeColl.at(i), "POGMVAMIP")) FillHist("EleB1IDSumW_All_PT_FR1D", PTCorr, weight, PtEdges, NPtEdges-1);
+         if(PassIDCriteria(FakeLColl.at(i), "POGMVAMIP")) FillHist("EleB1IDSumW_All_PT_FR1D", PTCorr, weight, PtEdges, NPtEdges-1);
 
          //PerSources(Only for matched ones)
          if     (FakeSrcType==3){
            FillHist("EleB1SumW_BjMatch_PT_FR1D", PTCorr, weight, PtEdges, NPtEdges-1);   
-           if(PassIDCriteria(FakeColl.at(i), "POGMVAMIP")) FillHist("EleB1IDSumW_BjMatch_PT_FR1D", PTCorr, weight, PtEdges, NPtEdges-1);
+           if(PassIDCriteria(FakeLColl.at(i), "POGMVAMIP")) FillHist("EleB1IDSumW_BjMatch_PT_FR1D", PTCorr, weight, PtEdges, NPtEdges-1);
          }
          else if(FakeSrcType==2){
            FillHist("EleB1SumW_CjMatch_PT_FR1D", PTCorr, weight, PtEdges, NPtEdges-1);   
-           if(PassIDCriteria(FakeColl.at(i), "POGMVAMIP")) FillHist("EleB1IDSumW_CjMatch_PT_FR1D", PTCorr, weight, PtEdges, NPtEdges-1);
+           if(PassIDCriteria(FakeLColl.at(i), "POGMVAMIP")) FillHist("EleB1IDSumW_CjMatch_PT_FR1D", PTCorr, weight, PtEdges, NPtEdges-1);
          }
          else if(FakeSrcType==1){
            FillHist("EleB1SumW_LjMatch_PT_FR1D", PTCorr, weight, PtEdges, NPtEdges-1);   
-           if(PassIDCriteria(FakeColl.at(i), "POGMVAMIP")) FillHist("EleB1IDSumW_LjMatch_PT_FR1D", PTCorr, weight, PtEdges, NPtEdges-1);
+           if(PassIDCriteria(FakeLColl.at(i), "POGMVAMIP")) FillHist("EleB1IDSumW_LjMatch_PT_FR1D", PTCorr, weight, PtEdges, NPtEdges-1);
          }
        }
-       else if( fabs(FakeColl.at(i).Eta())<1.479 ){
+       else if( fabs(FakeLColl.at(i).Eta())<1.479 ){
          //AllFakes
          FillHist("EleB2SumW_All_PT_FR1D", PTCorr, weight, PtEdges, NPtEdges-1);   
-         if(PassIDCriteria(FakeColl.at(i), "POGMVAMIP")) FillHist("EleB2IDSumW_All_PT_FR1D", PTCorr, weight, PtEdges, NPtEdges-1);
+         if(PassIDCriteria(FakeLColl.at(i), "POGMVAMIP")) FillHist("EleB2IDSumW_All_PT_FR1D", PTCorr, weight, PtEdges, NPtEdges-1);
 
          //PerSources(Only for matched ones)
          if     (FakeSrcType==3){
            FillHist("EleB2SumW_BjMatch_PT_FR1D", PTCorr, weight, PtEdges, NPtEdges-1);   
-           if(PassIDCriteria(FakeColl.at(i), "POGMVAMIP")) FillHist("EleB2IDSumW_BjMatch_PT_FR1D", PTCorr, weight, PtEdges, NPtEdges-1);
+           if(PassIDCriteria(FakeLColl.at(i), "POGMVAMIP")) FillHist("EleB2IDSumW_BjMatch_PT_FR1D", PTCorr, weight, PtEdges, NPtEdges-1);
          }
          else if(FakeSrcType==2){
            FillHist("EleB2SumW_CjMatch_PT_FR1D", PTCorr, weight, PtEdges, NPtEdges-1);   
-           if(PassIDCriteria(FakeColl.at(i), "POGMVAMIP")) FillHist("EleB2IDSumW_CjMatch_PT_FR1D", PTCorr, weight, PtEdges, NPtEdges-1);
+           if(PassIDCriteria(FakeLColl.at(i), "POGMVAMIP")) FillHist("EleB2IDSumW_CjMatch_PT_FR1D", PTCorr, weight, PtEdges, NPtEdges-1);
          }
          else if(FakeSrcType==1){
            FillHist("EleB2SumW_LjMatch_PT_FR1D", PTCorr, weight, PtEdges, NPtEdges-1);   
-           if(PassIDCriteria(FakeColl.at(i), "POGMVAMIP")) FillHist("EleB2IDSumW_LjMatch_PT_FR1D", PTCorr, weight, PtEdges, NPtEdges-1);
+           if(PassIDCriteria(FakeLColl.at(i), "POGMVAMIP")) FillHist("EleB2IDSumW_LjMatch_PT_FR1D", PTCorr, weight, PtEdges, NPtEdges-1);
          }
        }
-       else if( fabs(FakeColl.at(i).Eta())<2.5 ){
+       else if( fabs(FakeLColl.at(i).Eta())<2.5 ){
          //AllFakes
          FillHist("EleESumW_All_PT_FR1D", PTCorr, weight, PtEdges, NPtEdges-1);   
-         if(PassIDCriteria(FakeColl.at(i), "POGMVAMIP")) FillHist("EleEIDSumW_All_PT_FR1D", PTCorr, weight, PtEdges, NPtEdges-1);
+         if(PassIDCriteria(FakeLColl.at(i), "POGMVAMIP")) FillHist("EleEIDSumW_All_PT_FR1D", PTCorr, weight, PtEdges, NPtEdges-1);
 
          //PerSources(Only for matched ones)
          if     (FakeSrcType==3){
            FillHist("EleESumW_BjMatch_PT_FR1D", PTCorr, weight, PtEdges, NPtEdges-1);   
-           if(PassIDCriteria(FakeColl.at(i), "POGMVAMIP")) FillHist("EleEIDSumW_BjMatch_PT_FR1D", PTCorr, weight, PtEdges, NPtEdges-1);
+           if(PassIDCriteria(FakeLColl.at(i), "POGMVAMIP")) FillHist("EleEIDSumW_BjMatch_PT_FR1D", PTCorr, weight, PtEdges, NPtEdges-1);
          }
          else if(FakeSrcType==2){
            FillHist("EleESumW_CjMatch_PT_FR1D", PTCorr, weight, PtEdges, NPtEdges-1);   
-           if(PassIDCriteria(FakeColl.at(i), "POGMVAMIP")) FillHist("EleEIDSumW_CjMatch_PT_FR1D", PTCorr, weight, PtEdges, NPtEdges-1);
+           if(PassIDCriteria(FakeLColl.at(i), "POGMVAMIP")) FillHist("EleEIDSumW_CjMatch_PT_FR1D", PTCorr, weight, PtEdges, NPtEdges-1);
          }
          else if(FakeSrcType==1){
            FillHist("EleESumW_LjMatch_PT_FR1D", PTCorr, weight, PtEdges, NPtEdges-1);   
-           if(PassIDCriteria(FakeColl.at(i), "POGMVAMIP")) FillHist("EleEIDSumW_LjMatch_PT_FR1D", PTCorr, weight, PtEdges, NPtEdges-1);
+           if(PassIDCriteria(FakeLColl.at(i), "POGMVAMIP")) FillHist("EleEIDSumW_LjMatch_PT_FR1D", PTCorr, weight, PtEdges, NPtEdges-1);
          }
 
        }
 
      }//End of Fake Lepton Loop 
+
      
    }//End of Ele Fake WP Scan
+   if(FineTune){
+     std::vector<snu::KElectron> FakeColl     = SkimLepColl(electronFakeLPreOptColl, truthColl, "HFake");
+     std::vector<snu::KElectron> FakeLColl    = SkimLepColl(electronFakeLColl, truthColl, "HFake");
+     std::vector<snu::KJet>      JetCleanColl = SkimJetColl(jetColl, truthColl, "NoPrNoTau");
+     float HT=0; for(int i=0; i<JetCleanColl.size(); i++){ HT+=JetCleanColl.at(i).Pt(); }
+
+     //const int NIsoCuts=3, NMVACuts=3;
+     //float IsoCuts[NIsoCuts]={0.3, 0.4, 0.5};
+     //float MVACuts[NMVACuts]={-0.4, -0.2, 0.};
+
+     const int NIsoCuts=11, NMVACuts=21;
+     float IsoCuts[NIsoCuts]={0., 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5};
+     float MVACuts[NMVACuts]={-1., -0.9, -0.8, -0.7, -0.6, -0.5, -0.4, -0.3, -0.2, -0.1, 0., 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.};
+
+     const int NPtEdges=7;
+     float PtEdges[NPtEdges]={0., 25., 35., 50., 70., 100., 200.};
+
+     for(int it_iso=0; it_iso<NIsoCuts; it_iso++){
+       for(int it_mva=0; it_mva<NMVACuts; it_mva++){
+         Draw1DFakePlot(FakeColl, JetCleanColl, MVACuts[it_mva], IsoCuts[it_iso], NPtEdges, PtEdges);
+       }
+     }
+
+
+   }
    if(EleFakeParam){
      std::vector<snu::KElectron> FakeColl     = SkimLepColl(electronFakeLColl, truthColl, "HFake");
      std::vector<snu::KElectron> PromptColl   = SkimLepColl(electronFakeLColl, truthColl, "Prompt");
@@ -419,9 +537,28 @@ void Jun2017_MCFakeStudy::ExecuteEvents()throw( LQError ){
      int NValidEleL = NPromptFake_Ele(electronFakeLColl, truthColl, "EWPromptHFake");
      int NValidMuL  = NPromptFake_Mu(muonHN2FakeLColl, truthColl, "EWPromptHFake");
 
+     //Fake Composition Test
+     for(int i=0; i<electronFakeLColl.size(); i++){
+       int EleType=GetLeptonType(electronFakeLColl.at(i),truthColl);
+       if(EleType>0 && EleType<4) continue;
+       FillHist("EleFakeType", EleType, weight, -10., 10., 20);
+       if(!PassIDCriteria(electronFakeLColl.at(i), "POGMVAMIP")){
+         FillHist("EleFakeType_TfLp", EleType, weight, -10., 10., 20);
+       }
+     }
+     for(int i=0; i<muonHN2FakeLColl.size(); i++){
+       int MuType=GetLeptonType(muonHN2FakeLColl.at(i), truthColl);
+       if(MuType>0 && MuType<4) continue;
+       FillHist("MuFakeType", MuType, weight, -10., 10., 20);
+       if(muonHN2FakeLColl.at(i).RelIso04()>0.1){
+         FillHist("MuFakeType_TfLp", MuType, weight, -10., 10., 20);
+       }
+     }
 
-     if(EMuMuClosure){ if( muonHN2FakeLColl.size()==2 && electronFakeLColl.size()==1) IsCand=true; }
-     if(TriMuClosure){ if( muonHN2FakeLColl.size()==3 && electronFakeLColl.size()==0) IsCand=true; }
+
+     //Use only 3 valid leptons 
+     if(EMuMuClosure){ if( NValidMuL==2 && NValidEleL==1 ) IsCand=true; }
+     if(TriMuClosure){ if( NValidMuL==3 ) IsCand=true; }
        
      if(!IsCand) return;
      
@@ -434,8 +571,9 @@ void Jun2017_MCFakeStudy::ExecuteEvents()throw( LQError ){
      }
      for(int i=0; i<electronFakeLColl.size(); i++){
        if(!PassIDCriteria(electronFakeLColl.at(i), "POGMVAMIP")){
-         float FR=FakeRateMC(electronFakeLColl.at(i), "QCD_EGM");
-         //float FR=FakeRateMC(electronFakeLColl.at(i), "TT_powheg");
+         //float FR=FakeRateMC(electronFakeLColl.at(i), "QCD_EGM");
+         //float FR=FakeRateMC(electronFakeLColl.at(i), "DY");
+         float FR=FakeRateMC(electronFakeLColl.at(i), "TT_powheg");
          fakeweight*=-FR/(1-FR);
        }
      }
@@ -479,7 +617,7 @@ void Jun2017_MCFakeStudy::ExecuteEvents()throw( LQError ){
 
        if(Pass_Trigger){
          weight *= trigger_period_weight;
-         if(muonHN2FakeLColl.size()==2 && electronFakeLColl.size()==1){
+         if(muonHN2FakeLColl.size()==2 && electronFakeLColl.size()==1 ){
            int NStepPassed_exp=StepPassed(muonHN2FakeLColl, electronFakeLColl, jetColl, bjetColl, met, "EMuMu");
            if(NStepPassed_exp>=6) FillHist("NStepPassed_1e2mu_exp", 6., weight*fakeweight, 0., 10., 10);
            if(NStepPassed_exp>=5) FillHist("NStepPassed_1e2mu_exp", 5., weight*fakeweight, 0., 10., 10);
@@ -489,7 +627,7 @@ void Jun2017_MCFakeStudy::ExecuteEvents()throw( LQError ){
            if(NStepPassed_exp>=1) FillHist("NStepPassed_1e2mu_exp", 1., weight*fakeweight, 0., 10., 10);
            if(NStepPassed_exp>=0) FillHist("NStepPassed_1e2mu_exp", 0., weight*fakeweight, 0., 10., 10);
          }
-         if(muonHN2FakeTColl.size()==2 && electronMVAMColl.size()==1 && NValidEleL==1 && NValidMuL==2 ){
+         if(muonHN2FakeTColl.size()==2 && electronMVAMColl.size()==1 ){
            int NStepPassed_obs=StepPassed(muonHN2FakeTColl, electronMVAMColl, jetColl, bjetColl, met, "EMuMu");
            if(NStepPassed_obs>=6) FillHist("NStepPassed_1e2mu_obs", 6., weight, 0., 10., 10);
            if(NStepPassed_obs>=5) FillHist("NStepPassed_1e2mu_obs", 5., weight, 0., 10., 10);
@@ -547,7 +685,45 @@ Jun2017_MCFakeStudy::~Jun2017_MCFakeStudy() {
   
 }
 
-int Jun2017_MCFakeStudy::FakeRateMC(snu::KElectron Ele, TString Option){
+void Jun2017_MCFakeStudy::Draw1DFakePlot(std::vector<snu::KElectron> FakeColl, std::vector<snu::KJet> JetColl, float MVACut, float IsoCut, int NPtEdges, float PtEdges[]){
+
+  std::ostringstream s1,s2;
+  s1<<MVACut; s2<<IsoCut;
+  TString Str_MVACut=s1.str(),    Str_IsoCut=s2.str();
+  Str_MVACut.ReplaceAll(".","p"); Str_IsoCut.ReplaceAll(".","p");
+  Str_MVACut.ReplaceAll("-","m");
+  
+  for(int i=0; i<FakeColl.size(); i++){
+    if(FakeColl.at(i).MVA()<MVACut) continue;
+    if(FakeColl.at(i).PFRelIso(0.3)>IsoCut) continue;
+
+    float PTCorr=ConeCorrectedPT(FakeColl.at(i), 0.1);
+    int FakeSrcType=GetFakeLepSrcType(FakeColl.at(i), JetColl);
+
+    if(PTCorr<25) continue;
+    //AllFakes
+    FillHist("EleSumW_mva"+Str_MVACut+"iso"+Str_IsoCut+"_All_PT_FR1D", PTCorr, weight, PtEdges, NPtEdges-1);   
+    if(PassIDCriteria(FakeColl.at(i), "POGMVAMIP")) FillHist("EleIDSumW_mva"+Str_MVACut+"iso"+Str_IsoCut+"_All_PT_FR1D", PTCorr, weight, PtEdges, NPtEdges-1);
+
+    //PerSources(Only for matched ones)
+    if     (FakeSrcType==3){
+      FillHist("EleSumW_mva"+Str_MVACut+"iso"+Str_IsoCut+"_BjMatch_PT_FR1D", PTCorr, weight, PtEdges, NPtEdges-1);   
+      if(PassIDCriteria(FakeColl.at(i), "POGMVAMIP")) FillHist("EleIDSumW_mva"+Str_MVACut+"iso"+Str_IsoCut+"_BjMatch_PT_FR1D", PTCorr, weight, PtEdges, NPtEdges-1);
+    }
+    else if(FakeSrcType==2){
+      FillHist("EleSumW_mva"+Str_MVACut+"iso"+Str_IsoCut+"_CjMatch_PT_FR1D", PTCorr, weight, PtEdges, NPtEdges-1);   
+      if(PassIDCriteria(FakeColl.at(i), "POGMVAMIP")) FillHist("EleIDSumW_mva"+Str_MVACut+"iso"+Str_IsoCut+"_CjMatch_PT_FR1D", PTCorr, weight, PtEdges, NPtEdges-1);
+    }
+    else if(FakeSrcType==1){
+      FillHist("EleSumW_mva"+Str_MVACut+"iso"+Str_IsoCut+"_LjMatch_PT_FR1D", PTCorr, weight, PtEdges, NPtEdges-1);   
+      if(PassIDCriteria(FakeColl.at(i), "POGMVAMIP")) FillHist("EleIDSumW_mva"+Str_MVACut+"iso"+Str_IsoCut+"_LjMatch_PT_FR1D", PTCorr, weight, PtEdges, NPtEdges-1);
+    }
+  }//End of Fake Lepton Loop 
+
+
+}
+
+float Jun2017_MCFakeStudy::FakeRateMC(snu::KElectron Ele, TString Option){
 
   float FR=0.;
 
@@ -578,26 +754,53 @@ int Jun2017_MCFakeStudy::FakeRateMC(snu::KElectron Ele, TString Option){
   }
   else if(Option=="QCD_EGM"){
     if(fEta<0.8){
-      if(PTCorr<35) FR=0.09618;
+      if(PTCorr<35) FR=0.09618;//@PT10
+      //if(PTCorr<35) FR=0.1636;//@PT25
       else if(PTCorr<50) FR=0.1187;
       else if(PTCorr<70) FR=0.1699;
       else if(PTCorr<100) FR=0.1384;
       else FR=0.1430;
     }
     else if(fEta<1.479){
-      if(PTCorr<35) FR=0.1297;
+      if(PTCorr<35) FR=0.1297;//@PT10
+      //if(PTCorr<35) FR=0.2244;//@PT25
       else if(PTCorr<50) FR=0.1582;
       else if(PTCorr<70) FR=0.158;
       else if(PTCorr<100) FR=0.1148;
       else FR=0.2209;
     }
     else{
-      if(PTCorr<35) FR=0.2479;
+      if(PTCorr<35) FR=0.2479;//@PT10
+      //if(PTCorr<35) FR=0.3798;//@PT25
       else if(PTCorr<50) FR=0.2129;
       else if(PTCorr<70) FR=0.2157;
       else if(PTCorr<100) FR=0.2727;
       else FR=0.2477;
     }
+  }
+  else if(Option=="DY"){
+    if(fEta<0.8){
+      if(PTCorr<35) FR=0.222;//@PT25
+      else if(PTCorr<50) FR=0.215;
+      else if(PTCorr<70) FR=0.183;
+      else if(PTCorr<100) FR=0.219;
+      else FR=0.2143;
+    }
+    else if(fEta<1.479){
+      if(PTCorr<35) FR=0.2266;//@PT25
+      else if(PTCorr<50) FR=0.2278;
+      else if(PTCorr<70) FR=0.2705;
+      else if(PTCorr<100) FR=0.2280;
+      else FR=0.4105;
+    }
+    else{
+      if(PTCorr<35) FR=0.3865;//@PT25
+      else if(PTCorr<50) FR=0.3448;
+      else if(PTCorr<70) FR=0.3467;
+      else if(PTCorr<100) FR=0.3912;
+      else FR=0.3640;
+    }
+
   }
 
   return FR;

@@ -2594,10 +2594,10 @@ void AnalyzerCore::PrintTruth(){
   cout << "=========================================================" << endl;
   cout << "truth size = " << truthColl.size() << endl;
   //cout << "index" << '\t' << "pdgid" << '\t' << "mother" << '\t' << "mother pid" << endl;
-  cout << "index" << '\t' << "pdgid" << '\t' << "mother" << '\t' << "mother pid" << '\t' <<"GenSt"<< endl;
+  cout <<"idx"<<'\t'<<"PID"<<'\t'<<"MIdx"<<'\t'<<"MPID"<<'\t'<<"GenSt"<<'\t'<<"PT"<<'\t'<<"Eta"<<'\t'<<"Phi"<<endl;
   for(int i=2; i<truthColl.size(); i++){
   //  cout << i << '\t' << truthColl.at(i).PdgId() << '\t' << truthColl.at(i).IndexMother() << '\t' << truthColl.at( truthColl.at(i).IndexMother() ).PdgId() << endl;
-    cout << i << '\t' << truthColl.at(i).PdgId() << '\t' << truthColl.at(i).IndexMother() << '\t' << truthColl.at( truthColl.at(i).IndexMother() ).PdgId() << '\t' << truthColl.at(i).GenStatus()<<'\t'<<truthColl.at(i).Pt()<< endl;
+    cout<< i <<'\t'<<truthColl.at(i).PdgId()<<'\t'<<truthColl.at(i).IndexMother()<<'\t'<<truthColl.at( truthColl.at(i).IndexMother() ).PdgId() <<'\t'<< truthColl.at(i).GenStatus()<<'\t'<<truthColl.at(i).Pt()<<'\t'<<truthColl.at(i).Eta()<<'\t'<<truthColl.at(i).Phi()<<endl;
   }
 
 }
@@ -5380,6 +5380,20 @@ bool AnalyzerCore::PassIDCriteria(snu::KElectron Ele, TString ID, TString Option
     if( !(fabs(Ele.dxy())<0.01)      ) PassID=false;
     if( !(fabs(Ele.dz())<0.04)       ) PassID=false;
     if( !(fabs(Ele.dxySig())<3.)     ) PassID=false;
+    if( !(Ele.GsfCtfScPixChargeConsistency()) ) PassID=false;
+  }
+  else if(ID=="HNMVATEST170706"){
+    float fEta=fabs(Ele.SCEta());
+    if     ( fEta<0.8 )  { if( Ele.MVA()<0.9   ) PassID=false; }
+    else if( fEta<1.479 ){ if( Ele.MVA()<0.825 ) PassID=false; }
+    else                 { if( Ele.MVA()<0.93  ) PassID=false; }
+
+    if( !(Ele.IsTrigMVAValid())      ) PassID=false;
+    if( !(Ele.PassesConvVeto())      ) PassID=false;
+    if( !(Ele.PFRelIso(0.3)<0.08)    ) PassID=false;
+    if( !(fabs(Ele.dxy())<0.01)      ) PassID=false;
+    if( !(fabs(Ele.dz())<0.04)       ) PassID=false;
+    if( !(fabs(Ele.dxySig())<4.)     ) PassID=false;
     if( !(Ele.GsfCtfScPixChargeConsistency()) ) PassID=false;
   }
   else return false;

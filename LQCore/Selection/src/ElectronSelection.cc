@@ -668,6 +668,16 @@ bool ElectronSelection::PassID(snu::KElectron el, ID id){
     else if( fabs(el.Eta())<1.479 ){ if( el.MVA()<-0.1 ) pass_selection=false; }
     else if( fabs(el.Eta())<2.5   ){ if( el.MVA()<-0.3 ) pass_selection=false; }
   }
+  else if( id == ELECTRON_HN_MVA_TEST170706 ){
+    if     ( fabs(el.Eta())<0.8   ){ if( el.MVA()<0.9   ) pass_selection=false; }
+    else if( fabs(el.Eta())<1.479 ){ if( el.MVA()<0.825 ) pass_selection=false; }
+    else if( fabs(el.Eta())<2.5   ){ if( el.MVA()<0.93  ) pass_selection=false; }
+  }
+  else if( id == ELECTRON_HN_MVA_TEST170706LOOSE ){
+    if     ( fabs(el.Eta())<0.8   ){ if( el.MVA()<0.   ) pass_selection=false; }
+    else if( fabs(el.Eta())<1.479 ){ if( el.MVA()<0.   ) pass_selection=false; }
+    else if( fabs(el.Eta())<2.5   ){ if( el.MVA()<0.6  ) pass_selection=false; }
+  }
 
   return pass_selection;
 }
