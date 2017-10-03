@@ -186,7 +186,7 @@ void ElectronSelection::Selection(std::vector<KElectron>& leptonColl, TString Op
     // ID cut
     if(apply_ID){
       if     (GetString(k_id).Contains("POG"))             ElectronID = PassID(*el, k_id);
-      else if(GetString(k_id).Contains("HctoWA")) ElectronID = PassID(*el, k_id);
+      else if(GetString(k_id).Contains("HctoWA"))          ElectronID = PassID(*el, k_id);
       else if(GetString(k_id).Contains("ELECTRON_HN_MVA")) ElectronID = PassID(*el, k_id);
       else ElectronID = PassUserID( *el,GetString(k_id) , GetString(k_id), apply_chargeconst, apply_convcut,relIsoBarrel_max,relIsoEndcap_max,dxyBarrel_max,dxyEndcap_max,dzBarrel_max,dzEndcap_max, 999.,999.);
 

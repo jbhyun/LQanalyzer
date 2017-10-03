@@ -2063,7 +2063,7 @@ float Aug2017_TriLepSR::GetFakeWeight(std::vector<snu::KMuon> MuLColl, std::vect
     if(!PassIDCriteria(MuLColl.at(i), MuTID)){
       float FR=0.;
       if(JSTrilepFR){
-        FR=m_datadriven_bkg->GetFakeObj()->getTrilepFakeRate_muon(false, MuLColl.at(i).Pt(), MuLColl.at(i).Eta());
+        //FR=m_datadriven_bkg->GetFakeObj()->getTrilepFakeRate_muon(false, MuLColl.at(i).Pt(), MuLColl.at(i).Eta());
       }
       else{
         FR=FakeRateData(MuLColl.at(i),MuTID.ReplaceAll("Test_","")+"_"+MuLID.ReplaceAll("Test_","")+"_"+FilterInfo+ConeMethod);

@@ -742,7 +742,8 @@ void Jul2017_DataFakeStudy::ExecuteEvents()throw( LQError ){
          for(int i=0; i<muonLooseColl.size(); i++){
            if(muonLooseColl.at(i).RelIso04()>0.1){
            //if(muonLooseColl.at(i).RelIso04()*muonLooseColl.at(i).Pt()/muonLooseColl.at(i).RochPt()>0.1){
-             float FR=m_datadriven_bkg->GetFakeObj()->getTrilepFakeRate_muon(false, muonLooseColl.at(i).Pt(), muonLooseColl.at(i).Eta());
+             float FR=0.;
+             //float FR=m_datadriven_bkg->GetFakeObj()->getTrilepFakeRate_muon(false, muonLooseColl.at(i).Pt(), muonLooseColl.at(i).Eta());
              fakeweight*=-FR/(1-FR);
              NLooseNotTight++;
            }
@@ -1641,7 +1642,8 @@ void Jul2017_DataFakeStudy::DoSystRun(TString Cycle, TString Mode, std::vector<s
       float fakeweight=-1.; int NLooseNotTight=0;
       for(int i=0; i<MuLColl.size(); i++){
         if(MuLColl.at(i).RelIso04()>0.1){
-          float FR=m_datadriven_bkg->GetFakeObj()->getTrilepFakeRate_muon(false, MuLColl.at(i).Pt(), MuLColl.at(i).Eta());
+          //float FR=m_datadriven_bkg->GetFakeObj()->getTrilepFakeRate_muon(false, MuLColl.at(i).Pt(), MuLColl.at(i).Eta());
+          float FR=0.;
           fakeweight*=-FR/(1-FR);
           NLooseNotTight++;
         }

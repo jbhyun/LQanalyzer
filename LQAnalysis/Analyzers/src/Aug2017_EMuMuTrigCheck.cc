@@ -519,7 +519,7 @@ float Aug2017_EMuMuTrigCheck::GetFakeWeight(std::vector<snu::KMuon> MuLColl, std
     if(!PassIDCriteria(MuLColl.at(i), MuTID)){
       float FR=0.;
       if(JSTrilepFR){
-        FR=m_datadriven_bkg->GetFakeObj()->getTrilepFakeRate_muon(false, MuLColl.at(i).Pt(), MuLColl.at(i).Eta());
+//        FR=m_datadriven_bkg->GetFakeObj()->getTrilepFakeRate_muon(false, MuLColl.at(i).Pt(), MuLColl.at(i).Eta());
       }
       fakeweight*=-FR/(1-FR);
       NLooseNotTight++;

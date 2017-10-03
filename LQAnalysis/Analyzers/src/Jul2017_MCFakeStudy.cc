@@ -676,7 +676,7 @@ void Jul2017_MCFakeStudy::ExecuteEvents()throw( LQError ){
 
      bool EMuMuClosure=true, TriMuClosure=true;
      bool IsCand=false;
-     m_datadriven_bkg->GetFakeObj()->SetUseQCDFake(true);
+     //m_datadriven_bkg->GetFakeObj()->SetUseQCDFake(true);
      float fakeweight=-1.;
 
      int NValidEleL   = NPromptFake_Ele(electronFakeLColl, truthColl, "EWPromptHFake");
@@ -721,7 +721,8 @@ void Jul2017_MCFakeStudy::ExecuteEvents()throw( LQError ){
 
      for(int i=0; i<muonHN2FakeLColl.size(); i++){
        if(muonHN2FakeLColl.at(i).RelIso04()>0.1){
-        float FR=m_datadriven_bkg->GetFakeObj()->getTrilepFakeRate_muon(false, muonHN2FakeLColl.at(i).Pt(), muonHN2FakeLColl.at(i).Eta());
+        float FR=0.;
+        //float FR=m_datadriven_bkg->GetFakeObj()->getTrilepFakeRate_muon(false, muonHN2FakeLColl.at(i).Pt(), muonHN2FakeLColl.at(i).Eta());
         fakeweight*=-FR/(1-FR);
        }
      }
@@ -821,7 +822,7 @@ void Jul2017_MCFakeStudy::ExecuteEvents()throw( LQError ){
      //-------------------------------------------------------------------------------------//
 
 
-     if(k_running_nonprompt) m_datadriven_bkg->GetFakeObj()->SetUseQCDFake(true);
+     if(k_running_nonprompt){} //m_datadriven_bkg->GetFakeObj()->SetUseQCDFake(true);
 
      std::vector<snu::KElectron> electronFakeL2Coll;
        for(int i=0; i<electronPreColl.size(); i++){
@@ -852,13 +853,15 @@ void Jul2017_MCFakeStudy::ExecuteEvents()throw( LQError ){
 
      if(muonHN2FakeLColl.at(0).RelIso04()<0.1) NMuT++;
      else {NMuLnT++;
-           float FR=m_datadriven_bkg->GetFakeObj()->getTrilepFakeRate_muon(false, muonHN2FakeLColl.at(0).Pt(), muonHN2FakeLColl.at(0).Eta());
+           float FR=0.;
+           //float FR=m_datadriven_bkg->GetFakeObj()->getTrilepFakeRate_muon(false, muonHN2FakeLColl.at(0).Pt(), muonHN2FakeLColl.at(0).Eta());
            fakeweight*=-FR/(1.-FR);}
 
 
      if(muonHN2FakeLColl.at(1).RelIso04()<0.1) NMuT++;
      else{ NMuLnT++;
-           float FR=m_datadriven_bkg->GetFakeObj()->getTrilepFakeRate_muon(false, muonHN2FakeLColl.at(1).Pt(), muonHN2FakeLColl.at(1).Eta());
+           float FR=0.;
+           //float FR=m_datadriven_bkg->GetFakeObj()->getTrilepFakeRate_muon(false, muonHN2FakeLColl.at(1).Pt(), muonHN2FakeLColl.at(1).Eta());
            fakeweight*=-FR/(1.-FR);}
 
      if( (NEleT+NMuT)==3 ) fakeweight==0;

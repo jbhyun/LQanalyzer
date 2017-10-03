@@ -679,7 +679,7 @@ void Jun2017_MCFakeStudy::ExecuteEvents()throw( LQError ){
 
      bool EMuMuClosure=true, TriMuClosure=true;
      bool IsCand=false;
-     m_datadriven_bkg->GetFakeObj()->SetUseQCDFake(true);
+     //m_datadriven_bkg->GetFakeObj()->SetUseQCDFake(true);
      float fakeweight=-1.;
 
      int NValidEleL = NPromptFake_Ele(electronFakeLColl, truthColl, "EWPromptHFake");
@@ -713,7 +713,8 @@ void Jun2017_MCFakeStudy::ExecuteEvents()throw( LQError ){
 
      for(int i=0; i<muonHN2FakeLColl.size(); i++){
        if(muonHN2FakeLColl.at(i).RelIso04()>0.1){
-        float FR=m_datadriven_bkg->GetFakeObj()->getTrilepFakeRate_muon(false, muonHN2FakeLColl.at(i).Pt(), muonHN2FakeLColl.at(i).Eta());
+ //       float FR=m_datadriven_bkg->GetFakeObj()->getTrilepFakeRate_muon(false, muonHN2FakeLColl.at(i).Pt(), muonHN2FakeLColl.at(i).Eta());
+        float FR=0.;
         fakeweight*=-FR/(1-FR);
        }
      }
@@ -792,7 +793,7 @@ void Jun2017_MCFakeStudy::ExecuteEvents()throw( LQError ){
    if(NewClosureEMuMu){
      bool EMuMuClosure=true, TriMuClosure=true;
      bool IsCand=false;
-     m_datadriven_bkg->GetFakeObj()->SetUseQCDFake(true);
+     //m_datadriven_bkg->GetFakeObj()->SetUseQCDFake(true);
      float fakeweight=-1.;
 
      int NValidEleL = NPromptFake_Ele(electronFakeLColl, truthColl, "EWPromptHFake");
@@ -828,7 +829,8 @@ void Jun2017_MCFakeStudy::ExecuteEvents()throw( LQError ){
 
      for(int i=0; i<muonHN2FakeLColl.size(); i++){
        if(muonHN2FakeLColl.at(i).RelIso04()>0.1){
-        float FR=m_datadriven_bkg->GetFakeObj()->getTrilepFakeRate_muon(false, muonHN2FakeLColl.at(i).Pt(), muonHN2FakeLColl.at(i).Eta());
+        //float FR=m_datadriven_bkg->GetFakeObj()->getTrilepFakeRate_muon(false, muonHN2FakeLColl.at(i).Pt(), muonHN2FakeLColl.at(i).Eta());
+        float FR=0.;
         fakeweight*=-FR/(1-FR);
        }
      }

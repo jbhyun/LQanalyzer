@@ -1471,9 +1471,9 @@ void Aug2017_DataEleFRCalc::CheckTrilepCRs(std::vector<snu::KElectron> EleTColl,
     FillHist("PTmu2_3lOS"+Label, MuTColl.at(1).Pt(), weight, 0., 200., 40);
     FillHist("Etamu1_3lOS"+Label, MuTColl.at(0).Eta(), weight, -5., 5., 20);
     FillHist("Etamu2_3lOS"+Label, MuTColl.at(1).Eta(), weight, -5., 5., 20);
-    FillHist("dRemu1_3lOS"+Label, MuTColl.at(0).DeltaR(EleTColl.at(0)), 0., 5., 50);
-    FillHist("dRemu2_3lOS"+Label, MuTColl.at(1).DeltaR(EleTColl.at(0)), 0., 5., 50);
-    FillHist("dRmu1mu2_3lOS"+Label, MuTColl.at(0).DeltaR(MuTColl.at(1)), 0., 5., 50);
+    FillHist("dRemu1_3lOS"+Label, MuTColl.at(0).DeltaR(EleTColl.at(0)), weight, 0., 5., 50);
+    FillHist("dRemu2_3lOS"+Label, MuTColl.at(1).DeltaR(EleTColl.at(0)), weight, 0., 5., 50);
+    FillHist("dRmu1mu2_3lOS"+Label, MuTColl.at(0).DeltaR(MuTColl.at(1)), weight, 0., 5., 50);
   
     FillHist("Mmumu_3lOS"+Label, Mmumu, weight, 0., 200., 40);
     FillHist("M3l_3lOS"+Label, (EleTColl.at(0)+MuTColl.at(0)+MuTColl.at(1)).M(), weight, 0., 500., 100);
@@ -1551,9 +1551,9 @@ void Aug2017_DataEleFRCalc::CheckTrilepCRs(std::vector<snu::KElectron> EleTColl,
     FillHist("PTmu2_ttZSel"+Label, MuTColl.at(1).Pt(), weight, 0., 200., 40);
     FillHist("Etamu1_ttZSel"+Label, MuTColl.at(0).Eta(), weight, -5., 5., 20);
     FillHist("Etamu2_ttZSel"+Label, MuTColl.at(1).Eta(), weight, -5., 5., 20);
-    FillHist("dRemu1_ttZSel"+Label, MuTColl.at(0).DeltaR(EleTColl.at(0)), 0., 5., 50);
-    FillHist("dRemu2_ttZSel"+Label, MuTColl.at(1).DeltaR(EleTColl.at(0)), 0., 5., 50);
-    FillHist("dRmu1mu2_ttZSel"+Label, MuTColl.at(0).DeltaR(MuTColl.at(1)), 0., 5., 50);
+    FillHist("dRemu1_ttZSel"+Label, MuTColl.at(0).DeltaR(EleTColl.at(0)), weight, 0., 5., 50);
+    FillHist("dRemu2_ttZSel"+Label, MuTColl.at(1).DeltaR(EleTColl.at(0)), weight, 0., 5., 50);
+    FillHist("dRmu1mu2_ttZSel"+Label, MuTColl.at(0).DeltaR(MuTColl.at(1)), weight, 0., 5., 50);
 
   
     FillHist("Mmumu_ttZSel"+Label, Mmumu, weight, 60., 120., 30);
@@ -1585,9 +1585,9 @@ void Aug2017_DataEleFRCalc::CheckTrilepCRs(std::vector<snu::KElectron> EleTColl,
     FillHist("PTmu2_OffZ"+Label, MuTColl.at(1).Pt(), weight, 0., 200., 40);
     FillHist("Etamu1_OffZ"+Label, MuTColl.at(0).Eta(), weight, -5., 5., 20);
     FillHist("Etamu2_OffZ"+Label, MuTColl.at(1).Eta(), weight, -5., 5., 20);
-    FillHist("dRemu1_OffZ"+Label, MuTColl.at(0).DeltaR(EleTColl.at(0)), 0., 5., 50);
-    FillHist("dRemu2_OffZ"+Label, MuTColl.at(1).DeltaR(EleTColl.at(0)), 0., 5., 50);
-    FillHist("dRmu1mu2_OffZ"+Label, MuTColl.at(0).DeltaR(MuTColl.at(1)), 0., 5., 50);
+    FillHist("dRemu1_OffZ"+Label, MuTColl.at(0).DeltaR(EleTColl.at(0)), weight, 0., 5., 50);
+    FillHist("dRemu2_OffZ"+Label, MuTColl.at(1).DeltaR(EleTColl.at(0)), weight, 0., 5., 50);
+    FillHist("dRmu1mu2_OffZ"+Label, MuTColl.at(0).DeltaR(MuTColl.at(1)), weight, 0., 5., 50);
   
     FillHist("Mmumu_OffZ"+Label, Mmumu, weight, 0., 200., 40);
     FillHist("M3l_OffZ"+Label, (EleTColl.at(0)+MuTColl.at(0)+MuTColl.at(1)).M(), weight, 0., 500., 100);
@@ -1603,9 +1603,9 @@ void Aug2017_DataEleFRCalc::CheckTrilepCRs(std::vector<snu::KElectron> EleTColl,
     FillHist("PTmu2_NoBlt2JOffZ"+Label, MuTColl.at(1).Pt(), weight, 0., 200., 40);
     FillHist("Etamu1_NoBlt2JOffZ"+Label, MuTColl.at(0).Eta(), weight, -5., 5., 20);
     FillHist("Etamu2_NoBlt2JOffZ"+Label, MuTColl.at(1).Eta(), weight, -5., 5., 20);
-    FillHist("dRemu1_NoBlt2JOffZ"+Label, MuTColl.at(0).DeltaR(EleTColl.at(0)), 0., 5., 50);
-    FillHist("dRemu2_NoBlt2JOffZ"+Label, MuTColl.at(1).DeltaR(EleTColl.at(0)), 0., 5., 50);
-    FillHist("dRmu1mu2_NoBlt2JOffZ"+Label, MuTColl.at(0).DeltaR(MuTColl.at(1)), 0., 5., 50);
+    FillHist("dRemu1_NoBlt2JOffZ"+Label, MuTColl.at(0).DeltaR(EleTColl.at(0)), weight, 0., 5., 50);
+    FillHist("dRemu2_NoBlt2JOffZ"+Label, MuTColl.at(1).DeltaR(EleTColl.at(0)), weight, 0., 5., 50);
+    FillHist("dRmu1mu2_NoBlt2JOffZ"+Label, MuTColl.at(0).DeltaR(MuTColl.at(1)), weight, 0., 5., 50);
   
     FillHist("Mmumu_NoBlt2JOffZ"+Label, Mmumu, weight, 0., 200., 40);
     FillHist("M3l_NoBlt2JOffZ"+Label, (EleTColl.at(0)+MuTColl.at(0)+MuTColl.at(1)).M(), weight, 0., 500., 100);
@@ -1621,9 +1621,9 @@ void Aug2017_DataEleFRCalc::CheckTrilepCRs(std::vector<snu::KElectron> EleTColl,
     FillHist("PTmu2_1Blt2JOffZ"+Label, MuTColl.at(1).Pt(), weight, 0., 200., 40);
     FillHist("Etamu1_1Blt2JOffZ"+Label, MuTColl.at(0).Eta(), weight, -5., 5., 20);
     FillHist("Etamu2_1Blt2JOffZ"+Label, MuTColl.at(1).Eta(), weight, -5., 5., 20);
-    FillHist("dRemu1_1Blt2JOffZ"+Label, MuTColl.at(0).DeltaR(EleTColl.at(0)), 0., 5., 50);
-    FillHist("dRemu2_1Blt2JOffZ"+Label, MuTColl.at(1).DeltaR(EleTColl.at(0)), 0., 5., 50);
-    FillHist("dRmu1mu2_1Blt2JOffZ"+Label, MuTColl.at(0).DeltaR(MuTColl.at(1)), 0., 5., 50);
+    FillHist("dRemu1_1Blt2JOffZ"+Label, MuTColl.at(0).DeltaR(EleTColl.at(0)), weight, 0., 5., 50);
+    FillHist("dRemu2_1Blt2JOffZ"+Label, MuTColl.at(1).DeltaR(EleTColl.at(0)), weight, 0., 5., 50);
+    FillHist("dRmu1mu2_1Blt2JOffZ"+Label, MuTColl.at(0).DeltaR(MuTColl.at(1)), weight, 0., 5., 50);
   
     FillHist("Mmumu_1Blt2JOffZ"+Label, Mmumu, weight, 0., 200., 40);
     FillHist("M3l_1Blt2JOffZ"+Label, (EleTColl.at(0)+MuTColl.at(0)+MuTColl.at(1)).M(), weight, 0., 500., 100);
@@ -1640,9 +1640,9 @@ void Aug2017_DataEleFRCalc::CheckTrilepCRs(std::vector<snu::KElectron> EleTColl,
     FillHist("PTmu2_ANSBOffZ"+Label, MuTColl.at(1).Pt(), weight, 0., 200., 40);
     FillHist("Etamu1_ANSBOffZ"+Label, MuTColl.at(0).Eta(), weight, -5., 5., 20);
     FillHist("Etamu2_ANSBOffZ"+Label, MuTColl.at(1).Eta(), weight, -5., 5., 20);
-    FillHist("dRemu1_ANSBOffZ"+Label, MuTColl.at(0).DeltaR(EleTColl.at(0)), 0., 5., 50);
-    FillHist("dRemu2_ANSBOffZ"+Label, MuTColl.at(1).DeltaR(EleTColl.at(0)), 0., 5., 50);
-    FillHist("dRmu1mu2_ANSBOffZ"+Label, MuTColl.at(0).DeltaR(MuTColl.at(1)), 0., 5., 50);
+    FillHist("dRemu1_ANSBOffZ"+Label, MuTColl.at(0).DeltaR(EleTColl.at(0)), weight, 0., 5., 50);
+    FillHist("dRemu2_ANSBOffZ"+Label, MuTColl.at(1).DeltaR(EleTColl.at(0)), weight, 0., 5., 50);
+    FillHist("dRmu1mu2_ANSBOffZ"+Label, MuTColl.at(0).DeltaR(MuTColl.at(1)), weight, 0., 5., 50);
   
     FillHist("Mmumu_ANSBOffZ"+Label, Mmumu, weight, 0., 200., 40);
     FillHist("M3l_ANSBOffZ"+Label, (EleTColl.at(0)+MuTColl.at(0)+MuTColl.at(1)).M(), weight, 0., 500., 100);
@@ -1659,9 +1659,9 @@ void Aug2017_DataEleFRCalc::CheckTrilepCRs(std::vector<snu::KElectron> EleTColl,
       FillHist("PTmu2_SRincl"+Label, MuTColl.at(1).Pt(), weight, 0., 200., 40);
       FillHist("Etamu1_SRincl"+Label, MuTColl.at(0).Eta(), weight, -5., 5., 20);
       FillHist("Etamu2_SRincl"+Label, MuTColl.at(1).Eta(), weight, -5., 5., 20);
-      FillHist("dRemu1_SRincl"+Label, MuTColl.at(0).DeltaR(EleTColl.at(0)), 0., 5., 50);
-      FillHist("dRemu2_SRincl"+Label, MuTColl.at(1).DeltaR(EleTColl.at(0)), 0., 5., 50);
-      FillHist("dRmu1mu2_SRincl"+Label, MuTColl.at(0).DeltaR(MuTColl.at(1)), 0., 5., 50);
+      FillHist("dRemu1_SRincl"+Label, MuTColl.at(0).DeltaR(EleTColl.at(0)), weight, 0., 5., 50);
+      FillHist("dRemu2_SRincl"+Label, MuTColl.at(1).DeltaR(EleTColl.at(0)), weight, 0., 5., 50);
+      FillHist("dRmu1mu2_SRincl"+Label, MuTColl.at(0).DeltaR(MuTColl.at(1)), weight, 0., 5., 50);
     
       FillHist("Mmumu_SRincl"+Label, Mmumu, weight, 0., 200., 40);
       FillHist("M3l_SRincl"+Label, (EleTColl.at(0)+MuTColl.at(0)+MuTColl.at(1)).M(), weight, 0., 500., 100);
@@ -1677,9 +1677,9 @@ void Aug2017_DataEleFRCalc::CheckTrilepCRs(std::vector<snu::KElectron> EleTColl,
       FillHist("PTmu2_SR2j"+Label, MuTColl.at(1).Pt(), weight, 0., 200., 40);
       FillHist("Etamu1_SR2j"+Label, MuTColl.at(0).Eta(), weight, -5., 5., 20);
       FillHist("Etamu2_SR2j"+Label, MuTColl.at(1).Eta(), weight, -5., 5., 20);
-      FillHist("dRemu1_SR2j"+Label, MuTColl.at(0).DeltaR(EleTColl.at(0)), 0., 5., 50);
-      FillHist("dRemu2_SR2j"+Label, MuTColl.at(1).DeltaR(EleTColl.at(0)), 0., 5., 50);
-      FillHist("dRmu1mu2_SR2j"+Label, MuTColl.at(0).DeltaR(MuTColl.at(1)), 0., 5., 50);
+      FillHist("dRemu1_SR2j"+Label, MuTColl.at(0).DeltaR(EleTColl.at(0)), weight, 0., 5., 50);
+      FillHist("dRemu2_SR2j"+Label, MuTColl.at(1).DeltaR(EleTColl.at(0)), weight, 0., 5., 50);
+      FillHist("dRmu1mu2_SR2j"+Label, MuTColl.at(0).DeltaR(MuTColl.at(1)), weight, 0., 5., 50);
     
       FillHist("Mmumu_SR2j"+Label, Mmumu, weight, 0., 200., 40);
       FillHist("M3l_SR2j"+Label, (EleTColl.at(0)+MuTColl.at(0)+MuTColl.at(1)).M(), weight, 0., 500., 100);
@@ -1697,9 +1697,9 @@ void Aug2017_DataEleFRCalc::CheckTrilepCRs(std::vector<snu::KElectron> EleTColl,
       FillHist("PTmu2_SR3j"+Label, MuTColl.at(1).Pt(), weight, 0., 200., 40);
       FillHist("Etamu1_SR3j"+Label, MuTColl.at(0).Eta(), weight, -5., 5., 20);
       FillHist("Etamu2_SR3j"+Label, MuTColl.at(1).Eta(), weight, -5., 5., 20);
-      FillHist("dRemu1_SR3j"+Label, MuTColl.at(0).DeltaR(EleTColl.at(0)), 0., 5., 50);
-      FillHist("dRemu2_SR3j"+Label, MuTColl.at(1).DeltaR(EleTColl.at(0)), 0., 5., 50);
-      FillHist("dRmu1mu2_SR3j"+Label, MuTColl.at(0).DeltaR(MuTColl.at(1)), 0., 5., 50);
+      FillHist("dRemu1_SR3j"+Label, MuTColl.at(0).DeltaR(EleTColl.at(0)), weight, 0., 5., 50);
+      FillHist("dRemu2_SR3j"+Label, MuTColl.at(1).DeltaR(EleTColl.at(0)), weight, 0., 5., 50);
+      FillHist("dRmu1mu2_SR3j"+Label, MuTColl.at(0).DeltaR(MuTColl.at(1)), weight, 0., 5., 50);
     
       FillHist("Mmumu_SR3j"+Label, Mmumu, weight, 0., 200., 40);
       FillHist("M3l_SR3j"+Label, (EleTColl.at(0)+MuTColl.at(0)+MuTColl.at(1)).M(), weight, 0., 500., 100);
@@ -1847,7 +1847,7 @@ float Aug2017_DataEleFRCalc::GetFakeWeight(std::vector<snu::KMuon> MuLColl, std:
     if(!PassIDCriteria(MuLColl.at(i), MuTID)){
       float FR=0.;
       if(JSTrilepFR){
-        FR=m_datadriven_bkg->GetFakeObj()->getTrilepFakeRate_muon(false, MuLColl.at(i).Pt(), MuLColl.at(i).Eta());
+//        FR=m_datadriven_bkg->GetFakeObj()->getTrilepFakeRate_muon(false, MuLColl.at(i).Pt(), MuLColl.at(i).Eta());
       }
       else{
         FR=FakeRateData(MuLColl.at(i),MuTID.ReplaceAll("Test_","")+"_"+MuLID.ReplaceAll("Test_","")+"_"+FilterInfo+ConeMethod);
