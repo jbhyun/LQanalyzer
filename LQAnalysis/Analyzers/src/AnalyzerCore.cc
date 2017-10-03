@@ -1264,8 +1264,12 @@ std::map<TString,BTagSFUtil*> AnalyzerCore::SetupBTagger(std::vector<TString> ta
   for(std::vector<TString>::const_iterator it = taggers.begin(); it != taggers.end(); it++){
     for(std::vector<TString>::const_iterator it2 = wps.begin(); it2 != wps.end(); it2++){
       if (it->Contains("CSVv2")){
-	tmpmap[*it + "_" + *it2 + "_lf"]= new BTagSFUtil("incl", (*it + "_BtoF").Data(), (*it + "_GtoH").Data(),  it2->Data());
-	tmpmap[*it +  "_" + *it2 + "_hf"]= new BTagSFUtil("mujets", (*it + "_BtoF").Data(),  (*it + "_GtoH").Data(), it2->Data());
+	tmpmap[*it + "_" + *it2 + "_lf"]          = new BTagSFUtil("incl"  , (*it + "_BtoF").Data(), (*it + "_GtoH").Data(), it2->Data());
+	tmpmap[*it + "_" + *it2 + "_hf"]          = new BTagSFUtil("mujets", (*it + "_BtoF").Data(), (*it + "_GtoH").Data(), it2->Data());
+	tmpmap[*it + "_" + *it2 + "_lf_systup"]   = new BTagSFUtil("incl"  , (*it + "_BtoF").Data(), (*it + "_GtoH").Data(), it2->Data(),  3);
+	tmpmap[*it + "_" + *it2 + "_hf_systup"]   = new BTagSFUtil("mujets", (*it + "_BtoF").Data(), (*it + "_GtoH").Data(), it2->Data(),  1);
+	tmpmap[*it + "_" + *it2 + "_lf_systdown"] = new BTagSFUtil("incl"  , (*it + "_BtoF").Data(), (*it + "_GtoH").Data(), it2->Data(), -3);
+	tmpmap[*it + "_" + *it2 + "_hf_systdown"] = new BTagSFUtil("mujets", (*it + "_BtoF").Data(), (*it + "_GtoH").Data(), it2->Data(), -1);
 	// tmpmap[*it +  "_" + *it2 + "_hfcomb"]= new BTagSFUtil("comb", it->Data(), it2->Data());                /// SWITCH ON IF USER NEEDS THIS METHOD  
 	// tmpmap[*it +  "_" + *it2 + "iterativefit"]= new BTagSFUtil("iterativefit", it->Data(), it2->Data());   /// SWITCH ON IF USER NEEDS THIS METHOD
       }
@@ -2683,10 +2687,10 @@ void AnalyzerCore::PrintTruth(){
   cout << "=========================================================" << endl;
   cout << "truth size = " << truthColl.size() << endl;
   //cout << "index" << '\t' << "pdgid" << '\t' << "mother" << '\t' << "mother pid" << endl;
-  cout <<"idx"<<'\t'<<"PID"<<'\t'<<"MIdx"<<'\t'<<"MPID"<<'\t'<<"GenSt"<<'\t'<<"PT"<<'\t'<<"Eta"<<'\t'<<"Phi"<<endl;
+  cout<<"Idx"<<'\t'<<"PID"<<'\t'<<"MIdx"<<'\t'<<"MPID"<<'\t'<<"GenSt"<<'\t'<<"pt"<<'\t'<<"eta"<<'\t'<<"phi"<<endl;
   for(int i=2; i<truthColl.size(); i++){
-  //  cout << i << '\t' << truthColl.at(i).PdgId() << '\t' << truthColl.at(i).IndexMother() << '\t' << truthColl.at( truthColl.at(i).IndexMother() ).PdgId() << endl;
-    cout<< i <<'\t'<<truthColl.at(i).PdgId()<<'\t'<<truthColl.at(i).IndexMother()<<'\t'<<truthColl.at( truthColl.at(i).IndexMother() ).PdgId() <<'\t'<< truthColl.at(i).GenStatus()<<'\t'<<truthColl.at(i).Pt()<<'\t'<<truthColl.at(i).Eta()<<'\t'<<truthColl.at(i).Phi()<<endl;
+    //cout << i << '\t' << truthColl.at(i).PdgId() << '\t' << truthColl.at(i).IndexMother() << '\t' << truthColl.at( truthColl.at(i).IndexMother() ).PdgId() << endl;
+    cout<<i<<'\t'<<truthColl.at(i).PdgId()<<'\t'<<truthColl.at(i).IndexMother()<<'\t'<<truthColl.at(truthColl.at(i).IndexMother()).PdgId()<<'\t'<<truthColl.at(i).GenStatus()<<'\t'<<truthColl.at(i).Pt()<<'\t'<<truthColl.at(i).Eta()<<'\t'<<truthColl.at(i).Phi()<<endl;
   }
 
 }
@@ -3635,7 +3639,7 @@ bool AnalyzerCore::IsBTagged(snu::KJet jet,  KJet::Tagger tag, KJet::WORKING_POI
 }
 
 
-float AnalyzerCore::BTagScaleFactor_1a(std::vector<snu::KJet> jetColl, KJet::Tagger tag, KJet::WORKING_POINT wp, int mcperiod){
+float AnalyzerCore::BTagScaleFactor_1a(std::vector<snu::KJet> jetColl, KJet::Tagger tag, KJet::WORKING_POINT wp, int mcperiod, TString Option){
 
   //BTag SF from 1a method.
   //This is coded for H+->WA analysis. I'm fine with anybody else using this function, but be aware that HN analyses decided to use 2a method.
@@ -3658,8 +3662,20 @@ float AnalyzerCore::BTagScaleFactor_1a(std::vector<snu::KJet> jetColl, KJet::Tag
   if(tag== snu::KJet::CSVv2)  tag_string ="CSVv2Moriond17_2017_1_26";
   if(tag== snu::KJet::cMVAv2) tag_string ="cMVAv2Moriond17_2017_1_26";
 
-  btag_key_lf = tag_string+"_"+wp_string+"_lf";
-  btag_key_hf = tag_string+"_"+wp_string+"_hf";
+  TString Str_SystDir_L="", Str_SystDir_BC="";
+  if(Option.Contains("Syst")){
+    if(Option.Contains("Up")){
+      if     (Option.Contains("LTag"))  Str_SystDir_L ="_systup";
+      else if(Option.Contains("BCTag")) Str_SystDir_BC="_systup";
+    }
+    else if(Option.Contains("Down")){
+      if     (Option.Contains("LTag"))  Str_SystDir_L ="_systdown";
+      else if(Option.Contains("BCTag")) Str_SystDir_BC="_systdown";
+    }
+  }
+
+  btag_key_lf = tag_string+"_"+wp_string+"_lf"+Str_SystDir_L;
+  btag_key_hf = tag_string+"_"+wp_string+"_hf"+Str_SystDir_BC;
   std::map<TString,BTagSFUtil*>::iterator it_lf = MapBTagSF.find(btag_key_lf);
   std::map<TString,BTagSFUtil*>::iterator it_hf = MapBTagSF.find(btag_key_hf);
 
@@ -3697,7 +3713,6 @@ float AnalyzerCore::BTagScaleFactor_1a(std::vector<snu::KJet> jetColl, KJet::Tag
   return BTagSF;
 
 }
-
 
 
 double AnalyzerCore::MuonDYMassCorrection(std::vector<snu::KMuon> mu, double w){
@@ -4164,6 +4179,308 @@ int AnalyzerCore::GetLeptonType(int TruthIdx, std::vector<snu::KTruth>& TruthCol
   int LastSelfMIdx    = LastSelfMotherIdx(MotherIdx,TruthColl);
   int GrMotherIdx     = FirstNonSelfMotherIdx(MotherIdx,TruthColl);
   int LastSelfGrMIdx  = LastSelfMotherIdx(GrMotherIdx,TruthColl);
+
+  int MPID=0, GrMPID=0;
+  int Status_orig=0, MStatus_orig=0, MStatus_last=0, GrMStatus_orig=0, GrMStatus_last=0;
+  bool HadronicOrigin = false;
+    if(    TruthIdx!=-1   ){ Status_orig    = TruthColl.at(LastSelfIdx).GenStatus();
+                             HadronicOrigin = HasHadronicAncestor(TruthIdx, TruthColl);
+                           }                           
+    if(   MotherIdx!=-1   ){ MPID         = TruthColl.at(MotherIdx).PdgId();
+                             MStatus_orig = TruthColl.at(LastSelfMIdx).GenStatus();
+                             MStatus_last = TruthColl.at(MotherIdx).GenStatus();
+                           }
+    if(  GrMotherIdx!=-1  ){ GrMPID         = TruthColl.at(GrMotherIdx).PdgId();
+                             GrMStatus_orig = TruthColl.at(LastSelfGrMIdx).GenStatus();
+                             GrMStatus_last = TruthColl.at(GrMotherIdx).GenStatus();
+                           }
+ 
+  if     ( TruthIdx==-1 )                                       LeptonType= 0;
+  else if( Status_orig>20 && Status_orig<30 )                   LeptonType= 1;//1)
+  else if( fabs(MPID)==23 || fabs(MPID)==24 || fabs(MPID)==25 ) LeptonType= 1;
+  else if( fabs(MPID)==36 || fabs(MPID)==32 )                   LeptonType= 2;
+  else if( fabs(MPID)>50 )                                      LeptonType=-2;
+  else if( fabs(MPID)==15 && MStatus_last==2 ){
+           if     ( fabs(GrMPID)==23 || fabs(GrMPID)==24 || fabs(GrMPID)==25 ) LeptonType= 3;
+           else if( MStatus_orig>20  && MStatus_orig<30  )                     LeptonType= 3;//1)
+           else if( HadronicOrigin )                                           LeptonType=-3;//2-a)
+           else if( fabs(GrMPID)==22  && GrMStatus_orig>20 && GrMStatus_orig<30 )                     LeptonType= 5;//2-b)
+           else if( fabs(GrMPID)==22 )                                                                LeptonType= 4;//2-c)
+           else if( (fabs(GrMPID)==11 || fabs(GrMPID)==13 || fabs(GrMPID)==15) && GrMStatus_last!=2 ) LeptonType= 4;//2-d)
+           else                                                                                       LeptonType= 0;
+         }
+  else if( fabs(MPID)==22 ){
+           if( MStatus_orig>20 && MStatus_orig<30 )                            LeptonType= 5;//3-a)
+           else if( HadronicOrigin )                                           LeptonType=-4;//3-b)
+           else if( fabs(GrMPID)==24 || fabs(GrMPID)==23 || fabs(GrMPID)==6  ) LeptonType= 4;//3-c)
+           else if( fabs(GrMPID)==11 || fabs(GrMPID)==13 || fabs(GrMPID)==15 ) LeptonType= 4;//3-d)
+           else                                                                LeptonType= 0;
+         }
+  else if( (fabs(MPID)==11 || fabs(MPID)==13 || fabs(MPID)==15) && MStatus_last!=2 && !HadronicOrigin ) LeptonType= 4;//4-a)
+  else if( ((fabs(MPID)>=1 && fabs(MPID)<=5) || fabs(MPID)==21) && MStatus_last!=2 )                    LeptonType=-4;//4-b)
+  else if( fabs(MPID)==6 ) LeptonType=4;//4-c)
+  else LeptonType=0;
+
+
+  return LeptonType;
+
+//**footnote
+//These are based on observation in DY,ZG,TT sample(DY,ZG:amcnlo+pythia, TT:powheg+pythia) for other PS generator, convention may differ.
+//1) In amcnlo generator, output of ME level generation does not have specific guage field mother. e.g. u u~ > l+ l- -> fabs(MID)=1
+//   This perhaps due to multiple field can interplay in production, and apparently it is not possible to distinguish them in any logic.
+//   e.g. think about previous example. you cannot say whether this is from gamma or Z or H...
+//   But in PS procedure, corrections on ME proc is done sometimes. In that case it seems mother is set Z for OS ll prod. W for lnu prod.
+//   e.g. If pythia applies ISR process on input u u~, than it should affect momentum of all the consequent processes, or in case of lnu, W radiating gamma can be added.
+//   You may think lnu case is obvious, but it may not like in case of pp > lllnu(You never know which one is from W>lnu and Z>ll)
+//2-a) e.g. a)Had > ta+X, ta>l+2nu b) q>ta+X in jet fragmentation (ta is not hardscattered, since it is already considered prev. step)
+//2-b) e.g. gamma>ta(+)+ta(-)+X, ta>lnu (St=2)
+//2-c) e.g. " " " " " " " " " " " " " " " " " ", but soft gamma case. this is not observed in test sample but put here just in case.
+//          (Non hadronic origin since such case already counted before, gamma should be from non-hadronic source)
+//2-d) e.g. l>tata..+l.. , ta>l+2nu (Implicit tau conv. from non-hadronic lepton and decay) In implicit conv. GenStatus!=2
+//3-a) e.g. hard gamma>ll
+//3-b) e.g. a) Had>gamma+X, gamma>ll+X (in PS+Had stage intermediate process is omitted you see just Had>Nphoton+Mhadrons+..)
+//          b) q>gamma+q, gamms>ll+X in jet fragmentation or radiations of tops.
+//          c) gluon>Ngamma+Mhadrons in jet fragmentation (Actually observed in samples)
+//3-c) e.g. W+>W+ gamma, or t>t+gamma, gamma>ll+X, not yet observed in test sample but possible (upto radiation is observed so far)
+//3-d) e.g. ta>ta+gamma, gamma>ll+X, tau not from hadron(e.g. pp>tata)
+//4-a) e.g. EW lep l, l>lll... just implicit conversion. 
+//4-b) e.g. q or g> Nlepton +MHadrons... in parton shower history
+//4-c) e.g. t>t+ll.. implicit conversion
+}
+
+
+int AnalyzerCore::GetLeptonType(snu::KElectron El, std::vector<snu::KTruth>& TruthColl, TString Option){
+//Type : 1:EWPrompt  /  2:Signal Daughter /  3:EWtau daughter / 4:Internal Conversion daughter from t/EWV/EWlep(Implicit,Explicit) / 5:Internal Conversion daughter from HardScatterPhoton
+//      -1:Unmatched & not EW Conversion candidate / -2:Hadron daughter / -3:Daughter of tau from hadron or parton / -4:Internal conversion daughter(implicit,explicit) having hadronic origin / -5:External conversion candidate(Hard scattered photon) / -6:External conversion from t/EWV/EWlep
+//      (-4:Daughter of Non-hard scattered photon & has parton or hadron ancestor OR implicit Conv from quark)
+//       0:Error / >0: Non-fake: Non-hadronic origin / <0 : Fakes: Hadronic origin or external conversion
+
+  int LeptonType=0;
+  int MatchedTruthIdx = GenMatchedIdx(El,TruthColl);
+  int LastSelfIdx     = LastSelfMotherIdx(MatchedTruthIdx,TruthColl);
+  int MotherIdx       = FirstNonSelfMotherIdx(MatchedTruthIdx,TruthColl);
+  int LastSelfMIdx    = LastSelfMotherIdx(MotherIdx,TruthColl);
+  int GrMotherIdx     = FirstNonSelfMotherIdx(MotherIdx,TruthColl);
+  int LastSelfGrMIdx  = LastSelfMotherIdx(GrMotherIdx,TruthColl);
+
+  int NearPhotonType=0, NearPhotonIdx=-1;
+  int MPID=0, GrMPID=0;
+  int Status_orig=0, MStatus_orig=0, MStatus_last=0, GrMStatus_orig=0, GrMStatus_last=0;
+  bool HadronicOrigin = false;
+    if(MatchedTruthIdx!=-1){ Status_orig    = TruthColl.at(LastSelfIdx).GenStatus();
+                             HadronicOrigin = HasHadronicAncestor(MatchedTruthIdx, TruthColl);
+                           }
+    else                   { NearPhotonIdx  = GetNearPhotonIdx(El, TruthColl);
+                             NearPhotonType = GetPhotonType(NearPhotonIdx, TruthColl);
+                           }
+    if(   MotherIdx!=-1   ){ MPID         = TruthColl.at(MotherIdx).PdgId();
+                             MStatus_orig = TruthColl.at(LastSelfMIdx).GenStatus();
+                             MStatus_last = TruthColl.at(MotherIdx).GenStatus();
+                           }
+    if(  GrMotherIdx!=-1  ){ GrMPID         = TruthColl.at(GrMotherIdx).PdgId();
+                             GrMStatus_orig = TruthColl.at(LastSelfGrMIdx).GenStatus();
+                             GrMStatus_last = TruthColl.at(GrMotherIdx).GenStatus();
+                           }
+
+  if     ( Status_orig>20 && Status_orig<30 )                   LeptonType= 1;//1)
+  else if( fabs(MPID)==23 || fabs(MPID)==24 || fabs(MPID)==25 ) LeptonType= 1;
+  else if( fabs(MPID)==36 || fabs(MPID)==32 )                   LeptonType= 2;
+  else if( fabs(MPID)>50 )                                      LeptonType=-2;
+  else if( fabs(MPID)==15 && MStatus_last==2 ){
+           if     ( fabs(GrMPID)==23 || fabs(GrMPID)==24 || fabs(GrMPID)==25 ) LeptonType= 3;
+           else if( MStatus_orig>20  && MStatus_orig<30  )                     LeptonType= 3;//1)
+           else if( HadronicOrigin )                                           LeptonType=-3;//2-a)
+           else if( fabs(GrMPID)==22  && GrMStatus_orig>20 && GrMStatus_orig<30 )                     LeptonType= 5;//2-b)
+           else if( fabs(GrMPID)==22 )                                                                LeptonType= 4;//2-c)
+           else if( (fabs(GrMPID)==11 || fabs(GrMPID)==13 || fabs(GrMPID)==15) && GrMStatus_last!=2 ) LeptonType= 4;//2-d)
+           else                                                                                       LeptonType= 0;
+         }
+  else if( fabs(MPID)==22 ){
+           if( MStatus_orig>20 && MStatus_orig<30 )                            LeptonType= 5;//3-a)
+           else if( HadronicOrigin )                                           LeptonType=-4;//3-b)
+           else if( fabs(GrMPID)==24 || fabs(GrMPID)==23 || fabs(GrMPID)==6  ) LeptonType= 4;//3-c)
+           else if( fabs(GrMPID)==11 || fabs(GrMPID)==13 || fabs(GrMPID)==15 ) LeptonType= 4;//3-d)
+           else                                                                LeptonType= 0;
+         }
+  else if( MatchedTruthIdx==-1 ){
+           if     ( NearPhotonType<=0 ) LeptonType=-1;
+           else if( NearPhotonType==1 ) LeptonType=-5;
+           else if( NearPhotonType==2 ) LeptonType=-6;
+         }
+  else if( (fabs(MPID)==11 || fabs(MPID)==13 || fabs(MPID)==15) && MStatus_last!=2 && !HadronicOrigin ) LeptonType= 4;//4-a)
+  else if( ((fabs(MPID)>=1 && fabs(MPID)<=5) || fabs(MPID)==21) && MStatus_last!=2 )                    LeptonType=-4;//4-b)
+  else if( fabs(MPID)==6 ) LeptonType=4;//4-c)
+  else LeptonType=0;
+
+ 
+  return LeptonType;
+
+//**footnote
+//These are based on observation in DY,ZG,TT sample(DY,ZG:amcnlo+pythia, TT:powheg+pythia) for other PS generator, convention may differ.
+//1) In amcnlo generator, output of ME level generation does not have specific guage field mother. e.g. u u~ > l+ l- -> fabs(MID)=1
+//   This perhaps due to multiple field can interplay in production, and apparently it is not possible to distinguish them in any logic.
+//   e.g. think about previous example. you cannot say whether this is from gamma or Z or H...
+//   But in PS procedure, corrections on ME proc is done sometimes. In that case it seems mother is set Z for OS ll prod. W for lnu prod.
+//   e.g. If pythia applies ISR process on input u u~, than it should affect momentum of all the consequent processes, or in case of lnu, W radiating gamma can be added.
+//   You may think lnu case is obvious, but it may not like in case of pp > lllnu(You never know which one is from W>lnu and Z>ll)
+//2-a) e.g. a)Had > ta+X, ta>l+2nu b) q>ta+X in jet fragmentation (ta is not hardscattered, since it is already considered prev. step)
+//2-b) e.g. gamma>ta(+)+ta(-)+X, ta>lnu (St=2)
+//2-c) e.g. " " " " " " " " " " " " " " " " " ", but soft gamma case. this is not observed in test sample but put here just in case.
+//          (Non hadronic origin since such case already counted before, gamma should be from non-hadronic source)
+//2-d) e.g. l>tata..+l.. , ta>l+2nu (Implicit tau conv. from non-hadronic lepton and decay) In implicit conv. GenStatus!=2
+//3-a) e.g. hard gamma>ll
+//3-b) e.g. a) Had>gamma+X, gamma>ll+X (in PS+Had stage intermediate process is omitted you see just Had>Nphoton+Mhadrons+..)
+//          b) q>gamma+q, gamms>ll+X in jet fragmentation or radiations of tops.
+//          c) gluon>Ngamma+Mhadrons in jet fragmentation (Actually observed in samples)
+//3-c) e.g. W+>W+ gamma, or t>t+gamma, gamma>ll+X, not yet observed in test sample but possible (upto radiation is observed so far)
+//3-d) e.g. ta>ta+gamma, gamma>ll+X, tau not from hadron(e.g. pp>tata)
+//4-a) e.g. EW lep l, l>lll... just implicit conversion. 
+//4-b) e.g. q or g> Nlepton +MHadrons... in parton shower history
+//4-c) e.g. t>t+ll.. implicit conversion
+}
+
+
+int AnalyzerCore::GetLeptonType(snu::KMuon Mu, std::vector<snu::KTruth>& TruthColl, TString Option){
+//Type : 1:EWPrompt  /  2:Signal Daughter /  3:EWtau daughter / 4:Internal Conversion daughter from t/EWV/EWlep(Implicit,Explicit) / 5:Internal Conversion daughter from HardScatterPhoton
+//      -1:Unmatched & not EW Conversion candidate / -2:Hadron daughter / -3:Daughter of tau from hadron or parton / -4:Internal conversion daughter(implicit,explicit) having hadronic origin / -5:External conversion candidate(Hard scattered photon) / -6:External conversion from t/EWV/EWlep
+//      (-4:Daughter of Non-hard scattered photon & has parton or hadron ancestor OR implicit Conv from quark)
+//       0:Error / >0: Non-fake: Non-hadronic origin / <0 : Fakes: Hadronic origin or external conversion
+
+  int LeptonType=0;
+  int MatchedTruthIdx = GenMatchedIdx(Mu,TruthColl);
+  int LastSelfIdx     = LastSelfMotherIdx(MatchedTruthIdx,TruthColl);
+  int MotherIdx       = FirstNonSelfMotherIdx(MatchedTruthIdx,TruthColl);
+  int LastSelfMIdx    = LastSelfMotherIdx(MotherIdx,TruthColl);
+  int GrMotherIdx     = FirstNonSelfMotherIdx(MotherIdx,TruthColl);
+  int LastSelfGrMIdx  = LastSelfMotherIdx(GrMotherIdx,TruthColl);
+
+  int NearPhotonType=0, NearPhotonIdx=-1;
+  int MPID=0, GrMPID=0;
+  int Status_orig=0, MStatus_orig=0, MStatus_last=0, GrMStatus_orig=0, GrMStatus_last=0;
+  bool HadronicOrigin = false;
+    if(MatchedTruthIdx!=-1){ Status_orig    = TruthColl.at(LastSelfIdx).GenStatus();
+                             HadronicOrigin = HasHadronicAncestor(MatchedTruthIdx, TruthColl);
+                           }
+    else                   { NearPhotonIdx  = GetNearPhotonIdx(Mu, TruthColl);
+                             NearPhotonType = GetPhotonType(NearPhotonIdx, TruthColl);
+                           }
+    if(   MotherIdx!=-1   ){ MPID         = TruthColl.at(MotherIdx).PdgId();
+                             MStatus_orig = TruthColl.at(LastSelfMIdx).GenStatus();
+                             MStatus_last = TruthColl.at(MotherIdx).GenStatus();
+                           }
+    if(  GrMotherIdx!=-1  ){ GrMPID         = TruthColl.at(GrMotherIdx).PdgId();
+                             GrMStatus_orig = TruthColl.at(LastSelfGrMIdx).GenStatus();
+                             GrMStatus_last = TruthColl.at(GrMotherIdx).GenStatus();
+                           }
+
+  if     ( Status_orig>20 && Status_orig<30 )                   LeptonType= 1;//1)
+  else if( fabs(MPID)==23 || fabs(MPID)==24 || fabs(MPID)==25 ) LeptonType= 1;
+  else if( fabs(MPID)==36 || fabs(MPID)==32 )                   LeptonType= 2;
+  else if( fabs(MPID)>50 )                                      LeptonType=-2;
+  else if( fabs(MPID)==15 && MStatus_last==2 ){
+           if     ( fabs(GrMPID)==23 || fabs(GrMPID)==24 || fabs(GrMPID)==25 ) LeptonType= 3;
+           else if( MStatus_orig>20  && MStatus_orig<30  )                     LeptonType= 3;//1)
+           else if( HadronicOrigin )                                           LeptonType=-3;//2-a)
+           else if( fabs(GrMPID)==22  && GrMStatus_orig>20 && GrMStatus_orig<30 )                     LeptonType= 5;//2-b)
+           else if( fabs(GrMPID)==22 )                                                                LeptonType= 4;//2-c)
+           else if( (fabs(GrMPID)==11 || fabs(GrMPID)==13 || fabs(GrMPID)==15) && GrMStatus_last!=2 ) LeptonType= 4;//2-d)
+           else                                                                                       LeptonType= 0;
+         }
+  else if( fabs(MPID)==22 ){
+           if( MStatus_orig>20 && MStatus_orig<30 )                            LeptonType= 5;//3-a)
+           else if( HadronicOrigin )                                           LeptonType=-4;//3-b)
+           else if( fabs(GrMPID)==24 || fabs(GrMPID)==23 || fabs(GrMPID)==6  ) LeptonType= 4;//3-c)
+           else if( fabs(GrMPID)==11 || fabs(GrMPID)==13 || fabs(GrMPID)==15 ) LeptonType= 4;//3-d)
+           else                                                                LeptonType= 0;
+         }
+  else if( MatchedTruthIdx==-1 ){
+           if     ( NearPhotonType<=0 ) LeptonType=-1;
+           else if( NearPhotonType==1 ) LeptonType=-5;
+           else if( NearPhotonType==2 ) LeptonType=-6;
+         }
+  else if( (fabs(MPID)==11 || fabs(MPID)==13 || fabs(MPID)==15) && MStatus_last!=2 && !HadronicOrigin ) LeptonType= 4;//4-a)
+  else if( ((fabs(MPID)>=1 && fabs(MPID)<=5) || fabs(MPID)==21) && MStatus_last!=2 )                    LeptonType=-4;//4-b)
+  else if( fabs(MPID)==6 ) LeptonType=4;//4-c)
+  else LeptonType=0;
+
+ 
+  return LeptonType;
+
+//**footnote
+//These are based on observation in DY,ZG,TT sample(DY,ZG:amcnlo+pythia, TT:powheg+pythia) for other PS generator, convention may differ.
+//1) In amcnlo generator, output of ME level generation does not have specific guage field mother. e.g. u u~ > l+ l- -> fabs(MID)=1
+//   This perhaps due to multiple field can interplay in production, and apparently it is not possible to distinguish them in any logic.
+//   e.g. think about previous example. you cannot say whether this is from gamma or Z or H...
+//   But in PS procedure, corrections on ME proc is done sometimes. In that case it seems mother is set Z for OS ll prod. W for lnu prod.
+//   e.g. If pythia applies ISR process on input u u~, than it should affect momentum of all the consequent processes, or in case of lnu, W radiating gamma can be added.
+//   You may think lnu case is obvious, but it may not like in case of pp > lllnu(You never know which one is from W>lnu and Z>ll)
+//2-a) e.g. a)Had > ta+X, ta>l+2nu b) q>ta+X in jet fragmentation (ta is not hardscattered, since it is already considered prev. step)
+//2-b) e.g. gamma>ta(+)+ta(-)+X, ta>lnu (St=2)
+//2-c) e.g. " " " " " " " " " " " " " " " " " ", but soft gamma case. this is not observed in test sample but put here just in case.
+//          (Non hadronic origin since such case already counted before, gamma should be from non-hadronic source)
+//2-d) e.g. l>tata..+l.. , ta>l+2nu (Implicit tau conv. from non-hadronic lepton and decay) In implicit conv. GenStatus!=2
+//3-a) e.g. hard gamma>ll
+//3-b) e.g. a) Had>gamma+X, gamma>ll+X (in PS+Had stage intermediate process is omitted you see just Had>Nphoton+Mhadrons+..)
+//          b) q>gamma+q, gamms>ll+X in jet fragmentation or radiations of tops.
+//          c) gluon>Ngamma+Mhadrons in jet fragmentation (Actually observed in samples)
+//3-c) e.g. W+>W+ gamma, or t>t+gamma, gamma>ll+X, not yet observed in test sample but possible (upto radiation is observed so far)
+//3-d) e.g. ta>ta+gamma, gamma>ll+X, tau not from hadron(e.g. pp>tata)
+//4-a) e.g. EW lep l, l>lll... just implicit conversion. 
+//4-b) e.g. q or g> Nlepton +MHadrons... in parton shower history
+//4-c) e.g. t>t+ll.. implicit conversion
+}
+
+
+int AnalyzerCore::GetPhotonType(int PhotonIdx, std::vector<snu::KTruth> TruthColl){
+//Type : 
+// 0: Invalid input or Error or HardScatter is input when hardscatter is not final state
+// 1: HardScatter / 2: Else prompt daughter(l,V,t)
+//-1: Reserved for unmatched(Not used now) / -2: Hadronic origin
+
+  if( PhotonIdx<2 ) return 0;
+  if( !(TruthColl.at(PhotonIdx).PdgId()==22 && (TruthColl.at(PhotonIdx).GenStatus()==1 || TruthColl.at(PhotonIdx).GenStatus()==23)) ) return 0;
+
+  if(TruthColl.at(PhotonIdx).GenStatus()==23){
+    if(IsFinalPhotonSt23(TruthColl)) return 1;
+    else                             return 0;
+  }//From this pt, only St1 Photon is treated.
+
+  int PhotonType=0;
+  int LastSelfIdx    = LastSelfMotherIdx(PhotonIdx,TruthColl);
+  int MotherIdx      = FirstNonSelfMotherIdx(PhotonIdx,TruthColl);
+  int fMPID=0, Status_orig=0;
+  bool HadronicOrigin = false;
+    if( PhotonIdx!=-1 ){ Status_orig    = TruthColl.at(LastSelfIdx).GenStatus();
+                         HadronicOrigin = HasHadronicAncestor(PhotonIdx, TruthColl);
+                       }                           
+    if( MotherIdx!=-1 ){ fMPID          = fabs(TruthColl.at(MotherIdx).PdgId()); }
+
+
+  if     (  Status_orig>20 && Status_orig<30   ) PhotonType= 1;//1)
+  else if(       fMPID==23 || fMPID==25        ) PhotonType= 1;//2)
+  else if( fMPID==24 || fMPID==6  || fMPID==37 ) PhotonType= 2;//3)
+  else if(           HadronicOrigin            ) PhotonType=-2;//4)
+  else if( fMPID==11 || fMPID==13 || fMPID==15 ) PhotonType= 2;//5)
+  else                                           PhotonType= 0;
+  
+  return PhotonType;
+//**footnote
+//1) In case of hard scattered photon, they may have history; GenSt=23>...>GenSt1, And depending on generator, their mother can be explicitly
+//  written in history as Z>GG St2 but sometimes their field mother is not designated for avoiding confusion of gauge symmetry.
+//  e.g. qq>llG instead of qq>Z>llG
+//  To cover all the case, first thing to check is original state of photon is hard scattered or not
+//2) Sometimes, if there is no correction on gamma is applied on PS step, photon's final state is 1 before any history.
+//   e.g. G;St=1, Mother=Z ; cannot find hard scatter Z / in such case only possibility is to check mother.
+//   But in some case, it is not obvious. because in PS step, charged ptls can radiate photons including bosons.
+//   So it is artificial to distinguish hard scattered photon and photon from PS step. And fraction of this case is not negilgible; very frequently observed.
+//3) top and charged bosons radiate photons, and some case the photon is very energetic.
+//4) This category does not include tops. Photons from hadrons and quarks. But predominantly, in most of the cases they are daughter of pi0.
+//   But rarely other mesons as eta, B, or even some quarks can also radiate energetic photons.
+//5) Photons radiated from lepton FSR, but sometimes they radiate quite energetic photons.
+}
+
+//------------------------------------------------------------------------------------------//
+
 
 //Jihwan Bhyun Modification//////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////
@@ -4795,46 +5112,6 @@ int AnalyzerCore::NLeptonicBosonDecay(std::vector<snu::KTruth>& TruthColl){
 }
 
 
-int AnalyzerCore::GenMatchedIdx(snu::KElectron El, std::vector<snu::KTruth>& truthColl){
-  //Find Matched Index within dR01; if ambiguous closest dR one chosen(Resolution way better than dPtRel)
-  //Seed from RecoLepton
-
-  int MatchedIdx=-1;
-  float dR=999., dRmax=0.1;
-  
-  for(int i=2; i<truthColl.size(); i++){
-    if(truthColl.at(i).IndexMother()<0 )  continue;
-    if(truthColl.at(i).GenStatus()!=1)    continue;
-    if(fabs(truthColl.at(i).PdgId())!=11) continue;
-    if(truthColl.at(i).DeltaR(El)>dRmax)  continue;
-
-    if(truthColl.at(i).DeltaR(El)<dR){ dR=truthColl.at(i).DeltaR(El); MatchedIdx=i; }
-  }
-
-  return MatchedIdx;
-}
-
-
-int AnalyzerCore::GenMatchedIdx(snu::KMuon Mu, std::vector<snu::KTruth>& truthColl){
-  //Find Matched Index within dR01; if ambiguous closest dR one chosen(Resolution way better than dPtRel)
-  //Seed from RecoLepton
-
-  int MatchedIdx=-1;
-  float dR=999., dRmax=0.1;
-  
-  for(int i=2; i<truthColl.size(); i++){
-    if(truthColl.at(i).IndexMother()<0 )  continue;
-    if(truthColl.at(i).GenStatus()!=1)    continue;
-    if(fabs(truthColl.at(i).PdgId())!=13) continue;
-    if(truthColl.at(i).DeltaR(Mu)>dRmax)  continue;
-
-    if(truthColl.at(i).DeltaR(Mu)<dR){ dR=truthColl.at(i).DeltaR(Mu); MatchedIdx=i; }
-  }
-
-  return MatchedIdx;
-}
-
-
 int AnalyzerCore::GenMatchedIdx(snu::KJet Jet, std::vector<snu::KTruth>& TruthColl){
   //Seeding from jet, find parton matched to jet within dRmax;
   //Does not return matched index if not matched or matched multiple partons.(-1:Unmatched, -2:Multiple)
@@ -4857,170 +5134,6 @@ int AnalyzerCore::GenMatchedIdx(snu::KJet Jet, std::vector<snu::KTruth>& TruthCo
 }
 
 
-int AnalyzerCore::GetNearPhotonIdx(snu::KElectron Ele, std::vector<snu::KTruth>& TruthColl, TString Option){//1)
-
-  int NearPhotonIdx=-1;
-  bool OnlyHardPhoton=false;
-    if(Option=="Hard") OnlyHardPhoton=true;
-  float PTthreshold=10.;
-  float dRmax=0.2;//2)
-  float dRmin=999.;
-  for(int i=2; i<TruthColl.size(); i++){
-    if( TruthColl.at(i).IndexMother()<0   ) continue;
-    if( !(TruthColl.at(i).PdgId()==22 && (TruthColl.at(i).GenStatus()==1 || TruthColl.at(i).GenStatus()==23)) ) continue;
-    if( TruthColl.at(i).Pt()<PTthreshold  ) continue;
-    if( !(Ele.Pt()/TruthColl.at(i).Pt()>0.8 && Ele.Pt()/TruthColl.at(i).Pt()<1.2) ) continue;//3)
-    if( Ele.DeltaR(TruthColl.at(i))>dRmax ) continue;
-
-    if( TruthColl.at(i).GenStatus()==23 && !IsFinalPhotonSt23(TruthColl) ) continue;//4)
-    if( Ele.DeltaR(TruthColl.at(i))<dRmin ){ dRmin=Ele.DeltaR(TruthColl.at(i)); NearPhotonIdx=i; }
-  }
-
-  //if(NCount>1) return -2;
-  //When I tested with TT sample, double match case is order of 3E-4 times one matched. no need to consider. even before PT range cut
-
-  return NearPhotonIdx;
-//footnote
-//1) When checked with ZG sample with CBPOGT ElePt>25, Hardscattered photons, External conversion is only meaningful for electrons.
-//   Electron External Conversion~3000 Muon external conversion. This is in agreement with theoretical calculation that xsec~M^{-2} in asymmetric limit.
-//   ref. Arxiv:1110.1368v1
-//2) When checked with ZG sample with CBPOGT ElePt>25GeV, HardScatter Photons, Matching Eff~99.7% even when tested with dR01 cone.
-//   But just used conservative cone size.
-//3) When checked with ZG sample with CBPOGT ElePt>25GeV, HardScatter Photons, Matching Eff~99.5%
-//   External Conversion object's momentum is roughly symmetric with mother photon's momentum(similar fraction lower/upper than PT(G))
-//4) In some cases hard scattered photon(GenSt23) has no daughter like final state particles.
-}
-
-
-int AnalyzerCore::GetNearPhotonIdx(snu::KMuon Mu, std::vector<snu::KTruth>& TruthColl, TString Option){//1)
-
-  int NearPhotonIdx=-1;
-  bool OnlyHardPhoton=false;
-    if(Option=="Hard") OnlyHardPhoton=true;
-  float PTthreshold=10.;
-  float dRmax=0.2;//2)
-  float dRmin=999.;
-  for(int i=2; i<TruthColl.size(); i++){
-    if( TruthColl.at(i).IndexMother()<0   ) continue;
-    if( !(TruthColl.at(i).PdgId()==22 && (TruthColl.at(i).GenStatus()==1 || TruthColl.at(i).GenStatus()==23)) ) continue;
-    if( TruthColl.at(i).Pt()<PTthreshold  ) continue;
-    if( !(Mu.Pt()/TruthColl.at(i).Pt()>0.8 && Mu.Pt()/TruthColl.at(i).Pt()<1.2) ) continue;//3)
-    if( Mu.DeltaR(TruthColl.at(i))>dRmax ) continue;
-
-    if( TruthColl.at(i).GenStatus()==23 && !IsFinalPhotonSt23(TruthColl) ) continue;//4)
-    if( Mu.DeltaR(TruthColl.at(i))<dRmin ){ dRmin=Mu.DeltaR(TruthColl.at(i)); NearPhotonIdx=i; }
-  }
-
-  //if(NCount>1) return -2;
-  //When I tested with TT sample, double match case is order of 3E-4 times one matched. no need to consider. even before PT range cut
-
-  return NearPhotonIdx;
-//footnote
-//1) When checked with ZG sample with CBPOGT ElePt>25, Hardscattered photons, External conversion is only meaningful for electrons.
-//   Electron External Conversion~3000 Muon external conversion. This is in agreement with theoretical calculation that xsec~M^{-2} in asymmetric limit.
-//   ref. Arxiv:1110.1368v1
-//2) When checked with ZG sample with CBPOGT ElePt>25GeV, HardScatter Photons, Matching Eff~99.7% even when tested with dR01 cone.
-//   But just used conservative cone size.
-//3) When checked with ZG sample with CBPOGT ElePt>25GeV, HardScatter Photons, Matching Eff~99.5%
-//   External Conversion object's momentum is roughly symmetric with mother photon's momentum(similar fraction lower/upper than PT(G))
-//4) In some cases hard scattered photon(GenSt23) has no daughter like final state particles.
-}
-
-
-int AnalyzerCore::FirstNonSelfMotherIdx(int TruthIdx, std::vector<snu::KTruth>& TruthColl){
-
-  if(TruthIdx<2) return -1;
-
-  int pid=TruthColl.at(TruthIdx).PdgId(), midx=TruthIdx;
-  while(TruthColl.at(midx).PdgId()==pid){
-    midx=TruthColl.at(midx).IndexMother();  
-    if(midx<0) break;
-  }
-
-  return midx;
-}
-
-
-int AnalyzerCore::LastSelfMotherIdx(int TruthIdx,std::vector<snu::KTruth>& TruthColl){
-
-  if(TruthIdx<2) return TruthIdx;
-
-  int pid=TruthColl.at(TruthIdx).PdgId(), midx=TruthIdx, currentidx=TruthIdx;
-  while(TruthColl.at(midx).PdgId()==pid){
-    currentidx=midx;
-    midx=TruthColl.at(midx).IndexMother();  
-    if(midx<0) break;
-  }
-
-  return currentidx;
-}
-
-
-bool AnalyzerCore::HasHadronicAncestor(int TruthIdx, std::vector<snu::KTruth>& TruthColl){
-  //Returns true  if 1)has hadron mother, 2)has quark mother(!top, !hardScttr's mama) 3)Incident protons
-  //        false if 1)is hardscattered truth, 2)EW/H/BSM/t daughter, 3)not above, 4)invalid input(e.g. unmatched case)
-  
-  if(TruthIdx<0) return false;
-  if(TruthIdx<2) return true;
-
-  bool HasPartonHadronAncestor=false;
-  int  midx=TruthIdx, fmid=fabs(TruthColl.at(midx).PdgId()), MSt_orig=-1;
-  int  St_orig=TruthColl.at(LastSelfMotherIdx(TruthIdx, TruthColl)).GenStatus();
-  if( St_orig>20 && St_orig<30) return false;
-
-  while( midx>=2 ){
-    midx=FirstNonSelfMotherIdx(midx,TruthColl);
-    MSt_orig=TruthColl.at(LastSelfMotherIdx(midx,TruthColl)).GenStatus();
-    fmid=fabs(TruthColl.at(midx).PdgId());
-    if(  fmid==23 || fmid==24 || fmid==25 || fmid==6 || fmid==36 || fmid==32 ){ HasPartonHadronAncestor=false; break; }
-    if( (fmid==11 || fmid==13 || fmid==15 || fmid==22) && (MSt_orig>20 && MSt_orig<30)){ HasPartonHadronAncestor=false; break; }
-    if( fmid>50 ) { HasPartonHadronAncestor=true; break; }
-    if( (fmid>=1 && fmid<=5) || fmid==21 ){ HasPartonHadronAncestor=true; break; }
-  }
-
-  return HasPartonHadronAncestor;
-}
-
-
-bool AnalyzerCore::IsFinalPhotonSt23(std::vector<snu::KTruth> TruthColl){
-//In Some XG proc events, it seems there is status 23 photon, yet no status 1 photon and no other genparticle is daughter of this photon.
-//This is to check whether this is the case for the event.
-//And this is designed only for 1 hard photon case as W+G or Z+G or TT+G
-
-  bool IsFinalGammaStatus23 = false;
-  bool HasStatus23Photon    = false;
-  for(int i=2; i<TruthColl.size(); i++){
-    int fpid  = fabs(TruthColl.at(i).PdgId());
-    int GenSt = TruthColl.at(i).GenStatus();
-    int MPID_direct= TruthColl.at(TruthColl.at(i).IndexMother()).PdgId();
-    if( !((fpid!=22 && MPID_direct==22) || (fpid==22 && (GenSt==23||GenSt==1))) ) continue;
-
-    int LastSelfIdx  = LastSelfMotherIdx(i,TruthColl);
-    int LastSelfSt   = TruthColl.at(LastSelfIdx).GenStatus();
-    int MotherIdx    = FirstNonSelfMotherIdx(i,TruthColl);
-    int LastSelfMIdx=-1, MStatus_orig=-1;
-    if(MotherIdx!=-1){
-      LastSelfMIdx = LastSelfMotherIdx(MotherIdx,TruthColl);
-      MStatus_orig = TruthColl.at(LastSelfMIdx).GenStatus();
-    }
-
-    if(fpid==22){
-      if(GenSt==23) {HasStatus23Photon=true; IsFinalGammaStatus23=true;}
-      else if(GenSt==1 && LastSelfSt==23) {IsFinalGammaStatus23=false; break;}//a)
-    }
-    else if( MPID_direct==22 && MStatus_orig==23 ){ IsFinalGammaStatus23=false; break;}//b)
-  }
-
-  if(!HasStatus23Photon) return false;
-  
-  return IsFinalGammaStatus23;
-
-//**footnotes
-//a) The status 1 photon is end of the history of status 23 photon.
-//b) Some particle is daughter of status 23 photon.
-}
-
-
 bool AnalyzerCore::IsHardPhotonConverted(std::vector<snu::KTruth> TruthColl){
 
   bool IsConverted=false;
@@ -5040,345 +5153,6 @@ bool AnalyzerCore::IsHardPhotonConverted(std::vector<snu::KTruth> TruthColl){
   }
 
   return IsConverted;
-}
-
-
-
-int AnalyzerCore::GetLeptonType(int TruthIdx, std::vector<snu::KTruth>& TruthColl, TString Option){
-//Type : 1:EWPrompt  /  2:Signal Daughter /  3:EWtau daughter /  4:HardScatterPhoton daughter /  5:Implicit or Explicit Converion from EW lepton, charged bosons / 6:Matched but unclassified
-//      -1:Unmatched / -2:Hadron daughter / -3:Daughter of tau from hadron or parton / -4:Implicit or Explicit Conversion but has hadronic origin
-//      (Daughter of Non-hard scattered photon & has parton or hadron ancestor OR implicit Conv from quark)
-//       0:Error / >0 :Non-hadronic origin / <0 : Hadronic origin
-
-  //Only consider Status 1 lepton
-  if(TruthIdx<2) return 0;
-  if(TruthColl.at(TruthIdx).GenStatus()!=1) return 0;
-  if( !(fabs(TruthColl.at(TruthIdx).PdgId())==11 || fabs(TruthColl.at(TruthIdx).PdgId())==13) ) return 0;
-
-  int LeptonType=0;
-  int LastSelfIdx     = LastSelfMotherIdx(TruthIdx,TruthColl);
-  int MotherIdx       = FirstNonSelfMotherIdx(TruthIdx,TruthColl);
-  int LastSelfMIdx    = LastSelfMotherIdx(MotherIdx,TruthColl);
-  int GrMotherIdx     = FirstNonSelfMotherIdx(MotherIdx,TruthColl);
-  int LastSelfGrMIdx  = LastSelfMotherIdx(GrMotherIdx,TruthColl);
-
-  int MPID=0, GrMPID=0;
-  int Status_orig=0, MStatus_orig=0, MStatus_last=0, GrMStatus_orig=0, GrMStatus_last=0;
-  bool HadronicOrigin = false;
-    if(    TruthIdx!=-1   ){ Status_orig    = TruthColl.at(LastSelfIdx).GenStatus();
-                             HadronicOrigin = HasHadronicAncestor(TruthIdx, TruthColl);
-                           }                           
-    if(   MotherIdx!=-1   ){ MPID         = TruthColl.at(MotherIdx).PdgId();
-                             MStatus_orig = TruthColl.at(LastSelfMIdx).GenStatus();
-                             MStatus_last = TruthColl.at(MotherIdx).GenStatus();
-                           }
-    if(  GrMotherIdx!=-1  ){ GrMPID         = TruthColl.at(GrMotherIdx).PdgId();
-                             GrMStatus_orig = TruthColl.at(LastSelfGrMIdx).GenStatus();
-                             GrMStatus_last = TruthColl.at(GrMotherIdx).GenStatus();
-                           }
- 
-  if     ( TruthIdx==-1 )                                       LeptonType= 0;
-  else if( Status_orig>20 && Status_orig<30 )                   LeptonType= 1;//1)
-  else if( fabs(MPID)==23 || fabs(MPID)==24 || fabs(MPID)==25 ) LeptonType= 1;
-  else if( fabs(MPID)==36 || fabs(MPID)==32 )                   LeptonType= 2;
-  else if( fabs(MPID)>50 )                                      LeptonType=-2;
-  else if( fabs(MPID)==15 && MStatus_last==2 ){
-           if     ( fabs(GrMPID)==23 || fabs(GrMPID)==24 || fabs(GrMPID)==25 ) LeptonType= 3;
-           else if( MStatus_orig>20  && MStatus_orig<30  )                     LeptonType= 3;//1)
-           else if( HadronicOrigin )                                           LeptonType=-3;//2-a)
-           else if( fabs(GrMPID)==22  && GrMStatus_orig>20 && GrMStatus_orig<30 )                     LeptonType= 5;//2-b)
-           else if( fabs(GrMPID)==22 )                                                                LeptonType= 4;//2-c)
-           else if( (fabs(GrMPID)==11 || fabs(GrMPID)==13 || fabs(GrMPID)==15) && GrMStatus_last!=2 ) LeptonType= 4;//2-d)
-           else                                                                                       LeptonType= 0;
-         }
-  else if( fabs(MPID)==22 ){
-           if( MStatus_orig>20 && MStatus_orig<30 )                            LeptonType= 5;//3-a)
-           else if( HadronicOrigin )                                           LeptonType=-4;//3-b)
-           else if( fabs(GrMPID)==24 || fabs(GrMPID)==23 || fabs(GrMPID)==6  ) LeptonType= 4;//3-c)
-           else if( fabs(GrMPID)==11 || fabs(GrMPID)==13 || fabs(GrMPID)==15 ) LeptonType= 4;//3-d)
-           else                                                                LeptonType= 0;
-         }
-  else if( (fabs(MPID)==11 || fabs(MPID)==13 || fabs(MPID)==15) && MStatus_last!=2 && !HadronicOrigin ) LeptonType= 4;//4-a)
-  else if( ((fabs(MPID)>=1 && fabs(MPID)<=5) || fabs(MPID)==21) && MStatus_last!=2 )                    LeptonType=-4;//4-b)
-  else if( fabs(MPID)==6 ) LeptonType=4;//4-c)
-  else LeptonType=0;
-
-
-  return LeptonType;
-
-//**footnote
-//These are based on observation in DY,ZG,TT sample(DY,ZG:amcnlo+pythia, TT:powheg+pythia) for other PS generator, convention may differ.
-//1) In amcnlo generator, output of ME level generation does not have specific guage field mother. e.g. u u~ > l+ l- -> fabs(MID)=1
-//   This perhaps due to multiple field can interplay in production, and apparently it is not possible to distinguish them in any logic.
-//   e.g. think about previous example. you cannot say whether this is from gamma or Z or H...
-//   But in PS procedure, corrections on ME proc is done sometimes. In that case it seems mother is set Z for OS ll prod. W for lnu prod.
-//   e.g. If pythia applies ISR process on input u u~, than it should affect momentum of all the consequent processes, or in case of lnu, W radiating gamma can be added.
-//   You may think lnu case is obvious, but it may not like in case of pp > lllnu(You never know which one is from W>lnu and Z>ll)
-//2-a) e.g. a)Had > ta+X, ta>l+2nu b) q>ta+X in jet fragmentation (ta is not hardscattered, since it is already considered prev. step)
-//2-b) e.g. gamma>ta(+)+ta(-)+X, ta>lnu (St=2)
-//2-c) e.g. " " " " " " " " " " " " " " " " " ", but soft gamma case. this is not observed in test sample but put here just in case.
-//          (Non hadronic origin since such case already counted before, gamma should be from non-hadronic source)
-//2-d) e.g. l>tata..+l.. , ta>l+2nu (Implicit tau conv. from non-hadronic lepton and decay) In implicit conv. GenStatus!=2
-//3-a) e.g. hard gamma>ll
-//3-b) e.g. a) Had>gamma+X, gamma>ll+X (in PS+Had stage intermediate process is omitted you see just Had>Nphoton+Mhadrons+..)
-//          b) q>gamma+q, gamms>ll+X in jet fragmentation or radiations of tops.
-//          c) gluon>Ngamma+Mhadrons in jet fragmentation (Actually observed in samples)
-//3-c) e.g. W+>W+ gamma, gamma>ll+X , not yet observed in test sample but possible (upto radiation is observed so far)
-//3-d) e.g. ta>ta+gamma, gamma>ll+X, tau not from hadron(e.g. pp>tata)
-//4-a) e.g. EW lep l, l>lll... just implicit conversion. 
-//4-b) e.g. q or g> Nlepton +MHadrons... in parton shower history
-//
-
-//3-c) e.g. W+>W+ gamma, or t>t+gamma, gamma>ll+X, not yet observed in test sample but possible (upto radiation is observed so far)
-//3-d) e.g. ta>ta+gamma, gamma>ll+X, tau not from hadron(e.g. pp>tata)
-//4-a) e.g. EW lep l, l>lll... just implicit conversion. 
-//4-b) e.g. q or g> Nlepton +MHadrons... in parton shower history
-//4-c) e.g. t>t+ll.. implicit conversion
-}
-
-
-int AnalyzerCore::GetLeptonType(snu::KElectron El, std::vector<snu::KTruth>& TruthColl, TString Option){
-//Type : 1:EWPrompt  /  2:Signal Daughter /  3:EWtau daughter / 4:Internal Conversion daughter from t/EWV/EWlep(Implicit,Explicit) / 5:Internal Conversion daughter from HardScatterPhoton
-//      -1:Unmatched & not EW Conversion candidate / -2:Hadron daughter / -3:Daughter of tau from hadron or parton / -4:Internal conversion daughter(implicit,explicit) having hadronic origin / -5:External conversion candidate(Hard scattered photon) / -6:External conversion from t/EWV/EWlep
-//      (-4:Daughter of Non-hard scattered photon & has parton or hadron ancestor OR implicit Conv from quark)
-//       0:Error / >0: Non-fake: Non-hadronic origin / <0 : Fakes: Hadronic origin or external conversion
-
-  int LeptonType=0;
-  int MatchedTruthIdx = GenMatchedIdx(El,TruthColl);
-  int LastSelfIdx     = LastSelfMotherIdx(MatchedTruthIdx,TruthColl);
-  int MotherIdx       = FirstNonSelfMotherIdx(MatchedTruthIdx,TruthColl);
-  int LastSelfMIdx    = LastSelfMotherIdx(MotherIdx,TruthColl);
-  int GrMotherIdx     = FirstNonSelfMotherIdx(MotherIdx,TruthColl);
-  int LastSelfGrMIdx  = LastSelfMotherIdx(GrMotherIdx,TruthColl);
-
-  int NearPhotonType=0, NearPhotonIdx=-1;
-  int MPID=0, GrMPID=0;
-  int Status_orig=0, MStatus_orig=0, MStatus_last=0, GrMStatus_orig=0, GrMStatus_last=0;
-  bool HadronicOrigin = false;
-    if(MatchedTruthIdx!=-1){ Status_orig    = TruthColl.at(LastSelfIdx).GenStatus();
-                             HadronicOrigin = HasHadronicAncestor(MatchedTruthIdx, TruthColl);
-                           }
-    else                   { NearPhotonIdx  = GetNearPhotonIdx(El, TruthColl);
-                             NearPhotonType = GetPhotonType(NearPhotonIdx, TruthColl);
-                           }
-    if(   MotherIdx!=-1   ){ MPID         = TruthColl.at(MotherIdx).PdgId();
-                             MStatus_orig = TruthColl.at(LastSelfMIdx).GenStatus();
-                             MStatus_last = TruthColl.at(MotherIdx).GenStatus();
-                           }
-    if(  GrMotherIdx!=-1  ){ GrMPID         = TruthColl.at(GrMotherIdx).PdgId();
-                             GrMStatus_orig = TruthColl.at(LastSelfGrMIdx).GenStatus();
-                             GrMStatus_last = TruthColl.at(GrMotherIdx).GenStatus();
-                           }
-
-  if     ( Status_orig>20 && Status_orig<30 )                   LeptonType= 1;//1)
-  else if( fabs(MPID)==23 || fabs(MPID)==24 || fabs(MPID)==25 ) LeptonType= 1;
-  else if( fabs(MPID)==36 || fabs(MPID)==32 )                   LeptonType= 2;
-  else if( fabs(MPID)>50 )                                      LeptonType=-2;
-  else if( fabs(MPID)==15 && MStatus_last==2 ){
-           if     ( fabs(GrMPID)==23 || fabs(GrMPID)==24 || fabs(GrMPID)==25 ) LeptonType= 3;
-           else if( MStatus_orig>20  && MStatus_orig<30  )                     LeptonType= 3;//1)
-           else if( HadronicOrigin )                                           LeptonType=-3;//2-a)
-           else if( fabs(GrMPID)==22  && GrMStatus_orig>20 && GrMStatus_orig<30 )                     LeptonType= 5;//2-b)
-           else if( fabs(GrMPID)==22 )                                                                LeptonType= 4;//2-c)
-           else if( (fabs(GrMPID)==11 || fabs(GrMPID)==13 || fabs(GrMPID)==15) && GrMStatus_last!=2 ) LeptonType= 4;//2-d)
-           else                                                                                       LeptonType= 0;
-         }
-  else if( fabs(MPID)==22 ){
-           if( MStatus_orig>20 && MStatus_orig<30 )                            LeptonType= 5;//3-a)
-           else if( HadronicOrigin )                                           LeptonType=-4;//3-b)
-           else if( fabs(GrMPID)==24 || fabs(GrMPID)==23 || fabs(GrMPID)==6  ) LeptonType= 4;//3-c)
-           else if( fabs(GrMPID)==11 || fabs(GrMPID)==13 || fabs(GrMPID)==15 ) LeptonType= 4;//3-d)
-           else                                                                LeptonType= 0;
-         }
-  else if( MatchedTruthIdx==-1 ){
-           if     ( NearPhotonType<=0 ) LeptonType=-1;
-           else if( NearPhotonType==1 ) LeptonType=-5;
-           else if( NearPhotonType==2 ) LeptonType=-6;
-         }
-  else if( (fabs(MPID)==11 || fabs(MPID)==13 || fabs(MPID)==15) && MStatus_last!=2 && !HadronicOrigin ) LeptonType= 4;//4-a)
-  else if( ((fabs(MPID)>=1 && fabs(MPID)<=5) || fabs(MPID)==21) && MStatus_last!=2 )                    LeptonType=-4;//4-b)
-  else if( fabs(MPID)==6 ) LeptonType=4;//4-c)
-  else LeptonType=0;
-
- 
-  return LeptonType;
-
-//**footnote
-//These are based on observation in DY,ZG,TT sample(DY,ZG:amcnlo+pythia, TT:powheg+pythia) for other PS generator, convention may differ.
-//1) In amcnlo generator, output of ME level generation does not have specific guage field mother. e.g. u u~ > l+ l- -> fabs(MID)=1
-//   This perhaps due to multiple field can interplay in production, and apparently it is not possible to distinguish them in any logic.
-//   e.g. think about previous example. you cannot say whether this is from gamma or Z or H...
-//   But in PS procedure, corrections on ME proc is done sometimes. In that case it seems mother is set Z for OS ll prod. W for lnu prod.
-//   e.g. If pythia applies ISR process on input u u~, than it should affect momentum of all the consequent processes, or in case of lnu, W radiating gamma can be added.
-//   You may think lnu case is obvious, but it may not like in case of pp > lllnu(You never know which one is from W>lnu and Z>ll)
-//2-a) e.g. a)Had > ta+X, ta>l+2nu b) q>ta+X in jet fragmentation (ta is not hardscattered, since it is already considered prev. step)
-//2-b) e.g. gamma>ta(+)+ta(-)+X, ta>lnu (St=2)
-//2-c) e.g. " " " " " " " " " " " " " " " " " ", but soft gamma case. this is not observed in test sample but put here just in case.
-//          (Non hadronic origin since such case already counted before, gamma should be from non-hadronic source)
-//2-d) e.g. l>tata..+l.. , ta>l+2nu (Implicit tau conv. from non-hadronic lepton and decay) In implicit conv. GenStatus!=2
-//3-a) e.g. hard gamma>ll
-//3-a-2) e.g. hard Z>llG & G St1 Mother=Z
-//3-b) e.g. a) Had>gamma+X, gamma>ll+X (in PS+Had stage intermediate process is omitted you see just Had>Nphoton+Mhadrons+..)
-//          b) q>gamma+q, gamms>ll+X in jet fragmentation or radiations of tops.
-//          c) gluon>Ngamma+Mhadrons in jet fragmentation (Actually observed in samples)
-//3-c) e.g. W+>W+ gamma, gamma>ll+X , not yet observed in test sample but possible (upto radiation is observed so far)
-//3-d) e.g. ta>ta+gamma, gamma>ll+X, tau not from hadron(e.g. pp>tata)
-//4-a) e.g. EW lep l, l>lll... just implicit conversion. 
-//4-b) e.g. q or g> Nlepton +MHadrons... in parton shower history
-//3-b) e.g. a) Had>gamma+X, gamma>ll+X (in PS+Had stage intermediate process is omitted you see just Had>Nphoton+Mhadrons+..)
-//          b) q>gamma+q, gamms>ll+X in jet fragmentation or radiations of tops.
-//          c) gluon>Ngamma+Mhadrons in jet fragmentation (Actually observed in samples)
-//3-c) e.g. W+>W+ gamma, or t>t+gamma, gamma>ll+X, not yet observed in test sample but possible (upto radiation is observed so far)
-//3-d) e.g. ta>ta+gamma, gamma>ll+X, tau not from hadron(e.g. pp>tata)
-//4-a) e.g. EW lep l, l>lll... just implicit conversion. 
-//4-b) e.g. q or g> Nlepton +MHadrons... in parton shower history
-//4-c) e.g. t>t+ll.. implicit conversion
-}
-
-
-int AnalyzerCore::GetLeptonType(snu::KMuon Mu, std::vector<snu::KTruth>& TruthColl, TString Option){
-//Type : 1:EWPrompt  /  2:Signal Daughter /  3:EWtau daughter /  4:HardScatterPhoton daughter /  5:Implicit or Explicit Converion from EW lepton, charged bosons / 6:Matched but unclassified
-//      -1:Unmatched / -2:Hadron daughter / -3:Daughter of tau from hadron or parton / -4:Implicit or Explicit Conversion but has hadronic origin
-//      (Daughter of Non-hard scattered photon & has parton or hadron ancestor OR implicit Conv from quark)
-//       0:Error / >0 :Non-hadronic origin / <0 : Hadronic origin
-
-//Type : 1:EWPrompt  /  2:Signal Daughter /  3:EWtau daughter / 4:Internal Conversion daughter from t/EWV/EWlep(Implicit,Explicit) / 5:Internal Conversion daughter from HardScatterPhoton
-//      -1:Unmatched & not EW Conversion candidate / -2:Hadron daughter / -3:Daughter of tau from hadron or parton / -4:Internal conversion daughter(implicit,explicit) having hadronic origin / -5:External conversion candidate(Hard scattered photon) / -6:External conversion from t/EWV/EWlep
-//      (-4:Daughter of Non-hard scattered photon & has parton or hadron ancestor OR implicit Conv from quark)
-//       0:Error / >0: Non-fake: Non-hadronic origin / <0 : Fakes: Hadronic origin or external conversion
-
-  int LeptonType=0;
-  int MatchedTruthIdx = GenMatchedIdx(Mu,TruthColl);
-  int LastSelfIdx     = LastSelfMotherIdx(MatchedTruthIdx,TruthColl);
-  int MotherIdx       = FirstNonSelfMotherIdx(MatchedTruthIdx,TruthColl);
-  int LastSelfMIdx    = LastSelfMotherIdx(MotherIdx,TruthColl);
-  int GrMotherIdx     = FirstNonSelfMotherIdx(MotherIdx,TruthColl);
-  int LastSelfGrMIdx  = LastSelfMotherIdx(GrMotherIdx,TruthColl);
-
-  int NearPhotonType=0, NearPhotonIdx=-1;
-  int MPID=0, GrMPID=0;
-  int Status_orig=0, MStatus_orig=0, MStatus_last=0, GrMStatus_orig=0, GrMStatus_last=0;
-  bool HadronicOrigin = false;
-    if(MatchedTruthIdx!=-1){ Status_orig    = TruthColl.at(LastSelfIdx).GenStatus();
-                             HadronicOrigin = HasHadronicAncestor(MatchedTruthIdx, TruthColl);
-                           }
-    else                   { NearPhotonIdx  = GetNearPhotonIdx(Mu, TruthColl);
-                             NearPhotonType = GetPhotonType(NearPhotonIdx, TruthColl);
-                           }
-    if(   MotherIdx!=-1   ){ MPID         = TruthColl.at(MotherIdx).PdgId();
-                             MStatus_orig = TruthColl.at(LastSelfMIdx).GenStatus();
-                             MStatus_last = TruthColl.at(MotherIdx).GenStatus();
-                           }
-    if(  GrMotherIdx!=-1  ){ GrMPID         = TruthColl.at(GrMotherIdx).PdgId();
-                             GrMStatus_orig = TruthColl.at(LastSelfGrMIdx).GenStatus();
-                             GrMStatus_last = TruthColl.at(GrMotherIdx).GenStatus();
-                           }
-
-  if     ( Status_orig>20 && Status_orig<30 )                   LeptonType= 1;//1)
-  else if( fabs(MPID)==23 || fabs(MPID)==24 || fabs(MPID)==25 ) LeptonType= 1;
-  else if( fabs(MPID)==36 || fabs(MPID)==32 )                   LeptonType= 2;
-  else if( fabs(MPID)>50 )                                      LeptonType=-2;
-  else if( fabs(MPID)==15 && MStatus_last==2 ){
-           if     ( fabs(GrMPID)==23 || fabs(GrMPID)==24 || fabs(GrMPID)==25 ) LeptonType= 3;
-           else if( MStatus_orig>20  && MStatus_orig<30  )                     LeptonType= 3;//1)
-           else if( HadronicOrigin )                                           LeptonType=-3;//2-a)
-           else if( fabs(GrMPID)==22  && GrMStatus_orig>20 && GrMStatus_orig<30 )                     LeptonType= 5;//2-b)
-           else if( fabs(GrMPID)==22 )                                                                LeptonType= 4;//2-c)
-           else if( (fabs(GrMPID)==11 || fabs(GrMPID)==13 || fabs(GrMPID)==15) && GrMStatus_last!=2 ) LeptonType= 4;//2-d)
-           else                                                                                       LeptonType= 0;
-         }
-  else if( fabs(MPID)==22 ){
-           if( MStatus_orig>20 && MStatus_orig<30 )                            LeptonType= 5;//3-a)
-           else if( HadronicOrigin )                                           LeptonType=-4;//3-b)
-           else if( fabs(GrMPID)==24 || fabs(GrMPID)==23 || fabs(GrMPID)==6  ) LeptonType= 4;//3-c)
-           else if( fabs(GrMPID)==11 || fabs(GrMPID)==13 || fabs(GrMPID)==15 ) LeptonType= 4;//3-d)
-           else                                                                LeptonType= 0;
-         }
-  else if( MatchedTruthIdx==-1 ){
-           if     ( NearPhotonType<=0 ) LeptonType=-1;
-           else if( NearPhotonType==1 ) LeptonType=-5;
-           else if( NearPhotonType==2 ) LeptonType=-6;
-         }
-  else if( (fabs(MPID)==11 || fabs(MPID)==13 || fabs(MPID)==15) && MStatus_last!=2 && !HadronicOrigin ) LeptonType= 4;//4-a)
-  else if( ((fabs(MPID)>=1 && fabs(MPID)<=5) || fabs(MPID)==21) && MStatus_last!=2 )                    LeptonType=-4;//4-b)
-  else if( fabs(MPID)==6 ) LeptonType=4;//4-c)
-  else LeptonType=0;
-
- 
-  return LeptonType;
-
-//**footnote
-//These are based on observation in DY,ZG,TT sample(DY,ZG:amcnlo+pythia, TT:powheg+pythia) for other PS generator, convention may differ.
-//1) In amcnlo generator, output of ME level generation does not have specific guage field mother. e.g. u u~ > l+ l- -> fabs(MID)=1
-//   This perhaps due to multiple field can interplay in production, and apparently it is not possible to distinguish them in any logic.
-//   e.g. think about previous example. you cannot say whether this is from gamma or Z or H...
-//   But in PS procedure, corrections on ME proc is done sometimes. In that case it seems mother is set Z for OS ll prod. W for lnu prod.
-//   e.g. If pythia applies ISR process on input u u~, than it should affect momentum of all the consequent processes, or in case of lnu, W radiating gamma can be added.
-//   You may think lnu case is obvious, but it may not like in case of pp > lllnu(You never know which one is from W>lnu and Z>ll)
-//2-a) e.g. a)Had > ta+X, ta>l+2nu b) q>ta+X in jet fragmentation (ta is not hardscattered, since it is already considered prev. step)
-//2-b) e.g. gamma>ta(+)+ta(-)+X, ta>lnu (St=2)
-//2-c) e.g. " " " " " " " " " " " " " " " " " ", but soft gamma case. this is not observed in test sample but put here just in case.
-//          (Non hadronic origin since such case already counted before, gamma should be from non-hadronic source)
-//2-d) e.g. l>tata..+l.. , ta>l+2nu (Implicit tau conv. from non-hadronic lepton and decay) In implicit conv. GenStatus!=2
-//3-a) e.g. hard gamma>ll
-//3-b) e.g. a) Had>gamma+X, gamma>ll+X (in PS+Had stage intermediate process is omitted you see just Had>Nphoton+Mhadrons+..)
-//          b) q>gamma+q, gamms>ll+X in jet fragmentation or radiations of tops.
-//          c) gluon>Ngamma+Mhadrons in jet fragmentation (Actually observed in samples)
-//3-c) e.g. W+>W+ gamma, or t>t+gamma, gamma>ll+X, not yet observed in test sample but possible (upto radiation is observed so far)
-//3-d) e.g. ta>ta+gamma, gamma>ll+X, tau not from hadron(e.g. pp>tata)
-//4-a) e.g. EW lep l, l>lll... jut implicit conversion. 
-//4-a) e.g. EW lep l, l>lll... just implicit conversion. 
-//4-b) e.g. q or g> Nlepton +MHadrons... in parton shower history
-//4-c) e.g. t>t+ll.. implicit conversion
-}
-
-
-int AnalyzerCore::GetPhotonType(int PhotonIdx, std::vector<snu::KTruth> TruthColl){
-//Type : 
-// 0: Invalid input or Error or HardScatter is input when hardscatter is not final state
-// 1: HardScatter / 2: Else prompt daughter(l,V,t)
-//-1: Reserved for unmatched(Not used now) / -2: Hadronic origin
-
-  if( PhotonIdx<2 ) return 0;
-  if( !(TruthColl.at(PhotonIdx).PdgId()==22 && (TruthColl.at(PhotonIdx).GenStatus()==1 || TruthColl.at(PhotonIdx).GenStatus()==23)) ) return 0;
-
-  if(TruthColl.at(PhotonIdx).GenStatus()==23){
-    if(IsFinalPhotonSt23(TruthColl)) return 1;
-    else                             return 0;
-  }//From this pt, only St1 Photon is treated.
-
-  int PhotonType=0;
-  int LastSelfIdx    = LastSelfMotherIdx(PhotonIdx,TruthColl);
-  int MotherIdx      = FirstNonSelfMotherIdx(PhotonIdx,TruthColl);
-  int fMPID=0, Status_orig=0;
-  bool HadronicOrigin = false;
-    if( PhotonIdx!=-1 ){ Status_orig    = TruthColl.at(LastSelfIdx).GenStatus();
-                         HadronicOrigin = HasHadronicAncestor(PhotonIdx, TruthColl);
-                       }                           
-    if( MotherIdx!=-1 ){ fMPID          = fabs(TruthColl.at(MotherIdx).PdgId()); }
-
-
-  if     (  Status_orig>20 && Status_orig<30   ) PhotonType= 1;//1)
-  else if(       fMPID==23 || fMPID==25        ) PhotonType= 1;//2)
-  else if( fMPID==24 || fMPID==6  || fMPID==37 ) PhotonType= 2;//3)
-  else if(           HadronicOrigin            ) PhotonType=-2;//4)
-  else if( fMPID==11 || fMPID==13 || fMPID==15 ) PhotonType= 2;//5)
-  else                                           PhotonType= 0;
-  
-  return PhotonType;
-//**footnote
-//1) In case of hard scattered photon, they may have history; GenSt=23>...>GenSt1, And depending on generator, their mother can be explicitly
-//  written in history as Z>GG St2 but sometimes their field mother is not designated for avoiding confusion of gauge symmetry.
-//  e.g. qq>llG instead of qq>Z>llG
-//  To cover all the case, first thing to check is original state of photon is hard scattered or not
-//2) Sometimes, if there is no correction on gamma is applied on PS step, photon's final state is 1 before any history.
-//   e.g. G;St=1, Mother=Z ; cannot find hard scatter Z / in such case only possibility is to check mother.
-//   But in some case, it is not obvious. because in PS step, charged ptls can radiate photons including bosons.
-//   So it is artificial to distinguish hard scattered photon and photon from PS step. And fraction of this case is not negilgible; very frequently observed.
-//3) top and charged bosons radiate photons, and some case the photon is very energetic.
-//4) This category does not include tops. Photons from hadrons and quarks. But predominantly, in most of the cases they are daughter of pi0.
-//   But rarely other mesons as eta, B, or even some quarks can also radiate energetic photons.
-//5) Photons radiated from lepton FSR, but sometimes they radiate quite energetic photons.
 }
 
 
@@ -5528,6 +5302,28 @@ std::vector<snu::KElectron> AnalyzerCore::SkimLepColl(std::vector<snu::KElectron
   return ReturnVec;
 }
 
+
+std::vector<snu::KElectron> AnalyzerCore::SkimLepColl(std::vector<snu::KElectron>& EleColl, TString Option, float PTmin){
+  
+  std::vector<snu::KElectron> ReturnColl;
+  bool Barrel1=false, Barrel2=false, Endcap=false, PtCut=false;
+  if(Option.Contains("B1")) Barrel1=true;
+  if(Option.Contains("B2")) Barrel2=true;
+  if(Option.Contains("E"))  Endcap =true;
+  if(Option.Contains("Pt")) PtCut  =true;
+
+  for(int i=0; i<EleColl.size(); i++){
+    bool PassSel=false;
+    if( PtCut   && EleColl.at(i).Pt()<PTmin ) continue;
+    if( Barrel1 && fabs(EleColl.at(i).Eta())<0.8 ) ReturnColl.push_back(EleColl.at(i));
+    if( Barrel2 && fabs(EleColl.at(i).Eta())>=0.8 && fabs(EleColl.at(i).Eta())<1.479 ) ReturnColl.push_back(EleColl.at(i));
+    if( Endcap  && fabs(EleColl.at(i).Eta())>=1.479 && fabs(EleColl.at(i).Eta())<2.5 ) ReturnColl.push_back(EleColl.at(i));
+  }
+
+  return ReturnColl;
+}
+
+
 std::vector<snu::KMuon> AnalyzerCore::SkimLepColl(std::vector<snu::KMuon>& MuColl, std::vector<snu::KTruth>& TruthColl, TString Option){
 
   bool GetPrompt=false, GetHadFake=false, GetEWtau=false, GetNHIntConv=false, GetNHExtConv=false;
@@ -5571,6 +5367,40 @@ std::vector<snu::KJet> AnalyzerCore::SkimJetColl(std::vector<snu::KJet>& JetColl
   return ReturnVec;
 }
 
+std::vector<snu::KJet> AnalyzerCore::SkimJetColl(std::vector<snu::KJet>& JetColl, std::vector<snu::KElectron>& EleColl, std::vector<snu::KMuon>& MuColl, TString Option){
+
+  std::vector<snu::KJet> ReturnVec;
+  for(int i=0; i<JetColl.size(); i++){
+
+    bool NearLep=false;
+    for(int j=0; j<EleColl.size(); j++){
+      if(JetColl.at(i).DeltaR(EleColl.at(j))<0.4) NearLep=true;
+    }
+
+    for(int j=0; j<MuColl.size(); j++){
+      if(JetColl.at(i).DeltaR(MuColl.at(j))<0.4) NearLep=true;
+    }
+
+    if(!NearLep) ReturnVec.push_back(JetColl.at(i));
+  }
+
+  return ReturnVec;
+}
+
+
+
+int AnalyzerCore::GetNearJetIdx(snu::KElectron Ele, std::vector<snu::KJet> JetColl){
+
+   int NearJetIdx=-1;
+   float dRmin=999., dRmax=0.4;
+   for(int i=0; i<JetColl.size(); i++){
+     float dR=Ele.DeltaR(JetColl.at(i));
+     if(dR>dRmax) continue;
+     if(dR<dRmin){ dRmin=dR; NearJetIdx=i;}
+   }
+   
+   return NearJetIdx;
+}
 
 
 
@@ -5738,6 +5568,34 @@ float AnalyzerCore::GenFilterEfficiency(TString SampleName){
 }
 
 
+float AnalyzerCore::GetHiggsMass(TString SampleName, TString Option){
+
+  bool AMass=Option.Contains("A");
+  bool HcMass=Option.Contains("H+");
+  if(AMass && HcMass) return 0.;
+
+  float HiggsMass=0.;
+  if(AMass){
+    if     (SampleName.Contains("MA15")) HiggsMass= 15.;
+    else if(SampleName.Contains("MA20")) HiggsMass= 20.;
+    else if(SampleName.Contains("MA25")) HiggsMass= 25.;
+    else if(SampleName.Contains("MA30")) HiggsMass= 30.;
+    else if(SampleName.Contains("MA35")) HiggsMass= 35.;
+  }
+  else if(HcMass){
+    if     (SampleName.Contains("MHc100")) HiggsMass= 100.;
+    else if(SampleName.Contains("MHc110")) HiggsMass= 110.;
+    else if(SampleName.Contains("MHc120")) HiggsMass= 120.;
+    else if(SampleName.Contains("MHc130")) HiggsMass= 130.;
+    else if(SampleName.Contains("MHc140")) HiggsMass= 140.;
+    else if(SampleName.Contains("MHc150")) HiggsMass= 150.;
+    else if(SampleName.Contains("MHc160")) HiggsMass= 160.;
+  }
+
+  return HiggsMass;
+}
+
+
 float AnalyzerCore::SignalNorm(TString SampleName, float Xsec){
 
   //Normalise xsec(tt)*[2*Br(t>bH+)*Br(H+>AW)*Br(A>mumu)] to required value.
@@ -5764,7 +5622,7 @@ bool AnalyzerCore::PassIDCriteria(snu::KElectron Ele, TString ID, TString Option
   bool PassID=true;
   if(ID=="POGCBTIP"){
     if(Ele.SNUID()<1000) PassID=false;
-    if( !((fabs(Ele.Eta())<1.447 && Ele.PFRelIso(0.3)< 0.588) || (fabs(Ele.Eta())>=1.447 && Ele.PFRelIso(0.3)<0.571)) ) PassID=false;
+    if( !((fabs(Ele.Eta())<1.447 && Ele.PFRelIso(0.3)< 0.0588) || (fabs(Ele.Eta())>=1.447 && Ele.PFRelIso(0.3)<0.0571)) ) PassID=false;
     if( !(fabs(Ele.dxy())<0.05)  ) PassID=false;
     if( !(fabs(Ele.dz())<0.1)    ) PassID=false;
     if( !(fabs(Ele.dxySig())<3.) ) PassID=false;
@@ -5774,9 +5632,126 @@ bool AnalyzerCore::PassIDCriteria(snu::KElectron Ele, TString ID, TString Option
     if( !(Ele.IsTrigMVAValid())      ) PassID=false;
     if( !(Ele.PassesConvVeto())      ) PassID=false;
     if( !(Ele.PFRelIso(0.3)<0.1)     ) PassID=false;
-    if( !(fabs(Ele.dxy())<0.05)      ) PassID=false;
+    if( !(fabs(Ele.dxy())<0.025)     ) PassID=false;
+    if( !(fabs(Ele.dz())<0.05)       ) PassID=false;
+    if( !(fabs(Ele.dxySig())<4.)     ) PassID=false;
+  }
+  else if(ID=="POGWP90Isop1IPp025p05sig4"){
+    if( !(Ele.PassNotrigMVAMedium()) ) PassID=false;
+    if( !(Ele.IsTrigMVAValid())      ) PassID=false;
+    if( !(Ele.PassesConvVeto())      ) PassID=false;
+    if( !(Ele.PFRelIso(0.3)<0.1)     ) PassID=false;
+    if( !(fabs(Ele.dxy())<0.025)     ) PassID=false;
+    if( !(fabs(Ele.dz())<0.05)       ) PassID=false;
+    if( !(fabs(Ele.dxySig())<4.)     ) PassID=false;
+  }
+  else if(ID=="POGWP90Isop08IPp025p05sig4"){
+    if( !(Ele.PassNotrigMVAMedium()) ) PassID=false;
+    if( !(Ele.IsTrigMVAValid())      ) PassID=false;
+    if( !(Ele.PassesConvVeto())      ) PassID=false;
+    if( !(Ele.PFRelIso(0.3)<0.08)    ) PassID=false;
+    if( !(fabs(Ele.dxy())<0.025)     ) PassID=false;
+    if( !(fabs(Ele.dz())<0.05)       ) PassID=false;
+    if( !(fabs(Ele.dxySig())<4.)     ) PassID=false;
+  }
+  else if(ID=="POGWP90Isop06IPp025p05sig4"){
+    if( !(Ele.PassNotrigMVAMedium()) ) PassID=false;
+    if( !(Ele.IsTrigMVAValid())      ) PassID=false;
+    if( !(Ele.PassesConvVeto())      ) PassID=false;
+    if( !(Ele.PFRelIso(0.3)<0.06)    ) PassID=false;
+    if( !(fabs(Ele.dxy())<0.025)     ) PassID=false;
+    if( !(fabs(Ele.dz())<0.05)       ) PassID=false;
+    if( !(fabs(Ele.dxySig())<4.)     ) PassID=false;
+  }
+  else if(ID=="LMVA06Isop4IPp025p05sig4"){
+    if( !(Ele.IsTrigMVAValid())      ) PassID=false;
+    if( !(Ele.PassesConvVeto())      ) PassID=false;
+    if( !(Ele.PFRelIso(0.3)<0.4)     ) PassID=false;
+    if( !(fabs(Ele.dxy())<0.025)     ) PassID=false;
+    if( !(fabs(Ele.dz())<0.05)       ) PassID=false;
+    if( !(fabs(Ele.dxySig())<4.)     ) PassID=false;
+
+    //if     ( fabs(Ele.Eta())<0.8   ){ if(Ele.MVA()<-0.76) PassID=false; }
+    //else if( fabs(Ele.Eta())<1.479 ){ if(Ele.MVA()<-0.76) PassID=false; }
+    //else                            { if(Ele.MVA()<-0.67) PassID=false; }
+    if     ( fabs(Ele.Eta())<0.8   ){ if(Ele.MVA()<-0.92) PassID=false; }
+    else if( fabs(Ele.Eta())<1.479 ){ if(Ele.MVA()<-0.85) PassID=false; }
+    else                            { if(Ele.MVA()<-0.76) PassID=false; }
+  }
+  else if(ID=="LMVA08v1Isop4IPp025p05sig4"){
+    if( !(Ele.IsTrigMVAValid())      ) PassID=false;
+    if( !(Ele.PassesConvVeto())      ) PassID=false;
+    if( !(Ele.PFRelIso(0.3)<0.4)     ) PassID=false;
+    if( !(fabs(Ele.dxy())<0.025)     ) PassID=false;
+    if( !(fabs(Ele.dz())<0.05)       ) PassID=false;
+    if( !(fabs(Ele.dxySig())<4.)     ) PassID=false;
+
+    if     ( fabs(Ele.Eta())<0.8   ){ if(Ele.MVA()<-0.57) PassID=false; }
+    else if( fabs(Ele.Eta())<1.479 ){ if(Ele.MVA()<-0.51) PassID=false; }
+    else                            { if(Ele.MVA()<-0.5) PassID=false; }
+  }
+  else if(ID=="LMVA1v1Isop4IPp025p05sig4"){
+    if( !(Ele.IsTrigMVAValid())      ) PassID=false;
+    if( !(Ele.PassesConvVeto())      ) PassID=false;
+    if( !(Ele.PFRelIso(0.3)<0.4)     ) PassID=false;
+    if( !(fabs(Ele.dxy())<0.025)     ) PassID=false;
+    if( !(fabs(Ele.dz())<0.05)       ) PassID=false;
+    if( !(fabs(Ele.dxySig())<4.)     ) PassID=false;
+
+    if     ( fabs(Ele.Eta())<0.8   ){ if(Ele.MVA()<-0.29) PassID=false; }
+    else if( fabs(Ele.Eta())<1.479 ){ if(Ele.MVA()<-0.28) PassID=false; }
+    else                            { if(Ele.MVA()<-0.36) PassID=false; }
+  }
+  else if(ID=="LMVA06v1Isop4IPp5p1"){
+    if( !(Ele.IsTrigMVAValid())      ) PassID=false;
+    if( !(Ele.PassesConvVeto())      ) PassID=false;
+    if( !(Ele.PFRelIso(0.3)<0.4)     ) PassID=false;
+    if( !(fabs(Ele.dxy())<0.5)     ) PassID=false;
+    if( !(fabs(Ele.dz())<0.1)       ) PassID=false;
+
+    if     ( fabs(Ele.Eta())<0.8   ){ if(Ele.MVA()<-0.76) PassID=false; }
+    else if( fabs(Ele.Eta())<1.479 ){ if(Ele.MVA()<-0.76) PassID=false; }
+    else                            { if(Ele.MVA()<-0.67) PassID=false; }
+  }
+  else if(ID=="LMVA08v1Isop4IPp5p1"){
+    if( !(Ele.IsTrigMVAValid())      ) PassID=false;
+    if( !(Ele.PassesConvVeto())      ) PassID=false;
+    if( !(Ele.PFRelIso(0.3)<0.4)     ) PassID=false;
+    if( !(fabs(Ele.dxy())<0.5)     ) PassID=false;
+    if( !(fabs(Ele.dz())<0.1)       ) PassID=false;
+
+    if     ( fabs(Ele.Eta())<0.8   ){ if(Ele.MVA()<-0.57) PassID=false; }
+    else if( fabs(Ele.Eta())<1.479 ){ if(Ele.MVA()<-0.51) PassID=false; }
+    else                            { if(Ele.MVA()<-0.5) PassID=false; }
+  }
+  else if(ID=="LMVA1v1Isop4IPp5p1"){
+    if( !(Ele.IsTrigMVAValid())      ) PassID=false;
+    if( !(Ele.PassesConvVeto())      ) PassID=false;
+    if( !(Ele.PFRelIso(0.3)<0.4)     ) PassID=false;
+    if( !(fabs(Ele.dxy())<0.5)       ) PassID=false;
     if( !(fabs(Ele.dz())<0.1)        ) PassID=false;
-    if( !(fabs(Ele.dxySig())<3.)     ) PassID=false;
+
+    if     ( fabs(Ele.Eta())<0.8   ){ if(Ele.MVA()<-0.29) PassID=false; }
+    else if( fabs(Ele.Eta())<1.479 ){ if(Ele.MVA()<-0.28) PassID=false; }
+    else                            { if(Ele.MVA()<-0.36) PassID=false; }
+  }
+  else if(ID=="LNoMVANoIsoIPp025p05sig4"){
+    if( !(Ele.IsTrigMVAValid())      ) PassID=false;
+    if( !(Ele.PassesConvVeto())      ) PassID=false;
+    if( !(fabs(Ele.dxy())<0.025)     ) PassID=false;
+    if( !(fabs(Ele.dz())<0.05)       ) PassID=false;
+    if( !(fabs(Ele.dxySig())<4.)     ) PassID=false;
+  }
+  else if(ID=="POGMVAMIso"){
+    if( !(Ele.PassNotrigMVAMedium()) ) PassID=false;
+    if( !(Ele.IsTrigMVAValid())      ) PassID=false;
+    if( !(Ele.PassesConvVeto())      ) PassID=false;
+    if( !(Ele.PFRelIso(0.3)<0.1)     ) PassID=false;
+  }
+  else if(ID=="POGMVAM"){
+    if( !(Ele.PassNotrigMVAMedium()) ) PassID=false;
+    if( !(Ele.IsTrigMVAValid())      ) PassID=false;
+    if( !(Ele.PassesConvVeto())      ) PassID=false;
   }
   else if(ID=="POGMVAMIPQ"){
     if( !(Ele.PassNotrigMVAMedium()) ) PassID=false;
@@ -5793,9 +5768,9 @@ bool AnalyzerCore::PassIDCriteria(snu::KElectron Ele, TString ID, TString Option
     if( !(Ele.IsTrigMVAValid())      ) PassID=false;
     if( !(Ele.PassesConvVeto())      ) PassID=false;
     if( !(Ele.PFRelIso(0.3)<0.1)     ) PassID=false;
-    if( !(fabs(Ele.dxy())<0.05)      ) PassID=false;
-    if( !(fabs(Ele.dz())<0.1)        ) PassID=false;
-    if( !(fabs(Ele.dxySig())<3.)     ) PassID=false;
+    if( !(fabs(Ele.dxy())<0.025)     ) PassID=false;
+    if( !(fabs(Ele.dz())<0.05)       ) PassID=false;
+    if( !(fabs(Ele.dxySig())<4.)     ) PassID=false;
   }
   else if(ID=="POGMVATIPQ"){
     if( !(Ele.PassNotrigMVATight())  ) PassID=false;
@@ -5807,6 +5782,18 @@ bool AnalyzerCore::PassIDCriteria(snu::KElectron Ele, TString ID, TString Option
     if( !(fabs(Ele.dxySig())<3.)     ) PassID=false;
     if( !(Ele.GsfCtfScPixChargeConsistency()) ) PassID=false;
   }
+  else if(ID=="HctoWAFakeLoose"){
+    if( !(Ele.IsTrigMVAValid())      ) PassID=false;
+    if( !(Ele.PassesConvVeto())      ) PassID=false;
+    if( !(Ele.PFRelIso(0.3)<0.4)     ) PassID=false;
+    if( !(fabs(Ele.dxy())<0.025)     ) PassID=false;
+    if( !(fabs(Ele.dz())<0.05  )     ) PassID=false;
+    if( !(fabs(Ele.dxySig())<4.)     ) PassID=false;
+
+    if     ( fabs(Ele.Eta())<0.8   ){ if(Ele.MVA()<-0.92) PassID=false; }
+    else if( fabs(Ele.Eta())<1.479 ){ if(Ele.MVA()<-0.85) PassID=false; }
+    else                            { if(Ele.MVA()<-0.78) PassID=false; }
+  }
   else if(ID=="HNMVATIPQ"){
     if( !(Ele.PassTrigMVAHNTight())  ) PassID=false;
     if( !(Ele.IsTrigMVAValid())      ) PassID=false;
@@ -5817,23 +5804,341 @@ bool AnalyzerCore::PassIDCriteria(snu::KElectron Ele, TString ID, TString Option
     if( !(fabs(Ele.dxySig())<3.)     ) PassID=false;
     if( !(Ele.GsfCtfScPixChargeConsistency()) ) PassID=false;
   }
-  else if(ID=="HNMVATEST170706"){
-    float fEta=fabs(Ele.SCEta());
-    if     ( fEta<0.8 )  { if( Ele.MVA()<0.9   ) PassID=false; }
-    else if( fEta<1.479 ){ if( Ele.MVA()<0.825 ) PassID=false; }
-    else                 { if( Ele.MVA()<0.93  ) PassID=false; }
-
+  else if(ID=="POGMVAMFakeLIso04Opt1"){
     if( !(Ele.IsTrigMVAValid())      ) PassID=false;
     if( !(Ele.PassesConvVeto())      ) PassID=false;
-    if( !(Ele.PFRelIso(0.3)<0.08)    ) PassID=false;
+    if( !(Ele.PFRelIso(0.3)<0.4)     ) PassID=false;
+    if( !(fabs(Ele.dxy())<0.05)      ) PassID=false;
+    if( !(fabs(Ele.dz())<0.1)        ) PassID=false;
+    if( !(fabs(Ele.dxySig())<3.)     ) PassID=false;
+
+    if     ( fabs(Ele.Eta())<0.8   ){ if(Ele.MVA()<-0.2) PassID=false; }
+    else if( fabs(Ele.Eta())<1.479 ){ if(Ele.MVA()<-0.1) PassID=false; }
+    else                            { if(Ele.MVA()<-0.3) PassID=false; }
+  }
+  else if(ID=="POGMVAMFakeLIso04Opt2"){
+    if( !(Ele.IsTrigMVAValid())      ) PassID=false;
+    if( !(Ele.PassesConvVeto())      ) PassID=false;
+    if( !(Ele.PFRelIso(0.3)<0.4)     ) PassID=false;
     if( !(fabs(Ele.dxy())<0.01)      ) PassID=false;
-    if( !(fabs(Ele.dz())<0.04)       ) PassID=false;
+    if( !(fabs(Ele.dz())<0.04)        ) PassID=false;
     if( !(fabs(Ele.dxySig())<4.)     ) PassID=false;
-    if( !(Ele.GsfCtfScPixChargeConsistency()) ) PassID=false;
+
+    if     ( fabs(Ele.Eta())<0.8   ){ if(Ele.MVA()<-0.7) PassID=false; }
+    else if( fabs(Ele.Eta())<1.479 ){ if(Ele.MVA()<-0.5) PassID=false; }
+    else                            { if(Ele.MVA()<-0.6) PassID=false; }
+  }
+  else if(ID=="POGMVAMFakeLIso06Opt2"){
+    if( !(Ele.IsTrigMVAValid())      ) PassID=false;
+    if( !(Ele.PassesConvVeto())      ) PassID=false;
+    if( !(Ele.PFRelIso(0.3)<0.6)     ) PassID=false;
+    if( !(fabs(Ele.dxy())<0.05)      ) PassID=false;
+    if( !(fabs(Ele.dz())<0.1)        ) PassID=false;
+    if( !(fabs(Ele.dxySig())<3.)     ) PassID=false;
+
+    if     ( fabs(Ele.Eta())<0.8   ){ if(Ele.MVA()<-0.7) PassID=false; }
+    else if( fabs(Ele.Eta())<1.479 ){ if(Ele.MVA()<-0.5) PassID=false; }
+    else                            { if(Ele.MVA()<-0.6) PassID=false; }
+  }
+  else if(ID=="POGMVAMTIsop1IPp025p05Sig4FakeLIsop4"){
+    if( !(Ele.IsTrigMVAValid())      ) PassID=false;
+    if( !(Ele.PassesConvVeto())      ) PassID=false;
+    if( !(Ele.PFRelIso(0.3)<0.4)     ) PassID=false;
+    if( !(fabs(Ele.dxy())<0.025)     ) PassID=false;
+    if( !(fabs(Ele.dz())<0.05)       ) PassID=false;
+    if( !(fabs(Ele.dxySig())<4.)     ) PassID=false;
+
+    if     ( fabs(Ele.Eta())<0.8   ){ if(Ele.MVA()<-0.6) PassID=false; }
+    else if( fabs(Ele.Eta())<1.479 ){ if(Ele.MVA()<-0.5) PassID=false; }
+    else                            { if(Ele.MVA()<-0.5) PassID=false; }
+  }
+  else if(ID=="POGMVAMTIsop06IPp025p05Sig4FakeLIsop4"){
+    if( !(Ele.IsTrigMVAValid())      ) PassID=false;
+    if( !(Ele.PassesConvVeto())      ) PassID=false;
+    if( !(Ele.PFRelIso(0.3)<0.4)     ) PassID=false;
+    if( !(fabs(Ele.dxy())<0.025)     ) PassID=false;
+    if( !(fabs(Ele.dz())<0.05)       ) PassID=false;
+    if( !(fabs(Ele.dxySig())<4.)     ) PassID=false;
+
+    if     ( fabs(Ele.Eta())<0.8   ){ if(Ele.MVA()<-0.9) PassID=false; }
+    else if( fabs(Ele.Eta())<1.479 ){ if(Ele.MVA()<-0.9) PassID=false; }
+    else                            { if(Ele.MVA()<-0.8) PassID=false; }
+
+//    if     ( fabs(Ele.Eta())<0.8   ){ if(Ele.MVA()<-0.92) PassID=false; }
+//    else if( fabs(Ele.Eta())<1.479 ){ if(Ele.MVA()<-0.85) PassID=false; }
+//    else                            { if(Ele.MVA()<-0.78) PassID=false; }
+
+  }
+  else if(ID=="POGMVATTIsop1IPp025p05Sig4FakeLIsop4"){
+    if( !(Ele.IsTrigMVAValid())      ) PassID=false;
+    if( !(Ele.PassesConvVeto())      ) PassID=false;
+    if( !(Ele.PFRelIso(0.3)<0.4)     ) PassID=false;
+    if( !(fabs(Ele.dxy())<0.025)     ) PassID=false;
+    if( !(fabs(Ele.dz())<0.05)       ) PassID=false;
+    if( !(fabs(Ele.dxySig())<4.)     ) PassID=false;
+
+    if     ( fabs(Ele.Eta())<0.8   ){ if(Ele.MVA()<0.) PassID=false; }
+    else if( fabs(Ele.Eta())<1.479 ){ if(Ele.MVA()<0.1) PassID=false; }
+    else                            { if(Ele.MVA()<-0.1) PassID=false; }
+  }
+  else if(ID=="POGMVATTIsop06IPp025p05Sig4FakeLIsop4"){
+    if( !(Ele.IsTrigMVAValid())      ) PassID=false;
+    if( !(Ele.PassesConvVeto())      ) PassID=false;
+    if( !(Ele.PFRelIso(0.3)<0.4)     ) PassID=false;
+    if( !(fabs(Ele.dxy())<0.025)     ) PassID=false;
+    if( !(fabs(Ele.dz())<0.05)       ) PassID=false;
+    if( !(fabs(Ele.dxySig())<4.)     ) PassID=false;
+
+    if     ( fabs(Ele.Eta())<0.8   ){ if(Ele.MVA()<-0.7) PassID=false; }
+    else if( fabs(Ele.Eta())<1.479 ){ if(Ele.MVA()<-0.6) PassID=false; }
+    else                            { if(Ele.MVA()<-0.6) PassID=false; }
+  }
+  else if(ID=="POGMVAMFakeLIso04Opt2Nod0"){
+    if( !(Ele.IsTrigMVAValid())      ) PassID=false;
+    if( !(Ele.PassesConvVeto())      ) PassID=false;
+    if( !(Ele.PFRelIso(0.3)<0.4)     ) PassID=false;
+    if( !(fabs(Ele.dz())<0.1)        ) PassID=false;
+
+    if     ( fabs(Ele.Eta())<0.8   ){ if(Ele.MVA()<-0.7) PassID=false; }
+    else if( fabs(Ele.Eta())<1.479 ){ if(Ele.MVA()<-0.5) PassID=false; }
+    else                            { if(Ele.MVA()<-0.6) PassID=false; }
+  }
+  else if(ID=="POGMVAMFakeLIso04Opt2NoTrig"){
+    if( !(Ele.PassesConvVeto())      ) PassID=false;
+    if( !(Ele.PFRelIso(0.3)<0.6)     ) PassID=false;
+    if( !(fabs(Ele.dxy())<0.05)      ) PassID=false;
+    if( !(fabs(Ele.dz())<0.1)        ) PassID=false;
+
+    if     ( fabs(Ele.Eta())<0.8   ){ if(Ele.MVA()<-0.7) PassID=false; }
+    else if( fabs(Ele.Eta())<1.479 ){ if(Ele.MVA()<-0.5) PassID=false; }
+    else                            { if(Ele.MVA()<-0.6) PassID=false; }
+  }
+  else if(ID=="POGMVAMFakeLIso05Opt2"){
+    if( !(Ele.IsTrigMVAValid())      ) PassID=false;
+    if( !(Ele.PassesConvVeto())      ) PassID=false;
+    if( !(Ele.PFRelIso(0.3)<0.5)     ) PassID=false;
+    if( !(fabs(Ele.dxy())<0.05)      ) PassID=false;
+    if( !(fabs(Ele.dz())<0.1)        ) PassID=false;
+    if( !(fabs(Ele.dxySig())<3.)     ) PassID=false;
+
+    if     ( fabs(Ele.Eta())<0.8   ){ if(Ele.MVA()<-0.7) PassID=false; }
+    else if( fabs(Ele.Eta())<1.479 ){ if(Ele.MVA()<-0.6) PassID=false; }
+    else                            { if(Ele.MVA()<-0.6) PassID=false; }
+  }
+  else if(ID=="POGMVAMFakeLIso04NoMVA"){
+    if( !(Ele.IsTrigMVAValid())      ) PassID=false;
+    if( !(Ele.PassesConvVeto())      ) PassID=false;
+    if( !(Ele.PFRelIso(0.3)<0.4)     ) PassID=false;
+    if( !(fabs(Ele.dxy())<0.05)      ) PassID=false;
+    if( !(fabs(Ele.dz())<0.1)        ) PassID=false;
+    if( !(fabs(Ele.dxySig())<3.)     ) PassID=false;
+  }
+  else if(ID=="POGMVAMFakeLIso04Opt2Data"){
+    if( !(Ele.IsTrigMVAValid())      ) PassID=false;
+    if( !(Ele.PassesConvVeto())      ) PassID=false;
+    if( !(Ele.PFRelIso(0.3)<0.4)     ) PassID=false;
+    if( !(fabs(Ele.dxy())<0.05)      ) PassID=false;
+    if( !(fabs(Ele.dz())<0.1)        ) PassID=false;
+    if( !(fabs(Ele.dxySig())<3.)     ) PassID=false;
+
+    if     ( fabs(Ele.Eta())<0.8   ){ if(Ele.MVA()<-0.9) PassID=false; }
+    else if( fabs(Ele.Eta())<1.479 ){ if(Ele.MVA()<-0.8) PassID=false; }
+    else                            { if(Ele.MVA()<-0.9) PassID=false; }
   }
   else return false;
 
   return PassID;
 
 }
-//------------------------------------------------------------------------------------------//
+
+bool AnalyzerCore::PassIDCriteria(snu::KMuon Mu, TString ID, TString Option){
+
+  bool PassID=true;
+  bool RochCorr=Option.Contains("Roch");
+  float fEta=fabs(Mu.Eta());
+  if(ID=="HNTrilepFakeL2"){
+    if( !(Mu.IsTight())      ) PassID=false;
+    if     ( !RochCorr && !(Mu.RelIso04()<0.4) ) PassID=false;
+    else if(  RochCorr && Mu.RochPt()>0 && !(Mu.RelIso04()*Mu.MiniAODPt()/Mu.RochPt()<0.4) ) PassID=false;
+    if( !(fabs(Mu.dXY())<0.01) ) PassID=false;
+    if( !(fabs(Mu.dZ()) <0.1 ) ) PassID=false;
+    if( !(fabs(Mu.dXYSig())<3.)) PassID=false;
+  }
+  else if(ID=="HNTrilepTight2"){
+    if( !(Mu.IsTight())      ) PassID=false;
+    if     ( !RochCorr && !(Mu.RelIso04()<0.1) ) PassID=false;
+    else if(  RochCorr && Mu.RochPt()>0 && !(Mu.RelIso04()*Mu.MiniAODPt()/Mu.RochPt()<0.1) ) PassID=false;
+    if( !(fabs(Mu.dXY())<0.01) ) PassID=false;
+    if( !(fabs(Mu.dZ()) <0.1 ) ) PassID=false;
+    if( !(fabs(Mu.dXYSig())<3.)) PassID=false;
+  }
+  else if(ID=="POGLNoIso"){
+    if( !(Mu.IsLoose()) ) PassID=false;
+  }
+  else if(ID=="Test_POGLIsop6IPpXp1"){
+    if     ( !RochCorr && !(Mu.RelIso04()<0.6)     ) PassID=false;
+    else if(  RochCorr && !(RochIso(Mu,"0.4")<0.6) ) PassID=false;
+    if     ( !(Mu.IsLoose())     ) PassID=false;
+    if     ( !(fabs(Mu.dZ())<0.1)) PassID=false;
+  }
+  else if(ID=="Test_POGLIsop4IPpXp1"){
+    if     ( !RochCorr && !(Mu.RelIso04()    <0.4) ) PassID=false;
+    else if(  RochCorr && !(RochIso(Mu,"0.4")<0.4) ) PassID=false;
+    if     ( !(Mu.IsLoose())     ) PassID=false;
+    if     ( !(fabs(Mu.dZ())<0.1)) PassID=false;
+  }
+  else if(ID=="Test_POGLIsop6IPp5p1"){
+    if     ( !RochCorr && !(Mu.RelIso04()<0.6)     ) PassID=false;
+    else if(  RochCorr && !(RochIso(Mu,"0.4")<0.6) ) PassID=false;
+    if     ( !(Mu.IsLoose())            ) PassID=false;
+    if     ( !(fabs(Mu.dXY())<0.5)      ) PassID=false;
+    if     ( !(fabs(Mu.dZ())<0.1)       ) PassID=false;
+  }
+  else if(ID=="Test_POGLIsop4IPp5p1"){
+    if     ( !RochCorr && !(Mu.RelIso04()<0.4)     ) PassID=false;
+    else if(  RochCorr && !(RochIso(Mu,"0.4")<0.4) ) PassID=false;
+    if     ( !(Mu.IsLoose())            ) PassID=false;
+    if     ( !(fabs(Mu.dXY())<0.5)      ) PassID=false;
+    if     ( !(fabs(Mu.dZ())<0.1)       ) PassID=false;
+  }
+  else if(ID=="Test_POGLIsop6IPp5p1sig4"){
+    if     ( !RochCorr && !(Mu.RelIso04()<0.6)     ) PassID=false;
+    else if(  RochCorr && !(RochIso(Mu,"0.4")<0.6) ) PassID=false;
+    if     ( !(Mu.IsLoose())            ) PassID=false;
+    if     ( !(fabs(Mu.dXY())<0.5)      ) PassID=false;
+    if     ( !(fabs(Mu.dZ())<0.1)       ) PassID=false;
+    if     ( !(fabs(Mu.dXYSig())<4.)    ) PassID=false;
+  }
+  else if(ID=="Test_POGLIsop4IPp5p1sig4"){
+    if     ( !RochCorr && !(Mu.RelIso04()<0.4)     ) PassID=false;
+    else if(  RochCorr && !(RochIso(Mu,"0.4")<0.4) ) PassID=false;
+    if     ( !(Mu.IsLoose())            ) PassID=false;
+    if     ( !(fabs(Mu.dXY())<0.5)      ) PassID=false;
+    if     ( !(fabs(Mu.dZ())<0.1)       ) PassID=false;
+    if     ( !(fabs(Mu.dXYSig())<4.)    ) PassID=false;
+  }
+  else if(ID=="Test_POGLIsop6IPp5p1sig8"){
+    if     ( !RochCorr && !(Mu.RelIso04()<0.6)     ) PassID=false;
+    else if(  RochCorr && !(RochIso(Mu,"0.4")<0.6) ) PassID=false;
+    if     ( !(Mu.IsLoose())            ) PassID=false;
+    if     ( !(fabs(Mu.dXY())<0.5)      ) PassID=false;
+    if     ( !(fabs(Mu.dZ())<0.1)       ) PassID=false;
+    if     ( !(fabs(Mu.dXYSig())<8.)    ) PassID=false;
+  }
+  else if(ID=="Test_POGLIsop4IPp5p1sig8"){
+    if     ( !RochCorr && !(Mu.RelIso04()<0.4)     ) PassID=false;
+    else if(  RochCorr && !(RochIso(Mu,"0.4")<0.4) ) PassID=false;
+    if     ( !(Mu.IsLoose())            ) PassID=false;
+    if     ( !(fabs(Mu.dXY())<0.5)      ) PassID=false;
+    if     ( !(fabs(Mu.dZ())<0.1)       ) PassID=false;
+    if     ( !(fabs(Mu.dXYSig())<8.)    ) PassID=false;
+  }
+  else if(ID=="Test_POGLIsop4IPp5p1Chi100"){
+    if     ( !RochCorr && !(Mu.RelIso04()<0.4)     ) PassID=false;
+    else if(  RochCorr && !(RochIso(Mu,"0.4")<0.4) ) PassID=false;
+    if     ( !(Mu.IsLoose())            ) PassID=false;
+    if     ( !(fabs(Mu.dXY())<0.5)      ) PassID=false;
+    if     ( !(fabs(Mu.dZ())<0.1)       ) PassID=false;
+    if     ( !(fabs(Mu.GlobalChi2())<100.)) PassID=false;
+  }
+  else if(ID=="Test_POGLIsop6IPp5p1Chi30"){
+    if     ( !RochCorr && !(Mu.RelIso04()<0.6)     ) PassID=false;
+    else if(  RochCorr && !(RochIso(Mu,"0.4")<0.6) ) PassID=false;
+    if     ( !(Mu.IsLoose())     ) PassID=false;
+    if     ( !(fabs(Mu.dXY())<0.5 )     ) PassID=false;
+    if     ( !(fabs(Mu.dZ() )<0.1 )     ) PassID=false;
+    if     ( !(fabs(Mu.GlobalChi2())<30.)) PassID=false;
+  }
+  else if(ID=="Test_POGTIsop15IPp01p1"){
+    if     ( !RochCorr && !(Mu.RelIso04()    <0.15) ) PassID=false;
+    else if(  RochCorr && !(RochIso(Mu,"0.4")<0.15) ) PassID=false;
+    if     ( !(Mu.IsTight())        ) PassID=false;
+    if     ( !(fabs(Mu.dXY())<0.01) ) PassID=false;
+    if     ( !(fabs(Mu.dZ() )<0.1 ) ) PassID=false;
+  }
+  else if(ID=="Test_POGTIsop25IPp01p1Chi3"){
+    if     ( !RochCorr && !(Mu.RelIso04()    <0.25) ) PassID=false;
+    else if(  RochCorr && !(RochIso(Mu,"0.4")<0.25) ) PassID=false;
+    if     ( !(Mu.IsTight())            ) PassID=false;
+    if     ( !(fabs(Mu.dXY())<0.01)     ) PassID=false;
+    if     ( !(fabs(Mu.dZ() )<0.1 )     ) PassID=false;
+    if     ( !(fabs(Mu.GlobalChi2())<3.)) PassID=false;
+  }
+  else if(ID=="Test_POGTIsop20IPp01p1Chi3"){
+    if     ( !RochCorr && !(Mu.RelIso04()    <0.20) ) PassID=false;
+    else if(  RochCorr && !(RochIso(Mu,"0.4")<0.20) ) PassID=false;
+    if     ( !(Mu.IsTight())            ) PassID=false;
+    if     ( !(fabs(Mu.dXY())<0.01)     ) PassID=false;
+    if     ( !(fabs(Mu.dZ() )<0.1 )     ) PassID=false;
+    if     ( !(fabs(Mu.GlobalChi2())<3.)) PassID=false;
+  }
+  else if(ID=="Test_POGTIsop20IPp01p05sig4Chi3"){
+    if     ( !RochCorr && !(Mu.RelIso04()    <0.20) ) PassID=false;
+    else if(  RochCorr && !(RochIso(Mu,"0.4")<0.20) ) PassID=false;
+    if     ( !(Mu.IsTight())            ) PassID=false;
+    if     ( !(fabs(Mu.dXY())<0.01)     ) PassID=false;
+    if     ( !(fabs(Mu.dZ() )<0.05 )    ) PassID=false;
+    if     ( !(fabs(Mu.dXYSig())<4.)    ) PassID=false;
+    if     ( !(fabs(Mu.GlobalChi2())<3.)) PassID=false;
+  }
+  else if(ID=="Test_POGTIsop15IPp01p1Chi3"){
+    if     ( !RochCorr && !(Mu.RelIso04()    <0.15) ) PassID=false;
+    else if(  RochCorr && !(RochIso(Mu,"0.4")<0.15) ) PassID=false;
+    if     ( !(Mu.IsTight())            ) PassID=false;
+    if     ( !(fabs(Mu.dXY())<0.01)     ) PassID=false;
+    if     ( !(fabs(Mu.dZ() )<0.1 )     ) PassID=false;
+    if     ( !(fabs(Mu.GlobalChi2())<3.)) PassID=false;
+  }
+  else if(ID=="Test_POGTIsop20IPp01p05sig4Chi4"){
+    if     ( !RochCorr && !(Mu.RelIso04()    <0.20) ) PassID=false;
+    else if(  RochCorr && !(RochIso(Mu,"0.4")<0.20) ) PassID=false;
+    if     ( !(Mu.IsTight())            ) PassID=false;
+    if     ( !(fabs(Mu.dXY())<0.01)     ) PassID=false;
+    if     ( !(fabs(Mu.dZ() )<0.05)    ) PassID=false;
+    if     ( !(fabs(Mu.dXYSig())<4.)    ) PassID=false;
+    if     ( !(fabs(Mu.GlobalChi2())<4.)) PassID=false;
+  }
+  else if(ID=="Test_POGTIsop20IPp01p1sig4Chi4"){
+    if     ( !RochCorr && !(Mu.RelIso04()    <0.20) ) PassID=false;
+    else if(  RochCorr && !(RochIso(Mu,"0.4")<0.20) ) PassID=false;
+    if     ( !(Mu.IsTight())            ) PassID=false;
+    if     ( !(fabs(Mu.dXY())<0.01)     ) PassID=false;
+    if     ( !(fabs(Mu.dZ() )<0.1)      ) PassID=false;
+    if     ( !(fabs(Mu.dXYSig())<4.)    ) PassID=false;
+    if     ( !(fabs(Mu.GlobalChi2())<4.)) PassID=false;
+  }
+  else return false;
+
+  return PassID;
+}
+
+
+bool AnalyzerCore::HasStrangeEleCand(std::vector<snu::KElectron> EleColl){
+//Recommended to check whether weird electrons affect each of analysis or not.
+//Ref : https://hypernews.cern.ch/HyperNews/CMS/get/physics-announcements/4803.html
+
+  bool HasIt=false;
+  for(int i=0; i<EleColl.size(); i++){
+    if(CouldBeStrangeEleCand(EleColl.at(i))){ HasIt=true; break; }
+  }
+
+  return HasIt;
+}
+
+bool AnalyzerCore::CouldBeStrangeEleCand(snu::KElectron Ele){
+//Recommended to check whether weird electrons affect each of analysis or not.
+//Ref : https://hypernews.cern.ch/HyperNews/CMS/get/physics-announcements/4803.html
+
+  return fabs(Ele.Eta()-Ele.SCEta())>0.2;
+
+}
+
+float AnalyzerCore::RochIso(snu::KMuon Mu, TString ConeSize){
+
+  if     ( !Mu.IsRochesterCorrected() ) return 0.;
+  else if(  Mu.RochPt()==0.           ) return 0.;
+
+  float PFRelIsodbeta = ConeSize=="0.4"? Mu.RelIso04():Mu.RelIso03();
+  return PFRelIsodbeta*Mu.MiniAODPt()/Mu.RochPt();
+
+}

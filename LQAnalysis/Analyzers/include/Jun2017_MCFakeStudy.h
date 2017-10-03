@@ -29,7 +29,9 @@ class Jun2017_MCFakeStudy : public AnalyzerCore {
   float ConeCorrectedPT(snu::KElectron Ele, float TightIsoCut);
   int   GetFakeLepSrcType(snu::KElectron Ele, std::vector<snu::KJet> JetColl);
   float FakeRateMC(snu::KElectron Ele, TString Option);
-  void  Draw1DFakePlot(std::vector<snu::KElectron> FakeColl, std::vector<snu::KJet> JetColl, float MVACut, float IsoCut, int NPtEdges, float PtEdges[]);
+  void  Draw1DFakePlot(std::vector<snu::KElectron> FakeColl, std::vector<snu::KJet> JetColl, float MVACut, float IsoCut, int NPtEdges, float PtEdges[], TString Option="");
+  void  Draw1DFakePlot(std::vector<snu::KElectron> FakeColl, std::vector<snu::KJet> JetColl, float MVAB1Cut, float MVAB2Cut, float MVAECut, float IsoCut, int NPtEdges, float PtEdges[], TString Option="");
+  void Draw1DClosurePlot(std::vector<snu::KMuon> MuPreColl, std::vector<snu::KElectron> ElePreColl, std::vector<snu::KJet> jetColl, std::vector<snu::KJet> bjetColl, std::vector<snu::KTruth> truthColl, float met, float MVAB1Cut, float MVAB2Cut, float MVAECut, float IsoCut, TString Option);
 
 
  private:

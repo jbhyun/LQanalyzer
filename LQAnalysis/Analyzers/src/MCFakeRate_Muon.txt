@@ -1,0 +1,2241 @@
+  if(Option=="QCD_POGTIsop20IPp01p1Chi3_POGLIsop6IPp5p1Chi30_TrkIsoVVLConeE"){
+    if(fEta<0.9){
+      if     (PTCorr<15)  FR=0.394938 ;
+      else if(PTCorr<20)  FR=0.136155 ;
+      else if(PTCorr<25)  FR=0.107821 ;
+      else if(PTCorr<35)  FR=0.0881705;
+      else if(PTCorr<50)  FR=0.0728545;
+      else if(PTCorr<70)  FR=0.057961 ;
+      else                FR=0.0927629;
+    }
+    else if(fEta<1.6){
+      if     (PTCorr<15)  FR=0.441094 ;
+      else if(PTCorr<20)  FR=0.175048 ;
+      else if(PTCorr<25)  FR=0.138334 ;
+      else if(PTCorr<35)  FR=0.119499 ;
+      else if(PTCorr<50)  FR=0.10194  ;
+      else if(PTCorr<70)  FR=0.0840998;
+      else                FR=0.0606251;
+    }
+    else if(fEta<2.1){
+      if     (PTCorr<15)  FR=0.513466;
+      else if(PTCorr<20)  FR=0.228971;
+      else if(PTCorr<25)  FR=0.184917;
+      else if(PTCorr<35)  FR=0.161444;
+      else if(PTCorr<50)  FR=0.138602;
+      else if(PTCorr<70)  FR=0.127168;
+      else                FR=0.10325 ;
+    }
+    else{
+      if     (PTCorr<15)  FR=0.549444;
+      else if(PTCorr<20)  FR=0.257621;
+      else if(PTCorr<25)  FR=0.213924;
+      else if(PTCorr<35)  FR=0.174953;
+      else if(PTCorr<50)  FR=0.161501;
+      else if(PTCorr<70)  FR=0.120066;
+      else                FR=0.125157;
+    }
+  }
+  else if(Option=="QCD_POGTIsop20IPp01p1Chi3_POGLIsop5IPp5p1Chi_TrkIsoVVLConeE"){
+    if(fEta<0.9){
+      if     (PTCorr<15)  FR=0.394652 ;
+      else if(PTCorr<20)  FR=0.165052 ;
+      else if(PTCorr<25)  FR=0.138822 ;
+      else if(PTCorr<35)  FR=0.117067 ;
+      else if(PTCorr<50)  FR=0.0997149;
+      else if(PTCorr<70)  FR=0.0815288;
+      else                FR=0.130564 ;
+    }
+    else if(fEta<1.6){
+      if     (PTCorr<15)  FR=0.440961 ;
+      else if(PTCorr<20)  FR=0.206098 ;
+      else if(PTCorr<25)  FR=0.172291 ;
+      else if(PTCorr<35)  FR=0.152165 ;
+      else if(PTCorr<50)  FR=0.132213 ;
+      else if(PTCorr<70)  FR=0.113683 ;
+      else                FR=0.0984001;
+    }
+    else if(fEta<2.1){
+      if     (PTCorr<15)  FR=0.513365;
+      else if(PTCorr<20)  FR=0.263813;
+      else if(PTCorr<25)  FR=0.221514;
+      else if(PTCorr<35)  FR=0.198306;
+      else if(PTCorr<50)  FR=0.173796;
+      else if(PTCorr<70)  FR=0.160608;
+      else                FR=0.134846;
+    }
+    else{
+      if     (PTCorr<15)  FR=0.549439;
+      else if(PTCorr<20)  FR=0.29212 ;
+      else if(PTCorr<25)  FR=0.255054;
+      else if(PTCorr<35)  FR=0.216817;
+      else if(PTCorr<50)  FR=0.200834;
+      else if(PTCorr<70)  FR=0.155616;
+      else                FR=0.165278;
+    }
+  }
+  else if(Option=="QCD_POGTIsop15IPp01p1Chi3_POGLIsop6IPp5p1Chi30_TrkIsoVVLConeE"){
+    if(fEta<0.9){
+      if     (PTCorr<15)  FR=0.307404 ;
+      else if(PTCorr<20)  FR=0.0885854;
+      else if(PTCorr<25)  FR=0.0649694;
+      else if(PTCorr<35)  FR=0.0529196;
+      else if(PTCorr<50)  FR=0.0414075;
+      else if(PTCorr<70)  FR=0.0335444;
+      else                FR=0.0256424;
+    }
+    else if(fEta<1.6){
+      if     (PTCorr<15)  FR=0.351894 ;
+      else if(PTCorr<20)  FR=0.118576 ;
+      else if(PTCorr<25)  FR=0.0880966;
+      else if(PTCorr<35)  FR=0.0740952;
+      else if(PTCorr<50)  FR=0.0639738;
+      else if(PTCorr<70)  FR=0.0509207;
+      else                FR=0.0354599;
+    }
+    else if(fEta<2.1){
+      if     (PTCorr<15)  FR=0.42511  ;
+      else if(PTCorr<20)  FR=0.16566  ;
+      else if(PTCorr<25)  FR=0.126669 ;
+      else if(PTCorr<35)  FR=0.106401 ;
+      else if(PTCorr<50)  FR=0.090494 ;
+      else if(PTCorr<70)  FR=0.0758025;
+      else                FR=0.0667572;
+    }
+    else{
+      if     (PTCorr<15)  FR=0.467181 ;
+      else if(PTCorr<20)  FR=0.190865 ;
+      else if(PTCorr<25)  FR=0.15891  ;
+      else if(PTCorr<35)  FR=0.124359 ;
+      else if(PTCorr<50)  FR=0.110689 ;
+      else if(PTCorr<70)  FR=0.0841911;
+      else                FR=0.0873385;
+    }
+  }
+  else if(Option=="QCD_POGTIsop15IPp01p1Chi3_POGLIsop5IPp5p1Chi_TrkIsoVVLConeE"){
+    if(fEta<0.9){
+      if     (PTCorr<15)  FR=0.307167 ;
+      else if(PTCorr<20)  FR=0.107365 ;
+      else if(PTCorr<25)  FR=0.0836534;
+      else if(PTCorr<35)  FR=0.0702525;
+      else if(PTCorr<50)  FR=0.0566473;
+      else if(PTCorr<70)  FR=0.0471972;
+      else                FR=0.0362778;
+    }
+    else if(fEta<1.6){
+      if     (PTCorr<15)  FR=0.351782 ;
+      else if(PTCorr<20)  FR=0.139608 ;
+      else if(PTCorr<25)  FR=0.109712 ;
+      else if(PTCorr<35)  FR=0.0943515;
+      else if(PTCorr<50)  FR=0.0829542;
+      else if(PTCorr<70)  FR=0.0687772;
+      else                FR=0.0576762;
+    }
+    else if(fEta<2.1){
+      if     (PTCorr<15)  FR=0.425032 ;
+      else if(PTCorr<20)  FR=0.190866 ;
+      else if(PTCorr<25)  FR=0.151737 ;
+      else if(PTCorr<35)  FR=0.130251 ;
+      else if(PTCorr<50)  FR=0.113434 ;
+      else if(PTCorr<70)  FR=0.0956885;
+      else                FR=0.0871999;
+    }
+    else{
+      if     (PTCorr<15)  FR=0.467164;
+      else if(PTCorr<20)  FR=0.216407;
+      else if(PTCorr<25)  FR=0.189465;
+      else if(PTCorr<35)  FR=0.154076;
+      else if(PTCorr<50)  FR=0.137688;
+      else if(PTCorr<70)  FR=0.109098;
+      else                FR=0.115343;
+    }
+  }
+  else if(Option=="QCD_POGTIsop20IPp01p1Chi3_POGLIsop6IPp5p1Chi30_NoFilterConeE"){
+    if(fEta<0.9){
+      if     (PTCorr<15)  FR=0.389175 ;
+      else if(PTCorr<20)  FR=0.122202 ;
+      else if(PTCorr<25)  FR=0.0947011;
+      else if(PTCorr<35)  FR=0.0767624;
+      else if(PTCorr<50)  FR=0.0624423;
+      else if(PTCorr<70)  FR=0.0499401;
+      else                FR=0.0803949;
+    }
+    else if(fEta<1.6){
+      if     (PTCorr<15)  FR=0.433183 ;
+      else if(PTCorr<20)  FR=0.154728 ;
+      else if(PTCorr<25)  FR=0.119083 ;
+      else if(PTCorr<35)  FR=0.101688 ;
+      else if(PTCorr<50)  FR=0.0862129;
+      else if(PTCorr<70)  FR=0.071013 ;
+      else                FR=0.0536229;
+    }
+    else if(fEta<2.1){
+      if     (PTCorr<15)  FR=0.504904 ;
+      else if(PTCorr<20)  FR=0.200071 ;
+      else if(PTCorr<25)  FR=0.157903 ;
+      else if(PTCorr<35)  FR=0.135676 ;
+      else if(PTCorr<50)  FR=0.114882 ;
+      else if(PTCorr<70)  FR=0.105058 ;
+      else                FR=0.0883849;
+    }
+    else{
+      if     (PTCorr<15)  FR=0.543047;
+      else if(PTCorr<20)  FR=0.23083 ;
+      else if(PTCorr<25)  FR=0.190102;
+      else if(PTCorr<35)  FR=0.155122;
+      else if(PTCorr<50)  FR=0.142147;
+      else if(PTCorr<70)  FR=0.104949;
+      else                FR=0.111145;
+    }
+  }
+  else if(Option=="QCD_POGTIsop20IPp01p1Chi3_POGLIsop5IPp5p1Chi_NoFilterConeE"){
+    if(fEta<0.9){
+      if     (PTCorr<15)  FR=0.388886 ;
+      else if(PTCorr<20)  FR=0.155876 ;
+      else if(PTCorr<25)  FR=0.130309 ;
+      else if(PTCorr<35)  FR=0.109454 ;
+      else if(PTCorr<50)  FR=0.0924648;
+      else if(PTCorr<70)  FR=0.0761654;
+      else                FR=0.121522 ;
+    }
+    else if(fEta<1.6){
+      if     (PTCorr<15)  FR=0.433037 ;
+      else if(PTCorr<20)  FR=0.191881 ;
+      else if(PTCorr<25)  FR=0.15878  ;
+      else if(PTCorr<35)  FR=0.140149 ;
+      else if(PTCorr<50)  FR=0.121188 ;
+      else if(PTCorr<70)  FR=0.104985 ;
+      else                FR=0.0917933;
+    }
+    else if(fEta<2.1){
+      if     (PTCorr<15)  FR=0.504788;
+      else if(PTCorr<20)  FR=0.243666;
+      else if(PTCorr<25)  FR=0.203619;
+      else if(PTCorr<35)  FR=0.181099;
+      else if(PTCorr<50)  FR=0.157576;
+      else if(PTCorr<70)  FR=0.144517;
+      else                FR=0.125587;
+    }
+    else{
+      if     (PTCorr<15)  FR=0.543038;
+      else if(PTCorr<20)  FR=0.273063;
+      else if(PTCorr<25)  FR=0.239835;
+      else if(PTCorr<35)  FR=0.201732;
+      else if(PTCorr<50)  FR=0.18687 ;
+      else if(PTCorr<70)  FR=0.142861;
+      else                FR=0.154894;
+    }
+  }
+  else if(Option=="QCD_POGTIsop15IPp01p1Chi3_POGLIsop6IPp5p1Chi30_NoFilterConeE"){
+    if(fEta<0.9){
+      if     (PTCorr<15)  FR=0.302944 ;
+      else if(PTCorr<20)  FR=0.0794349;
+      else if(PTCorr<25)  FR=0.0570965;
+      else if(PTCorr<35)  FR=0.0461095;
+      else if(PTCorr<50)  FR=0.0355947;
+      else if(PTCorr<70)  FR=0.0288719;
+      else                FR=0.022547 ;
+    }
+    else if(fEta<1.6){
+      if     (PTCorr<15)  FR=0.345526 ;
+      else if(PTCorr<20)  FR=0.104711 ;
+      else if(PTCorr<25)  FR=0.0759929;
+      else if(PTCorr<35)  FR=0.0629857;
+      else if(PTCorr<50)  FR=0.0539071;
+      else if(PTCorr<70)  FR=0.0430252;
+      else                FR=0.0315116;
+    }
+    else if(fEta<2.1){
+      if     (PTCorr<15)  FR=0.417907 ;
+      else if(PTCorr<20)  FR=0.144589 ;
+      else if(PTCorr<25)  FR=0.108075 ;
+      else if(PTCorr<35)  FR=0.0892081;
+      else if(PTCorr<50)  FR=0.0749247;
+      else if(PTCorr<70)  FR=0.0626758;
+      else                FR=0.0572998;
+    }
+    else{
+      if     (PTCorr<15)  FR=0.46098  ;
+      else if(PTCorr<20)  FR=0.170368 ;
+      else if(PTCorr<25)  FR=0.140946 ;
+      else if(PTCorr<35)  FR=0.109875 ;
+      else if(PTCorr<50)  FR=0.0973176;
+      else if(PTCorr<70)  FR=0.0737076;
+      else                FR=0.0777818;
+    }
+  }
+  else if(Option=="QCD_POGTIsop15IPp01p1Chi3_POGLIsop5IPp5p1Chi_NoFilterConeE"){
+    if(fEta<0.9){
+      if     (PTCorr<15)  FR=0.302705 ;
+      else if(PTCorr<20)  FR=0.101304 ;
+      else if(PTCorr<25)  FR=0.078567 ;
+      else if(PTCorr<35)  FR=0.0657342;
+      else if(PTCorr<50)  FR=0.0526828;
+      else if(PTCorr<70)  FR=0.0440456;
+      else                FR=0.0342491;
+    }
+    else if(fEta<1.6){
+      if     (PTCorr<15)  FR=0.345405 ;
+      else if(PTCorr<20)  FR=0.129853 ;
+      else if(PTCorr<25)  FR=0.101318 ;
+      else if(PTCorr<35)  FR=0.0868159;
+      else if(PTCorr<50)  FR=0.0757563;
+      else if(PTCorr<70)  FR=0.0635328;
+      else                FR=0.0540415;
+    }
+    else if(fEta<2.1){
+      if     (PTCorr<15)  FR=0.417816 ;
+      else if(PTCorr<20)  FR=0.176093 ;
+      else if(PTCorr<25)  FR=0.139364 ;
+      else if(PTCorr<35)  FR=0.118691 ;
+      else if(PTCorr<50)  FR=0.102736 ;
+      else if(PTCorr<70)  FR=0.0861758;
+      else                FR=0.0814302;
+    }
+    else{
+      if     (PTCorr<15)  FR=0.460959;
+      else if(PTCorr<20)  FR=0.201523;
+      else if(PTCorr<25)  FR=0.177822;
+      else if(PTCorr<35)  FR=0.142855;
+      else if(PTCorr<50)  FR=0.127972;
+      else if(PTCorr<70)  FR=0.100316;
+      else                FR=0.108421;
+    }
+  }
+  else if(Option=="QCD_POGTIsop20IPp01p1Chi3_POGLIsop6IPp5p1Chi30_NoFilterConeSUSY"){
+    if(fEta<0.9){
+      if     (PTCorr<15)  FR=0.26958  ;
+      else if(PTCorr<20)  FR=0.127345 ;
+      else if(PTCorr<25)  FR=0.104651 ;
+      else if(PTCorr<35)  FR=0.087553 ;
+      else if(PTCorr<50)  FR=0.0688128;
+      else if(PTCorr<70)  FR=0.0568122;
+      else                FR=0.125093 ;
+    }
+    else if(fEta<1.6){
+      if     (PTCorr<15)  FR=0.314604 ;
+      else if(PTCorr<20)  FR=0.163422 ;
+      else if(PTCorr<25)  FR=0.138994 ;
+      else if(PTCorr<35)  FR=0.12169  ;
+      else if(PTCorr<50)  FR=0.101807 ;
+      else if(PTCorr<70)  FR=0.0805677;
+      else                FR=0.0660265;
+    }
+    else if(fEta<2.1){
+      if     (PTCorr<15)  FR=0.384187;
+      else if(PTCorr<20)  FR=0.218886;
+      else if(PTCorr<25)  FR=0.18668 ;
+      else if(PTCorr<35)  FR=0.171061;
+      else if(PTCorr<50)  FR=0.142251;
+      else if(PTCorr<70)  FR=0.118951;
+      else                FR=0.115454;
+    }
+    else{
+      if     (PTCorr<15)  FR=0.425167;
+      else if(PTCorr<20)  FR=0.252365;
+      else if(PTCorr<25)  FR=0.233936;
+      else if(PTCorr<35)  FR=0.194181;
+      else if(PTCorr<50)  FR=0.172417;
+      else if(PTCorr<70)  FR=0.142109;
+      else                FR=0.136599;
+    }
+  }
+  else if(Option=="QCD_POGTIsop20IPp01p1Chi3_POGLIsop5IPp5p1Chi_NoFilterConeSUSY"){
+    if(fEta<0.9){
+      if     (PTCorr<15)  FR=0.291171;
+      else if(PTCorr<20)  FR=0.17298 ;
+      else if(PTCorr<25)  FR=0.148656;
+      else if(PTCorr<35)  FR=0.129365;
+      else if(PTCorr<50)  FR=0.106001;
+      else if(PTCorr<70)  FR=0.091418;
+      else                FR=0.187801;
+    }
+    else if(fEta<1.6){
+      if     (PTCorr<15)  FR=0.335598;
+      else if(PTCorr<20)  FR=0.213453;
+      else if(PTCorr<25)  FR=0.191302;
+      else if(PTCorr<35)  FR=0.17187 ;
+      else if(PTCorr<50)  FR=0.14712 ;
+      else if(PTCorr<70)  FR=0.12353 ;
+      else                FR=0.119904;
+    }
+    else if(fEta<2.1){
+      if     (PTCorr<15)  FR=0.405999;
+      else if(PTCorr<20)  FR=0.276911;
+      else if(PTCorr<25)  FR=0.247057;
+      else if(PTCorr<35)  FR=0.228418;
+      else if(PTCorr<50)  FR=0.197374;
+      else if(PTCorr<70)  FR=0.167205;
+      else                FR=0.165222;
+    }
+    else{
+      if     (PTCorr<15)  FR=0.444043;
+      else if(PTCorr<20)  FR=0.311821;
+      else if(PTCorr<25)  FR=0.294946;
+      else if(PTCorr<35)  FR=0.255312;
+      else if(PTCorr<50)  FR=0.228904;
+      else if(PTCorr<70)  FR=0.2008  ;
+      else                FR=0.181379;
+    }
+  }
+  else if(Option=="QCD_POGTIsop15IPp01p1Chi3_POGLIsop6IPp5p1Chi30_NoFilterConeSUSY"){
+    if(fEta<0.9){
+      if     (PTCorr<15)  FR=0.218143 ;
+      else if(PTCorr<20)  FR=0.0806746;
+      else if(PTCorr<25)  FR=0.0629062;
+      else if(PTCorr<35)  FR=0.0512942;
+      else if(PTCorr<50)  FR=0.0397658;
+      else if(PTCorr<70)  FR=0.0321076;
+      else                FR=0.0236885;
+    }
+    else if(fEta<1.6){
+      if     (PTCorr<15)  FR=0.258624 ;
+      else if(PTCorr<20)  FR=0.108383 ;
+      else if(PTCorr<25)  FR=0.0879409;
+      else if(PTCorr<35)  FR=0.0737399;
+      else if(PTCorr<50)  FR=0.0613633;
+      else if(PTCorr<70)  FR=0.0454474;
+      else                FR=0.0386289;
+    }
+    else if(fEta<2.1){
+      if     (PTCorr<15)  FR=0.326546 ;
+      else if(PTCorr<20)  FR=0.154278 ;
+      else if(PTCorr<25)  FR=0.124704 ;
+      else if(PTCorr<35)  FR=0.111563 ;
+      else if(PTCorr<50)  FR=0.0892836;
+      else if(PTCorr<70)  FR=0.0704111;
+      else                FR=0.0781218;
+    }
+    else{
+      if     (PTCorr<15)  FR=0.370091 ;
+      else if(PTCorr<20)  FR=0.181926 ;
+      else if(PTCorr<25)  FR=0.166917 ;
+      else if(PTCorr<35)  FR=0.132433 ;
+      else if(PTCorr<50)  FR=0.116563 ;
+      else if(PTCorr<70)  FR=0.0916993;
+      else                FR=0.0899307;
+    }
+  }
+  else if(Option=="QCD_POGTIsop15IPp01p1Chi3_POGLIsop5IPp5p1Chi_NoFilterConeSUSY"){
+    if(fEta<0.9){
+      if     (PTCorr<15)  FR=0.230967 ;
+      else if(PTCorr<20)  FR=0.109273 ;
+      else if(PTCorr<25)  FR=0.0889465;
+      else if(PTCorr<35)  FR=0.0756527;
+      else if(PTCorr<50)  FR=0.0607969;
+      else if(PTCorr<70)  FR=0.0513012;
+      else                FR=0.035944 ;
+    }
+    else if(fEta<1.6){
+      if     (PTCorr<15)  FR=0.271256 ;
+      else if(PTCorr<20)  FR=0.141448 ;
+      else if(PTCorr<25)  FR=0.121097 ;
+      else if(PTCorr<35)  FR=0.104025 ;
+      else if(PTCorr<50)  FR=0.0886599;
+      else if(PTCorr<70)  FR=0.0695686;
+      else                FR=0.068215 ;
+    }
+    else if(fEta<2.1){
+      if     (PTCorr<15)  FR=0.339945 ;
+      else if(PTCorr<20)  FR=0.19605  ;
+      else if(PTCorr<25)  FR=0.164924 ;
+      else if(PTCorr<35)  FR=0.149579 ;
+      else if(PTCorr<50)  FR=0.124642 ;
+      else if(PTCorr<70)  FR=0.0996561;
+      else                FR=0.112517 ;
+    }
+    else{
+      if     (PTCorr<15)  FR=0.381757;
+      else if(PTCorr<20)  FR=0.2247  ;
+      else if(PTCorr<25)  FR=0.21272 ;
+      else if(PTCorr<35)  FR=0.175078;
+      else if(PTCorr<50)  FR=0.155034;
+      else if(PTCorr<70)  FR=0.129934;
+      else                FR=0.124669;
+    }
+  }
+
+  else if(Option=="QCD_POGTIsop20IPp01p1Chi3_POGLIsop6IPp5p1Chi30_TrkIsoVVLConeSUSY"){
+    if(fEta<0.9){
+      if     (PTCorr<15)  FR=0.282833 ;
+      else if(PTCorr<20)  FR=0.14426  ;
+      else if(PTCorr<25)  FR=0.119892 ;
+      else if(PTCorr<35)  FR=0.101384 ;
+      else if(PTCorr<50)  FR=0.0806774;
+      else if(PTCorr<70)  FR=0.0661303;
+      else                FR=0.142978 ;
+    }
+    else if(fEta<1.6){
+      if     (PTCorr<15)  FR=0.332161 ;
+      else if(PTCorr<20)  FR=0.187594 ;
+      else if(PTCorr<25)  FR=0.163124 ;
+      else if(PTCorr<35)  FR=0.14291  ;
+      else if(PTCorr<50)  FR=0.120868 ;
+      else if(PTCorr<70)  FR=0.0933465;
+      else                FR=0.0739589;
+    }
+    else if(fEta<2.1){
+      if     (PTCorr<15)  FR=0.405678;
+      else if(PTCorr<20)  FR=0.252745;
+      else if(PTCorr<25)  FR=0.22097 ;
+      else if(PTCorr<35)  FR=0.205234;
+      else if(PTCorr<50)  FR=0.171121;
+      else if(PTCorr<70)  FR=0.141681;
+      else                FR=0.133837;
+    }
+    else{
+      if     (PTCorr<15)  FR=0.442926;
+      else if(PTCorr<20)  FR=0.282441;
+      else if(PTCorr<25)  FR=0.263494;
+      else if(PTCorr<35)  FR=0.218149;
+      else if(PTCorr<50)  FR=0.196809;
+      else if(PTCorr<70)  FR=0.159818;
+      else                FR=0.153925;
+    }
+  }
+  else if(Option=="QCD_POGTIsop20IPp01p1Chi3_POGLIsop5IPp5p1Chi_TrkIsoVVLConeSUSY"){
+    if(fEta<0.9){
+      if     (PTCorr<15)  FR=0.29997  ;
+      else if(PTCorr<20)  FR=0.1837   ;
+      else if(PTCorr<25)  FR=0.158618 ;
+      else if(PTCorr<35)  FR=0.138545 ;
+      else if(PTCorr<50)  FR=0.11394  ;
+      else if(PTCorr<70)  FR=0.0983973;
+      else                FR=0.199419 ;
+    }
+    else if(fEta<1.6){
+      if     (PTCorr<15)  FR=0.347953;
+      else if(PTCorr<20)  FR=0.229975;
+      else if(PTCorr<25)  FR=0.20753 ;
+      else if(PTCorr<35)  FR=0.185913;
+      else if(PTCorr<50)  FR=0.159875;
+      else if(PTCorr<70)  FR=0.132226;
+      else                FR=0.127357;
+    }
+    else if(fEta<2.1){
+      if     (PTCorr<15)  FR=0.421019;
+      else if(PTCorr<20)  FR=0.299401;
+      else if(PTCorr<25)  FR=0.26929 ;
+      else if(PTCorr<35)  FR=0.250407;
+      else if(PTCorr<50)  FR=0.216142;
+      else if(PTCorr<70)  FR=0.183413;
+      else                FR=0.177613;
+    }
+    else{
+      if     (PTCorr<15)  FR=0.45704 ;
+      else if(PTCorr<20)  FR=0.330754;
+      else if(PTCorr<25)  FR=0.314873;
+      else if(PTCorr<35)  FR=0.272196;
+      else if(PTCorr<50)  FR=0.246047;
+      else if(PTCorr<70)  FR=0.216935;
+      else                FR=0.193373;
+    }
+  }
+  else if(Option=="QCD_POGTIsop15IPp01p1Chi3_POGLIsop6IPp5p1Chi30_TrkIsoVVLConeSUSY"){
+    if(fEta<0.9){
+      if     (PTCorr<15)  FR=0.227179 ;
+      else if(PTCorr<20)  FR=0.091401 ;
+      else if(PTCorr<25)  FR=0.0719472;
+      else if(PTCorr<35)  FR=0.059275 ;
+      else if(PTCorr<50)  FR=0.0465187;
+      else if(PTCorr<70)  FR=0.0374228;
+      else                FR=0.0265197;
+    }
+    else if(fEta<1.6){
+      if     (PTCorr<15)  FR=0.270734 ;
+      else if(PTCorr<20)  FR=0.124733 ;
+      else if(PTCorr<25)  FR=0.102892 ;
+      else if(PTCorr<35)  FR=0.0873157;
+      else if(PTCorr<50)  FR=0.0728567;
+      else if(PTCorr<70)  FR=0.0531341;
+      else                FR=0.0438082;
+    }
+    else if(fEta<2.1){
+      if     (PTCorr<15)  FR=0.342186 ;
+      else if(PTCorr<20)  FR=0.178554 ;
+      else if(PTCorr<25)  FR=0.14836  ;
+      else if(PTCorr<35)  FR=0.134529 ;
+      else if(PTCorr<50)  FR=0.107752 ;
+      else if(PTCorr<70)  FR=0.0846486;
+      else                FR=0.0922012;
+    }
+    else{
+      if     (PTCorr<15)  FR=0.383761;
+      else if(PTCorr<20)  FR=0.205027;
+      else if(PTCorr<25)  FR=0.188293;
+      else if(PTCorr<35)  FR=0.149583;
+      else if(PTCorr<50)  FR=0.133897;
+      else if(PTCorr<70)  FR=0.104173;
+      else                FR=0.102305;
+    }
+  }
+  else if(Option=="QCD_POGTIsop15IPp01p1Chi3_POGLIsop5IPp5p1Chi_TrkIsoVVLConeSUSY"){
+    if(fEta<0.9){
+      if     (PTCorr<15)  FR=0.237255 ;
+      else if(PTCorr<20)  FR=0.116228 ;
+      else if(PTCorr<25)  FR=0.0948374;
+      else if(PTCorr<35)  FR=0.0809258;
+      else if(PTCorr<50)  FR=0.0653765;
+      else if(PTCorr<70)  FR=0.0551889;
+      else                FR=0.0373596;
+    }
+    else if(fEta<1.6){
+      if     (PTCorr<15)  FR=0.280281 ;
+      else if(PTCorr<20)  FR=0.152697 ;
+      else if(PTCorr<25)  FR=0.13129  ;
+      else if(PTCorr<35)  FR=0.113235 ;
+      else if(PTCorr<50)  FR=0.0964042;
+      else if(PTCorr<70)  FR=0.0749084;
+      else                FR=0.07318  ;
+    }
+    else if(fEta<2.1){
+      if     (PTCorr<15)  FR=0.351411;
+      else if(PTCorr<20)  FR=0.212445;
+      else if(PTCorr<25)  FR=0.180762;
+      else if(PTCorr<35)  FR=0.165014;
+      else if(PTCorr<50)  FR=0.136824;
+      else if(PTCorr<70)  FR=0.110106;
+      else                FR=0.123001;
+    }
+    else{
+      if     (PTCorr<15)  FR=0.392323;
+      else if(PTCorr<20)  FR=0.240235;
+      else if(PTCorr<25)  FR=0.227262;
+      else if(PTCorr<35)  FR=0.187587;
+      else if(PTCorr<50)  FR=0.167677;
+      else if(PTCorr<70)  FR=0.141609;
+      else                FR=0.132896;
+    }
+  }
+  else if(Option=="QCD_POGTIsop20IPp01p05sig4Chi3_POGLIsop4IPp5p1_TrkIsoVVLConeSUSY"){
+    if(fEta<0.9){
+      if     (PTCorr<15)  FR=0.311389;
+      else if(PTCorr<20)  FR=0.220952;
+      else if(PTCorr<25)  FR=0.200137;
+      else if(PTCorr<35)  FR=0.173684;
+      else                FR=0.143685;
+    }
+    else if(fEta<1.6){
+      if     (PTCorr<15)  FR=0.326864;
+      else if(PTCorr<20)  FR=0.248881;
+      else if(PTCorr<25)  FR=0.237655;
+      else if(PTCorr<35)  FR=0.203788;
+      else                FR=0.199625;
+    }
+    else if(fEta<2.1){
+      if     (PTCorr<15)  FR=0.367995;
+      else if(PTCorr<20)  FR=0.296419;
+      else if(PTCorr<25)  FR=0.281165;
+      else if(PTCorr<35)  FR=0.269041;
+      else                FR=0.232356;
+    }
+    else{
+      if     (PTCorr<15)  FR=0.366748;
+      else if(PTCorr<20)  FR=0.297245;
+      else if(PTCorr<25)  FR=0.280047;
+      else if(PTCorr<35)  FR=0.267768;
+      else                FR=0.248312;
+    }
+  }
+  else if(Option=="QCD_POGTIsop20IPp01p05sig4Chi3_POGLIsop6IPp5p1_TrkIsoVVLConeSUSY"){
+    if(fEta<0.9){
+      if     (PTCorr<15)  FR=0.255385 ;
+      else if(PTCorr<20)  FR=0.127925 ;
+      else if(PTCorr<25)  FR=0.105778 ;
+      else if(PTCorr<35)  FR=0.0884978;
+      else                FR=0.0667374;
+    }
+    else if(fEta<1.6){
+      if     (PTCorr<15)  FR=0.27718 ;
+      else if(PTCorr<20)  FR=0.154481;
+      else if(PTCorr<25)  FR=0.140362;
+      else if(PTCorr<35)  FR=0.113462;
+      else                FR=0.10105 ;
+    }
+    else if(fEta<2.1){
+      if     (PTCorr<15)  FR=0.325374;
+      else if(PTCorr<20)  FR=0.19894 ;
+      else if(PTCorr<25)  FR=0.180416;
+      else if(PTCorr<35)  FR=0.169749;
+      else                FR=0.136135;
+    }
+    else{
+      if     (PTCorr<15)  FR=0.326906;
+      else if(PTCorr<20)  FR=0.207326;
+      else if(PTCorr<25)  FR=0.188049;
+      else if(PTCorr<35)  FR=0.168565;
+      else                FR=0.151011;
+    }
+  }
+  else if(Option=="QCD_POGTIsop20IPp01p05sig4Chi3_POGLIsop4IPp5p1_TrkIsoVVLConeE"){
+    if(fEta<0.9){
+      if     (PTCorr<15)  FR=0.383527;
+      else if(PTCorr<20)  FR=0.207971;
+      else if(PTCorr<25)  FR=0.18692 ;
+      else if(PTCorr<35)  FR=0.161955;
+      else                FR=0.13418 ;
+    }
+    else if(fEta<1.6){
+      if     (PTCorr<15)  FR=0.39118 ;
+      else if(PTCorr<20)  FR=0.236589;
+      else if(PTCorr<25)  FR=0.218171;
+      else if(PTCorr<35)  FR=0.191778;
+      else                FR=0.171137;
+    }
+    else if(fEta<2.1){
+      if     (PTCorr<15)  FR=0.431819;
+      else if(PTCorr<20)  FR=0.282076;
+      else if(PTCorr<25)  FR=0.247844;
+      else if(PTCorr<35)  FR=0.238433;
+      else                FR=0.211232;
+    }
+    else{
+      if     (PTCorr<15)  FR=0.42158 ;
+      else if(PTCorr<20)  FR=0.291056;
+      else if(PTCorr<25)  FR=0.251822;
+      else if(PTCorr<35)  FR=0.235159;
+      else                FR=0.215888;
+    }
+  }
+  else if(Option=="QCD_POGTIsop20IPp01p05sig4Chi3_POGLIsop6IPp5p1_TrkIsoVVLConeE"){
+    if(fEta<0.9){
+      if     (PTCorr<15)  FR=0.367272 ;
+      else if(PTCorr<20)  FR=0.125437 ;
+      else if(PTCorr<25)  FR=0.10491  ;
+      else if(PTCorr<35)  FR=0.0843891;
+      else                FR=0.0652664;
+    }
+    else if(fEta<1.6){
+      if     (PTCorr<15)  FR=0.377108 ;
+      else if(PTCorr<20)  FR=0.153215 ;
+      else if(PTCorr<25)  FR=0.13095  ;
+      else if(PTCorr<35)  FR=0.111162 ;
+      else                FR=0.0905857;
+    }
+    else if(fEta<2.1){
+      if     (PTCorr<15)  FR=0.420907;
+      else if(PTCorr<20)  FR=0.197075;
+      else if(PTCorr<25)  FR=0.1618  ;
+      else if(PTCorr<35)  FR=0.149718;
+      else                FR=0.124826;
+    }
+    else{
+      if     (PTCorr<15)  FR=0.412367;
+      else if(PTCorr<20)  FR=0.209779;
+      else if(PTCorr<25)  FR=0.169323;
+      else if(PTCorr<35)  FR=0.150048;
+      else                FR=0.133021;
+    }
+  }
+  else if(Option=="QCD_POGTIsop20IPp01p025sig4Chi4_POGLIsop4IPp5p1_TrkIsoVVLConeE"){
+    if(fEta<0.9){
+      if     (PTCorr<15)  FR=0.361392;
+      else if(PTCorr<20)  FR=0.201772;
+      else if(PTCorr<25)  FR=0.180953;
+      else if(PTCorr<35)  FR=0.155931;
+      else                FR=0.131158;
+    }
+    else if(fEta<1.6){
+      if     (PTCorr<15)  FR=0.346106;
+      else if(PTCorr<20)  FR=0.212738;
+      else if(PTCorr<25)  FR=0.194852;
+      else if(PTCorr<35)  FR=0.176536;
+      else                FR=0.159065;
+    }
+    else if(fEta<2.1){
+      if     (PTCorr<15)  FR=0.352425;
+      else if(PTCorr<20)  FR=0.235802;
+      else if(PTCorr<25)  FR=0.210667;
+      else if(PTCorr<35)  FR=0.196339;
+      else                FR=0.182402;
+    }
+    else{
+      if     (PTCorr<15)  FR=0.349713;
+      else if(PTCorr<20)  FR=0.235998;
+      else if(PTCorr<25)  FR=0.207309;
+      else if(PTCorr<35)  FR=0.198189;
+      else                FR=0.179527;
+    }
+  }
+  else if(Option=="QCD_POGTIsop20IPp01p05sig4Chi4_POGLIsop4IPp5p1_TrkIsoVVLConeE"){
+    if(fEta<0.9){
+      if     (PTCorr<15)  FR=0.386162;
+      else if(PTCorr<20)  FR=0.210792;
+      else if(PTCorr<25)  FR=0.187936;
+      else if(PTCorr<35)  FR=0.162582;
+      else                FR=0.135433;
+    }
+    else if(fEta<1.6){
+      if     (PTCorr<15)  FR=0.392839;
+      else if(PTCorr<20)  FR=0.238147;
+      else if(PTCorr<25)  FR=0.21964 ;
+      else if(PTCorr<35)  FR=0.192999;
+      else                FR=0.171891;
+    }
+    else if(fEta<2.1){
+      if     (PTCorr<15)  FR=0.433894;
+      else if(PTCorr<20)  FR=0.283956;
+      else if(PTCorr<25)  FR=0.24923 ;
+      else if(PTCorr<35)  FR=0.240228;
+      else                FR=0.212374;
+    }
+    else{
+      if     (PTCorr<15)  FR=0.423668;
+      else if(PTCorr<20)  FR=0.291915;
+      else if(PTCorr<25)  FR=0.253004;
+      else if(PTCorr<35)  FR=0.237121;
+      else                FR=0.216396;
+    }
+  }
+  else if(Option=="QCD_POGTIsop20IPp01p075sig4Chi4_POGLIsop4IPp5p1_TrkIsoVVLConeE"){
+    if(fEta<0.9){
+      if     (PTCorr<15)  FR=0.395702;
+      else if(PTCorr<20)  FR=0.21303 ;
+      else if(PTCorr<25)  FR=0.189846;
+      else if(PTCorr<35)  FR=0.164305;
+      else                FR=0.136487;
+    }
+    else if(fEta<1.6){
+      if     (PTCorr<15)  FR=0.411562;
+      else if(PTCorr<20)  FR=0.246357;
+      else if(PTCorr<25)  FR=0.224842;
+      else if(PTCorr<35)  FR=0.197724;
+      else                FR=0.175134;
+    }
+    else if(fEta<2.1){
+      if     (PTCorr<15)  FR=0.475208;
+      else if(PTCorr<20)  FR=0.303494;
+      else if(PTCorr<25)  FR=0.264079;
+      else if(PTCorr<35)  FR=0.254474;
+      else                FR=0.223696;
+    }
+    else{
+      if     (PTCorr<15)  FR=0.488252;
+      else if(PTCorr<20)  FR=0.323216;
+      else if(PTCorr<25)  FR=0.28413 ;
+      else if(PTCorr<35)  FR=0.263376;
+      else                FR=0.243437;
+    }
+  }
+  else if(Option=="QCD_POGTIsop20IPp01p1sig4Chi4_POGLIsop4IPp5p1_TrkIsoVVLConeE"){
+    if(fEta<0.9){
+      if     (PTCorr<15)  FR=0.400921;
+      else if(PTCorr<20)  FR=0.213993;
+      else if(PTCorr<25)  FR=0.190507;
+      else if(PTCorr<35)  FR=0.164643;
+      else                FR=0.136694;
+    }
+    else if(fEta<1.6){
+      if     (PTCorr<15)  FR=0.42447 ;
+      else if(PTCorr<20)  FR=0.249272;
+      else if(PTCorr<25)  FR=0.227591;
+      else if(PTCorr<35)  FR=0.199331;
+      else                FR=0.176662;
+    }
+    else if(fEta<2.1){
+      if     (PTCorr<15)  FR=0.497194;
+      else if(PTCorr<20)  FR=0.314378;
+      else if(PTCorr<25)  FR=0.271068;
+      else if(PTCorr<35)  FR=0.260357;
+      else                FR=0.22999 ;
+    }
+    else{
+      if     (PTCorr<15)  FR=0.530789;
+      else if(PTCorr<20)  FR=0.344902;
+      else if(PTCorr<25)  FR=0.305012;
+      else if(PTCorr<35)  FR=0.277972;
+      else                FR=0.257983;
+    }
+  }
+  else if(Option=="QCD_POGTIsop20IPp0125p04sig4Chi4_POGLIsop4IPp5p1_TrkIsoVVLConeE"){
+ //125
+    if(fEta<0.9){
+      if     (PTCorr<15)  FR=0.387911;
+      else if(PTCorr<20)  FR=0.213728;
+      else if(PTCorr<25)  FR=0.187938;
+      else if(PTCorr<35)  FR=0.162266;
+      else                FR=0.135125;
+    }
+    else if(fEta<1.6){
+      if     (PTCorr<15)  FR=0.392434;
+      else if(PTCorr<20)  FR=0.237279;
+      else if(PTCorr<25)  FR=0.216924;
+      else if(PTCorr<35)  FR=0.190023;
+      else                FR=0.16957 ;
+    }
+    else if(fEta<2.1){
+      if     (PTCorr<15)  FR=0.417111;
+      else if(PTCorr<20)  FR=0.273808;
+      else if(PTCorr<25)  FR=0.242087;
+      else if(PTCorr<35)  FR=0.231822;
+      else                FR=0.206093;
+    }
+    else{
+      if     (PTCorr<15)  FR=0.412612;
+      else if(PTCorr<20)  FR=0.274368;
+      else if(PTCorr<25)  FR=0.241904;
+      else if(PTCorr<35)  FR=0.228894;
+      else                FR=0.205661;
+    }
+  }
+  else if(Option=="QCD_POGTIsop20IPp0125p05sig4Chi4_POGLIsop4IPp5p1_TrkIsoVVLConeE"){
+    if(fEta<0.9){
+      if     (PTCorr<15)  FR=0.394204;
+      else if(PTCorr<20)  FR=0.215896;
+      else if(PTCorr<25)  FR=0.189517;
+      else if(PTCorr<35)  FR=0.16337 ;
+      else                FR=0.136145;
+    }
+    else if(fEta<1.6){
+      if     (PTCorr<15)  FR=0.405253;
+      else if(PTCorr<20)  FR=0.24367 ;
+      else if(PTCorr<25)  FR=0.222612;
+      else if(PTCorr<35)  FR=0.194463;
+      else                FR=0.17291 ;
+    }
+    else if(fEta<2.1){
+      if     (PTCorr<15)  FR=0.446426;
+      else if(PTCorr<20)  FR=0.290893;
+      else if(PTCorr<25)  FR=0.252464;
+      else if(PTCorr<35)  FR=0.242548;
+      else                FR=0.214725;
+    }
+    else{
+      if     (PTCorr<15)  FR=0.443319;
+      else if(PTCorr<20)  FR=0.300352;
+      else if(PTCorr<25)  FR=0.258881;
+      else if(PTCorr<35)  FR=0.243079;
+      else                FR=0.219633;
+    }
+  }
+  else if(Option=="QCD_POGTIsop20IPp0125p06sig4Chi4_POGLIsop4IPp5p1_TrkIsoVVLConeE"){
+    if(fEta<0.9){
+      if     (PTCorr<15)  FR=0.398135;
+      else if(PTCorr<20)  FR=0.217371;
+      else if(PTCorr<25)  FR=0.1908  ;
+      else if(PTCorr<35)  FR=0.164245;
+      else                FR=0.136526;
+    }
+    else if(fEta<1.6){
+      if     (PTCorr<15)  FR=0.414961;
+      else if(PTCorr<20)  FR=0.248093;
+      else if(PTCorr<25)  FR=0.225642;
+      else if(PTCorr<35)  FR=0.197026;
+      else                FR=0.17445 ;
+    }
+    else if(fEta<2.1){
+      if     (PTCorr<15)  FR=0.468478;
+      else if(PTCorr<20)  FR=0.301685;
+      else if(PTCorr<25)  FR=0.260725;
+      else if(PTCorr<35)  FR=0.250481;
+      else                FR=0.220938;
+    }
+    else{
+      if     (PTCorr<15)  FR=0.474041;
+      else if(PTCorr<20)  FR=0.314092;
+      else if(PTCorr<25)  FR=0.273229;
+      else if(PTCorr<35)  FR=0.257731;
+      else                FR=0.233757;
+    }
+  }
+  else if(Option=="QCD_POGTIsop20IPp0125p07sig4Chi4_POGLIsop4IPp5p1_TrkIsoVVLConeE"){
+    if(fEta<0.9){
+      if     (PTCorr<15)  FR=0.40129 ;
+      else if(PTCorr<20)  FR=0.218139;
+      else if(PTCorr<25)  FR=0.191209;
+      else if(PTCorr<35)  FR=0.164816;
+      else                FR=0.137166;
+    }
+    else if(fEta<1.6){
+      if     (PTCorr<15)  FR=0.42293 ;
+      else if(PTCorr<20)  FR=0.25105 ;
+      else if(PTCorr<25)  FR=0.227399;
+      else if(PTCorr<35)  FR=0.198344;
+      else                FR=0.175772;
+    }
+    else if(fEta<2.1){
+      if     (PTCorr<15)  FR=0.483322;
+      else if(PTCorr<20)  FR=0.308477;
+      else if(PTCorr<25)  FR=0.26654 ;
+      else if(PTCorr<35)  FR=0.255678;
+      else                FR=0.224679;
+    }
+    else{
+      if     (PTCorr<15)  FR=0.505448;
+      else if(PTCorr<20)  FR=0.328537;
+      else if(PTCorr<25)  FR=0.28732 ;
+      else if(PTCorr<35)  FR=0.266264;
+      else                FR=0.24263 ;
+    }
+  }
+  else if(Option=="QCD_POGTIsop20IPp015p04sig4Chi4_POGLIsop4IPp5p1_TrkIsoVVLConeE"){
+ //15
+    if(fEta<0.9){
+      if     (PTCorr<15)  FR=0.389171;
+      else if(PTCorr<20)  FR=0.214375;
+      else if(PTCorr<25)  FR=0.190495;
+      else if(PTCorr<35)  FR=0.162673;
+      else                FR=0.135217;
+    }
+    else if(fEta<1.6){
+      if     (PTCorr<15)  FR=0.395014;
+      else if(PTCorr<20)  FR=0.237817;
+      else if(PTCorr<25)  FR=0.217574;
+      else if(PTCorr<35)  FR=0.190461;
+      else                FR=0.169725;
+    }
+    else if(fEta<2.1){
+      if     (PTCorr<15)  FR=0.420643;
+      else if(PTCorr<20)  FR=0.275106;
+      else if(PTCorr<25)  FR=0.242501;
+      else if(PTCorr<35)  FR=0.232573;
+      else                FR=0.206511;
+    }
+    else{
+      if     (PTCorr<15)  FR=0.42064 ;
+      else if(PTCorr<20)  FR=0.277559;
+      else if(PTCorr<25)  FR=0.244934;
+      else if(PTCorr<35)  FR=0.230189;
+      else                FR=0.206311;
+    }
+  }
+  else if(Option=="QCD_POGTIsop20IPp015p05sig4Chi4_POGLIsop4IPp5p1_TrkIsoVVLConeE"){
+    if(fEta<0.9){
+      if     (PTCorr<15)  FR=0.395517;
+      else if(PTCorr<20)  FR=0.216565;
+      else if(PTCorr<25)  FR=0.192075;
+      else if(PTCorr<35)  FR=0.163776;
+      else                FR=0.136237;
+    }
+    else if(fEta<1.6){
+      if     (PTCorr<15)  FR=0.408083;
+      else if(PTCorr<20)  FR=0.24424 ;
+      else if(PTCorr<25)  FR=0.223316;
+      else if(PTCorr<35)  FR=0.194979;
+      else                FR=0.173073;
+    }
+    else if(fEta<2.1){
+      if     (PTCorr<15)  FR=0.450388;
+      else if(PTCorr<20)  FR=0.292555;
+      else if(PTCorr<25)  FR=0.253006;
+      else if(PTCorr<35)  FR=0.24341 ;
+      else                FR=0.215143;
+    }
+    else{
+      if     (PTCorr<15)  FR=0.453031;
+      else if(PTCorr<20)  FR=0.304127;
+      else if(PTCorr<25)  FR=0.262142;
+      else if(PTCorr<35)  FR=0.244439;
+      else                FR=0.220495;
+    }
+  }
+  else if(Option=="QCD_POGTIsop20IPp015p06sig4Chi4_POGLIsop4IPp5p1_TrkIsoVVLConeE"){
+    if(fEta<0.9){
+      if     (PTCorr<15)  FR=0.399453;
+      else if(PTCorr<20)  FR=0.218062;
+      else if(PTCorr<25)  FR=0.193369;
+      else if(PTCorr<35)  FR=0.164655;
+      else                FR=0.136619;
+    }
+    else if(fEta<1.6){
+      if     (PTCorr<15)  FR=0.417991;
+      else if(PTCorr<20)  FR=0.248719;
+      else if(PTCorr<25)  FR=0.226392;
+      else if(PTCorr<35)  FR=0.197556;
+      else                FR=0.174622;
+    }
+    else if(fEta<2.1){
+      if     (PTCorr<15)  FR=0.472834;
+      else if(PTCorr<20)  FR=0.303611;
+      else if(PTCorr<25)  FR=0.261286;
+      else if(PTCorr<35)  FR=0.251366;
+      else                FR=0.221357;
+    }
+    else{
+      if     (PTCorr<15)  FR=0.484588;
+      else if(PTCorr<20)  FR=0.318481;
+      else if(PTCorr<25)  FR=0.276572;
+      else if(PTCorr<35)  FR=0.259458;
+      else                FR=0.234783;
+    }
+  }
+  else if(Option=="QCD_POGTIsop20IPp015p07sig4Chi4_POGLIsop4IPp5p1_TrkIsoVVLConeE"){
+    if(fEta<0.9){
+      if     (PTCorr<15)  FR=0.402639;
+      else if(PTCorr<20)  FR=0.21883 ;
+      else if(PTCorr<25)  FR=0.193778;
+      else if(PTCorr<35)  FR=0.165226;
+      else                FR=0.137259;
+    }
+    else if(fEta<1.6){
+      if     (PTCorr<15)  FR=0.426008;
+      else if(PTCorr<20)  FR=0.251688;
+      else if(PTCorr<25)  FR=0.22816 ;
+      else if(PTCorr<35)  FR=0.198876;
+      else                FR=0.175943;
+    }
+    else if(fEta<2.1){
+      if     (PTCorr<15)  FR=0.487956;
+      else if(PTCorr<20)  FR=0.310513;
+      else if(PTCorr<25)  FR=0.267204;
+      else if(PTCorr<35)  FR=0.256568;
+      else                FR=0.225112;
+    }
+    else{
+      if     (PTCorr<15)  FR=0.517491;
+      else if(PTCorr<20)  FR=0.333278;
+      else if(PTCorr<25)  FR=0.290857;
+      else if(PTCorr<35)  FR=0.268163;
+      else                FR=0.24369 ;
+    }
+  }
+  else if(Option=="QCD_POGTIsop20IPp0175p04sig4Chi4_POGLIsop4IPp5p1_TrkIsoVVLConeE"){
+ //175
+    if(fEta<0.9){
+      if     (PTCorr<15)  FR=0.389616;
+      else if(PTCorr<20)  FR=0.214576;
+      else if(PTCorr<25)  FR=0.190613;
+      else if(PTCorr<35)  FR=0.16275 ;
+      else                FR=0.135291;
+    }
+    else if(fEta<1.6){
+      if     (PTCorr<15)  FR=0.395806;
+      else if(PTCorr<20)  FR=0.238165;
+      else if(PTCorr<25)  FR=0.217878;
+      else if(PTCorr<35)  FR=0.190577;
+      else                FR=0.169778;
+    }
+    else if(fEta<2.1){
+      if     (PTCorr<15)  FR=0.422198;
+      else if(PTCorr<20)  FR=0.275334;
+      else if(PTCorr<25)  FR=0.243199;
+      else if(PTCorr<35)  FR=0.233022;
+      else                FR=0.206722;
+    }
+    else{
+      if     (PTCorr<15)  FR=0.42526 ;
+      else if(PTCorr<20)  FR=0.278722;
+      else if(PTCorr<25)  FR=0.245516;
+      else if(PTCorr<35)  FR=0.231125;
+      else                FR=0.207766;
+    }
+  }
+  else if(Option=="QCD_POGTIsop20IPp0175p05sig4Chi4_POGLIsop4IPp5p1_TrkIsoVVLConeE"){
+    if(fEta<0.9){
+      if     (PTCorr<15)  FR=0.395998;
+      else if(PTCorr<20)  FR=0.216767;
+      else if(PTCorr<25)  FR=0.192202;
+      else if(PTCorr<35)  FR=0.163865;
+      else                FR=0.136311;
+    }
+    else if(fEta<1.6){
+      if     (PTCorr<15)  FR=0.40892 ;
+      else if(PTCorr<20)  FR=0.244589;
+      else if(PTCorr<25)  FR=0.223665;
+      else if(PTCorr<35)  FR=0.195094;
+      else                FR=0.173126;
+    }
+    else if(fEta<2.1){
+      if     (PTCorr<15)  FR=0.451966;
+      else if(PTCorr<20)  FR=0.292865;
+      else if(PTCorr<25)  FR=0.253704;
+      else if(PTCorr<35)  FR=0.243922;
+      else                FR=0.215362;
+    }
+    else{
+      if     (PTCorr<15)  FR=0.4582  ;
+      else if(PTCorr<20)  FR=0.305722;
+      else if(PTCorr<25)  FR=0.262727;
+      else if(PTCorr<35)  FR=0.245438;
+      else                FR=0.221992;
+    }
+  }
+  else if(Option=="QCD_POGTIsop20IPp0175p06sig4Chi4_POGLIsop4IPp5p1_TrkIsoVVLConeE"){
+    if(fEta<0.9){
+      if     (PTCorr<15)  FR=0.399939;
+      else if(PTCorr<20)  FR=0.218272;
+      else if(PTCorr<25)  FR=0.193497;
+      else if(PTCorr<35)  FR=0.164743;
+      else                FR=0.136694;
+    }
+    else if(fEta<1.6){
+      if     (PTCorr<15)  FR=0.418888;
+      else if(PTCorr<20)  FR=0.249091;
+      else if(PTCorr<25)  FR=0.226741;
+      else if(PTCorr<35)  FR=0.197687;
+      else                FR=0.174674;
+    }
+    else if(fEta<2.1){
+      if     (PTCorr<15)  FR=0.47459 ;
+      else if(PTCorr<20)  FR=0.303965;
+      else if(PTCorr<25)  FR=0.262177;
+      else if(PTCorr<35)  FR=0.251883;
+      else                FR=0.221642;
+    }
+    else{
+      if     (PTCorr<15)  FR=0.490616;
+      else if(PTCorr<20)  FR=0.320165;
+      else if(PTCorr<25)  FR=0.277561;
+      else if(PTCorr<35)  FR=0.260457;
+      else                FR=0.23628 ;
+    }
+  }
+  else if(Option=="QCD_POGTIsop20IPp0175p07sig4Chi4_POGLIsop4IPp5p1_TrkIsoVVLConeE"){
+    if(fEta<0.9){
+      if     (PTCorr<15)  FR=0.403194;
+      else if(PTCorr<20)  FR=0.21904 ;
+      else if(PTCorr<25)  FR=0.193906;
+      else if(PTCorr<35)  FR=0.165314;
+      else                FR=0.137337;
+    }
+    else if(fEta<1.6){
+      if     (PTCorr<15)  FR=0.42694 ;
+      else if(PTCorr<20)  FR=0.252083;
+      else if(PTCorr<25)  FR=0.228509;
+      else if(PTCorr<35)  FR=0.199104;
+      else                FR=0.176021;
+    }
+    else if(fEta<2.1){
+      if     (PTCorr<15)  FR=0.490017;
+      else if(PTCorr<20)  FR=0.310875;
+      else if(PTCorr<25)  FR=0.268112;
+      else if(PTCorr<35)  FR=0.257115;
+      else                FR=0.225413;
+    }
+    else{
+      if     (PTCorr<15)  FR=0.524185;
+      else if(PTCorr<20)  FR=0.335123;
+      else if(PTCorr<25)  FR=0.292401;
+      else if(PTCorr<35)  FR=0.269174;
+      else                FR=0.245186;
+    }
+  }
+  else if(Option=="QCD_POGTIsop20IPp02p04sig4Chi4_POGLIsop4IPp5p1_TrkIsoVVLConeE"){
+ //200
+    if(fEta<0.9){
+      if     (PTCorr<15)  FR=0.389849;
+      else if(PTCorr<20)  FR=0.214677;
+      else if(PTCorr<25)  FR=0.19062 ;
+      else if(PTCorr<35)  FR=0.162763;
+      else                FR=0.135382;
+    }
+    else if(fEta<1.6){
+      if     (PTCorr<15)  FR=0.396121;
+      else if(PTCorr<20)  FR=0.23833 ;
+      else if(PTCorr<25)  FR=0.217908;
+      else if(PTCorr<35)  FR=0.190599;
+      else                FR=0.169798;
+    }
+    else if(fEta<2.1){
+      if     (PTCorr<15)  FR=0.422551;
+      else if(PTCorr<20)  FR=0.275502;
+      else if(PTCorr<25)  FR=0.243374;
+      else if(PTCorr<35)  FR=0.233107;
+      else                FR=0.206775;
+    }
+    else{
+      if     (PTCorr<15)  FR=0.426251;
+      else if(PTCorr<20)  FR=0.279422;
+      else if(PTCorr<25)  FR=0.246125;
+      else if(PTCorr<35)  FR=0.231288;
+      else                FR=0.208247;
+    }
+  }
+  else if(Option=="QCD_POGTIsop20IPp02p05sig4Chi4_POGLIsop4IPp5p1_TrkIsoVVLConeE"){
+    if(fEta<0.9){
+      if     (PTCorr<15)  FR=0.396231;
+      else if(PTCorr<20)  FR=0.216868;
+      else if(PTCorr<25)  FR=0.192208;
+      else if(PTCorr<35)  FR=0.163878;
+      else                FR=0.136402;
+    }
+    else if(fEta<1.6){
+      if     (PTCorr<15)  FR=0.409258;
+      else if(PTCorr<20)  FR=0.244762;
+      else if(PTCorr<25)  FR=0.223695;
+      else if(PTCorr<35)  FR=0.195132;
+      else                FR=0.173146;
+    }
+    else if(fEta<2.1){
+      if     (PTCorr<15)  FR=0.452378;
+      else if(PTCorr<20)  FR=0.293041;
+      else if(PTCorr<25)  FR=0.253879;
+      else if(PTCorr<35)  FR=0.244115;
+      else                FR=0.215415;
+    }
+    else{
+      if     (PTCorr<15)  FR=0.45963 ;
+      else if(PTCorr<20)  FR=0.306629;
+      else if(PTCorr<25)  FR=0.263336;
+      else if(PTCorr<35)  FR=0.245654;
+      else                FR=0.222474;
+    }
+  }
+  else if(Option=="QCD_POGTIsop20IPp02p06sig4Chi4_POGLIsop4IPp5p1_TrkIsoVVLConeE"){
+    if(fEta<0.9){
+      if     (PTCorr<15)  FR=0.400172;
+      else if(PTCorr<20)  FR=0.218373;
+      else if(PTCorr<25)  FR=0.193504;
+      else if(PTCorr<35)  FR=0.16476 ;
+      else                FR=0.136785;
+    }
+    else if(fEta<1.6){
+      if     (PTCorr<15)  FR=0.419226;
+      else if(PTCorr<20)  FR=0.249289;
+      else if(PTCorr<25)  FR=0.226771;
+      else if(PTCorr<35)  FR=0.197725;
+      else                FR=0.174703;
+    }
+    else if(fEta<2.1){
+      if     (PTCorr<15)  FR=0.475042;
+      else if(PTCorr<20)  FR=0.304177;
+      else if(PTCorr<25)  FR=0.262446;
+      else if(PTCorr<35)  FR=0.252076;
+      else                FR=0.221695;
+    }
+    else{
+      if     (PTCorr<15)  FR=0.492189;
+      else if(PTCorr<20)  FR=0.321169;
+      else if(PTCorr<25)  FR=0.27818 ;
+      else if(PTCorr<35)  FR=0.261009;
+      else                FR=0.236761;
+    }
+  }
+  else if(Option=="QCD_POGTIsop20IPp02p07sig4Chi4_POGLIsop4IPp5p1_TrkIsoVVLConeE"){
+    if(fEta<0.9){
+      if     (PTCorr<15)  FR=0.403431;
+      else if(PTCorr<20)  FR=0.219145;
+      else if(PTCorr<25)  FR=0.193913;
+      else if(PTCorr<35)  FR=0.165331;
+      else                FR=0.137428;
+    }
+    else if(fEta<1.6){
+      if     (PTCorr<15)  FR=0.427285;
+      else if(PTCorr<20)  FR=0.252283;
+      else if(PTCorr<25)  FR=0.228539;
+      else if(PTCorr<35)  FR=0.199142;
+      else                FR=0.176257;
+    }
+    else if(fEta<2.1){
+      if     (PTCorr<15)  FR=0.490472;
+      else if(PTCorr<20)  FR=0.311096;
+      else if(PTCorr<25)  FR=0.268381;
+      else if(PTCorr<35)  FR=0.257308;
+      else                FR=0.225466;
+    }
+    else{
+      if     (PTCorr<15)  FR=0.525774;
+      else if(PTCorr<20)  FR=0.336211;
+      else if(PTCorr<25)  FR=0.29302 ;
+      else if(PTCorr<35)  FR=0.269726;
+      else                FR=0.245668;
+    }
+  }
+
+/////
+  else if(Option=="QCD_POGTIsop20IPp01p025sig4Chi4_POGLIsop4IPp5p1_TrkIsoVVLConeSUSY"){
+    if(fEta<0.9){
+      if     (PTCorr<15)  FR=0.294883;
+      else if(PTCorr<20)  FR=0.213815;
+      else if(PTCorr<25)  FR=0.193388;
+      else if(PTCorr<35)  FR=0.168004;
+      else                FR=0.139754;
+    }
+    else if(fEta<1.6){
+      if     (PTCorr<15)  FR=0.290537;
+      else if(PTCorr<20)  FR=0.221546;
+      else if(PTCorr<25)  FR=0.216289;
+      else if(PTCorr<35)  FR=0.187544;
+      else                FR=0.185092;
+    }
+    else if(fEta<2.1){
+      if     (PTCorr<15)  FR=0.299972;
+      else if(PTCorr<20)  FR=0.251974;
+      else if(PTCorr<25)  FR=0.232277;
+      else if(PTCorr<35)  FR=0.230784;
+      else                FR=0.198902;
+    }
+    else{
+      if     (PTCorr<15)  FR=0.301741;
+      else if(PTCorr<20)  FR=0.244944;
+      else if(PTCorr<25)  FR=0.233691;
+      else if(PTCorr<35)  FR=0.222159;
+      else                FR=0.211062;
+    }
+  }
+  else if(Option=="QCD_POGTIsop20IPp01p05sig4Chi4_POGLIsop4IPp5p1_TrkIsoVVLConeSUSY"){
+    if(fEta<0.9){
+      if     (PTCorr<15)  FR=0.314254;
+      else if(PTCorr<20)  FR=0.222419;
+      else if(PTCorr<25)  FR=0.20118 ;
+      else if(PTCorr<35)  FR=0.174829;
+      else                FR=0.144616;
+    }
+    else if(fEta<1.6){
+      if     (PTCorr<15)  FR=0.328548;
+      else if(PTCorr<20)  FR=0.250127;
+      else if(PTCorr<25)  FR=0.239249;
+      else if(PTCorr<35)  FR=0.204845;
+      else                FR=0.200607;
+    }
+    else if(fEta<2.1){
+      if     (PTCorr<15)  FR=0.369875;
+      else if(PTCorr<20)  FR=0.298374;
+      else if(PTCorr<25)  FR=0.282459;
+      else if(PTCorr<35)  FR=0.271425;
+      else                FR=0.233469;
+    }
+    else{
+      if     (PTCorr<15)  FR=0.368423;
+      else if(PTCorr<20)  FR=0.298424;
+      else if(PTCorr<25)  FR=0.280743;
+      else if(PTCorr<35)  FR=0.270701;
+      else                FR=0.248817;
+    }
+  }
+  else if(Option=="QCD_POGTIsop20IPp01p075sig4Chi4_POGLIsop4IPp5p1_TrkIsoVVLConeSUSY"){
+    if(fEta<0.9){
+      if     (PTCorr<15)  FR=0.321406;
+      else if(PTCorr<20)  FR=0.224662;
+      else if(PTCorr<25)  FR=0.203131;
+      else if(PTCorr<35)  FR=0.176616;
+      else                FR=0.145655;
+    }
+    else if(fEta<1.6){
+      if     (PTCorr<15)  FR=0.343537;
+      else if(PTCorr<20)  FR=0.258039;
+      else if(PTCorr<25)  FR=0.244591;
+      else if(PTCorr<35)  FR=0.209987;
+      else                FR=0.203997;
+    }
+    else if(fEta<2.1){
+      if     (PTCorr<15)  FR=0.403991;
+      else if(PTCorr<20)  FR=0.317839;
+      else if(PTCorr<25)  FR=0.298377;
+      else if(PTCorr<35)  FR=0.287161;
+      else                FR=0.247678;
+    }
+    else{
+      if     (PTCorr<15)  FR=0.422304;
+      else if(PTCorr<20)  FR=0.332748;
+      else if(PTCorr<25)  FR=0.31017 ;
+      else if(PTCorr<35)  FR=0.299681;
+      else                FR=0.277713;
+    }
+  }
+  else if(Option=="QCD_POGTIsop20IPp01p1sig4Chi4_POGLIsop4IPp5p1_TrkIsoVVLConeSUSY"){
+    if(fEta<0.9){
+      if     (PTCorr<15)  FR=0.325276;
+      else if(PTCorr<20)  FR=0.225453;
+      else if(PTCorr<25)  FR=0.203815;
+      else if(PTCorr<35)  FR=0.176975;
+      else                FR=0.145882;
+    }
+    else if(fEta<1.6){
+      if     (PTCorr<15)  FR=0.353288;
+      else if(PTCorr<20)  FR=0.260957;
+      else if(PTCorr<25)  FR=0.246977;
+      else if(PTCorr<35)  FR=0.211934;
+      else                FR=0.205754;
+    }
+    else if(fEta<2.1){
+      if     (PTCorr<15)  FR=0.422156;
+      else if(PTCorr<20)  FR=0.328348;
+      else if(PTCorr<25)  FR=0.305613;
+      else if(PTCorr<35)  FR=0.294939;
+      else                FR=0.25351 ;
+    }
+    else{
+      if     (PTCorr<15)  FR=0.457456;
+      else if(PTCorr<20)  FR=0.356409;
+      else if(PTCorr<25)  FR=0.331472;
+      else if(PTCorr<35)  FR=0.317288;
+      else                FR=0.291546;
+    }
+  }
+  else if(Option=="QCD_POGTIsop20IPp0125p04sig4Chi4_POGLIsop4IPp5p1_TrkIsoVVLConeSUSY"){
+ //125
+    if(fEta<0.9){
+      if     (PTCorr<15)  FR=0.317124;
+      else if(PTCorr<20)  FR=0.222424;
+      else if(PTCorr<25)  FR=0.200728;
+      else if(PTCorr<35)  FR=0.174318;
+      else                FR=0.144474;
+    }
+    else if(fEta<1.6){
+      if     (PTCorr<15)  FR=0.328804;
+      else if(PTCorr<20)  FR=0.246939;
+      else if(PTCorr<25)  FR=0.235767;
+      else if(PTCorr<35)  FR=0.201843;
+      else                FR=0.197724;
+    }
+    else if(fEta<2.1){
+      if     (PTCorr<15)  FR=0.354346;
+      else if(PTCorr<20)  FR=0.291261;
+      else if(PTCorr<25)  FR=0.274672;
+      else if(PTCorr<35)  FR=0.262122;
+      else                FR=0.22624 ;
+    }
+    else{
+      if     (PTCorr<15)  FR=0.354353;
+      else if(PTCorr<20)  FR=0.287316;
+      else if(PTCorr<25)  FR=0.271596;
+      else if(PTCorr<35)  FR=0.258526;
+      else                FR=0.23663 ;
+    }
+  }
+  else if(Option=="QCD_POGTIsop20IPp0125p05sig4Chi4_POGLIsop4IPp5p1_TrkIsoVVLConeSUSY"){
+    if(fEta<0.9){
+      if     (PTCorr<15)  FR=0.321971;
+      else if(PTCorr<20)  FR=0.2245  ;
+      else if(PTCorr<25)  FR=0.202544;
+      else if(PTCorr<35)  FR=0.175453;
+      else                FR=0.145458;
+    }
+    else if(fEta<1.6){
+      if     (PTCorr<15)  FR=0.338976;
+      else if(PTCorr<20)  FR=0.254411;
+      else if(PTCorr<25)  FR=0.24119 ;
+      else if(PTCorr<35)  FR=0.206331;
+      else                FR=0.201473;
+    }
+    else if(fEta<2.1){
+      if     (PTCorr<15)  FR=0.380208;
+      else if(PTCorr<20)  FR=0.305632;
+      else if(PTCorr<25)  FR=0.284786;
+      else if(PTCorr<35)  FR=0.274222;
+      else                FR=0.2358  ;
+    }
+    else{
+      if     (PTCorr<15)  FR=0.384081;
+      else if(PTCorr<20)  FR=0.30831 ;
+      else if(PTCorr<25)  FR=0.287063;
+      else if(PTCorr<35)  FR=0.275957;
+      else                FR=0.251246;
+    }
+  }
+  else if(Option=="QCD_POGTIsop20IPp0125p06sig4Chi4_POGLIsop4IPp5p1_TrkIsoVVLConeSUSY"){
+    if(fEta<0.9){
+      if     (PTCorr<15)  FR=0.325098;
+      else if(PTCorr<20)  FR=0.225846;
+      else if(PTCorr<25)  FR=0.203901;
+      else if(PTCorr<35)  FR=0.176178;
+      else                FR=0.146007;
+    }
+    else if(fEta<1.6){
+      if     (PTCorr<15)  FR=0.346748;
+      else if(PTCorr<20)  FR=0.258867;
+      else if(PTCorr<25)  FR=0.244445;
+      else if(PTCorr<35)  FR=0.208635;
+      else                FR=0.203194;
+    }
+    else if(fEta<2.1){
+      if     (PTCorr<15)  FR=0.398606;
+      else if(PTCorr<20)  FR=0.316298;
+      else if(PTCorr<25)  FR=0.292917;
+      else if(PTCorr<35)  FR=0.283162;
+      else                FR=0.2445  ;
+    }
+    else{
+      if     (PTCorr<15)  FR=0.409702;
+      else if(PTCorr<20)  FR=0.323395;
+      else if(PTCorr<25)  FR=0.301311;
+      else if(PTCorr<35)  FR=0.290758;
+      else                FR=0.265831;
+    }
+  }
+  else if(Option=="QCD_POGTIsop20IPp0125p07sig4Chi4_POGLIsop4IPp5p1_TrkIsoVVLConeSUSY"){
+    if(fEta<0.9){
+      if     (PTCorr<15)  FR=0.327462;
+      else if(PTCorr<20)  FR=0.226583;
+      else if(PTCorr<25)  FR=0.204259;
+      else if(PTCorr<35)  FR=0.176976;
+      else                FR=0.146524;
+    }
+    else if(fEta<1.6){
+      if     (PTCorr<15)  FR=0.35304 ;
+      else if(PTCorr<20)  FR=0.261572;
+      else if(PTCorr<25)  FR=0.245981;
+      else if(PTCorr<35)  FR=0.210533;
+      else                FR=0.20426 ;
+    }
+    else if(fEta<2.1){
+      if     (PTCorr<15)  FR=0.410589;
+      else if(PTCorr<20)  FR=0.323752;
+      else if(PTCorr<25)  FR=0.29904 ;
+      else if(PTCorr<35)  FR=0.289199;
+      else                FR=0.248516;
+    }
+    else{
+      if     (PTCorr<15)  FR=0.435563;
+      else if(PTCorr<20)  FR=0.339743;
+      else if(PTCorr<25)  FR=0.312255;
+      else if(PTCorr<35)  FR=0.301039;
+      else                FR=0.276065;
+    }
+  }
+  else if(Option=="QCD_POGTIsop20IPp015p04sig4Chi4_POGLIsop4IPp5p1_TrkIsoVVLConeSUSY"){
+ //15
+    if(fEta<0.9){
+      if     (PTCorr<15)  FR=0.318051;
+      else if(PTCorr<20)  FR=0.224517;
+      else if(PTCorr<25)  FR=0.201251;
+      else if(PTCorr<35)  FR=0.174734;
+      else                FR=0.14458 ;
+    }
+    else if(fEta<1.6){
+      if     (PTCorr<15)  FR=0.330708;
+      else if(PTCorr<20)  FR=0.247642;
+      else if(PTCorr<25)  FR=0.236219;
+      else if(PTCorr<35)  FR=0.202398;
+      else                FR=0.197817;
+    }
+    else if(fEta<2.1){
+      if     (PTCorr<15)  FR=0.357114;
+      else if(PTCorr<20)  FR=0.29251 ;
+      else if(PTCorr<25)  FR=0.275467;
+      else if(PTCorr<35)  FR=0.262797;
+      else                FR=0.22703 ;
+    }
+    else{
+      if     (PTCorr<15)  FR=0.36111 ;
+      else if(PTCorr<20)  FR=0.289668;
+      else if(PTCorr<25)  FR=0.274987;
+      else if(PTCorr<35)  FR=0.260457;
+      else                FR=0.237272;
+    }
+  }
+  else if(Option=="QCD_POGTIsop20IPp015p05sig4Chi4_POGLIsop4IPp5p1_TrkIsoVVLConeSUSY"){
+    if(fEta<0.9){
+      if     (PTCorr<15)  FR=0.322935;
+      else if(PTCorr<20)  FR=0.226623;
+      else if(PTCorr<25)  FR=0.203067;
+      else if(PTCorr<35)  FR=0.175869;
+      else                FR=0.145565;
+    }
+    else if(fEta<1.6){
+      if     (PTCorr<15)  FR=0.34106 ;
+      else if(PTCorr<20)  FR=0.255182;
+      else if(PTCorr<25)  FR=0.241642;
+      else if(PTCorr<35)  FR=0.207008;
+      else                FR=0.201566;
+    }
+    else if(fEta<2.1){
+      if     (PTCorr<15)  FR=0.383312;
+      else if(PTCorr<20)  FR=0.307312;
+      else if(PTCorr<25)  FR=0.285833;
+      else if(PTCorr<35)  FR=0.2749  ;
+      else                FR=0.23659 ;
+    }
+    else{
+      if     (PTCorr<15)  FR=0.392309;
+      else if(PTCorr<20)  FR=0.310937;
+      else if(PTCorr<25)  FR=0.290521;
+      else if(PTCorr<35)  FR=0.277972;
+      else                FR=0.252235;
+    }
+  }
+  else if(Option=="QCD_POGTIsop20IPp015p06sig4Chi4_POGLIsop4IPp5p1_TrkIsoVVLConeSUSY"){
+    if(fEta<0.9){
+      if     (PTCorr<15)  FR=0.326076;
+      else if(PTCorr<20)  FR=0.22797 ;
+      else if(PTCorr<25)  FR=0.20444 ;
+      else if(PTCorr<35)  FR=0.176597;
+      else                FR=0.146117;
+    }
+    else if(fEta<1.6){
+      if     (PTCorr<15)  FR=0.348985;
+      else if(PTCorr<20)  FR=0.259689;
+      else if(PTCorr<25)  FR=0.244929;
+      else if(PTCorr<35)  FR=0.209334;
+      else                FR=0.203301;
+    }
+    else if(fEta<2.1){
+      if     (PTCorr<15)  FR=0.402031;
+      else if(PTCorr<20)  FR=0.318237;
+      else if(PTCorr<25)  FR=0.293986;
+      else if(PTCorr<35)  FR=0.283873;
+      else                FR=0.245291;
+    }
+    else{
+      if     (PTCorr<15)  FR=0.418658;
+      else if(PTCorr<20)  FR=0.326558;
+      else if(PTCorr<25)  FR=0.304833;
+      else if(PTCorr<35)  FR=0.293329;
+      else                FR=0.267088;
+    }
+  }
+  else if(Option=="QCD_POGTIsop20IPp015p07sig4Chi4_POGLIsop4IPp5p1_TrkIsoVVLConeSUSY"){
+    if(fEta<0.9){
+      if     (PTCorr<15)  FR=0.328462;
+      else if(PTCorr<20)  FR=0.228706;
+      else if(PTCorr<25)  FR=0.204799;
+      else if(PTCorr<35)  FR=0.177395;
+      else                FR=0.146633;
+    }
+    else if(fEta<1.6){
+      if     (PTCorr<15)  FR=0.355313;
+      else if(PTCorr<20)  FR=0.262405;
+      else if(PTCorr<25)  FR=0.24648 ;
+      else if(PTCorr<35)  FR=0.211233;
+      else                FR=0.204367;
+    }
+    else if(fEta<2.1){
+      if     (PTCorr<15)  FR=0.414245;
+      else if(PTCorr<20)  FR=0.325821;
+      else if(PTCorr<25)  FR=0.30011 ;
+      else if(PTCorr<35)  FR=0.289918;
+      else                FR=0.249332;
+    }
+    else{
+      if     (PTCorr<15)  FR=0.445667;
+      else if(PTCorr<20)  FR=0.343261;
+      else if(PTCorr<25)  FR=0.31599 ;
+      else if(PTCorr<35)  FR=0.303887;
+      else                FR=0.277322;
+    }
+  }
+  else if(Option=="QCD_POGTIsop20IPp0175p04sig4Chi4_POGLIsop4IPp5p1_TrkIsoVVLConeSUSY"){
+ //175
+    if(fEta<0.9){
+      if     (PTCorr<15)  FR=0.318413;
+      else if(PTCorr<20)  FR=0.224688;
+      else if(PTCorr<25)  FR=0.201403;
+      else if(PTCorr<35)  FR=0.174754;
+      else                FR=0.144696;
+    }
+    else if(fEta<1.6){
+      if     (PTCorr<15)  FR=0.331371;
+      else if(PTCorr<20)  FR=0.247888;
+      else if(PTCorr<25)  FR=0.236523;
+      else if(PTCorr<35)  FR=0.202568;
+      else                FR=0.197908;
+    }
+    else if(fEta<2.1){
+      if     (PTCorr<15)  FR=0.358255;
+      else if(PTCorr<20)  FR=0.292891;
+      else if(PTCorr<25)  FR=0.276378;
+      else if(PTCorr<35)  FR=0.263166;
+      else                FR=0.227301;
+    }
+    else{
+      if     (PTCorr<15)  FR=0.364668;
+      else if(PTCorr<20)  FR=0.290943;
+      else if(PTCorr<25)  FR=0.275865;
+      else if(PTCorr<35)  FR=0.261609;
+      else                FR=0.237945;
+    }
+  }
+  else if(Option=="QCD_POGTIsop20IPp0175p05sig4Chi4_POGLIsop4IPp5p1_TrkIsoVVLConeSUSY"){
+    if(fEta<0.9){
+      if     (PTCorr<15)  FR=0.323322;
+      else if(PTCorr<20)  FR=0.226799;
+      else if(PTCorr<25)  FR=0.203232;
+      else if(PTCorr<35)  FR=0.17589 ;
+      else                FR=0.14568 ;
+    }
+    else if(fEta<1.6){
+      if     (PTCorr<15)  FR=0.341754;
+      else if(PTCorr<20)  FR=0.255436;
+      else if(PTCorr<25)  FR=0.241989;
+      else if(PTCorr<35)  FR=0.207177;
+      else                FR=0.201658;
+    }
+    else if(fEta<2.1){
+      if     (PTCorr<15)  FR=0.384489;
+      else if(PTCorr<20)  FR=0.307751;
+      else if(PTCorr<25)  FR=0.286807;
+      else if(PTCorr<35)  FR=0.275269;
+      else                FR=0.236873;
+    }
+    else{
+      if     (PTCorr<15)  FR=0.396365;
+      else if(PTCorr<20)  FR=0.312543;
+      else if(PTCorr<25)  FR=0.291404;
+      else if(PTCorr<35)  FR=0.27922 ;
+      else                FR=0.252977;
+    }
+  }
+  else if(Option=="QCD_POGTIsop20IPp0175p06sig4Chi4_POGLIsop4IPp5p1_TrkIsoVVLConeSUSY"){
+    if(fEta<0.9){
+      if     (PTCorr<15)  FR=0.326471;
+      else if(PTCorr<20)  FR=0.228146;
+      else if(PTCorr<25)  FR=0.204608;
+      else if(PTCorr<35)  FR=0.176618;
+      else                FR=0.146232;
+    }
+    else if(fEta<1.6){
+      if     (PTCorr<15)  FR=0.349721;
+      else if(PTCorr<20)  FR=0.259974;
+      else if(PTCorr<25)  FR=0.245277;
+      else if(PTCorr<35)  FR=0.209526;
+      else                FR=0.203392;
+    }
+    else if(fEta<2.1){
+      if     (PTCorr<15)  FR=0.403356;
+      else if(PTCorr<20)  FR=0.318748;
+      else if(PTCorr<25)  FR=0.29508 ;
+      else if(PTCorr<35)  FR=0.284243;
+      else                FR=0.245685;
+    }
+    else{
+      if     (PTCorr<15)  FR=0.423379;
+      else if(PTCorr<20)  FR=0.328308;
+      else if(PTCorr<25)  FR=0.305979;
+      else if(PTCorr<35)  FR=0.294576;
+      else                FR=0.26809 ;
+    }
+  }
+  else if(Option=="QCD_POGTIsop20IPp0175p07sig4Chi4_POGLIsop4IPp5p1_TrkIsoVVLConeSUSY"){
+    if(fEta<0.9){
+      if     (PTCorr<15)  FR=0.328904;
+      else if(PTCorr<20)  FR=0.228883;
+      else if(PTCorr<25)  FR=0.204966;
+      else if(PTCorr<35)  FR=0.177416;
+      else                FR=0.146754;
+    }
+    else if(fEta<1.6){
+      if     (PTCorr<15)  FR=0.356074;
+      else if(PTCorr<20)  FR=0.262721;
+      else if(PTCorr<25)  FR=0.246827;
+      else if(PTCorr<35)  FR=0.211587;
+      else                FR=0.204458;
+    }
+    else if(fEta<2.1){
+      if     (PTCorr<15)  FR=0.415798;
+      else if(PTCorr<20)  FR=0.326342;
+      else if(PTCorr<25)  FR=0.30123 ;
+      else if(PTCorr<35)  FR=0.290296;
+      else                FR=0.249749;
+    }
+    else{
+      if     (PTCorr<15)  FR=0.45096 ;
+      else if(PTCorr<20)  FR=0.345222;
+      else if(PTCorr<25)  FR=0.317383;
+      else if(PTCorr<35)  FR=0.305153;
+      else                FR=0.278324;
+    }
+  }
+  else if(Option=="QCD_POGTIsop20IPp02p04sig4Chi4_POGLIsop4IPp5p1_TrkIsoVVLConeSUSY"){
+ //200
+    if(fEta<0.9){
+      if     (PTCorr<15)  FR=0.318599;
+      else if(PTCorr<20)  FR=0.22476 ;
+      else if(PTCorr<25)  FR=0.201413;
+      else if(PTCorr<35)  FR=0.17478 ;
+      else                FR=0.144828;
+    }
+    else if(fEta<1.6){
+      if     (PTCorr<15)  FR=0.331654;
+      else if(PTCorr<20)  FR=0.247956;
+      else if(PTCorr<25)  FR=0.236561;
+      else if(PTCorr<35)  FR=0.202605;
+      else                FR=0.197932;
+    }
+    else if(fEta<2.1){
+      if     (PTCorr<15)  FR=0.358539;
+      else if(PTCorr<20)  FR=0.293043;
+      else if(PTCorr<25)  FR=0.276645;
+      else if(PTCorr<35)  FR=0.263249;
+      else                FR=0.227393;
+    }
+    else{
+      if     (PTCorr<15)  FR=0.365527;
+      else if(PTCorr<20)  FR=0.291637;
+      else if(PTCorr<25)  FR=0.276532;
+      else if(PTCorr<35)  FR=0.261954;
+      else                FR=0.237945;
+    }
+  }
+  else if(Option=="QCD_POGTIsop20IPp02p05sig4Chi4_POGLIsop4IPp5p1_TrkIsoVVLConeSUSY"){
+    if(fEta<0.9){
+      if     (PTCorr<15)  FR=0.323508;
+      else if(PTCorr<20)  FR=0.226871;
+      else if(PTCorr<25)  FR=0.203242;
+      else if(PTCorr<35)  FR=0.175915;
+      else                FR=0.145812;
+    }
+    else if(fEta<1.6){
+      if     (PTCorr<15)  FR=0.342056;
+      else if(PTCorr<20)  FR=0.25551 ;
+      else if(PTCorr<25)  FR=0.242027;
+      else if(PTCorr<35)  FR=0.207239;
+      else                FR=0.201682;
+    }
+    else if(fEta<2.1){
+      if     (PTCorr<15)  FR=0.384817;
+      else if(PTCorr<20)  FR=0.307913;
+      else if(PTCorr<25)  FR=0.287075;
+      else if(PTCorr<35)  FR=0.275518;
+      else                FR=0.236965;
+    }
+    else{
+      if     (PTCorr<15)  FR=0.397593;
+      else if(PTCorr<20)  FR=0.313388;
+      else if(PTCorr<25)  FR=0.292071;
+      else if(PTCorr<35)  FR=0.279645;
+      else                FR=0.253176;
+    }
+  }
+  else if(Option=="QCD_POGTIsop20IPp02p06sig4Chi4_POGLIsop4IPp5p1_TrkIsoVVLConeSUSY"){
+    if(fEta<0.9){
+      if     (PTCorr<15)  FR=0.326657;
+      else if(PTCorr<20)  FR=0.228218;
+      else if(PTCorr<25)  FR=0.204618;
+      else if(PTCorr<35)  FR=0.176649;
+      else                FR=0.146364;
+    }
+    else if(fEta<1.6){
+      if     (PTCorr<15)  FR=0.350022;
+      else if(PTCorr<20)  FR=0.260082;
+      else if(PTCorr<25)  FR=0.245315;
+      else if(PTCorr<35)  FR=0.209587;
+      else                FR=0.20343 ;
+    }
+    else if(fEta<2.1){
+      if     (PTCorr<15)  FR=0.403713;
+      else if(PTCorr<20)  FR=0.319006;
+      else if(PTCorr<25)  FR=0.295361;
+      else if(PTCorr<35)  FR=0.284491;
+      else                FR=0.245778;
+    }
+    else{
+      if     (PTCorr<15)  FR=0.424712;
+      else if(PTCorr<20)  FR=0.329282;
+      else if(PTCorr<25)  FR=0.306657;
+      else if(PTCorr<35)  FR=0.29551 ;
+      else                FR=0.268289;
+    }
+  }
+  else if(Option=="QCD_POGTIsop20IPp02p07sig4Chi4_POGLIsop4IPp5p1_TrkIsoVVLConeSUSY"){
+    if(fEta<0.9){
+      if     (PTCorr<15)  FR=0.329094;
+      else if(PTCorr<20)  FR=0.228957;
+      else if(PTCorr<25)  FR=0.204976;
+      else if(PTCorr<35)  FR=0.177448;
+      else                FR=0.146887;
+    }
+    else if(fEta<1.6){
+      if     (PTCorr<15)  FR=0.35638 ;
+      else if(PTCorr<20)  FR=0.26283 ;
+      else if(PTCorr<25)  FR=0.246866;
+      else if(PTCorr<35)  FR=0.211765;
+      else                FR=0.204496;
+    }
+    else if(fEta<2.1){
+      if     (PTCorr<15)  FR=0.416156;
+      else if(PTCorr<20)  FR=0.32661 ;
+      else if(PTCorr<25)  FR=0.30151 ;
+      else if(PTCorr<35)  FR=0.290545;
+      else                FR=0.249841;
+    }
+    else{
+      if     (PTCorr<15)  FR=0.452305;
+      else if(PTCorr<20)  FR=0.346306;
+      else if(PTCorr<25)  FR=0.31806 ;
+      else if(PTCorr<35)  FR=0.306087;
+      else                FR=0.278523;
+    }
+  }
+  else if(Option=="QCD_POGTIsop20IPp01p05sig4_POGLIsop4IPp5p1_TrkIsoVVLConeSUSY"){
+  //Chi2 Test
+    if(fEta<0.9){
+      if     (PTCorr<15)  FR=0.316613;
+      else if(PTCorr<20)  FR=0.224134;
+      else if(PTCorr<25)  FR=0.202856;
+      else if(PTCorr<35)  FR=0.175559;
+      else                FR=0.145097;
+    }
+    else if(fEta<1.6){
+      if     (PTCorr<15)  FR=0.329868;
+      else if(PTCorr<20)  FR=0.251756;
+      else if(PTCorr<25)  FR=0.241151;
+      else if(PTCorr<35)  FR=0.206132;
+      else                FR=0.201213;
+    }
+    else if(fEta<2.1){
+      if     (PTCorr<15)  FR=0.37141 ;
+      else if(PTCorr<20)  FR=0.299894;
+      else if(PTCorr<25)  FR=0.284253;
+      else if(PTCorr<35)  FR=0.272971;
+      else                FR=0.235093;
+    }
+    else{
+      if     (PTCorr<15)  FR=0.369881;
+      else if(PTCorr<20)  FR=0.300937;
+      else if(PTCorr<25)  FR=0.282879;
+      else if(PTCorr<35)  FR=0.274888;
+      else                FR=0.250294;
+    }
+  }
+  else if(Option=="QCD_POGTIsop20IPp0125p05sig4_POGLIsop4IPp5p1_TrkIsoVVLConeSUSY"){
+    if(fEta<0.9){
+      if     (PTCorr<15)  FR=0.32442 ;
+      else if(PTCorr<20)  FR=0.226215;
+      else if(PTCorr<25)  FR=0.20422 ;
+      else if(PTCorr<35)  FR=0.176282;
+      else                FR=0.145939;
+    }
+    else if(fEta<1.6){
+      if     (PTCorr<15)  FR=0.340308;
+      else if(PTCorr<20)  FR=0.256041;
+      else if(PTCorr<25)  FR=0.243092;
+      else if(PTCorr<35)  FR=0.207619;
+      else                FR=0.202079;
+    }
+    else if(fEta<2.1){
+      if     (PTCorr<15)  FR=0.381777;
+      else if(PTCorr<20)  FR=0.307196;
+      else if(PTCorr<25)  FR=0.286595;
+      else if(PTCorr<35)  FR=0.275768;
+      else                FR=0.237424;
+    }
+    else{
+      if     (PTCorr<15)  FR=0.385551;
+      else if(PTCorr<20)  FR=0.311224;
+      else if(PTCorr<25)  FR=0.289198;
+      else if(PTCorr<35)  FR=0.280145;
+      else                FR=0.252723;
+    }
+  }
+  else if(Option=="QCD_POGTIsop20IPp015p05sig4_POGLIsop4IPp5p1_TrkIsoVVLConeSUSY"){
+    if(fEta<0.9){
+      if     (PTCorr<15)  FR=0.325402;
+      else if(PTCorr<20)  FR=0.228338;
+      else if(PTCorr<25)  FR=0.204743;
+      else if(PTCorr<35)  FR=0.176697;
+      else                FR=0.146046;
+    }
+    else if(fEta<1.6){
+      if     (PTCorr<15)  FR=0.342404;
+      else if(PTCorr<20)  FR=0.256812;
+      else if(PTCorr<25)  FR=0.243544;
+      else if(PTCorr<35)  FR=0.208295;
+      else                FR=0.202172;
+    }
+    else if(fEta<2.1){
+      if     (PTCorr<15)  FR=0.384885;
+      else if(PTCorr<20)  FR=0.308876;
+      else if(PTCorr<25)  FR=0.287757;
+      else if(PTCorr<35)  FR=0.276483;
+      else                FR=0.238214;
+    }
+    else{
+      if     (PTCorr<15)  FR=0.393781;
+      else if(PTCorr<20)  FR=0.313874;
+      else if(PTCorr<25)  FR=0.292656;
+      else if(PTCorr<35)  FR=0.282183;
+      else                FR=0.253712;
+    }
+  }
+  else if(Option=="QCD_POGTIsop20IPp01p05sig4_POGLIsop4IPp5p1_TrkIsoVVLFOPt"){
+    if(fEta<0.9){
+      if     (PTCorr<15)  FR=0.282768;
+      else if(PTCorr<20)  FR=0.254387;
+      else if(PTCorr<25)  FR=0.228408;
+      else if(PTCorr<35)  FR=0.212528;
+      else                FR=0.197155;
+    }
+    else if(fEta<1.6){
+      if     (PTCorr<15)  FR=0.29959 ;
+      else if(PTCorr<20)  FR=0.281059;
+      else if(PTCorr<25)  FR=0.26929 ;
+      else if(PTCorr<35)  FR=0.249107;
+      else                FR=0.258742;
+    }
+    else if(fEta<2.1){
+      if     (PTCorr<15)  FR=0.341298;
+      else if(PTCorr<20)  FR=0.328288;
+      else if(PTCorr<25)  FR=0.321943;
+      else if(PTCorr<35)  FR=0.318295;
+      else                FR=0.291953;
+    }
+    else{
+      if     (PTCorr<15)  FR=0.34174 ;
+      else if(PTCorr<20)  FR=0.32845 ;
+      else if(PTCorr<25)  FR=0.320203;
+      else if(PTCorr<35)  FR=0.309992;
+      else                FR=0.305525;
+    }
+  }
+  else if(Option=="QCD_POGTIsop20IPp01p05sig4Chi4_POGLIsop4IPp5p1Chi100_TrkIsoVVLConeE"){
+    if(fEta<0.9){
+      if     (PTCorr<15)  FR=0.386169;
+      else if(PTCorr<20)  FR=0.210802;
+      else if(PTCorr<25)  FR=0.187967;
+      else if(PTCorr<35)  FR=0.162585;
+      else                FR=0.135455;
+    }
+    else if(fEta<1.6){
+      if     (PTCorr<15)  FR=0.392858;
+      else if(PTCorr<20)  FR=0.238182;
+      else if(PTCorr<25)  FR=0.219697;
+      else if(PTCorr<35)  FR=0.193024;
+      else                FR=0.171902;
+    }
+    else if(fEta<2.1){
+      if     (PTCorr<15)  FR=0.433991;
+      else if(PTCorr<20)  FR=0.283975;
+      else if(PTCorr<25)  FR=0.249286;
+      else if(PTCorr<35)  FR=0.240255;
+      else                FR=0.212403;
+    }
+    else{
+      if     (PTCorr<15)  FR=0.423682;
+      else if(PTCorr<20)  FR=0.291987;
+      else if(PTCorr<25)  FR=0.253028;
+      else if(PTCorr<35)  FR=0.237223;
+      else                FR=0.216396;
+    }
+  }
+  else if(Option=="QCD_POGTIsop20IPp01p05sig4Chi4_POGLIsop6IPp5p1_TrkIsoVVLConeE"){
+    if(fEta<0.9){
+      if     (PTCorr<15)  FR=0.3698   ;
+      else if(PTCorr<20)  FR=0.127077 ;
+      else if(PTCorr<25)  FR=0.105482 ;
+      else if(PTCorr<35)  FR=0.0847003;
+      else                FR=0.0658657;
+    }
+    else if(fEta<1.6){
+      if     (PTCorr<15)  FR=0.378711 ;
+      else if(PTCorr<20)  FR=0.15421  ;
+      else if(PTCorr<25)  FR=0.131833 ;
+      else if(PTCorr<35)  FR=0.111871 ;
+      else                FR=0.0909864;
+    }
+    else if(fEta<2.1){
+      if     (PTCorr<15)  FR=0.422932;
+      else if(PTCorr<20)  FR=0.198389;
+      else if(PTCorr<25)  FR=0.162706;
+      else if(PTCorr<35)  FR=0.150881;
+      else                FR=0.125503;
+    }
+    else{
+      if     (PTCorr<15)  FR=0.4144  ;
+      else if(PTCorr<20)  FR=0.210401;
+      else if(PTCorr<25)  FR=0.17012 ;
+      else if(PTCorr<35)  FR=0.151303;
+      else                FR=0.133335;
+    }
+  }
+  else if(Option=="QCD_POGTIsop20IPp01p05sig4Chi4_POGLIsop4IPp5p1Chi100_TrkIsoVVLConeSUSY"){
+    if(fEta<0.9){
+      if     (PTCorr<15)  FR=0.31426 ;
+      else if(PTCorr<20)  FR=0.222439;
+      else if(PTCorr<25)  FR=0.201205;
+      else if(PTCorr<35)  FR=0.174831;
+      else                FR=0.144662;
+    }
+    else if(fEta<1.6){
+      if     (PTCorr<15)  FR=0.32857 ;
+      else if(PTCorr<20)  FR=0.250185;
+      else if(PTCorr<25)  FR=0.239277;
+      else if(PTCorr<35)  FR=0.204876;
+      else                FR=0.200625;
+    }
+    else if(fEta<2.1){
+      if     (PTCorr<15)  FR=0.369924;
+      else if(PTCorr<20)  FR=0.298439;
+      else if(PTCorr<25)  FR=0.282484;
+      else if(PTCorr<35)  FR=0.27146 ;
+      else                FR=0.233521;
+    }
+    else{
+      if     (PTCorr<15)  FR=0.368448;
+      else if(PTCorr<20)  FR=0.298501;
+      else if(PTCorr<25)  FR=0.280768;
+      else if(PTCorr<35)  FR=0.27085 ;
+      else                FR=0.248833;
+    }
+  }
+  else if(Option=="QCD_POGTIsop20IPp01p05sig4Chi4_POGLIsop6IPp5p1_TrkIsoVVLConeSUSY"){
+    if(fEta<0.9){
+      if     (PTCorr<15)  FR=0.257737 ;
+      else if(PTCorr<20)  FR=0.128697 ;
+      else if(PTCorr<25)  FR=0.106332 ;
+      else if(PTCorr<35)  FR=0.0890508;
+      else                FR=0.0671498;
+    }
+    else if(fEta<1.6){
+      if     (PTCorr<15)  FR=0.278599;
+      else if(PTCorr<20)  FR=0.155255;
+      else if(PTCorr<25)  FR=0.141305;
+      else if(PTCorr<35)  FR=0.114051;
+      else                FR=0.10155 ;
+    }
+    else if(fEta<2.1){
+      if     (PTCorr<15)  FR=0.327038;
+      else if(PTCorr<20)  FR=0.200252;
+      else if(PTCorr<25)  FR=0.181269;
+      else if(PTCorr<35)  FR=0.171255;
+      else                FR=0.136789;
+    }
+    else{
+      if     (PTCorr<15)  FR=0.328393;
+      else if(PTCorr<20)  FR=0.208152;
+      else if(PTCorr<25)  FR=0.188517;
+      else if(PTCorr<35)  FR=0.170417;
+      else                FR=0.15132 ;
+    }
+  }
+  else if(Option=="QCD_POGTIsop20IPp01p05sig4Chi4_POGLIsop4IPp5p1Chi100_TrkIsoVVLFOPt"){
+    if(fEta<0.9){
+      if     (PTCorr<15)  FR=0.282776;
+      else if(PTCorr<20)  FR=0.254416;
+      else if(PTCorr<25)  FR=0.228421;
+      else if(PTCorr<35)  FR=0.212552;
+      else                FR=0.197174;
+    }
+    else if(fEta<1.6){
+      if     (PTCorr<15)  FR=0.299608;
+      else if(PTCorr<20)  FR=0.281139;
+      else if(PTCorr<25)  FR=0.269316;
+      else if(PTCorr<35)  FR=0.249154;
+      else                FR=0.258796;
+    }
+    else if(fEta<2.1){
+      if     (PTCorr<15)  FR=0.341341;
+      else if(PTCorr<20)  FR=0.328367;
+      else if(PTCorr<25)  FR=0.321994;
+      else if(PTCorr<35)  FR=0.318312;
+      else                FR=0.292036;
+    }
+    else{
+      if     (PTCorr<15)  FR=0.341761;
+      else if(PTCorr<20)  FR=0.328543;
+      else if(PTCorr<25)  FR=0.320256;
+      else if(PTCorr<35)  FR=0.310155;
+      else                FR=0.305548;
+    }
+  }
+  else if(Option=="QCD_POGTIsop20IPp01p05sig4Chi4_POGLIsop6IPp5p1_TrkIsoVVLFOPt"){
+    if(fEta<0.9){
+      if     (PTCorr<15)  FR=0.195291;
+      else if(PTCorr<20)  FR=0.164882;
+      else if(PTCorr<25)  FR=0.145287;
+      else if(PTCorr<35)  FR=0.134064;
+      else                FR=0.121428;
+    }
+    else if(fEta<1.6){
+      if     (PTCorr<15)  FR=0.218693;
+      else if(PTCorr<20)  FR=0.196759;
+      else if(PTCorr<25)  FR=0.188185;
+      else if(PTCorr<35)  FR=0.168262;
+      else                FR=0.172855;
+    }
+    else if(fEta<2.1){
+      if     (PTCorr<15)  FR=0.265117;
+      else if(PTCorr<20)  FR=0.24897 ;
+      else if(PTCorr<25)  FR=0.239586;
+      else if(PTCorr<35)  FR=0.241763;
+      else                FR=0.220358;
+    }
+    else{
+      if     (PTCorr<15)  FR=0.271358;
+      else if(PTCorr<20)  FR=0.25469 ;
+      else if(PTCorr<25)  FR=0.2454  ;
+      else if(PTCorr<35)  FR=0.241034;
+      else                FR=0.230736;
+    }
+  }
+

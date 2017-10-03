@@ -25,8 +25,8 @@ LogLevel="INFO"
 QueueOption="fastq" 
 
 
-#MCList="Analysis_bkg"
-MCList="ZG2l"
+MCList="Analysis_bkg"
+#MCList="ZG2l"
 #MCList="SignalMajor_1e2mu"#MCList="SignalMajor_3mu"
 #MCList="SignalMajor_3mu"
 #MCList="DY"

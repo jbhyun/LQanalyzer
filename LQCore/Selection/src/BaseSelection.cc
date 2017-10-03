@@ -69,7 +69,7 @@ TString BaseSelection::GetString(ID id){
   if ( id == MUON_POG_TIGHT) return  "MUON_POG_TIGHT";
   if ( id == ELECTRON_POG_MVA_WP80 ) return "ELECTRON_POG_MVA_WP80";
   if ( id == ELECTRON_POG_MVA_WP90 ) return "ELECTRON_POG_MVA_WP90"; 
-  if ( id == ELECTRON_POGMVAWP90_FAKELOOSE ) return "ELECTRON_POGMVAWP90_FAKELOOSE";
+  if ( id == ELECTRON_HctoWA_FAKELOOSE ) return "ELECTRON_HctoWA_FAKELOOSE";
 
 
   if ( id == MUON_TOP_VETO) return  "MUON_TOP_VETO";
@@ -89,9 +89,6 @@ TString BaseSelection::GetString(ID id){
   if ( id == ELECTRON_POG_LOOSE) return "ELECTRON_POG_LOOSE";
   if ( id == ELECTRON_POG_MEDIUM) return "ELECTRON_POG_MEDIUM";
   if ( id == ELECTRON_POG_TIGHT) return  "ELECTRON_POG_TIGHT";
-  if ( id == ELECTRON_HN_MVA_TEST170706 ) return "ELECTRON_HN_MVA_TEST170706";
-  if ( id == ELECTRON_HN_MVA_TEST170706LOOSE ) return "ELECTRON_HN_MVA_TEST170706LOOSE";
-
   
   cerr << "Did not find ID for object. Please enter TString of ID not enum" << endl;
   exit(EXIT_FAILURE);

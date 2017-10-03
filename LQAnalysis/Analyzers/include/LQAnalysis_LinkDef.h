@@ -25,6 +25,17 @@
 
 //#endif // __CINT__
 //Jihwan Bhyun Modification///////////
+#pragma link C++ class Aug2017_MuIDChoice+;
+#pragma link C++ class Aug2017_MuFakeDataStudy+;
+#pragma link C++ class Aug2017_MuFakeMCStudy+;
+#pragma link C++ class Aug2017_EMuMuTrigCheck+;
+#pragma link C++ class Aug2017_DataEleFRCalc+;
+#pragma link C++ class Aug2017_TriLepSR+;
+#pragma link C++ class Aug2017_ObjEffCalc+;
+#pragma link C++ class Jul2017_EMuMuComp+;
+#pragma link C++ class Jul2017_NvtxWeightCheck+;
+#pragma link C++ class Jul2017_DataFakeStudy+;
+#pragma link C++ class Jul2017_MCFakeStudy+;
 #pragma link C++ class Jun2017_GenMatchXCheck+;
 #pragma link C++ class Jun2017_MCFakeStudy+;
 #pragma link C++ class Jun2017_ConversionStudy+;

@@ -138,7 +138,7 @@ class AnalyzerCore : public LQCycleBase {
   int NBJet(std::vector<snu::KJet> jets,  snu::KJet::Tagger tag=snu::KJet::CSVv2, snu::KJet::WORKING_POINT wp = snu::KJet::Medium, int mcperiod=-1);
 
   bool IsBTagged(snu::KJet jet,  snu::KJet::Tagger tag, snu::KJet::WORKING_POINT wp, int mcperiod=-1);
-  float BTagScaleFactor_1a(std::vector<snu::KJet> jetColl, snu::KJet::Tagger tag, snu::KJet::WORKING_POINT wp, int mcperiod=-1);
+  float BTagScaleFactor_1a(std::vector<snu::KJet> jetColl, snu::KJet::Tagger tag, snu::KJet::WORKING_POINT wp, int mcperiod=-1, TString Option="");
 
   int AssignnNumberOfTruth();
   bool IsSignal();
@@ -424,21 +424,21 @@ class AnalyzerCore : public LQCycleBase {
 //};
 //#endif
   //Jihwan Bhyun Modification/////////////////////////
-  std::vector<snu::KJet> SelBJets(std::vector<snu::KJet>& jetColl,TString level);
-  std::vector<int> GetSFBJetIdx(std::vector<snu::KJet>& jetColl,TString level);
-  std::vector<int> GetSFLJetIdx(std::vector<snu::KJet>& jetColl, std::vector<int>& bIdxColl, TString level);
+  std::vector<snu::KJet> SelBJets    (std::vector<snu::KJet>& jetColl, TString level);
+  std::vector<int>       GetSFBJetIdx(std::vector<snu::KJet>& jetColl, TString level);
+  std::vector<int>       GetSFLJetIdx(std::vector<snu::KJet>& jetColl, std::vector<int>& bIdxColl, TString level);
   std::vector<snu::KJet> SelLightJets(std::vector<snu::KJet>& jetColl, TString level);
   std::vector<snu::KElectron> SelEndcapElectrons(std::vector<snu::KElectron>& electronColl);
-  std::vector<snu::KJet> GetTopBasicJets(/*std::vector<snu::KMuon>& muonColl, std::vector<snu::KElectron>& electronColl*/);
-  int SumCharge(std::vector<snu::KMuon>& MuonColl);
-  int TriMuChargeIndex(std::vector<snu::KMuon>& MuonColl, TString charge);
-  double GetvPz(snu::KParticle v, snu::KElectron e, int pm);
-  double GetvPz(snu::KParticle v, snu::KMuon mu, int pm);
+  int    SumCharge       (std::vector<snu::KMuon>& MuonColl);
+  int    TriMuChargeIndex(std::vector<snu::KMuon>& MuonColl, TString charge);
+  double GetvPz  (snu::KParticle v, snu::KElectron e, int pm);
+  double GetvPz  (snu::KParticle v, snu::KMuon mu, int pm);
   double GetAngle(snu::KElectron e, snu::KMuon mu);
   double GetAngle(snu::KMuon mu1, snu::KMuon mu2);
   double GetAngle(snu::KElectron e, snu::KJet j);
   double GetAngle(snu::KMuon mu, snu::KJet j);
   double GetAngle(snu::KJet j1, snu::KJet j2);
+
 
   double dPtRel(snu::KTruth T, snu::KElectron e);
   double dPtRel(snu::KTruth T, snu::KMuon mu);
@@ -450,39 +450,36 @@ class AnalyzerCore : public LQCycleBase {
   int  GetGenMatchedSigIndex(std::vector<snu::KTruth>& truthColl, std::vector<snu::KMuon>& muonColl, std::vector<snu::KElectron>& electronColl, std::vector<snu::KJet>& jetColl, TString PtlName, float weight);
 
   int  NPromptLeptons(std::vector<snu::KTruth>& truthColl, TString Option="");
+  int  NLeptonicBosonDecay(std::vector<snu::KTruth>& TruthColl);
 
   //template <class Ptl> int GetDaughterCandIdx(std::vector<Ptl> PtlColl, TString MotherPtl, float WindowWidth=10., TString Option="");
   int GetDaughterCandIdx(std::vector<snu::KMuon> PtlColl, TString MotherPtl, float WindowWidth=10., TString Option="");
   int GetDaughterCandIdx(std::vector<snu::KJet>  PtlColl, TString MotherPtl, float WindowWidth=10., TString Option="");
+  int GetNearJetIdx(snu::KElectron Ele, std::vector<snu::KJet> JetColl);
   double TopPTReweight(std::vector<snu::KTruth> TruthColl);
   float  GenFilterEfficiency(TString SampleName);
   float  SignalNorm(TString SampleName, float Xsec);
+  float  GetHiggsMass(TString SampleName, TString Option);
 
 
-
-  int GenMatchedIdx(snu::KElectron El, std::vector<snu::KTruth>& truthColl);
-  int GenMatchedIdx(snu::KMuon Mu, std::vector<snu::KTruth>& truthColl);
-  int GenMatchedIdx(snu::KJet Jet, std::vector<snu::KTruth>& TruthColl);
-  int FirstNonSelfMotherIdx(int TruthIdx, std::vector<snu::KTruth>& TruthColl);
-  int LastSelfMotherIdx(int TruthIdx, std::vector<snu::KTruth>& TruthColl);
-  bool HasHadronicAncestor(int TruthIdx, std::vector<snu::KTruth>& TruthColl);
-  bool IsFinalPhotonSt23(std::vector<snu::KTruth> TruthColl);
+  int  GenMatchedIdx(snu::KJet Jet, std::vector<snu::KTruth>& TruthColl);
   bool IsHardPhotonConverted(std::vector<snu::KTruth> TruthColl);
-  int GetLeptonType(int TruthIdx, std::vector<snu::KTruth>& TruthColl, TString Option="");
-  int GetLeptonType(snu::KElectron El, std::vector<snu::KTruth>& TruthColl, TString Option="");
-  int GetLeptonType(snu::KMuon Mu, std::vector<snu::KTruth>& TruthColl, TString Option="");
-  int GetPhotonType(int PhotonIdx, std::vector<snu::KTruth> TruthColl);
   bool IsJetConsistentPartonHadronMatch(snu::KJet Jet, std::vector<snu::KTruth>& KTruthColl, TString Option="BFlav");
   bool HasEWLepInJet(snu::KJet Jet, std::vector<snu::KTruth>& TruthColl, TString Option="");
   bool NearEWLep(snu::KElectron Ele, std::vector<snu::KTruth>& TruthColl, TString Option="");
   bool NearPhoton(snu::KElectron Ele, std::vector<snu::KTruth>& TruthColl, TString Option="AllPhoton");
-  int GetNearPhotonIdx(snu::KElectron Ele, std::vector<snu::KTruth>& TruthColl, TString Option="AllPhoton");
-  int GetNearPhotonIdx(snu::KMuon Mu, std::vector<snu::KTruth>& TruthColl, TString Option="AllPhoton");
   std::vector<snu::KElectron> SkimLepColl(std::vector<snu::KElectron>& EleColl, std::vector<snu::KTruth>& TruthColl, TString Option="Prompt");
+  std::vector<snu::KElectron> SkimLepColl(std::vector<snu::KElectron>& EleColl, TString Option="B1B2E", float PTmin=10.);
   std::vector<snu::KMuon>     SkimLepColl(std::vector<snu::KMuon>& MuColl, std::vector<snu::KTruth>& TruthColl, TString Option="Prompt");
   std::vector<snu::KJet>      SkimJetColl(std::vector<snu::KJet>& JetColl, std::vector<snu::KTruth>& TruthColl, TString Option="NoPr");
+  std::vector<snu::KJet>      SkimJetColl(std::vector<snu::KJet>& JetColl, std::vector<snu::KElectron>& EleColl, std::vector<snu::KMuon>& MuColl, TString Option="ElMuVeto");
 
   bool PassIDCriteria(snu::KElectron Ele, TString ID, TString Option="");
-  int NLeptonicBosonDecay(std::vector<snu::KTruth>& TruthColl);
+  bool PassIDCriteria(snu::KMuon      Mu, TString ID, TString Option="");
+
+  float RochIso(snu::KMuon Mu, TString ConeSize="0.4");
+
+  bool HasStrangeEleCand(std::vector<snu::KElectron> EleColl);
+  bool CouldBeStrangeEleCand(snu::KElectron Ele);
 };
 #endif

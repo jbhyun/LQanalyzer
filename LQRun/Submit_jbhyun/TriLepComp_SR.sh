@@ -2,34 +2,31 @@
 
 ########################################################################
 ## MC / DATA
-runMC=true
-runData=false
-
+runMC=false
+runData=true
+runFake="True"
+runSignal="False"
 
 ########################################################################
 ## RUN PARAMETERS
 
-AnalysisCode="Apr2017_SignalRegion"
-#Stream="MuonEG"     
-#Stream="SingleMuon"     
-Stream="DoubleMuon"     
+AnalysisCode="Aug2017_TriLepSR" 
+#Stream="SingleElectron"
+#Stream="MuonEG"
+Stream="DoubleMuon"
 #Stream="DoubleEG"
-runFake="False"
-runSignal="True"
 #Skim="SKTree_LeptonSkim"  ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
-#Skim="SKTree_DiLepSkim"  ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
-Skim="SKTree_TriLepSkim"  ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
+#Skim="SKTree_DiLepSkim"   ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
+Skim="SKTree_TriLepSkim"   ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
 DataPeriod="ALL"
-#job_logstep=1000
+job_logstep=1000
 LogLevel="INFO"
-#QueueOption="longq" 
-QueueOption="fastq" 
+QueueOption="fastq"    #"longq"
+RunningMode="TriMu,SRYield,SystRun" #"CutOpt,EMuMu,MAWinOpt" #"EMuMu,SRYield,SystRun" #"CutOpt,EMuMu,MAWinOpt" #"TriMu,SRDist" #"EMuMu,SRDist" #"TriMu,SRDist" #"TriMu,SRYield,SystRun" #"EMuMu,SRYield,SystRun" #"TriMu,CutOpt"
 
-
-#MCList="example"
-#MCList="Analysis_bkg"
 MCList="SignalMajor_All"
-###Signal    : "SignalMajor_All" "SignalMajor_1e2mu" "SignalMajor_3mu" "SignalMajor_1ta2mu" "SignalMajor_2l2mu"
+#MCList="Analysis_bkg"
+#MCList="MajorFakeSource"
 
 ########################################################################
 ## OUTPUT PATH CONFIG
@@ -39,6 +36,7 @@ outputdir_cat="/data2/Users/jbhyun/cmssw/CATanalyzer/CATOut/${CATVERSION}"
 
 if [[ -z ${CATVERSION} ]]; then echo "source setup.sh needed. exit"; exit 1; fi
 if [[ ! -d $CATOUT ]]; then echo "Made $CATOUT"; mkdir $CATOut; fi
+if [[ ! -d ${outputdir_cat} ]]; then echo "Made ${outputdir_cat}"; mkdir ${outputdir_cat}; fi
 if [[ ! -d ${outputdir_cat} ]]; then echo "Made ${outputdir_cat}"; mkdir ${outputdir_cat}; fi
 if [[ ! -d ${outputdir_cat}/${AnalysisCode} ]]; then echo "Made ${outputdir_cat}/${AnalysisCode}"; mkdir ${outputdir_cat}/${AnalysisCode}; fi;
 
@@ -61,7 +59,7 @@ else echo "Error: Period Set Wrongly"; exit 1;
 fi
 outputdir_period="${outputdir_lep}/${dir_period}/"
 outputdir_fake="${outputdir_period}Fakes/";
-outputdir_sig="${outputdir_period}Signals/";
+outputdir_signal="${outputdir_period}Signals/";
 OutputDir=${outputdir_period}
 
 
@@ -73,16 +71,15 @@ then
   OutputDir=${outputdir_fake}
 fi
 if [[ ${runSignal} == "True" || ${runSignal} == "true" ]];
-then 
-  if [[ ${runMC} == "false" || ${runMC} == "False" ]]; then echo "runMC false but signal? exiting."; exit 1; fi
-  if [[ ! -d "${outputdir_sig}" ]]; then mkdir ${outputdir_sig}; echo "Made ${outputdir_sig}"; fi
-  OutputDir=${outputdir_sig}
+then
+  if [[ ! -d "${outputdir_signal}" ]]; then mkdir ${outputdir_signal}; echo "Made ${outputdir_signal}"; fi
+  OutputDir=${outputdir_signal}
 fi
-  
 
 
 if [[ $runData == 'false' || $runData == 'False' ]]; then Stream=""; fi
 if [[ $runMC == 'false' || $runMC == 'False' ]]; then MCList=""; fi
+
 
 ########################################################################
 ## COMMAND
@@ -92,14 +89,14 @@ date >> CommandHist.txt
 
 
 if [[ $runData == 'false' || $runData == 'False' ]];
-  then nohup bash ${LQANALYZER_BIN_PATH}/submitSKTree.sh -b True -a ${AnalysisCode} -p ${DataPeriod} -s ${Skim} -list ${MCList} -o ${OutputDir} -d ${LogLevel} -q ${QueueOption} 
-  echo "nohup bash ${LQANALYZER_BIN_PATH}/submitSKTree.sh -b True -a ${AnalysisCode} -p ${DataPeriod} -s ${Skim} -list ${MCList} -o ${OutputDir} -d ${LogLevel} -q ${QueueOption}">> CommandHist.txt
+  then nohup bash ${LQANALYZER_BIN_PATH}/submitSKTree.sh -b True -a ${AnalysisCode} -p ${DataPeriod} -s ${Skim} -list ${MCList} -o ${OutputDir} -d ${LogLevel} -q ${QueueOption} -userflag ${RunningMode} 
+  echo "nohup bash ${LQANALYZER_BIN_PATH}/submitSKTree.sh -b True -a ${AnalysisCode} -p ${DataPeriod} -s ${Skim} -list ${MCList} -o ${OutputDir} -d ${LogLevel} -q ${QueueOption} -userflag ${RunningMode}">> CommandHist.txt
 elif [[ $runMC == 'false' || $runMC == 'False' ]];
-  then nohup bash ${LQANALYZER_BIN_PATH}/submitSKTree.sh -b True -a ${AnalysisCode} -S ${Stream} -p ${DataPeriod} -s ${Skim} -o ${OutputDir} -d ${LogLevel} -q ${QueueOption} -fake ${runFake}
-  echo "nohup bash ${LQANALYZER_BIN_PATH}/submitSKTree.sh -b True -a ${AnalysisCode} -S ${Stream} -p ${DataPeriod} -s ${Skim} -o ${OutputDir} -d ${LogLevel} -q ${QueueOption} -fake ${runFake}" >> CommandHist.txt
+  then nohup bash ${LQANALYZER_BIN_PATH}/submitSKTree.sh -b True -a ${AnalysisCode} -S ${Stream} -p ${DataPeriod} -s ${Skim} -o ${OutputDir} -d ${LogLevel} -q ${QueueOption} -fake ${runFake} -userflag ${RunningMode}
+  echo "nohup bash ${LQANALYZER_BIN_PATH}/submitSKTree.sh -b True -a ${AnalysisCode} -S ${Stream} -p ${DataPeriod} -s ${Skim} -o ${OutputDir} -d ${LogLevel} -q ${QueueOption} -fake ${runFake} -userflag ${RunningMode}" >> CommandHist.txt
 else
-  nohup bash ${LQANALYZER_BIN_PATH}/submitSKTree.sh -b True -a ${AnalysisCode} -S ${Stream} -p ${DataPeriod} -s ${Skim} -list ${MCList} -o ${OutputDir} -d ${LogLevel} -q ${QueueOption}
-  echo "nohup bash ${LQANALYZER_BIN_PATH}/submitSKTree.sh -b True -a ${AnalysisCode} -S ${Stream} -p ${DataPeriod} -s ${Skim} -list ${MCList} -o ${OutputDir} -d ${LogLevel} -q ${QueueOption}" >> CommandHist.txt
+  nohup bash ${LQANALYZER_BIN_PATH}/submitSKTree.sh -b True -a ${AnalysisCode} -S ${Stream} -p ${DataPeriod} -s ${Skim} -list ${MCList} -o ${OutputDir} -d ${LogLevel} -q ${QueueOption} -fake ${runFake} -userflag ${RunningMode}
+  echo "nohup bash ${LQANALYZER_BIN_PATH}/submitSKTree.sh -b True -a ${AnalysisCode} -S ${Stream} -p ${DataPeriod} -s ${Skim} -list ${MCList} -o ${OutputDir} -d ${LogLevel} -q ${QueueOption} -fake ${runFake} -userflag ${RunningMode}" >> CommandHist.txt
 fi
 
 echo >> CommandHist.txt

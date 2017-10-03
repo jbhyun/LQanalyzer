@@ -776,7 +776,7 @@ double MCDataCorrections::ElectronScaleFactor( TString elid, vector<snu::KElectr
   std::string sid= "";
   
   if(elid.Contains("HN")) elid = "ELECTRON_MVA_80";
-  if(elid.Contains("ELECTRON_MVA_90")) elid = "ELECTRON_MVA_80";
+  //if(elid.Contains("ELECTRON_MVA_90")) elid = "ELECTRON_MVA_80";
 
   for(vector<KElectron>::iterator itel=el.begin(); itel!=el.end(); ++itel) {
     float elpt=itel->Pt();

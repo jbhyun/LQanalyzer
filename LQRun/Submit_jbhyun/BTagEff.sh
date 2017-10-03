@@ -19,8 +19,8 @@ QueueOption="fastq"
 #QueueOption="longq"
 
 #MCList="DY"
-MCList="BtagEffSample"
-#MCList="Analysis_bkg"
+#MCList="BtagEffSample"
+MCList="Analysis_bkg"
 #MCList="SignalMajor_All"
 ###Backgound : AllSample / Analysis_bkg / Analysis_bkg_test / QCD_mu
 ###Signal    : Analysis_sig_All / Analysis_sig_1e2mu / Analysis_sig_3mu / tthwA_1e2mu / tthwA_3mu / Analysis_sig_test / Analysis_sig_test1

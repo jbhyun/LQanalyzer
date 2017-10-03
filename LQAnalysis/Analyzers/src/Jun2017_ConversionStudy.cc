@@ -299,7 +299,68 @@ void Jun2017_ConversionStudy::ExecuteEvents()throw( LQError ){
    }
 
 
-   bool ZGDataMCComp=true;
+   bool ConversionIPCheck=false;
+   if(ConversionIPCheck){
+
+       eventbase->GetElectronSel()->SetID(BaseSelection::ELECTRON_POG_TIGHT);
+       eventbase->GetElectronSel()->SetPt(25.);                eventbase->GetElectronSel()->SetEta(2.5);
+       eventbase->GetElectronSel()->SetBETrRegIncl(false);
+       eventbase->GetElectronSel()->SetRelIsoType("Default");  eventbase->GetElectronSel()->SetRelIsoBEMax(0.0588, 0.0571);//2016 80X tuned WP
+     //  eventbase->GetElectronSel()->SetdxyBEMax(0.05, 0.05);    eventbase->GetElectronSel()->SetdzBEMax(0.1, 0.1);//Not in ID, but additional safe WP
+     std::vector<snu::KElectron> electronColl; eventbase->GetElectronSel()->Selection(electronColl);
+       eventbase->GetMuonSel()->SetID(BaseSelection::MUON_POG_TIGHT);
+       eventbase->GetMuonSel()->SetPt(10.);                    eventbase->GetMuonSel()->SetEta(2.4);
+       eventbase->GetMuonSel()->SetBSdxy(0.05);                eventbase->GetMuonSel()->SetdxySigMax(3.);
+       eventbase->GetMuonSel()->SetRelIsoType("PFRelIso04");   eventbase->GetMuonSel()->SetRelIso(0.1);
+     std::vector<snu::KMuon>   muonColl; eventbase->GetMuonSel()->Selection(muonColl,true);
+     std::vector<snu::KTruth> truthColl; eventbase->GetTruthSel()->Selection(truthColl);
+
+     std::vector<snu::KElectron> EleIntConvColl;
+       for(int i=0; i<electronColl.size(); i++){
+         int LepType=GetLeptonType(electronColl.at(i), truthColl);
+         if(LepType>3) EleIntConvColl.push_back(electronColl.at(i));
+       }
+     std::vector<snu::KElectron> EleExtConvColl;
+       for(int i=0; i<electronColl.size(); i++){
+         int LepType=GetLeptonType(electronColl.at(i), truthColl);
+         if(LepType>3) EleIntConvColl.push_back(electronColl.at(i));
+       }
+
+     for(int i=0; i<electronColl.size(); i++){
+
+       int LepType=GetLeptonType(electronColl.at(i), truthColl);
+       float d0=fabs(electronColl.at(i).dxy()), dz=fabs(electronColl.at(i).dz()), d0Sig=fabs(electronColl.at(i).dxySig());
+
+       //d0
+       if     (LepType==1)                 FillHist("d0_Type1", d0, weight, 0., 0.2, 200);
+       else if(LepType==3)                 FillHist("d0_Type3", d0, weight, 0., 0.2, 200);
+       else if(LepType>3)                  FillHist("d0_Type45_IntConv", d0, weight, 0., 0.2, 200);
+       else if(LepType==-1)                FillHist("d0_Typem1", d0, weight, 0., 0.2, 200);
+       else if(LepType<=-2 && LepType>=-4) FillHist("d0_Typem234", d0, weight, 0., 0.2, 200);
+       else if(LepType<-4)                 FillHist("d0_Typem56_ExtConv", d0, weight, 0., 0.2, 200);
+
+       //dz
+       if     (LepType==1)                 FillHist("dz_Type1", dz, weight, 0., 0.2, 200);
+       else if(LepType==3)                 FillHist("dz_Type3", dz, weight, 0., 0.2, 200);
+       else if(LepType>3)                  FillHist("dz_Type45_IntConv", dz, weight, 0., 0.2, 200);
+       else if(LepType==-1)                FillHist("dz_Typem1", dz, weight, 0., 0.2, 200);
+       else if(LepType<=-2 && LepType>=-4) FillHist("dz_Typem234", dz, weight, 0., 0.2, 200);
+       else if(LepType<-4)                 FillHist("dz_Typem56_ExtConv", dz, weight, 0., 0.2, 200);
+
+       //d0Sig
+       if     (LepType==1)                 FillHist("d0Sig_Type1", d0Sig, weight, 0., 10, 100);
+       else if(LepType==3)                 FillHist("d0Sig_Type3", d0Sig, weight, 0., 10, 100);
+       else if(LepType>3)                  FillHist("d0Sig_Type45_IntConv", d0Sig, weight, 0., 10, 100);
+       else if(LepType==-1)                FillHist("d0Sig_Typem1", d0Sig, weight, 0., 10, 100);
+       else if(LepType<=-2 && LepType>=-4) FillHist("d0Sig_Typem234", d0Sig, weight, 0., 10, 100);
+       else if(LepType<-4)                 FillHist("d0Sig_Typem56_ExtConv", d0Sig, weight, 0., 10, 100);
+     }//End of ele loop
+ 
+   
+   }//End of IPCheck
+
+
+   bool ZGDataMCComp=false;
    if(ZGDataMCComp){
 
      if(!isData) weight*=WeightByTrigger("HLT_IsoMu24_v", TargetLumi);
@@ -491,6 +552,171 @@ void Jun2017_ConversionStudy::ExecuteEvents()throw( LQError ){
    }
 
 
+
+   bool SRContributionCheck=true;
+   if(SRContributionCheck){
+
+     if(!isData) weight*=WeightByTrigger("HLT_IsoMu24_v", TargetLumi);
+     if(!isData) weight*=MCweight;
+     float pileup_reweight=1.;
+     if(!k_isdata) { pileup_reweight*=eventbase->GetEvent().PileUpWeight_Gold(snu::KEvent::central);}
+     FillCutFlow("NoCut", weight*pileup_reweight);
+
+
+     int Pass_Trigger1=0, Pass_Trigger2=0;
+     if( PassTrigger("HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v") ) Pass_Trigger1++;
+     if( PassTrigger("HLT_Mu12_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ_v") ) Pass_Trigger2++;
+
+     float trigger_period_weight=1.;
+     bool Pass_Trigger=false;
+     if(isData){
+       int DataPeriod=GetDataPeriod();
+       if( DataPeriod>0 && DataPeriod<7 && Pass_Trigger1==1 ) Pass_Trigger=true;
+       else if( DataPeriod==7 && Pass_Trigger2==1 ) Pass_Trigger=true;
+     }
+     else{
+       if( Pass_Trigger1>0 || Pass_Trigger2>0 ) Pass_Trigger=true;
+       trigger_period_weight=(Pass_Trigger1*27.257618+Pass_Trigger2*8.605696)/35.863314;
+     }
+     weight*=trigger_period_weight;
+     if(!Pass_Trigger) return;     FillCutFlow("TriggerCut", weight*pileup_reweight);
+     if(!PassMETFilter()) return;  FillCutFlow("EventCut", weight*pileup_reweight);
+     if(!eventbase->GetEvent().HasGoodPrimaryVertex()) return; FillCutFlow("VertexCut", weight*pileup_reweight);
+
+     /**PreSelCut***********************************************************************************************/
+     //Intended for Code speed boosting up.
+       eventbase->GetMuonSel()->SetPt(10.);                    eventbase->GetMuonSel()->SetEta(2.4);
+     std::vector<snu::KMuon> muonPreColl; eventbase->GetMuonSel()->Selection(muonPreColl, true);
+       eventbase->GetElectronSel()->SetPt(10.);                eventbase->GetElectronSel()->SetEta(2.5);
+       eventbase->GetElectronSel()->SetBETrRegIncl(false);
+     std::vector<snu::KElectron> electronPreColl; eventbase->GetElectronSel()->Selection(electronPreColl);
+       if( !(muonPreColl.size()>=2 && electronPreColl.size()>=1) ) return;
+     /**********************************************************************************************************/
+
+     std::vector<snu::KTruth> truthColl; eventbase->GetTruthSel()->Selection(truthColl);
+
+       eventbase->GetMuonSel()->SetID(BaseSelection::MUON_POG_TIGHT);
+       eventbase->GetMuonSel()->SetPt(10.);                    eventbase->GetMuonSel()->SetEta(2.4);
+       eventbase->GetMuonSel()->SetBSdxy(0.01);                eventbase->GetMuonSel()->SetdxySigMax(3.);
+       eventbase->GetMuonSel()->SetBSdz(0.1);
+       eventbase->GetMuonSel()->SetRelIsoType("PFRelIso04");   eventbase->GetMuonSel()->SetRelIso(0.4);
+     std::vector<snu::KMuon> muonLooseColl; eventbase->GetMuonSel()->Selection(muonLooseColl, true);
+       eventbase->GetMuonSel()->SetID(BaseSelection::MUON_POG_TIGHT);
+       eventbase->GetMuonSel()->SetPt(10.);                    eventbase->GetMuonSel()->SetEta(2.4);
+       eventbase->GetMuonSel()->SetBSdxy(0.01);                eventbase->GetMuonSel()->SetdxySigMax(3.);
+       eventbase->GetMuonSel()->SetBSdz(0.1);
+       eventbase->GetMuonSel()->SetRelIsoType("PFRelIso04");   eventbase->GetMuonSel()->SetRelIso(0.1);
+     std::vector<snu::KMuon> muonTightColl; eventbase->GetMuonSel()->Selection(muonTightColl,true);
+     std::vector<snu::KMuon> muonColl;      
+       if     ( isData){ if(k_running_nonprompt){ muonColl=muonLooseColl;} else{ muonColl=muonTightColl;} }
+       else if(!isData) muonColl=muonTightColl;
+//       else if(!isData) muonColl=SkimLepColl(muonTightColl, truthColl, "PromptEWtauNHConv");
+  
+
+       eventbase->GetElectronSel()->SetPt(25.);                eventbase->GetElectronSel()->SetEta(2.5);
+     std::vector<snu::KElectron> electronPreLooseColl; eventbase->GetElectronSel()->Selection(electronPreLooseColl);
+       
+     std::vector<snu::KElectron> electronLooseColl; 
+       for(int i=0; i<electronPreLooseColl.size(); i++){
+         if(PassIDCriteria(electronPreLooseColl.at(i), "POGMVAMFakeLIso04Opt1")) electronLooseColl.push_back(electronPreLooseColl.at(i));
+         //if(PassIDCriteria(electronPreLooseColl.at(i), "POGMVAMFakeLIso04Opt2")) electronLooseColl.push_back(electronPreLooseColl.at(i));
+       }
+     
+       eventbase->GetElectronSel()->SetID(BaseSelection::ELECTRON_POG_MVA_WP90);
+       eventbase->GetElectronSel()->SetHLTSafeCut("CaloIdL_TrackIdL_IsoVL");
+       eventbase->GetElectronSel()->SetPt(25.);                eventbase->GetElectronSel()->SetEta(2.5);
+       eventbase->GetElectronSel()->SetBETrRegIncl(false);
+       eventbase->GetElectronSel()->SetRelIsoType("Default");  eventbase->GetElectronSel()->SetRelIsoBEMax(0.1, 0.1);
+       eventbase->GetElectronSel()->SetdxyBEMax(0.05, 0.05);   eventbase->GetElectronSel()->SetdzBEMax(0.1, 0.1);
+       eventbase->GetElectronSel()->SetdxySigMax(3.);
+       eventbase->GetElectronSel()->SetApplyConvVeto(true);
+     std::vector<snu::KElectron> electronTightColl; eventbase->GetElectronSel()->Selection(electronTightColl);
+     std::vector<snu::KElectron> electronColl=electronTightColl;
+//     std::vector<snu::KElectron> electronColl;
+//       if     ( isData){ if(k_running_nonprompt){ electronColl=electronLooseColl;} else{ electronColl=electronTightColl;} }
+//       else if(!isData) electronColl=electronTightColl;
+//       else if(!isData) electronColl=SkimLepColl(electronTightColl, truthColl, "PromptEWtauNHConv");
+
+  
+       eventbase->GetJetSel()->SetID(BaseSelection::PFJET_LOOSE);
+       eventbase->GetJetSel()->SetPt(25.);                     eventbase->GetJetSel()->SetEta(2.4);
+       //eventbase->GetJetSel()->SetPileUpJetID(true,"Loose");
+       bool LeptonVeto=true;
+     std::vector<snu::KJet> jetColl; eventbase->GetJetSel()->Selection(jetColl, LeptonVeto, muonTightColl, electronTightColl);
+  
+     std::vector<snu::KJet> bjetColl = SelBJets(jetColl, "Medium");
+     std::vector<snu::KJet> ljetColl = SelLightJets(jetColl, "Medium");
+  
+  
+     double met = eventbase->GetEvent().PFMETType1();
+     double met_x = eventbase->GetEvent().PFMETType1x();
+     double met_y = eventbase->GetEvent().PFMETType1y();
+     int nbjets=bjetColl.size(); int njets=jetColl.size(); const int nljets=ljetColl.size();
+  
+     /*****************************************************
+     **Scale Factors
+     *****************************************************/
+     float id_weight_ele=1., reco_weight_ele=1., trk_weight_mu=1., id_weight_mu=1., iso_weight_mu=1., btag_sf=1.;
+     float trigger_sf=1.;
+     float fake_weight=1.; bool EventCand=false;
+  
+     /*This part is for boosting up speed.. SF part takes rather longer time than expected*/
+     if(muonLooseColl.size()==2 && electronLooseColl.size()==1) EventCand=true; 
+  
+     if(EventCand){
+  
+       if(!isData){
+        //trigger_sf      = mcdata_correction->TriggerScaleFactor( electronColl, muonColl, "HLT_IsoMu24_v" );
+    
+         id_weight_ele   = mcdata_correction->ElectronScaleFactor("ELECTRON_MVA_90", electronColl);
+         reco_weight_ele = mcdata_correction->ElectronRecoScaleFactor(electronColl);
+    
+         id_weight_mu    = mcdata_correction->MuonScaleFactor("MUON_HN_TRI_TIGHT", muonColl);
+         //iso_weight_mu   = mcdata_correction->MuonISOScaleFactor("MUON_POG_TIGHT", muonColl);
+         trk_weight_mu   = mcdata_correction->MuonTrackingEffScaleFactor(muonColl);
+    
+         btag_sf         = BTagScaleFactor_1a(jetColl, snu::KJet::CSVv2, snu::KJet::Medium);
+
+         if(k_sample_name.Contains("ZZTo4L")) weight*=GetKFactor();
+       }
+       else{
+         //Perfect Prompt Ratio Approximation applied.(p=1), Applicable to generic number, combination of leptons under premise of high prompt rate.
+         if(k_running_nonprompt){
+           fake_weight = m_datadriven_bkg->Get_DataDrivenWeight(false, muonLooseColl, "MUON_HN_TRI_TIGHT", muonLooseColl.size(), electronLooseColl, "ELECTRON_MVA_TIGHT", electronLooseColl.size(), "ELECTRON_MVA_FAKELOOSE", "dijet_ajet40");
+         }
+       }
+     }
+  
+     weight *= id_weight_ele*reco_weight_ele*id_weight_mu*iso_weight_mu*trk_weight_mu*pileup_reweight*fake_weight*btag_sf;
+  
+     if( !(electronLooseColl.size()==1 && muonLooseColl.size()==2) ) return;
+     if( !(electronColl.size()==1 && muonColl.size()==2) ) return;
+     if( !(electronColl.at(0).Pt()>25 && muonColl.at(0).Pt()>15 && muonColl.at(1).Pt()>10) ) return;
+     if( SumCharge(muonColl)!=0 ) return;
+     FillCutFlow("3lOSCut", weight);
+
+     float Mmumu=(muonColl.at(0)+muonColl.at(1)).M();
+     float M3l=(electronColl.at(0)+muonColl.at(0)+muonColl.at(1)).M();
+     float MTW = sqrt( 2*(met*electronColl.at(0).Pt()-met_x*electronColl.at(0).Px()-met_y*electronColl.at(0).Py()) );
+
+     if( Mmumu<12 ) return;
+     FillCutFlow("M(#mu#mu)>12", weight);
+
+     if(njets<3) return;
+     FillCutFlow("#geq3j", weight);
+
+     if(nbjets==0) return;
+     FillCutFlow("#geq1b", weight);
+
+     if( fabs(Mmumu-91.2)<10 ) return;
+     FillCutFlow("ZVeto", weight);
+
+     if( Mmumu>40 ) return;
+     FillCutFlow("M(A)Range", weight);
+
+   }
+
+
 /////////////////////////////////////////////////////////////////////////////////// 
 
 
@@ -651,22 +877,31 @@ void Jun2017_ConversionStudy::FillCutFlow(TString cut, float weight){
   }
   else{
     if(!GetHist("cutflow_W")){
-      AnalyzerCore::MakeHistograms("cutflow_W", 6, 0., 6.);
+      AnalyzerCore::MakeHistograms("cutflow_W", 10, 0., 10.);
       GetHist("cutflow_W")->GetXaxis()->SetBinLabel(1,"NoCut");
       GetHist("cutflow_W")->GetXaxis()->SetBinLabel(2,"TriggerCut");
       GetHist("cutflow_W")->GetXaxis()->SetBinLabel(3,"EventCut");
       GetHist("cutflow_W")->GetXaxis()->SetBinLabel(4,"VertexCut");
-      GetHist("cutflow_W")->GetXaxis()->SetBinLabel(5,"3lCut");
-      GetHist("cutflow_W")->GetXaxis()->SetBinLabel(6,"bVeto");
+      GetHist("cutflow_W")->GetXaxis()->SetBinLabel(5,"3lOSCut");
+      GetHist("cutflow_W")->GetXaxis()->SetBinLabel(6,"M(#mu#mu)>12");
+      GetHist("cutflow_W")->GetXaxis()->SetBinLabel(7,"#geq3j");
+      GetHist("cutflow_W")->GetXaxis()->SetBinLabel(8,"#geq1b");
+      GetHist("cutflow_W")->GetXaxis()->SetBinLabel(9,"ZVeto");
+      GetHist("cutflow_W")->GetXaxis()->SetBinLabel(10,"M(A)Range");
+
     }
     if(!GetHist("cutflow_N")){
-      AnalyzerCore::MakeHistograms("cutflow_N", 6, 0., 6.);
+      AnalyzerCore::MakeHistograms("cutflow_N", 10, 0., 10.);
       GetHist("cutflow_N")->GetXaxis()->SetBinLabel(1,"NoCut");
       GetHist("cutflow_N")->GetXaxis()->SetBinLabel(2,"TriggerCut");
       GetHist("cutflow_N")->GetXaxis()->SetBinLabel(3,"EventCut");
       GetHist("cutflow_N")->GetXaxis()->SetBinLabel(4,"VertexCut");
-      GetHist("cutflow_N")->GetXaxis()->SetBinLabel(5,"3lCut");
-      GetHist("cutflow_N")->GetXaxis()->SetBinLabel(6,"bVeto");
+      GetHist("cutflow_N")->GetXaxis()->SetBinLabel(5,"3lOSCut");
+      GetHist("cutflow_N")->GetXaxis()->SetBinLabel(6,"M(#mu#mu)>12");
+      GetHist("cutflow_N")->GetXaxis()->SetBinLabel(7,"#geq3j");
+      GetHist("cutflow_N")->GetXaxis()->SetBinLabel(8,"#geq1b");
+      GetHist("cutflow_N")->GetXaxis()->SetBinLabel(9,"ZVeto");
+      GetHist("cutflow_N")->GetXaxis()->SetBinLabel(10,"M(A)Range");
     }
   }
 }
