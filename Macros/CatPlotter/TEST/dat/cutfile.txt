@@ -1,2 +1,2 @@
-SSMM_CR
+DiMuonSSMM_DiJet_veto
 END

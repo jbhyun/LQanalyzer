@@ -47,6 +47,7 @@ parser.add_option("-f", "--skflag", dest="skflag", default="NULL", help="add inp
 parser.add_option("-b", "--usebatch", dest="usebatch", default="usebatch", help="Run in batch queue?")
 parser.add_option("-J", "--setnjobs", dest="setnjobs", default="False", help="user sets njobs?")
 parser.add_option("-F","--submitallfiles",dest="submitallfiles",default="False", help="force n=1000")
+parser.add_option("-g","--tmpfilename",dest="tmpfilename",default="", help="tmpname")
 
 
 ###################################################
@@ -90,6 +91,11 @@ DEBUG = options.debug
 useskim = options.useskim
 skflag = options.skflag
 usebatch =options.usebatch
+
+tmp_filename=options.tmpfilename
+if tmp_filename == "None":
+    tmp_filename=""
+    
 
 tmpsubmit_allfiles=options.submitallfiles
 submit_allfiles=False
@@ -575,6 +581,12 @@ output_catversion=os.getenv("CATVERSION")
 
 #### Check latest tag/version for DS.
 iversion=0
+
+if "HN" in  sample or "CHT" in sample:
+    datasetfile="datasets_snu_sig_CAT_mc_"
+else:
+    datasetfile="datasets_snu_nonsig_CAT_mc_"
+
 while inDS == "":
     if platform.system() == "Linux":
         version="_CAT"
@@ -587,7 +599,7 @@ while inDS == "":
 
         print "Using CAT " +sample_catversion + " ntuples"
         if mc:
-            filename = os.getenv("LQANALYZER_RUN_PATH") + '/txt/datasets_snu_CAT_mc_' +sample_catversion +  '.txt'
+            filename = os.getenv("LQANALYZER_RUN_PATH") + '/txt/'+datasetfile +sample_catversion +  '.txt'
 
         else:
             filename = os.getenv("LQANALYZER_RUN_PATH") + '/txt/datasets_snu_CAT_data_'  +sample_catversion +'.txt'
@@ -824,6 +836,9 @@ else:
 
 if  "SKTreeMaker" in cycle:            
     outsamplename = outsamplename +  os.getenv("CATTAG")
+
+if tmp_filename != "":
+    outsamplename = outsamplename +"_"+tmp_filename
 
 ### specify the location of the macro for the subjob     
 printedrunscript = output+ "Job_[1-" + str(number_of_cores)  + "]/runJob_[1-" + str(number_of_cores)  + "].C"
@@ -1277,6 +1292,10 @@ while not JobSuccess:
                             num = entries[7]
                             s = num.replace("/", " ")
                             event_split = s.split()
+                            if len(event_split) < 2:
+                                print "Error [2002] " + event_split 
+                                print line
+                                os.system("cp " + local_sub_dir + '/outlog.txt ~/error_log_'+str(array_batchjobs[i-1]))
                             nevent_processed_i = float(event_split[0])
                             nevents_total_i= float(event_split[1])
             nevent_processed+=nevent_processed_i                
@@ -1510,11 +1529,23 @@ else:
                 Finaloutputdir += "SingleElectron/"
                 if not os.path.exists(Finaloutputdir):
                     os.system("mkdir " + Finaloutputdir)
+            if original_channel =="MuonEG":
+                Finaloutputdir += "MuonEG/"
+                if not os.path.exists(Finaloutputdir):
+                    os.system("mkdir " + Finaloutputdir)
 
             Finaloutputdir += "period" + original_sample + "/"
             if not os.path.exists(Finaloutputdir):
                 os.system("mkdir " + Finaloutputdir)
 
+        else:
+            Finaloutputdir = SKTreeOutput + "MCHNDiLep/"
+            if not os.path.exists(Finaloutputdir):
+                os.system("mkdir " + Finaloutputdir)
+            Finaloutputdir +=  original_sample + "/"
+            if not os.path.exists(Finaloutputdir):
+                os.system("mkdir " + Finaloutputdir)
+                os.system("chmod 777 -R " +  Finaloutputdir)
     if cycle == "SKTreeMakerFakeHN":
         doMerge=False
         if not os.path.exists(SKTreeOutput):
@@ -1589,6 +1620,8 @@ else:
                 
     if not os.path.exists(Finaloutputdir):
         os.system("mkdir " + Finaloutputdir)
+
+
     outfile = cycle + "_" + filechannel + outsamplename + ".root"
     if doMerge:
         print "doing merge"
@@ -1599,6 +1632,12 @@ else:
         os.system("mv " +outputdir + "*.root" + " " + mergeoutputdir)
         os.system("hadd " + mergeoutputdir +  outfile  + " "+ mergeoutputdir + "*.root")
         
+        if mc:
+            if not os.path.exists( "/data2/CAT_SKTreeOutput/"+os.getenv("USER")+"/Histdir" + tagger ):
+                os.system("mkdir " +  "/data2/CAT_SKTreeOutput/"+os.getenv("USER")+"/Histdir" + tagger)
+            os.system("source "+os.getenv("LQANALYZER_DIR")+"/scripts/Counter.sh " + mergeoutputdir +  outfile + " > /data2/CAT_SKTreeOutput/"+os.getenv("USER")+"/Histdir" + tagger + "/"+original_sample+"Hist.txt"   )
+            os.system("source "+os.getenv("LQANALYZER_DIR")+"/scripts/CutFlow.sh " + mergeoutputdir +  outfile + " > /data2/CAT_SKTreeOutput/"+os.getenv("USER")+"/Histdir" + tagger + "/"+original_sample+"CutFlow.txt"   )  
+
         if os.getenv("USER") == "jalmond":
 
             transout=Finaloutputdir.replace("/data2/CAT_SKTreeOutput/JobOutPut/jalmond/LQanalyzer//data/output/CAT/","/afs/cern.ch/work/j/jalmond/CAT/")
@@ -1611,7 +1650,12 @@ else:
                     srline = rline.split()
                     lxmachine=srline[2]
             readcatpath.close()
-            
+            if not "OPT/" in Finaloutputdir:
+                os.system("ssh  jalmond@"+lxmachine+".cern.ch  mkdir " + transout )
+                if "OPT" in skflag:
+                    transout = transout+"/OPT/"
+
+            os.system("ssh  jalmond@"+lxmachine+".cern.ch  mkdir " + transout )
             os.system("scp -r "+mergeoutputdir +  outfile + " jalmond@"+lxmachine+".cern.ch:"+transout)
             
 
