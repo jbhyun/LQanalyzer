@@ -9,22 +9,20 @@ runData=false
 ########################################################################
 ## RUN PARAMETERS
 
-AnalysisCode="Jun2017_MCFakeStudy" 
+AnalysisCode="Jul2017_MCFakeStudy" 
 Stream="SingleElectron"
 #Stream="DoubleMuon"     
 #Stream="DoubleEG"
 #Stream="MuonEG"
-Skim="SKTree_LeptonSkim"  ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
+#Skim="SKTree_LeptonSkim"  ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
 #Skim="SKTree_DiLepSkim"  ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
-#Skim="SKTree_TriLepSkim"  ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
+Skim="SKTree_TriLepSkim"  ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
 DataPeriod="ALL"
-#DataPeriod="H"
 job_logstep=1000
 LogLevel="INFO"
-#QueueOption="longq" 
 QueueOption="fastq" 
-RunningMode="FineTune" #"EleFakeIDOpt" #"EleFakeParam"
-MCList="QCD_EM" # #"TT" # #"MajorFakeSource" #"FakeMeasRegSample"
+RunningMode="DetailClosure" #"DetailClosure" #"DetailClosure" #"FREmul" #"HighdXYApproachStudy" #"VJetReductionStudy" #"VetoImpactStudy" #"METMTWCutStudy" #"VetoImpactStudy" #"Scan_AvgFR_MVAIso_2D" #"SelBiasTest" #"TrigBiasTest" #"CompositionCheck" #"FineTune" #"EleFakeIDOpt" #"EleFakeParam"
+MCList="MajorFakeSource" #"VJets" #"FR_Prompt" #"TTLL" #"MajorFakeSource" #"FakeMeasRegSample" #"QCD_BCToE" #"QCD_EM" #"TT"
 
 ########################################################################
 ## OUTPUT PATH CONFIG
