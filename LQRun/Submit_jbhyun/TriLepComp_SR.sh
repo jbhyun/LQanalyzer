@@ -24,8 +24,9 @@ LogLevel="INFO"
 QueueOption="fastq"    #"longq"
 RunningMode="EMuMu,SRYield,SystRun" #"EMuMu,SRYield,SystRun" #"TriMu,SRYield,SystRun" #"CutOpt,EMuMu,MAWinOpt" #"EMuMu,SRYield,SystRun" #"CutOpt,EMuMu,MAWinOpt" #"TriMu,SRDist" #"EMuMu,SRDist" #"TriMu,SRDist" #"TriMu,SRYield,SystRun" #"EMuMu,SRYield,SystRun" #"TriMu,CutOpt"
 
-MCList="SignalMajor_All"
-#MCList="Signal_1e2mu"
+#MCList="SignalMajor_All"
+MCList="Signal_1e2mu"
+#MCList="Signal_All"
 #MCList="Analysis_bkg"
 #MCList="MajorFakeSource"
 

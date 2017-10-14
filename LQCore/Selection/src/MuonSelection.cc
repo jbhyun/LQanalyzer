@@ -147,11 +147,7 @@ void MuonSelection::Selection( std::vector<KMuon>& leptonColl, bool applyrochest
 
       
       if(apply_chi2cut && !( muit->GlobalChi2() < chiNdof_cut && muit->GlobalChi2() >= chiNdofMIN_cut )) pass_selection = false;
-<<<<<<< HEAD
-      if(DebugPrint&&apply_chi2cut && !( muit->GlobalChi2() <chiNdof_cut && muit->GlobalChi2()  >=chiNdofMIN_cut)) cout << "Fails chi2 cut " << endl;
-=======
       if(DebugPrint && apply_chi2cut && !( muit->GlobalChi2() <chiNdof_cut && muit->GlobalChi2()  >=chiNdofMIN_cut)) cout << "Fails chi2 cut " << endl;
->>>>>>> Tagv8-0-7.31
 
       
       //// ADD EXTRA  cut on D0sig? or same vertex?     
