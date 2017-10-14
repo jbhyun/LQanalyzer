@@ -65,8 +65,8 @@ class BaseSelection {
     JET_NOLEPTONVETO               = 38,
     JET_LOOSE                      = 39,
     JET_TIGHT                      = 40,
-    PHOTON_POG_LOOSE               = 41, 
-    PHOTON_POG_MEDIUM              = 42, 
+    PHOTON_POG_LOOSE               = 41,
+    PHOTON_POG_MEDIUM              = 42,
     PHOTON_POG_TIGHT               = 43,
   };
 

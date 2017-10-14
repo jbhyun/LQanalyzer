@@ -72,12 +72,12 @@ void JetSelection::Selection(std::vector<KJet>& jetColl, bool LepVeto, std::vect
   }
 
   for (std::vector<KJet>::iterator jit = alljets.begin(); jit!=alljets.end(); jit++){
-    
+
     if     (Syst_JES && SystDir>0) *jit *= jit->ScaledUpEnergy();
     else if(Syst_JES && SystDir<0) *jit *= jit->ScaledDownEnergy();
     else if(Syst_JER && SystDir>0) *jit *= jit->SmearedResUp();
     else if(Syst_JER && SystDir<0) *jit *= jit->SmearedResDown();
-
+    
     bool IsNotPileUpJet = true;
     if(applypileuptool) IsNotPileUpJet = jit->PassPileUpMVA(PUJetIDWP);
     if(apply_ID) {

@@ -685,7 +685,7 @@ bool ElectronSelection::PassID(snu::KElectron el, ID id){
   else if( id == ELECTRON_POG_MVA_WP90 && (!el.PassNotrigMVAMedium()) ){ pass_selection = false; }
   else if( id == ELECTRON_POG_MVA_WP80 && (!el.PassNotrigMVATight())  ){ pass_selection = false; }
   else if( id == ELECTRON_HN_MVA_LOOSE && (!el.PassTrigMVAHNLoose())  ){ pass_selection = false; }
-  else if( id == ELECTRON_HN_MVA_TIGHT && (!el.PassTrigMVAHNTight())  ){ pass_selection = false; }
+  else if( id == ELECTRON_HN_MVA_TIGHT && (!el.PassTrigMVAHNTightv4())  ){ pass_selection = false; }
   else if( id == ELECTRON_HctoWA_FAKELOOSE ){
     if     ( fabs(el.Eta())<0.8   ){ if( el.MVA()<-0.92 ) pass_selection=false; }
     else if( fabs(el.Eta())<1.479 ){ if( el.MVA()<-0.85 ) pass_selection=false; }
