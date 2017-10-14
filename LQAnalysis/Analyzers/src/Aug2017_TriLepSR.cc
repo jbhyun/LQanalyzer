@@ -586,7 +586,9 @@ void Aug2017_TriLepSR::ExecuteEvents()throw( LQError ){
          btag_sf_JERdown  = BTagScaleFactor_1a(jetJERDownColl, snu::KJet::CSVv2, snu::KJet::Medium);
        }
        else if(k_running_nonprompt){
-         fake_weight = GetFakeWeight(muonLooseColl, electronLooseColl, "Test_POGLIsop4IPp5p1Chi100", "Test_POGTIsop20IPp01p05sig4Chi4", "LMVA06Isop4IPp025p05sig4", "POGWP90Isop06IPp025p05sig4", "TrkIsoVVLConeSUSY");
+         fake_weight        = GetFakeWeight(muonLooseColl, electronLooseColl, "Test_POGLIsop4IPp5p1Chi100", "Test_POGTIsop20IPp01p05sig4Chi4", "LMVA06Isop4IPp025p05sig4", "POGWP90Isop06IPp025p05sig4", "TrkIsoVVLConeSUSY");
+         fake_weight_FRup   = GetFakeWeight(muonLooseColl, electronLooseColl, "Test_POGLIsop4IPp5p1Chi100", "Test_POGTIsop20IPp01p05sig4Chi4", "LMVA06Isop4IPp025p05sig4", "POGWP90Isop06IPp025p05sig4", "TrkIsoVVLConeSUSYSystUp");
+         fake_weight_FRdown = GetFakeWeight(muonLooseColl, electronLooseColl, "Test_POGLIsop4IPp5p1Chi100", "Test_POGTIsop20IPp01p05sig4Chi4", "LMVA06Isop4IPp025p05sig4", "POGWP90Isop06IPp025p05sig4", "TrkIsoVVLConeSUSYSystDown");
          //fake_weight = GetFakeWeight(muonLooseColl, electronLooseColl, "Test_POGLIsop4IPp5p1Chi100", "Test_POGTIsop20IPp01p05sig4Chi4", "LMVA06v1Isop4IPp5p1", "POGWP90Isop06IPp025p05sig4", "TrkIsoVVLConeSUSY");
        }
        float systweight_central=weight*id_weight_ele       *reco_weight_ele       *id_weight_mu       *trk_weight_mu       *btag_sf        *fake_weight;
@@ -597,6 +599,7 @@ void Aug2017_TriLepSR::ExecuteEvents()throw( LQError ){
        float systweight_LTagup =weight*id_weight_ele       *reco_weight_ele       *id_weight_mu       *trk_weight_mu       *btag_sf_LTagup *fake_weight;
        float systweight_BCTagup=weight*id_weight_ele       *reco_weight_ele       *id_weight_mu       *trk_weight_mu       *btag_sf_BCTagup*fake_weight;
        float systweight_PUup   =weight*id_weight_ele       *reco_weight_ele       *id_weight_mu       *trk_weight_mu       *btag_sf        *fake_weight*pileup_reweight_systup;
+       float systweight_FRup   =weight*id_weight_ele       *reco_weight_ele       *id_weight_mu       *trk_weight_mu       *btag_sf        *fake_weight_FRup;
 
        float systweight_ElEndown =weight*id_weight_ele_ElEndown*reco_weight_ele_ElEndown*id_weight_mu         *trk_weight_mu         *btag_sf          *fake_weight;
        float systweight_MuEndown =weight*id_weight_ele         *reco_weight_ele         *id_weight_mu_MuEndown*trk_weight_mu_MuEndown*btag_sf          *fake_weight;
@@ -605,6 +608,7 @@ void Aug2017_TriLepSR::ExecuteEvents()throw( LQError ){
        float systweight_LTagdown =weight*id_weight_ele         *reco_weight_ele         *id_weight_mu         *trk_weight_mu         *btag_sf_LTagdown *fake_weight;
        float systweight_BCTagdown=weight*id_weight_ele         *reco_weight_ele         *id_weight_mu         *trk_weight_mu         *btag_sf_BCTagdown*fake_weight;
        float systweight_PUdown   =weight*id_weight_ele         *reco_weight_ele         *id_weight_mu         *trk_weight_mu         *btag_sf          *fake_weight*pileup_reweight_systdown;
+       float systweight_FRdown   =weight*id_weight_ele         *reco_weight_ele         *id_weight_mu         *trk_weight_mu         *btag_sf          *fake_weight_FRdown;
 
 
 
@@ -667,7 +671,14 @@ void Aug2017_TriLepSR::ExecuteEvents()throw( LQError ){
                    systweight_MuEndown);
 
        }
-
+       else if( isData && k_running_nonprompt ){
+         DoSystRun("SRYield", ChannelString+"SystUpFR",
+                  electronColl, electronLooseColl, muonColl, muonLooseColl, jetColl, bjetColl, met, met*cos(metphi), met*sin(metphi),
+                  systweight_FRup);
+         DoSystRun("SRYield", ChannelString+"SystDownFR",
+                  electronColl, electronLooseColl, muonColl, muonLooseColl, jetColl, bjetColl, met, met*cos(metphi), met*sin(metphi),
+                  systweight_FRdown);
+       }
      }//End of SystRun
    }
    if(CutOpt){
@@ -961,19 +972,14 @@ void Aug2017_TriLepSR::CheckSRYield(std::vector<snu::KMuon> MuTColl, std::vector
     //c.f. Regarding detector resolution not considering FSR tail
     //σ(m, pT) = 0.026 + 0.0065m for the barrel,
     //σ(m, pT) = 0.026 + 0.013m GeV/c2 for the endcap.
-    if( Mmumu>12 && Mmumu<40 && JetColl.size()>1 ){
-      FillHist("Count_2jCut_1e2mu_M12to40"+Label, 0., weight, 0., 1., 1);
-    }
-    if( fabs(Mmumu-15)<5 && JetColl.size()>1 ){
-      FillHist("Count_2jCut_1e2mu_M15"+Label, 0., weight, 0., 1., 1);
-    }
-    if( fabs(Mmumu-25)<5 && JetColl.size()>1 ){
-      FillHist("Count_2jCut_1e2mu_M25"+Label, 0., weight, 0., 1., 1);
-    }
-    if( fabs(Mmumu-35)<5 && JetColl.size()>1 ){
-      FillHist("Count_2jCut_1e2mu_M35"+Label, 0., weight, 0., 1., 1);
-    }
+    if(JetColl.size()>1){
+      FillHist("Mmumu_2jCut_1e2mu"+Label, Mmumu, weight, 0., 200., 40);
 
+      if( Mmumu>12 && Mmumu<40 ) FillHist("Count_2jCut_1e2mu_M12to40"+Label, 0., weight, 0., 1., 1);
+      if( fabs(Mmumu-15)<5     ) FillHist("Count_2jCut_1e2mu_M15"+Label, 0., weight, 0., 1., 1);
+      if( fabs(Mmumu-25)<5     ) FillHist("Count_2jCut_1e2mu_M25"+Label, 0., weight, 0., 1., 1);
+      if( fabs(Mmumu-35)<5     ) FillHist("Count_2jCut_1e2mu_M35"+Label, 0., weight, 0., 1., 1);
+    }
   }
   if(TriMu){
     if( !(MuLColl.size()==3 && EleLColl.size()==0) ) return;
@@ -995,16 +1001,16 @@ void Aug2017_TriLepSR::CheckSRYield(std::vector<snu::KMuon> MuTColl, std::vector
       FillHist("MOSSS1_2j"+Label, MOSSS1, weight, 0., 200., 40);
       FillHist("MOSSS2_2j"+Label, MOSSS2, weight, 0., 200., 40);
       if(MOSSS2<40)         FillHist("Count_2jCut_MOSSS2_3mu_M12to40"+Label, 0., weight, 0., 1., 1);
-      if(fabs(MOSSS2-15)<1.5) FillHist("Count_2jCut_MOSSS2_3mu_M15"    +Label, 0., weight, 0., 1., 1);
-      if(fabs(MOSSS2-25)<3) FillHist("Count_2jCut_MOSSS2_3mu_M25"    +Label, 0., weight, 0., 1., 1);
+      if(fabs(MOSSS2-15)<5) FillHist("Count_2jCut_MOSSS2_3mu_M15"    +Label, 0., weight, 0., 1., 1);
+      if(fabs(MOSSS2-25)<5) FillHist("Count_2jCut_MOSSS2_3mu_M25"    +Label, 0., weight, 0., 1., 1);
       if(fabs(MOSSS2-35)<5) FillHist("Count_2jCut_MOSSS2_3mu_M35"    +Label, 0., weight, 0., 1., 1);
     }
     if(JetColl.size()>2){
       FillHist("MOSSS1_3j"+Label, MOSSS1, weight, 0., 200., 40);
       FillHist("MOSSS2_3j"+Label, MOSSS2, weight, 0., 200., 40);
-      if(MOSSS2<40)         FillHist("Count_3jCut_MOSSS2_3mu_M12to40"+Label, 0., weight, 0., 1., 1);
-      if(fabs(MOSSS2-15)<1.5) FillHist("Count_3jCut_MOSSS2_3mu_M15"    +Label, 0., weight, 0., 1., 1);
-      if(fabs(MOSSS2-25)<3  ) FillHist("Count_3jCut_MOSSS2_3mu_M25"    +Label, 0., weight, 0., 1., 1);
+      if(MOSSS2<40)           FillHist("Count_3jCut_MOSSS2_3mu_M12to40"+Label, 0., weight, 0., 1., 1);
+      if(fabs(MOSSS2-15)<5  ) FillHist("Count_3jCut_MOSSS2_3mu_M15"    +Label, 0., weight, 0., 1., 1);
+      if(fabs(MOSSS2-25)<5  ) FillHist("Count_3jCut_MOSSS2_3mu_M25"    +Label, 0., weight, 0., 1., 1);
       if(fabs(MOSSS2-35)<5  ) FillHist("Count_3jCut_MOSSS2_3mu_M35"    +Label, 0., weight, 0., 1., 1);
     }
   }
@@ -1175,7 +1181,7 @@ void Aug2017_TriLepSR::DoSystRun(TString Cycle, TString Mode, std::vector<snu::K
 
   int SystDir=0; TString SystKindLabel="", SystDirLabel="", ChannelLabel="";
   if(Mode.Contains("Syst")){
-    if     (isData)                   return;
+    if(isData&& !k_running_nonprompt) return;
     if     (Mode.Contains("Up"))      {SystDir= 1; SystDirLabel="_systup";}
     else if(Mode.Contains("Down"))    {SystDir=-1; SystDirLabel="_systdown";}
     if     (Mode.Contains("PU"))      SystKindLabel="_PU";
@@ -1185,6 +1191,7 @@ void Aug2017_TriLepSR::DoSystRun(TString Cycle, TString Mode, std::vector<snu::K
     else if(Mode.Contains("Uncl"))    SystKindLabel="_Uncl";
     else if(Mode.Contains("ElEn"))    SystKindLabel="_ElEn";
     else if(Mode.Contains("MuEn"))    SystKindLabel="_MuEn";
+    else if(Mode.Contains("FR"))      SystKindLabel="_FR";
     else if(Mode.Contains("BTag_L"))  SystKindLabel="_BTag_L";
     else if(Mode.Contains("BTag_BC")) SystKindLabel="_BTag_BC";
   }
@@ -1224,6 +1231,8 @@ float Aug2017_TriLepSR::ConeCorrectedPT(snu::KElectron Ele, float TightIsoCut){
 float Aug2017_TriLepSR::FakeRateData(snu::KMuon Mu, TString Option){
 
   float FR=0., TightIsoCut=0.;
+  int SystDir=0.; bool Syst_FR=Option.Contains("Syst");
+  if(Syst_FR){ if(Option.Contains("Up")){ SystDir=1; } else if(Option.Contains("Down")){ SystDir=-1; } }
   if(Option.Contains("ConeSUSY")){
     if     (Option.Contains("TIsop15")) TightIsoCut = 0.15;
     else if(Option.Contains("TIsop20")) TightIsoCut = 0.2;
@@ -1232,7 +1241,7 @@ float Aug2017_TriLepSR::FakeRateData(snu::KMuon Mu, TString Option){
   float PTCorr=ConeCorrectedPT(Mu, TightIsoCut);
     if(Option.Contains("FOPt")) PTCorr=Mu.Pt();
   float fEta=fabs(Mu.Eta());
-  if(Option=="POGTIsop20IPp01p1Chi3_POGLIsop6IPp5p1Chi30_TrkIsoVVLConeE"){
+  if(Option.Contains("POGTIsop20IPp01p1Chi3_POGLIsop6IPp5p1Chi30_TrkIsoVVLConeE")){
     if(fEta<0.9){
       if     (PTCorr<15)  FR=0.336779 ;
       else if(PTCorr<20)  FR=0.111232 ;
@@ -1262,7 +1271,7 @@ float Aug2017_TriLepSR::FakeRateData(snu::KMuon Mu, TString Option){
       else                FR=0.138629;
     }
   }
-  else if(Option=="POGTIsop20IPp01p1Chi3_POGLIsop5IPp5p1Chi_TrkIsoVVLConeE"){
+  else if(Option.Contains("POGTIsop20IPp01p1Chi3_POGLIsop5IPp5p1Chi_TrkIsoVVLConeE")){
     if(fEta<0.9){
       if     (PTCorr<15)  FR=0.336737;
       else if(PTCorr<20)  FR=0.138805;
@@ -1292,7 +1301,7 @@ float Aug2017_TriLepSR::FakeRateData(snu::KMuon Mu, TString Option){
       else                FR=0.177849;
     }
   }
-  else if(Option=="POGTIsop15IPp01p1Chi3_POGLIsop6IPp5p1Chi30_TrkIsoVVLConeE"){
+  else if(Option.Contains("POGTIsop15IPp01p1Chi3_POGLIsop6IPp5p1Chi30_TrkIsoVVLConeE")){
     if(fEta<0.9){
       if     (PTCorr<15)  FR=0.260288 ;
       else if(PTCorr<20)  FR=0.0712013;
@@ -1322,7 +1331,7 @@ float Aug2017_TriLepSR::FakeRateData(snu::KMuon Mu, TString Option){
       else                FR=0.0974703;
     }
   }
-  else if(Option=="POGTIsop15IPp01p1Chi3_POGLIsop5IPp5p1Chi_TrkIsoVVLConeE"){
+  else if(Option.Contains("POGTIsop15IPp01p1Chi3_POGLIsop5IPp5p1Chi_TrkIsoVVLConeE")){
     if(fEta<0.9){
       if     (PTCorr<15)  FR=0.260264 ;
       else if(PTCorr<20)  FR=0.0887165;
@@ -1352,7 +1361,7 @@ float Aug2017_TriLepSR::FakeRateData(snu::KMuon Mu, TString Option){
       else                FR=0.125045;
     }
   }
-  else if(Option=="POGTIsop20IPp01p1Chi3_POGLIsop6IPp5p1Chi30_TrkIsoVVLConeSUSY"){
+  else if(Option.Contains("POGTIsop20IPp01p1Chi3_POGLIsop6IPp5p1Chi30_TrkIsoVVLConeSUSY")){
     if(fEta<0.9){
       if     (PTCorr<15)  FR=0.224901 ;
       else if(PTCorr<20)  FR=0.107681 ;
@@ -1382,7 +1391,7 @@ float Aug2017_TriLepSR::FakeRateData(snu::KMuon Mu, TString Option){
       else                FR=0.154967;
     }
   }
-  else if(Option=="POGTIsop20IPp01p1Chi3_POGLIsop5IPp5p1Chi_TrkIsoVVLConeSUSY"){
+  else if(Option.Contains("POGTIsop20IPp01p1Chi3_POGLIsop5IPp5p1Chi_TrkIsoVVLConeSUSY")){
     if(fEta<0.9){
       if     (PTCorr<15)  FR=0.243216;
       else if(PTCorr<20)  FR=0.140185;
@@ -1412,7 +1421,7 @@ float Aug2017_TriLepSR::FakeRateData(snu::KMuon Mu, TString Option){
       else                FR=0.201918;
     }
   }
-  else if(Option=="POGTIsop15IPp01p1Chi3_POGLIsop6IPp5p1Chi30_TrkIsoVVLConeSUSY"){
+  else if(Option.Contains("POGTIsop15IPp01p1Chi3_POGLIsop6IPp5p1Chi30_TrkIsoVVLConeSUSY")){
     if(fEta<0.9){
       if     (PTCorr<15)  FR=0.181152 ;
       else if(PTCorr<20)  FR=0.0707471;
@@ -1442,7 +1451,7 @@ float Aug2017_TriLepSR::FakeRateData(snu::KMuon Mu, TString Option){
       else                FR=0.104704;
     }
   }
-  else if(Option=="POGTIsop15IPp01p1Chi3_POGLIsop5IPp5p1Chi_TrkIsoVVLConeSUSY"){
+  else if(Option.Contains("POGTIsop15IPp01p1Chi3_POGLIsop5IPp5p1Chi_TrkIsoVVLConeSUSY")){
     if(fEta<0.9){
       if     (PTCorr<15)  FR=0.191885 ;
       else if(PTCorr<20)  FR=0.0915866;
@@ -1472,7 +1481,7 @@ float Aug2017_TriLepSR::FakeRateData(snu::KMuon Mu, TString Option){
       else                FR=0.136348;
     }
   }
-  else if(Option=="POGTIsop20IPp01p05sig4Chi3_POGLIsop4IPp5p1_TrkIsoVVLConeE"){
+  else if(Option.Contains("POGTIsop20IPp01p05sig4Chi3_POGLIsop4IPp5p1_TrkIsoVVLConeE")){
     if(fEta<0.9){
       if     (PTCorr<15)  FR=0.33842 ;
       else if(PTCorr<20)  FR=0.18468 ;
@@ -1502,7 +1511,7 @@ float Aug2017_TriLepSR::FakeRateData(snu::KMuon Mu, TString Option){
       else                FR=0.20606 ;
     }
   }
-  else if(Option=="POGTIsop20IPp01p05sig4Chi3_POGLIsop6IPp5p1_TrkIsoVVLConeE"){
+  else if(Option.Contains("POGTIsop20IPp01p05sig4Chi3_POGLIsop6IPp5p1_TrkIsoVVLConeE")){
     if(fEta<0.9){
       if     (PTCorr<15)  FR=0.320068 ;
       else if(PTCorr<20)  FR=0.103925 ;
@@ -1532,7 +1541,7 @@ float Aug2017_TriLepSR::FakeRateData(snu::KMuon Mu, TString Option){
       else                FR=0.114394;
     }
   }
-  else if(Option=="HNTrilepTight2_HNTrilepFakeL2_TrkIsoVVLConeE"){
+  else if(Option.Contains("HNTrilepTight2_HNTrilepFakeL2_TrkIsoVVLConeE")){
     if(fEta<0.9){
       if     (PTCorr<15)  FR=0.314559 ;
       else if(PTCorr<20)  FR=0.115043 ;
@@ -1562,7 +1571,7 @@ float Aug2017_TriLepSR::FakeRateData(snu::KMuon Mu, TString Option){
       else                FR=0.158053;
     }
   }
-  else if(Option=="POGTIsop20IPp01p05sig4Chi4_POGLIsop4IPp5p1_TrkIsoVVLConeSUSY"){
+  else if(Option.Contains("POGTIsop20IPp01p05sig4Chi4_POGLIsop4IPp5p1_TrkIsoVVLConeSUSY")){
     if(fEta<0.9){
       if     (PTCorr<15)  FR=0.276234;
       else if(PTCorr<20)  FR=0.191673;
@@ -1592,7 +1601,7 @@ float Aug2017_TriLepSR::FakeRateData(snu::KMuon Mu, TString Option){
       else                FR=0.23968 ;
     }
   }
-  else if(Option=="POGTIsop20IPp01p05sig4Chi4_POGLIsop6IPp5p1_TrkIsoVVLConeSUSY"){
+  else if(Option.Contains("POGTIsop20IPp01p05sig4Chi4_POGLIsop6IPp5p1_TrkIsoVVLConeSUSY")){
     if(fEta<0.9){
       if     (PTCorr<15)  FR=0.216822 ;
       else if(PTCorr<20)  FR=0.101333 ;
@@ -1622,7 +1631,7 @@ float Aug2017_TriLepSR::FakeRateData(snu::KMuon Mu, TString Option){
       else                FR=0.130693;
     }
   }
-  else if(Option=="POGTIsop20IPp01p05sig4Chi4_POGLIsop4IPp5p1_TrkIsoVVLConeE"){
+  else if(Option.Contains("POGTIsop20IPp01p05sig4Chi4_POGLIsop4IPp5p1_TrkIsoVVLConeE")){
     if(fEta<0.9){
       if     (PTCorr<15)  FR=0.344138;
       else if(PTCorr<20)  FR=0.187021;
@@ -1652,7 +1661,7 @@ float Aug2017_TriLepSR::FakeRateData(snu::KMuon Mu, TString Option){
       else                FR=0.208459;
     }
   }
-  else if(Option=="POGTIsop20IPp01p05sig4Chi4_POGLIsop6IPp5p1_TrkIsoVVLConeE"){
+  else if(Option.Contains("POGTIsop20IPp01p05sig4Chi4_POGLIsop6IPp5p1_TrkIsoVVLConeE")){
     if(fEta<0.9){
       if     (PTCorr<15)  FR=0.325488 ;
       else if(PTCorr<20)  FR=0.10525  ;
@@ -1682,7 +1691,7 @@ float Aug2017_TriLepSR::FakeRateData(snu::KMuon Mu, TString Option){
       else                FR=0.115769;
     }
   }
-  else if(Option=="POGTIsop20IPp01p05sig4Chi4_POGLIsop4IPp5p1Chi100_TrkIsoVVLConeE"){
+  else if(Option.Contains("POGTIsop20IPp01p05sig4Chi4_POGLIsop4IPp5p1Chi100_TrkIsoVVLConeE")){
     if(fEta<0.9){
       if     (PTCorr<15)  FR=0.344294;
       else if(PTCorr<20)  FR=0.187095;
@@ -1712,7 +1721,7 @@ float Aug2017_TriLepSR::FakeRateData(snu::KMuon Mu, TString Option){
       else                FR=0.208675;
     }
   }
-  else if(Option=="POGTIsop20IPp01p05sig4Chi4_POGLIsop4IPp5p1Chi100_TrkIsoVVLConeSUSY"){
+  else if(Option.Contains("POGTIsop20IPp01p05sig4Chi4_POGLIsop4IPp5p1Chi100_TrkIsoVVLConeSUSY")){
     if(fEta<0.9){
       if     (PTCorr<15)  FR=0.276317;
       else if(PTCorr<20)  FR=0.191793;
@@ -1741,8 +1750,70 @@ float Aug2017_TriLepSR::FakeRateData(snu::KMuon Mu, TString Option){
       else if(PTCorr<35)  FR=0.25788 ;
       else                FR=0.240026;
     }
+
+    if(Syst_FR && SystDir<0){
+      if(fEta<0.9){
+        if     (PTCorr<15)   FR*=(1.- 0.0655089 );
+        else if(PTCorr<20)   FR*=(1.- 0.304225  );
+        else if(PTCorr<25)   FR*=(1.- 0.301855  );
+        else if(PTCorr<35)   FR*=(1.- 0.387517  );
+        else                 FR*=(1.- 0.483798  );
+      }
+      else if(fEta<1.6){
+        if     (PTCorr<15)   FR*=(1.- 0.121366 );
+        else if(PTCorr<20)   FR*=(1.- 0.365817 );
+        else if(PTCorr<25)   FR*=(1.- 0.310581 );
+        else if(PTCorr<35)   FR*=(1.- 0.27695  );
+        else                 FR*=(1.- 0.438805 );
+      }
+      else if(fEta<2.1){
+        if     (PTCorr<15)   FR*=(1.- 0.252924 );
+        else if(PTCorr<20)   FR*=(1.- 0.368097 );
+        else if(PTCorr<25)   FR*=(1.- 0.460861 );
+        else if(PTCorr<35)   FR*=(1.- 0.242128 );
+        else                 FR*=(1.- 0.415018 );
+      }
+      else{
+        if     (PTCorr<15)   FR*=(1.- 0.243664 );
+        else if(PTCorr<20)   FR*=(1.- 0.341107 );
+        else if(PTCorr<25)   FR*=(1.- 0.442997 );
+        else if(PTCorr<35)   FR*=(1.- 0.292832 );
+        else                 FR*=(1.- 0.308315 );
+      }
+    }
+    else if(Syst_FR && SystDir>0){
+      if(fEta<0.9){
+        if     (PTCorr<15)   FR*=(1.+ 0.0681634 );
+        else if(PTCorr<20)   FR*=(1.+ 0.0553126 );
+        else if(PTCorr<25)   FR*=(1.+ 0.101094  );
+        else if(PTCorr<35)   FR*=(1.+ 0.07793   );
+        else                 FR*=(1.+ 0.199967  );
+      }
+      else if(fEta<1.6){
+        if     (PTCorr<15)   FR*=(1.+ 0.0625109);
+        else if(PTCorr<20)   FR*=(1.+ 0.0856362);
+        else if(PTCorr<25)   FR*=(1.+ 0.0966223);
+        else if(PTCorr<35)   FR*=(1.+ 0.108313 );
+        else                 FR*=(1.+ 0.146165 );
+      }
+      else if(fEta<2.1){
+        if     (PTCorr<15)   FR*=(1.+ 0.0774913);
+        else if(PTCorr<20)   FR*=(1.+ 0.0759516);
+        else if(PTCorr<25)   FR*=(1.+ 0.147378 );
+        else if(PTCorr<35)   FR*=(1.+ 0.131883 );
+        else                 FR*=(1.+ 0.14489  );
+      }
+      else{
+        if     (PTCorr<15)   FR*=(1.+ 0.0810315);
+        else if(PTCorr<20)   FR*=(1.+ 0.0809193);
+        else if(PTCorr<25)   FR*=(1.+ 0.0970186);
+        else if(PTCorr<35)   FR*=(1.+ 0.110969 );
+        else                 FR*=(1.+ 0.149472 );
+      }
+    }
+
   }
-  else if(Option=="POGTIsop20IPp01p05sig4Chi4_POGLIsop6IPp5p1_TrkIsoVVLFOPt"){
+  else if(Option.Contains("POGTIsop20IPp01p05sig4Chi4_POGLIsop6IPp5p1_TrkIsoVVLFOPt")){
     if(fEta<0.9){
       if     (PTCorr<15)  FR=0.155258;
       else if(PTCorr<20)  FR=0.125076;
@@ -1772,7 +1843,7 @@ float Aug2017_TriLepSR::FakeRateData(snu::KMuon Mu, TString Option){
       else                FR=0.222588;
     }
   }
-  else if(Option=="POGTIsop20IPp01p05sig4Chi4_POGLIsop4IPp5p1Chi100_TrkIsoVVLFOPt"){
+  else if(Option.Contains("POGTIsop20IPp01p05sig4Chi4_POGLIsop4IPp5p1Chi100_TrkIsoVVLFOPt")){
     if(fEta<0.9){
       if     (PTCorr<15)  FR=0.247975;
       else if(PTCorr<20)  FR=0.217638;
@@ -1802,7 +1873,7 @@ float Aug2017_TriLepSR::FakeRateData(snu::KMuon Mu, TString Option){
       else                FR=0.308716;
     }
   }
-  else if(Option=="POGTIsop20IPp01p05sig4Chi4_POGLIsop6IPp5p1sig8_TrkIsoVVLConeSUSY"){
+  else if(Option.Contains("POGTIsop20IPp01p05sig4Chi4_POGLIsop6IPp5p1sig8_TrkIsoVVLConeSUSY")){
     if(fEta<0.9){
       if     (PTCorr<15)  FR=0.254794 ;
       else if(PTCorr<20)  FR=0.121792 ;
@@ -1832,7 +1903,7 @@ float Aug2017_TriLepSR::FakeRateData(snu::KMuon Mu, TString Option){
       else                FR=0.155695;
     }
   }
-  else if(Option=="POGTIsop20IPp01p05sig4Chi4_POGLIsop6IPp5p1sig4_TrkIsoVVLConeSUSY"){
+  else if(Option.Contains("POGTIsop20IPp01p05sig4Chi4_POGLIsop6IPp5p1sig4_TrkIsoVVLConeSUSY")){
     if(fEta<0.9){
       if     (PTCorr<15)  FR=0.306808 ;
       else if(PTCorr<20)  FR=0.148199 ;
@@ -1871,6 +1942,8 @@ float Aug2017_TriLepSR::FakeRateData(snu::KMuon Mu, TString Option){
 float Aug2017_TriLepSR::FakeRateData(snu::KElectron Ele, TString Option){
 
   float FR=0., TightIsoCut=0.;
+  int SystDir=0.; bool Syst_FR=Option.Contains("Syst");
+  if(Syst_FR){ if(Option.Contains("Up")){ SystDir=1; } else if(Option.Contains("Down")){ SystDir=-1; } }
   if(Option.Contains("ConeSUSY")){
     if     (Option.Contains("Isop06")) TightIsoCut = 0.06;
     else if(Option.Contains("Isop08")) TightIsoCut = 0.08;
@@ -1880,7 +1953,7 @@ float Aug2017_TriLepSR::FakeRateData(snu::KElectron Ele, TString Option){
     if(Option.Contains("FOPt")) PTCorr=Ele.Pt();
   float fEta=fabs(Ele.Eta());
 
-  if(Option=="POGMVAMTIsop06IPp025p05Sig4FakeLIsop4"){
+  if(Option.Contains("POGMVAMTIsop06IPp025p05Sig4FakeLIsop4")){
     if(fEta<0.8){
       if     (PTCorr<35 ) FR= 0.119907 ;
       else if(PTCorr<50 ) FR= 0.065943 ;
@@ -1897,7 +1970,7 @@ float Aug2017_TriLepSR::FakeRateData(snu::KElectron Ele, TString Option){
       else                FR= 0.109458 ;
     }
   }
-  else if(Option=="QCD_POGWP90Isop06IPp025p05sig4_LMVA06Isop4IPp025p05sig4_ConeSUSY"){
+  else if(Option.Contains("QCD_POGWP90Isop06IPp025p05sig4_LMVA06Isop4IPp025p05sig4_ConeSUSY")){
     if(fEta<0.8){
       if     (PTCorr<35)  FR=0.118837 ;
       else if(PTCorr<50)  FR=0.0626265;
@@ -1913,8 +1986,45 @@ float Aug2017_TriLepSR::FakeRateData(snu::KElectron Ele, TString Option){
       else if(PTCorr<50)  FR=0.1026  ;
       else                FR=0.119577;
     }
+
+
+    if(Syst_FR && SystDir<0){
+      if(fEta<0.8){
+        if     (PTCorr<35)   FR*=(1.- 0.077764 );
+        else if(PTCorr<50)   FR*=(1.- 0.400603 );
+        else                 FR*=(1.- 0.51524  );
+      }
+      else if(fEta<1.479){
+        if     (PTCorr<35)   FR*=(1.- 0.169421 );
+        else if(PTCorr<50)   FR*=(1.- 0.424976 );
+        else                 FR*=(1.- 0.256287 );
+      }
+      else{
+        if     (PTCorr<35)   FR*=(1.- 0.0561248 );
+        else if(PTCorr<50)   FR*=(1.- 0.103     );
+        else                 FR*=(1.- 0.111331  );
+      }
+    }
+    else if(Syst_FR && SystDir>0){
+      if(fEta<0.8){
+        if     (PTCorr<35)   FR*=(1.+ 0.109443 );
+        else if(PTCorr<50)   FR*=(1.+ 0.202818 );
+        else                 FR*=(1.+ 0.374888 );
+      }
+      else if(fEta<1.479){
+        if     (PTCorr<35)   FR*=(1.+ 0.0973585 );
+        else if(PTCorr<50)   FR*=(1.+ 0.148029  );
+        else                 FR*=(1.+ 0.246644  );
+      }
+      else{
+        if     (PTCorr<35)   FR*=(1.+ 0.161426  );
+        else if(PTCorr<50)   FR*=(1.+ 0.0707937 );
+        else                 FR*=(1.+ 0.0566853 );
+      }
+    }
+
   }
-  else if(Option=="QCD_POGWP90Isop06IPp025p05sig4_LMVA06v1Isop4IPp025p05sig4_ConeSUSY"){
+  else if(Option.Contains("QCD_POGWP90Isop06IPp025p05sig4_LMVA06v1Isop4IPp025p05sig4_ConeSUSY")){
     if(fEta<0.8){
       if     (PTCorr<35)  FR=0.110603 ;
       else if(PTCorr<50)  FR=0.0644239;
@@ -1931,7 +2041,7 @@ float Aug2017_TriLepSR::FakeRateData(snu::KElectron Ele, TString Option){
       else                FR=0.11768 ;
     }
   }
-  else if(Option=="QCD_POGWP90Isop06IPp025p05sig4_LMVA06v1Isop4IPp5p1_ConeSUSY"){
+  else if(Option.Contains("QCD_POGWP90Isop06IPp025p05sig4_LMVA06v1Isop4IPp5p1_ConeSUSY")){
     if(fEta<0.8){
       if     (PTCorr<35)  FR=0.0736732;
       else if(PTCorr<50)  FR=0.0302377;
@@ -1948,7 +2058,7 @@ float Aug2017_TriLepSR::FakeRateData(snu::KElectron Ele, TString Option){
       else                FR=0.0723459;
     }
   }
-  else if(Option=="QCD_POGWP90Isop06IPp025p05sig4_LMVA06v2Isop4IPp025p05sig4_ConeSUSY"){
+  else if(Option.Contains("QCD_POGWP90Isop06IPp025p05sig4_LMVA06v2Isop4IPp025p05sig4_ConeSUSY")){
     if(fEta<0.8){
       if     (PTCorr<35)  FR=0.0974724;
       else if(PTCorr<50)  FR=0.0556398;
@@ -1965,7 +2075,7 @@ float Aug2017_TriLepSR::FakeRateData(snu::KElectron Ele, TString Option){
       else                FR=0.10212  ;
     }
   }
-  else if(Option=="QCD_POGWP90Isop08IPp025p05sig4_LMVA08v1Isop4IPp025p05sig4_ConeSUSY"){
+  else if(Option.Contains("QCD_POGWP90Isop08IPp025p05sig4_LMVA08v1Isop4IPp025p05sig4_ConeSUSY")){
     if(fEta<0.8){
       if     (PTCorr<35)  FR=0.154559 ;
       else if(PTCorr<50)  FR=0.0924185;
@@ -1982,7 +2092,7 @@ float Aug2017_TriLepSR::FakeRateData(snu::KElectron Ele, TString Option){
       else                FR=0.175704;
     }
   }
-  else if(Option=="QCD_POGWP90Isop08IPp025p05sig4_LMVA08v2Isop4IPp025p05sig4_ConeSUSY"){
+  else if(Option.Contains("QCD_POGWP90Isop08IPp025p05sig4_LMVA08v2Isop4IPp025p05sig4_ConeSUSY")){
     if(fEta<0.8){
       if     (PTCorr<35)  FR=0.137626 ;
       else if(PTCorr<50)  FR=0.0804705;
@@ -1999,7 +2109,7 @@ float Aug2017_TriLepSR::FakeRateData(snu::KElectron Ele, TString Option){
       else                FR=0.154777;
     }
   }
-  else if(Option=="QCD_POGWP90Isop1IPp025p05sig4_LMVA1v1Isop4IPp025p05sig4_ConeSUSY"){
+  else if(Option.Contains("QCD_POGWP90Isop1IPp025p05sig4_LMVA1v1Isop4IPp025p05sig4_ConeSUSY")){
     if(fEta<0.8){
       if     (PTCorr<35)  FR=0.209062;
       else if(PTCorr<50)  FR=0.12362 ;
@@ -2016,7 +2126,7 @@ float Aug2017_TriLepSR::FakeRateData(snu::KElectron Ele, TString Option){
       else                FR=0.236407;
     }
   }
-  else if(Option=="QCD_POGWP90Isop1IPp025p05sig4_LMVA1v2Isop4IPp025p05sig4_ConeSUSY"){
+  else if(Option.Contains("QCD_POGWP90Isop1IPp025p05sig4_LMVA1v2Isop4IPp025p05sig4_ConeSUSY")){
     if(fEta<0.8){
       if     (PTCorr<35)  FR=0.185823;
       else if(PTCorr<50)  FR=0.107285;
@@ -2051,22 +2161,24 @@ float Aug2017_TriLepSR::GetFakeWeight(std::vector<snu::KMuon> MuLColl, std::vect
   //if(EleTID=="POGMVAMIP"      && EleLID=="HctoWAFakeLoose") EleFRLabel="POGMVAMTIsop06IPp025p05Sig4FakeLIsop4";
   if(MuTID =="HNTrilepTight2" && MuLID =="HNTrilepFakeL2" ) JSTrilepFR=true;
 
-  TString FilterInfo="", ConeMethod="";
+  TString FilterInfo="", ConeMethod="", SystOpt="";
   if     (Option.Contains("NoFilter"))  FilterInfo="NoFilter";
   else if(Option.Contains("TrkIsoVVL")) FilterInfo="TrkIsoVVL";
   if     (Option.Contains("ConeE"))     ConeMethod="ConeE";
   else if(Option.Contains("ConeSUSY"))  ConeMethod="ConeSUSY";
   else if(Option.Contains("FOPt"))      ConeMethod="FOPt";
+  if     (Option.Contains("SystUp"))    SystOpt="SystUp";
+  else if(Option.Contains("SystDown"))  SystOpt="SystDown";
 
 
   for(int i=0; i<MuLColl.size(); i++){
     if(!PassIDCriteria(MuLColl.at(i), MuTID)){
       float FR=0.;
       if(JSTrilepFR){
-        //FR=m_datadriven_bkg->GetFakeObj()->getTrilepFakeRate_muon(false, MuLColl.at(i).Pt(), MuLColl.at(i).Eta());
+//        FR=m_datadriven_bkg->GetFakeObj()->getTrilepFakeRate_muon(false, MuLColl.at(i).Pt(), MuLColl.at(i).Eta());
       }
       else{
-        FR=FakeRateData(MuLColl.at(i),MuTID.ReplaceAll("Test_","")+"_"+MuLID.ReplaceAll("Test_","")+"_"+FilterInfo+ConeMethod);
+        FR=FakeRateData(MuLColl.at(i),MuTID.ReplaceAll("Test_","")+"_"+MuLID.ReplaceAll("Test_","")+"_"+FilterInfo+ConeMethod+SystOpt);
         //cout<<"MuFR"<<FR<<endl;
       }
       fakeweight*=-FR/(1-FR);
@@ -2075,7 +2187,7 @@ float Aug2017_TriLepSR::GetFakeWeight(std::vector<snu::KMuon> MuLColl, std::vect
   }
   for(int i=0; i<EleLColl.size(); i++){
     if(!PassIDCriteria(EleLColl.at(i), EleTID)){
-      float FR=FakeRateData(EleLColl.at(i), "QCD_"+EleTID.ReplaceAll("Test_","")+"_"+EleLID.ReplaceAll("Test_","")+"_"+ConeMethod);
+      float FR=FakeRateData(EleLColl.at(i), "QCD_"+EleTID.ReplaceAll("Test_","")+"_"+EleLID.ReplaceAll("Test_","")+"_"+ConeMethod+SystOpt);
       fakeweight*=-FR/(1-FR);
       NLooseNotTight++;
         //cout<<"ElFR"<<FR<<endl;

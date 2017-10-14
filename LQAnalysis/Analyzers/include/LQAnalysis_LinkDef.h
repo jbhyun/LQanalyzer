@@ -25,6 +25,8 @@
 
 //#endif // __CINT__
 //Jihwan Bhyun Modification///////////
+#pragma link C++ class Oct2017_MuFRSyst+;
+#pragma link C++ class Oct2017_EleFRSyst+;
 #pragma link C++ class Aug2017_MuIDChoice+;
 #pragma link C++ class Aug2017_MuFakeDataStudy+;
 #pragma link C++ class Aug2017_MuFakeMCStudy+;

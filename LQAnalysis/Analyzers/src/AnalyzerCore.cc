@@ -2253,9 +2253,9 @@ void AnalyzerCore::SetUpEvent(Long64_t entry, float ev_weight) throw( LQError ) 
   if(!IDSetup)   SetupID();
   if(!setupDDBkg)SetupDDBkg();
   
-  if(k_running_nonprompt&&fake_configured &&!self_configured){
-    cout << "Setting up fakes(Def)" << endl;
-    m_datadriven_bkg->SetupFake();self_configured=true; }
+//  if(k_running_nonprompt&&fake_configured &&!self_configured){
+//    cout << "Setting up fakes(Def)" << endl;
+//    m_datadriven_bkg->SetupFake();self_configured=true; }
 
 
 
@@ -3483,6 +3483,8 @@ void AnalyzerCore::WriteHists(){
       if(!m_outputFile->GetDirectory("Basic")){
 	Dir = m_outputFile->mkdir("Basic");
 	m_outputFile->cd(Dir->GetName());
+        mapit -> second -> Write();
+        m_outputFile -> cd();
       }
       else{
         m_outputFile->cd("Basic");
@@ -3491,19 +3493,19 @@ void AnalyzerCore::WriteHists(){
       }
     }
     else{
-      TDirectory *dir = m_outputFile->GetDirectory("Hists");
-   
-      if (dir) {
-	m_outputFile->cd("Hists");
-	mapit->second->Write();
-	m_outputFile->cd();
-      }
-      else{
-	Dir = m_outputFile->mkdir("Hists");
-	m_outputFile->cd( Dir->GetName() );
-	mapit->second->Write();
-	m_outputFile->cd();
-      }
+//      TDirectory *dir = m_outputFile->GetDirectory("Hists");
+//   
+//      if (dir) {
+//	m_outputFile->cd("Hists");
+//	mapit->second->Write();
+//	m_outputFile->cd();
+//      }
+//      else{
+//	Dir = m_outputFile->mkdir("Hists");
+//	m_outputFile->cd( Dir->GetName() );
+        mapit->second->Write();
+//	m_outputFile->cd();
+//      }
     }
   }
   for(map<TString, TH2*>::iterator mapit = maphist2D.begin(); mapit != maphist2D.end(); mapit++){
