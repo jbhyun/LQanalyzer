@@ -2474,10 +2474,20 @@ float AnalyzerCore::SumPt( std::vector<snu::KFatJet> particles){
 }
 
   
+
 float AnalyzerCore::GetLT(std::vector<snu::KMuon> muons){
   float lt=0.;
   for(unsigned int i = 0; i < muons.size(); i++){
     lt+= muons[i].Pt();
+  }
+
+  return lt;
+}
+
+float AnalyzerCore::GetLT(std::vector<snu::KElectron> electrons){
+  float lt=0.;
+  for(unsigned int i = 0; i < electrons.size(); i++){
+    lt+= electrons[i].Pt();
   }
   
   return lt;
@@ -2998,6 +3008,16 @@ void AnalyzerCore::Message(TString message, LQMsgType type){
  /// @@@@@@@@@@@@@@@@@@@@@@@@@ HIST   @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@                                                                             
 
 void AnalyzerCore::MakeCleverHistograms(histtype type, TString clhistname ){
+  
+  if(type==sighist_e|| type==sighist_ee || type==sighist_eee) {
+    map<TString, SignalPlotsEE*>::iterator fit = mapCLhistSigEE.find(clhistname);
+    if (fit != mapCLhistSigEE.end()) return;
+  }
+
+  if(type==sighist_m|| type==sighist_mm || type==sighist_mmm) {
+    map<TString, SignalPlotsMM*>::iterator fit = mapCLhistSigMM.find(clhistname);
+    if (fit != mapCLhistSigMM.end()) return;
+  }
   
   //// ELECTRON PLOTs                                                                                          
   if(type==elhist) mapCLhistEl[clhistname] = new ElectronPlots(clhistname);
@@ -3912,7 +3932,7 @@ int AnalyzerCore::NBJet(std::vector<snu::KJet> jets,  KJet::Tagger tag, KJet::WO
 }
 
 
-bool AnalyzerCore::IsBTagged(snu::KJet jet,  KJet::Tagger tag, KJet::WORKING_POINT wp, int mcperiod){
+bool AnalyzerCore::IsBTagged(snu::KJet jet,  KJet::Tagger tag, KJet::WORKING_POINT wp, int mcperiod, int syst){
 
   if(mcperiod == 0) {
     Message("mcperiod not set in AnalyzerCore::IsBTagged. Will assign mcperiod for you but this may not give correct behaviour", WARNING);      
@@ -3935,6 +3955,30 @@ bool AnalyzerCore::IsBTagged(snu::KJet jet,  KJet::Tagger tag, KJet::WORKING_POI
 
   btag_key_lf = tag_string+"_"+wp_string+"_lf";
   btag_key_hf = tag_string+"_"+wp_string+"_hf";
+
+  if(syst==0){
+
+  }
+  //==== Heavy (Eff) Up
+  else if(syst==1){
+    btag_key_hf += "_systup";
+  }
+  //==== Heavy (Eff) Down
+  else if(syst==-1){
+    btag_key_hf += "_systdown";
+  }
+  //==== Light (Miss) Up
+  else if(syst==3){
+    btag_key_lf += "_systup";
+  }
+  //==== Light (Miss) Down
+  else if(syst==-3){
+    btag_key_lf += "_systdown";
+  }
+  else{
+    // wrong syst?
+  }
+
   std::map<TString,BTagSFUtil*>::iterator it_lf = MapBTagSF.find(btag_key_lf);
   std::map<TString,BTagSFUtil*>::iterator it_hf = MapBTagSF.find(btag_key_hf);
 

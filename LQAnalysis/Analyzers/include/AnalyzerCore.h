@@ -145,7 +145,7 @@ class AnalyzerCore : public LQCycleBase {
   bool HasCloseBJet(snu::KElectron el, snu::KJet::Tagger tag=snu::KJet::CSVv2 , snu::KJet::WORKING_POINT wp= snu::KJet::Medium, int mcperiod=-1);
   int NBJet(std::vector<snu::KJet> jets,  snu::KJet::Tagger tag=snu::KJet::CSVv2, snu::KJet::WORKING_POINT wp = snu::KJet::Medium, int mcperiod=-1);
 
-  bool IsBTagged(snu::KJet jet,  snu::KJet::Tagger tag, snu::KJet::WORKING_POINT wp, int mcperiod=-1);
+  bool IsBTagged(snu::KJet jet,  snu::KJet::Tagger tag, snu::KJet::WORKING_POINT wp, int mcperiod=-1, int syst=0);
   float BTagScaleFactor_1a(std::vector<snu::KJet> jetColl, snu::KJet::Tagger tag, snu::KJet::WORKING_POINT wp, int mcperiod=-1, TString Option="");
 
   int AssignnNumberOfTruth();
@@ -167,6 +167,7 @@ class AnalyzerCore : public LQCycleBase {
   float SumPt( std::vector<snu::KJet> particles);
   float SumPt( std::vector<snu::KFatJet> particles);
   float GetLT(std::vector<snu::KMuon> muons);
+  float GetLT(std::vector<snu::KElectron> electrons);
   bool isPrompt(long pdgid);
   void TruthPrintOut();
   void TruthPrintOut(snu::KMuon muon);
