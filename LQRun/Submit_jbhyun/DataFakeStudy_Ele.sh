@@ -3,7 +3,7 @@
 ########################################################################
 ## MC / DATA
 runMC=true
-runData=false
+runData=true
 
 
 ########################################################################
@@ -11,27 +11,27 @@ runData=false
 
 AnalysisCode="Aug2017_DataEleFRCalc"
 #Stream="SingleElectron"
-Stream="MuonEG"
+#Stream="MuonEG"
 #Stream="DoubleMuon"
-#Stream="DoubleEG"
+Stream="DoubleEG"
 runFake="False"
-#Skim="SKTree_LeptonSkim"  ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
+Skim="SKTree_LeptonSkim"  ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
 #Skim="SKTree_DiLepSkim"   ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
-Skim="SKTree_TriLepSkim"   ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
+#Skim="SKTree_TriLepSkim"   ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
 DataPeriod="ALL"
 job_logstep=1000
 LogLevel="INFO"
 QueueOption="fastq"    #"longq"
-RunningMode="Closure,SystRun" #"FRMeasure,SiglWP,SiglPreTrig" #"OptMETMTWCuts,SiglPreTrig" #"NormCheck,SiglPreTrig,SystRun" #"NormCheck,UnPreTrig,SystRun" #"IDValidation" #"IsoIPOpt" #"NormCheck,SiglPreTrig" #"HighdXYCheck,SiglPreTrig" #"FRScan,SiglPreTrig" #"Closure" #"EleFR,PreTrig" #"TrigSel"
+RunningMode="FRMeasure,SiglWP,SiglPreTrig" #"Closure,SystRun" #"FRMeasure,SiglWP,SiglPreTrig" #"OptMETMTWCuts,SiglPreTrig" #"NormCheck,SiglPreTrig,SystRun" #"NormCheck,UnPreTrig,SystRun" #"IDValidation" #"IsoIPOpt" #"NormCheck,SiglPreTrig" #"HighdXYCheck,SiglPreTrig" #"FRScan,SiglPreTrig" #"Closure" #"EleFR,PreTrig" #"TrigSel"
 
 #MCList="TT"
 #MCList="DY"
 #MCList="CR_EE_fast"
-#MCList="FR_Prompt"
+MCList="FR_Prompt"
 #MCList="UnRun"
 #MCList="MajorFakeSource" #"QCD_BCToE" #"QCD_EM" #"FakeMeasRegSample"
 #MCList="SignalMajor_All"
-MCList="Analysis_bkg"
+#MCList="Analysis_bkg"
 
 ########################################################################
 ## OUTPUT PATH CONFIG

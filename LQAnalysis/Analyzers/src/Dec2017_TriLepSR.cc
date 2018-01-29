@@ -1,6 +1,6 @@
-// $Id: Aug2017_TriLepSR.cc 1 2013-11-26 10:23:10Z jalmond $
+// $Id: Dec2017_TriLepSR.cc 1 2013-11-26 10:23:10Z jalmond $
 /***************************************************************************
- * @Project: LQAug2017_TriLepSR Frame - ROOT-based analysis framework for Korea SNU
+ * @Project: LQDec2017_TriLepSR Frame - ROOT-based analysis framework for Korea SNU
  * @Package: LQCycles
  *
  * @author John Almond       <jalmond@cern.ch>           - SNU
@@ -8,7 +8,7 @@
  ***************************************************************************/
 
 /// Local includes
- #include "Aug2017_TriLepSR.h"
+ #include "Dec2017_TriLepSR.h"
 
  //Core includes
  #include "Reweight.h"
@@ -16,17 +16,17 @@
  #include "BaseSelection.h"
  #include "AnalyzerCore.h"
  //// Needed to allow inheritance for use in LQCore/core classes
- ClassImp (Aug2017_TriLepSR);
+ ClassImp (Dec2017_TriLepSR);
 
- Aug2017_TriLepSR::Aug2017_TriLepSR() : AnalyzerCore(), out_muons(0) {
+ Dec2017_TriLepSR::Dec2017_TriLepSR() : AnalyzerCore(), out_muons(0) {
 
-   SetLogName("Aug2017_TriLepSR");
-   Message("In Aug2017_TriLepSR constructor", INFO);
+   SetLogName("Dec2017_TriLepSR");
+   Message("In Dec2017_TriLepSR constructor", INFO);
    InitialiseAnalysis();
  }
 
 
- void Aug2017_TriLepSR::InitialiseAnalysis() throw( LQError ) {
+ void Dec2017_TriLepSR::InitialiseAnalysis() throw( LQError ) {
    
    /// Initialise histograms
    MakeHistograms();  
@@ -40,7 +40,7 @@
 //Loop///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-void Aug2017_TriLepSR::ExecuteEvents()throw( LQError ){
+void Dec2017_TriLepSR::ExecuteEvents()throw( LQError ){
 
 ////Basic Infos///////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -71,13 +71,14 @@ void Aug2017_TriLepSR::ExecuteEvents()throw( LQError ){
    FillCutFlow("NoCut", weight*pileup_reweight);
 
 
-   bool EMuMu=false, TriMu=false;
+   bool EMuMu=false, TriMu=false, MultiLep=false;
    bool CutOpt=false, ObsExpComp=false, SRYield=false, MAWinOpt=false;
    bool SRDist=false;
    bool SystRun=false, TestRun=false;
    for(int i=0; i<k_flags.size(); i++){
      if     (k_flags.at(i).Contains("EMuMu"))       EMuMu      = true;
      else if(k_flags.at(i).Contains("TriMu"))       TriMu      = true;
+     else if(k_flags.at(i).Contains("MultiLep"))    MultiLep   = true;
      else if(k_flags.at(i).Contains("SystRun"))     SystRun    = true;
      else if(k_flags.at(i).Contains("CutOpt"))      CutOpt     = true;
      else if(k_flags.at(i).Contains("MAWinOpt"))    MAWinOpt   = true;
@@ -87,33 +88,12 @@ void Aug2017_TriLepSR::ExecuteEvents()throw( LQError ){
      else if(k_flags.at(i).Contains("TestRun"))     TestRun    = true;
    }
 
-   if(TestRun){
-     
-     std::vector<Float_t> PdfWVec  = eventbase->GetEvent().PdfWeights();
-     std::vector<Float_t> ScaleWVec= eventbase->GetEvent().ScaleWeights();
-
-     cout<<"Scale Vec Info"<<endl;
-     cout<<"Size "<<ScaleWVec.size()<<endl;
-     for(int i=0; i<ScaleWVec.size(); i++){
-       cout<<i<<" "<<ScaleWVec.at(i)<<endl;
-     }
-     cout<<endl;
-
-     cout<<"Pdf Vec Info"<<endl;
-     cout<<"Size "<<PdfWVec.size()<<endl;
-     for(int i=0; i<PdfWVec.size(); i++){
-       cout<<i<<" "<<PdfWVec.at(i)<<endl;
-     }
-
-     return;
-   }
-
     
    /***************************************************************************************
    **Trigger Treatment
    ***************************************************************************************/
    //Trigger Path of Analysis
-   bool Pass_Trigger=false;
+   bool Pass_Trigger=false, Pass_EMuTrigger=false, Pass_DiMuTrigger=false;
    float trigger_ps_weight=1., trigger_period_weight=1.;
    if(EMuMu){
      int Pass_Trigger1=0, Pass_Trigger2=0;
@@ -139,8 +119,33 @@ void Aug2017_TriLepSR::ExecuteEvents()throw( LQError ){
      if(!isData) trigger_ps_weight=WeightByTrigger("HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_v", TargetLumi);
 
    }
+   if(MultiLep){
+
+     //DiMu
+     if     ( PassTrigger("HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_v")   ) Pass_DiMuTrigger=true;
+     else if( PassTrigger("HLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_DZ_v") ) Pass_DiMuTrigger=true;
+
+     //EMu
+     int Pass_Trigger1=0, Pass_Trigger2=0;
+     if( PassTrigger("HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v") )    Pass_Trigger1++;
+     if( PassTrigger("HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ_v") ) Pass_Trigger2++;
+
+     if(isData){
+       int DataPeriod=GetDataPeriod();
+       if( DataPeriod>0 && DataPeriod<7 && Pass_Trigger1==1 ) Pass_EMuTrigger=true;
+       else if( DataPeriod==7 && Pass_Trigger2==1 )           Pass_EMuTrigger=true;
+     }
+     else{
+       if( Pass_Trigger1>0 || Pass_Trigger2>0 ) Pass_EMuTrigger=true;
+       trigger_period_weight=(Pass_Trigger1*27.257618+Pass_Trigger2*8.605696)/35.863314;
+       trigger_ps_weight=WeightByTrigger("HLT_IsoMu24_v", TargetLumi);
+     }
+     if(Pass_DiMuTrigger || Pass_EMuTrigger) Pass_Trigger=true;
+
+   }
    FillHist("Basic_TrigPSWeight", trigger_ps_weight, 1., 0., 1., 100);
-   weight*=trigger_ps_weight*trigger_period_weight;
+   weight*=trigger_ps_weight;
+   if(!MultiLep) weight*=trigger_period_weight;
 
    //Trigger Cut
    if(!Pass_Trigger) return;
@@ -164,7 +169,7 @@ void Aug2017_TriLepSR::ExecuteEvents()throw( LQError ){
    //**PreSelCut*******************************************************************************************//
    //Intended for Code speed boosting up.
      eventbase->GetMuonSel()->SetID(BaseSelection::MUON_POG_LOOSE);
-     eventbase->GetMuonSel()->SetPt(5.);                    eventbase->GetMuonSel()->SetEta(2.4);
+     eventbase->GetMuonSel()->SetPt(10.);                    eventbase->GetMuonSel()->SetEta(2.4);
    std::vector<snu::KMuon> muonPreColl; eventbase->GetMuonSel()->Selection(muonPreColl, true);
      eventbase->GetElectronSel()->SetPt(10.);                eventbase->GetElectronSel()->SetEta(2.5);
      eventbase->GetElectronSel()->SetBETrRegIncl(false);
@@ -264,7 +269,7 @@ void Aug2017_TriLepSR::ExecuteEvents()throw( LQError ){
 
    if(EventCand & !SystRun){
      if(!isData){
-       if(EMuMu || TriMu){
+       if(EMuMu || TriMu || MultiLep){
  
          reco_weight_ele = mcdata_correction->ElectronRecoScaleFactor(electronColl);
          id_weight_ele   = mcdata_correction->ElectronScaleFactor("ELECTRON_MVA_90", electronColl);
@@ -931,14 +936,14 @@ return;
   
 
 
-void Aug2017_TriLepSR::EndCycle()throw( LQError ){
+void Dec2017_TriLepSR::EndCycle()throw( LQError ){
   
   Message("In EndCycle" , INFO);
 
 }
 
 
-void Aug2017_TriLepSR::BeginCycle() throw( LQError ){
+void Dec2017_TriLepSR::BeginCycle() throw( LQError ){
   
   Message("In begin Cycle", INFO);
   
@@ -958,16 +963,16 @@ void Aug2017_TriLepSR::BeginCycle() throw( LQError ){
   
 }
 
-Aug2017_TriLepSR::~Aug2017_TriLepSR() {
+Dec2017_TriLepSR::~Dec2017_TriLepSR() {
   
-  Message("In Aug2017_TriLepSR Destructor" , INFO);
+  Message("In Dec2017_TriLepSR Destructor" , INFO);
 //  if(!k_isdata)delete reweightPU;
   
 }
 
 
 
-void Aug2017_TriLepSR::CheckSRYield(std::vector<snu::KMuon> MuTColl, std::vector<snu::KMuon> MuLColl, std::vector<snu::KElectron> EleTColl, std::vector<snu::KElectron> EleLColl, std::vector<snu::KJet> JetColl, std::vector<snu::KJet> BJetColl, float MET, float METx, float METy, float weight, TString Label, TString Option){
+void Dec2017_TriLepSR::CheckSRYield(std::vector<snu::KMuon> MuTColl, std::vector<snu::KMuon> MuLColl, std::vector<snu::KElectron> EleTColl, std::vector<snu::KElectron> EleLColl, std::vector<snu::KJet> JetColl, std::vector<snu::KJet> BJetColl, float MET, float METx, float METy, float weight, TString Label, TString Option){
 
 
   bool EMuMu=Option.Contains("EMuMu"), TriMu=Option.Contains("TriMu");
@@ -1046,7 +1051,7 @@ void Aug2017_TriLepSR::CheckSRYield(std::vector<snu::KMuon> MuTColl, std::vector
 
 
 
-void Aug2017_TriLepSR::CheckSRDist(std::vector<snu::KMuon> MuTColl, std::vector<snu::KMuon> MuLColl, std::vector<snu::KElectron> EleTColl, std::vector<snu::KElectron> EleLColl, std::vector<snu::KJet> JetColl, std::vector<snu::KJet> BJetColl, float MET, float METx, float METy, float weight, TString Label, TString Option){
+void Dec2017_TriLepSR::CheckSRDist(std::vector<snu::KMuon> MuTColl, std::vector<snu::KMuon> MuLColl, std::vector<snu::KElectron> EleTColl, std::vector<snu::KElectron> EleLColl, std::vector<snu::KJet> JetColl, std::vector<snu::KJet> BJetColl, float MET, float METx, float METy, float weight, TString Label, TString Option){
 
 
   bool EMuMu=Option.Contains("EMuMu"), TriMu=Option.Contains("TriMu");
@@ -1204,7 +1209,7 @@ void Aug2017_TriLepSR::CheckSRDist(std::vector<snu::KMuon> MuTColl, std::vector<
 }
 
 
-void Aug2017_TriLepSR::DoSystRun(TString Cycle, TString Mode, std::vector<snu::KElectron> EleColl, std::vector<snu::KElectron> EleLColl, std::vector<snu::KMuon> MuColl, std::vector<snu::KMuon> MuLColl, std::vector<snu::KJet> JetColl, std::vector<snu::KJet> BJetColl, float MET, float METx, float METy, float weight){
+void Dec2017_TriLepSR::DoSystRun(TString Cycle, TString Mode, std::vector<snu::KElectron> EleColl, std::vector<snu::KElectron> EleLColl, std::vector<snu::KMuon> MuColl, std::vector<snu::KMuon> MuLColl, std::vector<snu::KJet> JetColl, std::vector<snu::KJet> BJetColl, float MET, float METx, float METy, float weight){
 
   int SystDir=0; TString SystKindLabel="", SystDirLabel="", ChannelLabel="";
   if(Mode.Contains("Syst")){
@@ -1235,7 +1240,7 @@ void Aug2017_TriLepSR::DoSystRun(TString Cycle, TString Mode, std::vector<snu::K
 
 
 
-float Aug2017_TriLepSR::ConeCorrectedPT(snu::KMuon Mu, float TightIsoCut){
+float Dec2017_TriLepSR::ConeCorrectedPT(snu::KMuon Mu, float TightIsoCut){
 
   //float PTCorr=Mu.Pt();
   //float PTCorr=Mu.Pt()*(1.+RochIso(Mu,"0.4"));
@@ -1246,7 +1251,7 @@ float Aug2017_TriLepSR::ConeCorrectedPT(snu::KMuon Mu, float TightIsoCut){
 
 
 
-float Aug2017_TriLepSR::ConeCorrectedPT(snu::KElectron Ele, float TightIsoCut){
+float Dec2017_TriLepSR::ConeCorrectedPT(snu::KElectron Ele, float TightIsoCut){
 
   //float PTCorr=Ele.Pt()*(1+Ele.PFRelIso(0.3));
   float PTCorr=Ele.Pt()*(1.+max(0.,Ele.PFRelIso(0.3)-TightIsoCut));
@@ -1255,7 +1260,7 @@ float Aug2017_TriLepSR::ConeCorrectedPT(snu::KElectron Ele, float TightIsoCut){
 }
 
 
-float Aug2017_TriLepSR::FakeRateData(snu::KMuon Mu, TString Option){
+float Dec2017_TriLepSR::FakeRateData(snu::KMuon Mu, TString Option){
 
   float FR=0., TightIsoCut=0.;
   int SystDir=0.; bool Syst_FR=Option.Contains("Syst");
@@ -1966,7 +1971,7 @@ float Aug2017_TriLepSR::FakeRateData(snu::KMuon Mu, TString Option){
 
 
 
-float Aug2017_TriLepSR::FakeRateData(snu::KElectron Ele, TString Option){
+float Dec2017_TriLepSR::FakeRateData(snu::KElectron Ele, TString Option){
 
   float FR=0., TightIsoCut=0.;
   int SystDir=0.; bool Syst_FR=Option.Contains("Syst");
@@ -2175,14 +2180,14 @@ float Aug2017_TriLepSR::FakeRateData(snu::KElectron Ele, TString Option){
 } 
 
 
-//float Aug2017_TriLepSR::OptimiseSelection(std::vector<snu::KMuon> MuPreColl, std::vector<snu::KElectron> ElePreColl, std::vector<snu::KJet> JetPreNoVetoColl, TString MuLID, TString MuTID, TString EleLID, TString EleTID, TString Label){
+//float Dec2017_TriLepSR::OptimiseSelection(std::vector<snu::KMuon> MuPreColl, std::vector<snu::KElectron> ElePreColl, std::vector<snu::KJet> JetPreNoVetoColl, TString MuLID, TString MuTID, TString EleLID, TString EleTID, TString Label){
 //
 //  float Mmumu=
 //  if(
 //
 //}
 
-float Aug2017_TriLepSR::GetFakeWeight(std::vector<snu::KMuon> MuLColl, std::vector<snu::KElectron> EleLColl, TString MuLID, TString MuTID, TString EleLID, TString EleTID, TString Option){
+float Dec2017_TriLepSR::GetFakeWeight(std::vector<snu::KMuon> MuLColl, std::vector<snu::KElectron> EleLColl, TString MuLID, TString MuTID, TString EleLID, TString EleTID, TString Option){
 
   float fakeweight=-1.; int NLooseNotTight=0; bool JSTrilepFR=false;
   //if(EleTID=="POGMVAMIP"      && EleLID=="HctoWAFakeLoose") EleFRLabel="POGMVAMTIsop06IPp025p05Sig4FakeLIsop4";
@@ -2227,7 +2232,7 @@ float Aug2017_TriLepSR::GetFakeWeight(std::vector<snu::KMuon> MuLColl, std::vect
 }
 
 
-float Aug2017_TriLepSR::GetPreTrigPURW(int Nvtx){
+float Dec2017_TriLepSR::GetPreTrigPURW(int Nvtx){
 
    float weight=1.;
    if(Nvtx<2) weight=1.22087;
@@ -2285,7 +2290,7 @@ float Aug2017_TriLepSR::GetPreTrigPURW(int Nvtx){
 
 
 
-void Aug2017_TriLepSR::FillCutFlow(TString cut, float weight){
+void Dec2017_TriLepSR::FillCutFlow(TString cut, float weight){
   
   if(GetHist("cutflow_W") && GetHist("cutflow_N")){
     GetHist("cutflow_W")->Fill(cut,weight);
@@ -2325,7 +2330,7 @@ void Aug2017_TriLepSR::FillCutFlow(TString cut, float weight){
 
 
 
-void Aug2017_TriLepSR::BeginEvent( )throw( LQError ){
+void Dec2017_TriLepSR::BeginEvent( )throw( LQError ){
 
   Message("In BeginEvent() " , DEBUG);
 
@@ -2333,7 +2338,7 @@ void Aug2017_TriLepSR::BeginEvent( )throw( LQError ){
 }
 
 
-void Aug2017_TriLepSR::MakeHistograms(){
+void Dec2017_TriLepSR::MakeHistograms(){
   //// Additional plots to make
     
   maphist.clear();
@@ -2369,14 +2374,14 @@ void Aug2017_TriLepSR::MakeHistograms(){
 
   Message("Made histograms", INFO);
   // **
-  // *  Remove//Overide this Aug2017_TriLepSRCore::MakeHistograms() to make new hists for your analysis
+  // *  Remove//Overide this Dec2017_TriLepSRCore::MakeHistograms() to make new hists for your analysis
   // **
   
 }
 
 
 
-void Aug2017_TriLepSR::ClearOutputVectors() throw(LQError) {
+void Dec2017_TriLepSR::ClearOutputVectors() throw(LQError) {
 
   // This function is called before every execute event (NO need to call this yourself.
   

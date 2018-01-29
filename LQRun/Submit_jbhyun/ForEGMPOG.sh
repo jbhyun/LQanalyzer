@@ -10,25 +10,24 @@ runSignal="True"
 ########################################################################
 ## RUN PARAMETERS
 
-AnalysisCode="Aug2017_TriLepSR" 
-#Stream="SingleElectron"
-Stream="MuonEG"
-#Stream="DoubleMuon"
-#Stream="DoubleEG"
-#Skim="SKTree_LeptonSkim"  ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
-#Skim="SKTree_DiLepSkim"   ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
-Skim="SKTree_TriLepSkim"   ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
+AnalysisCode="Jan2018_ForEGMSlot"
+Stream="SingleElectron"
+#Skim="FLATCAT"  ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
+Skim="SKTree_LeptonSkim"  ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
 DataPeriod="ALL"
 job_logstep=1000
 LogLevel="INFO"
 QueueOption="fastq"    #"longq"
-RunningMode="EMuMu,SRYield,SystRun" #"EMuMu,SRYield,SystRun" #"TriMu,SRYield,SystRun" #"CutOpt,EMuMu,MAWinOpt" #"EMuMu,SRYield,SystRun" #"CutOpt,EMuMu,MAWinOpt" #"TriMu,SRDist" #"EMuMu,SRDist" #"TriMu,SRDist" #"TriMu,SRYield,SystRun" #"EMuMu,SRYield,SystRun" #"TriMu,CutOpt"
+RunningMode="ForEGM_PlotRound1"
+ #"PDFQ2Syst,MultiLep" #"TopPtCheck" #"MultiLep,LOvsNLOBias"
 
-#MCList="SignalMajor_All"
+#MCList="TT"
+MCList="SignalMajor_All"
 #MCList="Signal_1e2mu"
-MCList="Signal_All"
+#MCList="Signal_All"
 #MCList="Analysis_bkg"
-#MCList="MajorFakeSource"
+#MCList="GenSystAnaTargetBkg"
+
 
 ########################################################################
 ## OUTPUT PATH CONFIG

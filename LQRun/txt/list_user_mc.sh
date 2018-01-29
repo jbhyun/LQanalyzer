@@ -5,9 +5,10 @@
 #######################
 declare -a tchannel_hn=('HNMoriondLL_Tchannel_EpEp_100' 'HNMoriondLL_Tchannel_EpEp_200' 'HNMoriondLL_Tchannel_EpEp_500' 'HNMoriondLL_Tchannel_EpEp_1100' 'HNMoriondLL_Tchannel_MupMup_100' 'HNMoriondLL_Tchannel_MupMup_200' 'HNMoriondLL_Tchannel_MupMup_500' 'HNMoriondLL_Tchannel_MupMup_1100' 'HNMumMum_40' 'HNMumMum_50' 'HNMumMum_200' 'HNMumMum_500' 'HNMumMum_1500'  'HNEmEm_40' 'HNEmEm_50' 'HNEmEm_200' 'HNEmEm_500' 'HNEmEm_1500'  'HNMupMup_40' 'HNMupMup_50' 'HNMupMup_200' 'HNMupMup_500' 'HNMupMup_1500' 'HNMupMup_100' 'HNMupMup_700' 'HNMupMup_1000' )
 
-declare -a ListToProd=("VHToNonbb" )
+declare -a ListToProd=("DYJets_MG_10to50_TrigInfoSample" "DYJets_MG_TrigInfoSample" "TT_powheg_TrigInfoSample")
+
 declare -a AllSample=('WJets' 'DYJets_10to50' 'DYJets' 'SingleTop_s' 'SingleTbar_t' 'SingleTop_t' 'SingleTbar_tW' 'SingleTop_tW' 'TT_powheg' 'ZZ' 'WZ' 'WW' 'WGtoLNuG' 'WGtoLNuEE' 'WGtoLNuMM' 'ZGto2LG' 'ttH_nonbb' 'ttH_bb' 'ttW' 'ttZ') 
-declare -a UnRun=('WW' 'WZ' 'ZZ')
+declare -a UnRun=("QCD_Pt-170to300_EMEnriched" "QCD_Pt-300toInf_EMEnriched")
 
 
 #####################################################################################
@@ -31,14 +32,15 @@ declare -a TTG=('TTG') #"TTJets_aMC")
 
 #Analysis Background
 #declare -a Analysis_bkg=('WZTo3LNu_powheg' 'ZZTo4L_powheg' "ZGto2LG" "TTG" 'ttWToLNu' 'ttZToLL_M-1to10' 'ttZ' 'tZq' 'ttH_nonbb' 'WWW' 'WWZ' 'WZZ' 'ZZZ' "vbhHtoZZ" "ggHtoZZ" "DYJets" "DYJets_10to50" "TTLL_powheg")
-declare -a Analysis_bkg=('WZTo3LNu_powheg' 'ZZTo4L_powheg' "ZGto2LG" 'TTG' 'TG' 'ttWToLNu' 'ttZToLL_M-1to10' 'ttZ' 'tZq' 'ttH_nonbb' 'WWW' 'WWZ' 'WZZ' 'ZZZ' "vbhHtoZZ" "ggHtoZZ")
+declare -a Analysis_bkg=('WZTo3LNu_powheg' 'ZZTo4L_powheg' "ZGto2LG" 'TTG' 'ttWToLNu' 'ttZToLL_M-1to10' 'ttZ' 'tZq' 'ttH_nonbb' 'WWW' 'WWZ' 'WZZ' 'ZZZ' "vbhHtoZZ" "ggHtoZZ")
 #declare -a Analysis_bkg=('WZTo3LNu_powheg' 'ZZTo4L_powheg' "ggZZto2e2mu" "ggZZto2e2tau" "ggZZto2mu2tau" "ggZZto4e" "ggZZto4mu" "ggZZto4tau" "ZGto2LG" 'ttWToLNu' 'ttZToLL_M-1to10' 'ttZ' 'tZq' 'ttH_nonbb' 'WWW' 'WWZ' 'WZZ' 'ZZZ' "vbhHtoZZ" "ggHtoZZ")
 
 
 #Dilepton Validation
-declare -a CR_DiLep=('DYJets_10to50' 'DYJets' 'SingleTbar_tW_noHadron' 'SingleTop_tW_noHadron' 'TT_powheg' 'WZ' 'ZZ' 'WWTo2L2Nu' 'ZGto2LG')
+declare -a CR_DiLep=('DYJets_10to50' 'DYJets' 'SingleTbar_tW_noHadron' 'SingleTop_tW_noHadron' 'TT_powheg' 'WZ' 'ZZ' 'WW')
 declare -a CR_EMu=('DYJets_10to50' 'LowStat_DYJets' 'SingleTbar_tW_noHadron' 'SingleTop_tW_noHadron' 'TT_powheg' 'WZ' 'ZZ' 'WW')
 declare -a CR_MuMu_fast=('DYJets_10to50' 'DYJets' 'TT_powheg')
+declare -a CR_MuMu50_fast=('DYJets' 'TT_powheg')
 declare -a CR_EE_fast=('DYJets_10to50' 'LowStat_DYJets' 'TT_powheg')
 
 #4lepton CR
@@ -68,7 +70,10 @@ declare -a QCD_EM=("QCD_Pt-20to30_EMEnriched" "QCD_Pt-30to50_EMEnriched" "QCD_Pt
 declare -a QCD_DoubleEM=("QCD_DoubleEMEnriched_30-40_mgg80toinf" "QCD_DoubleEMEnriched_30-inf_mgg40to80" "QCD_DoubleEMEnriched_40-inf_mgg80toinf") 
 declare -a QCD_Mu=("QCD_Pt-15to20_MuEnriched" "QCD_Pt-20to30_MuEnriched" "QCD_Pt-30to50_MuEnriched" "QCD_Pt-50to80_MuEnriched" "QCD_Pt-80to120_MuEnriched" "QCD_Pt-120to170_MuEnriched" "QCD_Pt-170to300_MuEnriched" "QCD_Pt-300to470_MuEnriched" "QCD_Pt-470to600_MuEnriched" "QCD_Pt-600to800_MuEnriched" "QCD_Pt-800to1000_MuEnriched" "QCD_Pt-1000toInf_MuEnriched")
 
-
+#GenSystSample
+declare -a GenSystAnaTargetBkg=('ttZ' 'ttZToLL_M-1to10' 'ttH_nonbb' 'ttWToLNu' 'ttZToLL_M-10' 'WZTo3LNu_powheg' 'ZZTo4L_powheg')
+declare -a TopPtMeasSample_SM=('TT_powheg')
+declare -a TopPtMeasSample_Sig=('TTToHcToWA_incl_MHc160_MA35')
 #####################################################################################
 
 
@@ -76,12 +81,15 @@ declare -a QCD_Mu=("QCD_Pt-15to20_MuEnriched" "QCD_Pt-20to30_MuEnriched" "QCD_Pt
 ##Signal###############
 #####################################################################################
 
-declare -a SignalMajor_All=("TTToHcToWA_1e2mu_MHc100_MA15" "TTToHcToWA_1e2mu_MHc130_MA15" "TTToHcToWA_1e2mu_MHc160_MA15" "TTToHcToWA_1e2mu_MHc110_MA25" "TTToHcToWA_1e2mu_MHc130_MA25" "TTToHcToWA_1e2mu_MHc160_MA25" "TTToHcToWA_1e2mu_MHc120_MA35" "TTToHcToWA_1e2mu_MHc130_MA35" "TTToHcToWA_1e2mu_MHc160_MA35" "TTToHcToWA_3mu_MHc100_MA15" "TTToHcToWA_3mu_MHc130_MA15" "TTToHcToWA_3mu_MHc160_MA15" "TTToHcToWA_3mu_MHc110_MA25" "TTToHcToWA_3mu_MHc130_MA25" "TTToHcToWA_3mu_MHc160_MA25" "TTToHcToWA_3mu_MHc120_MA35" "TTToHcToWA_3mu_MHc130_MA35" "TTToHcToWA_3mu_MHc160_MA35" "TTToHcToWA_1ta2mu_MHc100_MA15" "TTToHcToWA_1ta2mu_MHc130_MA15" "TTToHcToWA_1ta2mu_MHc160_MA15" "TTToHcToWA_1ta2mu_MHc110_MA25" "TTToHcToWA_1ta2mu_MHc130_MA25" "TTToHcToWA_1ta2mu_MHc160_MA25" "TTToHcToWA_1ta2mu_MHc120_MA35" "TTToHcToWA_1ta2mu_MHc130_MA35" "TTToHcToWA_1ta2mu_MHc160_MA35" "TTToHcToWA_2l2mu_MHc100_MA15" "TTToHcToWA_2l2mu_MHc130_MA15" "TTToHcToWA_2l2mu_MHc160_MA15" "TTToHcToWA_2l2mu_MHc110_MA25" "TTToHcToWA_2l2mu_MHc130_MA25" "TTToHcToWA_2l2mu_MHc160_MA25" "TTToHcToWA_2l2mu_MHc120_MA35" "TTToHcToWA_2l2mu_MHc130_MA35" "TTToHcToWA_2l2mu_MHc160_MA35")
 
-declare -a SignalMajor_1e2mu=("TTToHcToWA_1e2mu_MHc100_MA15" "TTToHcToWA_1e2mu_MHc110_MA30" "TTToHcToWA_1e2mu_MHc160_MA15" "TTToHcToWA_1e2mu_MHc160_MA30") 
-declare -a SignalMajor_3mu=("TTToHcToWA_3mu_MHc100_MA15" "TTToHcToWA_3mu_MHc110_MA30" "TTToHcToWA_3mu_MHc160_MA15" "TTToHcToWA_3mu_MHc160_MA30")
-declare -a SignalMajor_1tamu=("TTToHcToWA_1ta2mu_MHc100_MA15" "TTToHcToWA_1ta2mu_MHc110_MA30" "TTToHcToWA_1ta2mu_MHc160_MA15" "TTToHcToWA_1ta2mu_MHc160_MA30") 
-declare -a SignalMajor_2l2mu=("TTToHcToWA_2l2mu_MHc100_MA15" "TTToHcToWA_2l2mu_MHc110_MA30" "TTToHcToWA_2l2mu_MHc160_MA15" "TTToHcToWA_2l2mu_MHc160_MA30")
+declare -a SignalMajor_All=("TTToHcToWA_incl_MHc100_MA15" "TTToHcToWA_incl_MHc120_MA15" "TTToHcToWA_incl_MHc120_MA25" "TTToHcToWA_incl_MHc120_MA35" "TTToHcToWA_incl_MHc140_MA15" "TTToHcToWA_incl_MHc140_MA25" "TTToHcToWA_incl_MHc140_MA35" "TTToHcToWA_incl_MHc160_MA15" "TTToHcToWA_incl_MHc160_MA25" "TTToHcToWA_incl_MHc160_MA35")
+
+declare -a SignalMajor_Old=("TTToHcToWA_1e2mu_MHc100_MA15" "TTToHcToWA_1e2mu_MHc120_MA15" "TTToHcToWA_1e2mu_MHc120_MA25" "TTToHcToWA_1e2mu_MHc120_MA35" "TTToHcToWA_1e2mu_MHc140_MA15" "TTToHcToWA_1e2mu_MHc140_MA25" "TTToHcToWA_1e2mu_MHc140_MA35" "TTToHcToWA_1e2mu_MHc160_MA15" "TTToHcToWA_1e2mu_MHc160_MA25" "TTToHcToWA_1e2mu_MHc160_MA35" "TTToHcToWA_3mu_MHc100_MA15" "TTToHcToWA_3mu_MHc120_MA15" "TTToHcToWA_3mu_MHc120_MA25" "TTToHcToWA_3mu_MHc120_MA35" "TTToHcToWA_3mu_MHc140_MA15" "TTToHcToWA_3mu_MHc140_MA25" "TTToHcToWA_3mu_MHc140_MA35" "TTToHcToWA_3mu_MHc160_MA15" "TTToHcToWA_3mu_MHc160_MA25" "TTToHcToWA_3mu_MHc160_MA35" "TTToHcToWA_1ta2mu_MHc100_MA15" "TTToHcToWA_1ta2mu_MHc120_MA15" "TTToHcToWA_1ta2mu_MHc120_MA25" "TTToHcToWA_1ta2mu_MHc120_MA35" "TTToHcToWA_1ta2mu_MHc140_MA15" "TTToHcToWA_1ta2mu_MHc140_MA25" "TTToHcToWA_1ta2mu_MHc140_MA35" "TTToHcToWA_1ta2mu_MHc160_MA15" "TTToHcToWA_1ta2mu_MHc160_MA25" "TTToHcToWA_1ta2mu_MHc160_MA35" "TTToHcToWA_2l2mu_MHc100_MA15" "TTToHcToWA_2l2mu_MHc120_MA15" "TTToHcToWA_2l2mu_MHc120_MA25" "TTToHcToWA_2l2mu_MHc120_MA35" "TTToHcToWA_2l2mu_MHc140_MA15" "TTToHcToWA_2l2mu_MHc140_MA25" "TTToHcToWA_2l2mu_MHc140_MA35" "TTToHcToWA_2l2mu_MHc160_MA15" "TTToHcToWA_2l2mu_MHc160_MA25" "TTToHcToWA_2l2mu_MHc160_MA35")
+
+#declare -a SignalMajor_1e2mu=("TTToHcToWA_1e2mu_MHc100_MA15" "TTToHcToWA_1e2mu_MHc110_MA30" "TTToHcToWA_1e2mu_MHc160_MA15" "TTToHcToWA_1e2mu_MHc160_MA30") 
+#declare -a SignalMajor_3mu=("TTToHcToWA_3mu_MHc100_MA15" "TTToHcToWA_3mu_MHc110_MA30" "TTToHcToWA_3mu_MHc160_MA15" "TTToHcToWA_3mu_MHc160_MA30")
+#declare -a SignalMajor_1tamu=("TTToHcToWA_1ta2mu_MHc100_MA15" "TTToHcToWA_1ta2mu_MHc110_MA30" "TTToHcToWA_1ta2mu_MHc160_MA15" "TTToHcToWA_1ta2mu_MHc160_MA30") 
+#declare -a SignalMajor_2l2mu=("TTToHcToWA_2l2mu_MHc100_MA15" "TTToHcToWA_2l2mu_MHc110_MA30" "TTToHcToWA_2l2mu_MHc160_MA15" "TTToHcToWA_2l2mu_MHc160_MA30")
 #####################################################################################
 
 

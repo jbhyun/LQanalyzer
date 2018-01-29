@@ -2,32 +2,33 @@
 
 ########################################################################
 ## MC / DATA
-runMC=true
-runData=false
+runMC=false
+runData=true
 runFake="False"
-runSignal="True"
+runSignal="False"
 
 ########################################################################
 ## RUN PARAMETERS
 
-AnalysisCode="Aug2017_TriLepSR" 
+AnalysisCode="Dec2017_MuonSFValid" 
 #Stream="SingleElectron"
-Stream="MuonEG"
-#Stream="DoubleMuon"
+#Stream="MuonEG"
+#Stream="SingleMuon"
+Stream="DoubleMuon"
 #Stream="DoubleEG"
 #Skim="SKTree_LeptonSkim"  ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
-#Skim="SKTree_DiLepSkim"   ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
-Skim="SKTree_TriLepSkim"   ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
+Skim="SKTree_DiLepSkim"   ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
+#Skim="SKTree_TriLepSkim"   ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
 DataPeriod="ALL"
 job_logstep=1000
 LogLevel="INFO"
 QueueOption="fastq"    #"longq"
-RunningMode="EMuMu,SRYield,SystRun" #"EMuMu,SRYield,SystRun" #"TriMu,SRYield,SystRun" #"CutOpt,EMuMu,MAWinOpt" #"EMuMu,SRYield,SystRun" #"CutOpt,EMuMu,MAWinOpt" #"TriMu,SRDist" #"EMuMu,SRDist" #"TriMu,SRDist" #"TriMu,SRYield,SystRun" #"EMuMu,SRYield,SystRun" #"TriMu,CutOpt"
+RunningMode="MuIDValid"
 
 #MCList="SignalMajor_All"
 #MCList="Signal_1e2mu"
-MCList="Signal_All"
-#MCList="Analysis_bkg"
+#MCList="Signal_All"
+MCList="CR_MuMu50_fast"
 #MCList="MajorFakeSource"
 
 ########################################################################

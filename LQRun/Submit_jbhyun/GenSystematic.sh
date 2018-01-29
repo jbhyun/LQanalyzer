@@ -10,25 +10,24 @@ runSignal="True"
 ########################################################################
 ## RUN PARAMETERS
 
-AnalysisCode="Aug2017_TriLepSR" 
-#Stream="SingleElectron"
-Stream="MuonEG"
-#Stream="DoubleMuon"
-#Stream="DoubleEG"
-#Skim="SKTree_LeptonSkim"  ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
-#Skim="SKTree_DiLepSkim"   ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
-Skim="SKTree_TriLepSkim"   ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
+AnalysisCode="Nov2017_GenPDFQ2Syst" #"Oct2017_GenSystRWSumCalc"
+Stream="DoubleMuon"
+#Skim="FLATCAT"  ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
+Skim="SKTree_TriLepSkim"  ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
 DataPeriod="ALL"
 job_logstep=1000
 LogLevel="INFO"
 QueueOption="fastq"    #"longq"
-RunningMode="EMuMu,SRYield,SystRun" #"EMuMu,SRYield,SystRun" #"TriMu,SRYield,SystRun" #"CutOpt,EMuMu,MAWinOpt" #"EMuMu,SRYield,SystRun" #"CutOpt,EMuMu,MAWinOpt" #"TriMu,SRDist" #"EMuMu,SRDist" #"TriMu,SRDist" #"TriMu,SRYield,SystRun" #"EMuMu,SRYield,SystRun" #"TriMu,CutOpt"
+RunningMode="MultiLep,GenFilterBias"
+#"PDFQ2Syst,MultiLep" #"TopPtCheck" #"MultiLep,LOvsNLOBias"
 
+#MCList="TopPtMeasSample_Sig"
+#MCList="TopPtMeasSample_SM"
 #MCList="SignalMajor_All"
-#MCList="Signal_1e2mu"
-MCList="Signal_All"
+MCList="SignalMajor_Old"
 #MCList="Analysis_bkg"
-#MCList="MajorFakeSource"
+#MCList="GenSystAnaTargetBkg"
+
 
 ########################################################################
 ## OUTPUT PATH CONFIG

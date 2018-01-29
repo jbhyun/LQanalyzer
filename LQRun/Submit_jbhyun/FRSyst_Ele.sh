@@ -2,8 +2,8 @@
 
 ########################################################################
 ## MC / DATA
-runMC=true
-runData=false
+runMC=false
+runData=true
 
 
 ########################################################################
@@ -11,27 +11,27 @@ runData=false
 
 AnalysisCode="Oct2017_EleFRSyst"
 #Stream="SingleElectron"
-#Stream="MuonEG"
+Stream="MuonEG"
 #Stream="DoubleMuon"
-Stream="DoubleEG"
-runFake="False"
-Skim="SKTree_LeptonSkim"  ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
+#Stream="DoubleEG"
+runFake="True"
+#Skim="SKTree_LeptonSkim"  ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
 #Skim="SKTree_DiLepSkim"   ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
-#Skim="SKTree_TriLepSkim"   ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
+Skim="SKTree_TriLepSkim"   ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
 DataPeriod="ALL"
 job_logstep=1000
 LogLevel="INFO"
 QueueOption="fastq"    #"longq"
-RunningMode="EleFRSyst,SiglPreTrig" #"Closure,SystRun" #"EleFRSyst,SiglPreTrig"
+RunningMode="Closure,SystRun" #"EleFRSyst,SiglPreTrig"
 
 #MCList="TT"
 #MCList="DY"
 #MCList="CR_EE_fast"
 #MCList="FR_Prompt"
-MCList="UnRun"
+#MCList="UnRun"
 #MCList="QCD_BCToE" #"QCD_EM" #"QCD_BCToE" #"QCD_EM" #"FakeMeasRegSample"
 #MCList="SignalMajor_All"
-#MCList="Analysis_bkg"
+MCList="Analysis_bkg"
 
 ########################################################################
 ## OUTPUT PATH CONFIG

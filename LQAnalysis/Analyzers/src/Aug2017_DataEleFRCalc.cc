@@ -560,8 +560,15 @@ void Aug2017_DataEleFRCalc::ExecuteEvents()throw( LQError ){
      float PtEdges[NPtEdges]={0., 25., 35., 50., 70., 100.};
 
      if(SiglWP){
+//       MeasureFakeRate(electronPreColl, muonLooseColl, jetNoVetoColl, bjetNoVetoColl, met, met*cos(metphi), met*sin(metphi), weight, NPtEdges, PtEdges,
+//            "LMVA06Isop4IPp025p05sig4", "POGWP90Isop06IPp025p05sig4", "_WP90Isop06_L928676Isop4", "SiglPreTrig");
+
        MeasureFakeRate(electronPreColl, muonLooseColl, jetNoVetoColl, bjetNoVetoColl, met, met*cos(metphi), met*sin(metphi), weight, NPtEdges, PtEdges,
-            "LMVA06Isop4IPp025p05sig4", "POGWP90Isop06IPp025p05sig4", "_WP90Isop06_L928676Isop4", "SiglPreTrig");
+            "LMVA767271Isop4IPp05p1sig4", "POGWP90Isop06IPp05p1sig4", "_WP90Isop06IPp05p1sig4_L767271Isop4", "SiglPreTrig");
+
+       MeasureFakeRate(electronPreColl, muonLooseColl, jetNoVetoColl, bjetNoVetoColl, met, met*cos(metphi), met*sin(metphi), weight, NPtEdges, PtEdges,
+            "LMVA928881Isop4IPp05p1sig4", "POGWP90Isop06IPp05p1sig4", "_WP90Isop06IPp05p1sig4_L928881Isop4", "SiglPreTrig");
+
 
      }
      if(FRScan){

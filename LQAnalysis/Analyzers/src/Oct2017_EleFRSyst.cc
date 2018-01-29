@@ -3037,38 +3037,39 @@ float Oct2017_EleFRSyst::FakeRateData(snu::KElectron Ele, TString Option){
 
     if(Syst_FR && SystDir<0){
       if(fEta<0.8){
-        if     (PTCorr<35)   FR*=(1.- 0.0791571 );
-        else if(PTCorr<50)   FR*=(1.- 0.391781  );
-        else                 FR*=(1.- 0.477299  );
+        if     (PTCorr<35)   FR*=(1.- 0.077764 );
+        else if(PTCorr<50)   FR*=(1.- 0.400603 );
+        else                 FR*=(1.- 0.51524  );
       }
       else if(fEta<1.479){
-        if     (PTCorr<35)   FR*=(1.- 0.160179  );
-        else if(PTCorr<50)   FR*=(1.- 0.510462  );
-        else                 FR*=(1.- 0.23345   );
+        if     (PTCorr<35)   FR*=(1.- 0.169421 );
+        else if(PTCorr<50)   FR*=(1.- 0.424976 );
+        else                 FR*=(1.- 0.256287 );
       }
       else{
-        if     (PTCorr<35)   FR*=(1.- 0.0610817 );
-        else if(PTCorr<50)   FR*=(1.- 0.112503  );
-        else                 FR*=(1.- 0.114225  );
+        if     (PTCorr<35)   FR*=(1.- 0.0561248 );
+        else if(PTCorr<50)   FR*=(1.- 0.103     );
+        else                 FR*=(1.- 0.111331  );
       }
     }
     else if(Syst_FR && SystDir>0){
       if(fEta<0.8){
-        if     (PTCorr<35)   FR*=(1.+ 0.122614 );
-        else if(PTCorr<50)   FR*=(1.+ 0.190562 );
-        else                 FR*=(1.+ 0.282318 );
+        if     (PTCorr<35)   FR*=(1.+ 0.109443 );
+        else if(PTCorr<50)   FR*=(1.+ 0.202818 );
+        else                 FR*=(1.+ 0.374888 );
       }
       else if(fEta<1.479){
-        if     (PTCorr<35)   FR*=(1.+ 0.10469  );
-        else if(PTCorr<50)   FR*=(1.+ 0.137677 );
-        else                 FR*=(1.+ 0.208225 );
+        if     (PTCorr<35)   FR*=(1.+ 0.0973585 );
+        else if(PTCorr<50)   FR*=(1.+ 0.148029  );
+        else                 FR*=(1.+ 0.246644  );
       }
       else{
-        if     (PTCorr<35)   FR*=(1.+ 0.156983  );
-        else if(PTCorr<50)   FR*=(1.+ 0.0675837 );
-        else                 FR*=(1.+ 0.05555   );
+        if     (PTCorr<35)   FR*=(1.+ 0.161426  );
+        else if(PTCorr<50)   FR*=(1.+ 0.0707937 );
+        else                 FR*=(1.+ 0.0566853 );
       }
     }
+
   }
   else if(Option.Contains("QCD_POGWP90Isop06IPp025p05sig4_LMVA06v1Isop4IPp5p1_ConeSUSY")){
     if(fEta<0.8){

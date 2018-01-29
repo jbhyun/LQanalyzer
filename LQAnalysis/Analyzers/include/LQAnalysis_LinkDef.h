@@ -25,6 +25,14 @@
 
 //#endif // __CINT__
 //Jihwan Bhyun Modification///////////
+#pragma link C++ class Jan2018_ForEGMSlot+;
+#pragma link C++ class Jan2018_EleIPQuickCheck+;
+#pragma link C++ class Dec2017_EMuTrigEff+;
+#pragma link C++ class Dec2017_MuonSFValid+;
+#pragma link C++ class Dec2017_TriLepSR+;
+#pragma link C++ class Oct2017_AccTable+;
+#pragma link C++ class Nov2017_GenPDFQ2Syst+;
+#pragma link C++ class Oct2017_GenSystRWSumCalc+;
 #pragma link C++ class Oct2017_MuFRSyst+;
 #pragma link C++ class Oct2017_EleFRSyst+;
 #pragma link C++ class Aug2017_MuIDChoice+;

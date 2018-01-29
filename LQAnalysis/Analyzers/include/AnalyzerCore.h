@@ -469,7 +469,7 @@ class AnalyzerCore : public LQCycleBase {
   int  GenMatchedIdx(snu::KTruth T, std::vector<snu::KMuon>& MuonColl);
   int  GenMatchedIdx(snu::KTruth T, std::vector<snu::KElectron>& ElectronColl);
   int  GenMatchedIdx(snu::KTruth T, std::vector<snu::KJet>& JetColl);
-  bool GenDecayInfo(std::vector<snu::KTruth>& truthColl, TString Decaymode);
+  bool GenDecayInfo(std::vector<snu::KTruth>& TruthColl, TString Option);
   int  GetGenMatchedSigIndex(std::vector<snu::KTruth>& truthColl, std::vector<snu::KMuon>& muonColl, std::vector<snu::KElectron>& electronColl, std::vector<snu::KJet>& jetColl, TString PtlName, float weight);
 
   int  NPromptLeptons(std::vector<snu::KTruth>& truthColl, TString Option="");
@@ -504,5 +504,11 @@ class AnalyzerCore : public LQCycleBase {
 
   bool HasStrangeEleCand(std::vector<snu::KElectron> EleColl);
   bool CouldBeStrangeEleCand(snu::KElectron Ele);
+
+  float GenSystNorm_PDF    (TString SampleName, int IdxPDF    );
+  float GenSystNorm_Q2Scale(TString SampleName, int IdxQ2Scale);
+
+  int GetSigGenPtlIdx(vector<snu::KTruth>& TruthColl, TString PtlName);
+
 };
 #endif
