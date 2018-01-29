@@ -123,6 +123,7 @@ map<int, int> AnalyzerCore::CheckEventComparisonList(TString user, TString label
     map<int, int> list1;
     map<int, int> list2;
 
+    cout << "CheckEventComparisonList " <<  "/data1/LQAnalyzer_rootfiles_for_analysis/EventComparisons/"+  user+"/" + label + ".txt" << endl;
     if(1){
       ifstream comp(( "/data1/LQAnalyzer_rootfiles_for_analysis/EventComparisons/"+  user+"/" + label + ".txt"));
       if(!comp) {
@@ -147,7 +148,6 @@ map<int, int> AnalyzerCore::CheckEventComparisonList(TString user, TString label
 	is >> met;
 	is >> tmp;
 	if(blank2!=user) break;
-	
 	list1[ev] =run;
 	continue;
       }
@@ -176,7 +176,6 @@ map<int, int> AnalyzerCore::CheckEventComparisonList(TString user, TString label
 	is >> met;
 	is >> tmp;
 	if(blank2!=user) break;
-	
 	list2[ev] =run;
 	continue;
       }
@@ -187,7 +186,10 @@ map<int, int> AnalyzerCore::CheckEventComparisonList(TString user, TString label
       for(map<int,int>::iterator mit2 = list2.begin(); mit2 != list2.end(); mit2++){
 	if(mit2->first == mit->first && mit2->second==mit2->second) found=true;
       }
-      if(found) diffmap[mit->first] = mit->second;
+      if(!found) {
+
+	diffmap[mit->first] = mit->second;
+      }
     }
 
 
@@ -353,6 +355,21 @@ void AnalyzerCore::setTDRStyle() {
 
 }
 
+float AnalyzerCore::GetConvWeight(snu::KMuon mu){
+
+  if(mu.Pt() < 10) return  0.460224;
+  else if(mu.Pt() < 15) return 0.476428;
+  else if(mu.Pt() < 20) return 0.531144;
+  else if(mu.Pt() < 25) return 0.57826;
+  else if(mu.Pt() < 30) return 0.591419;
+  else if(mu.Pt() < 35) return 0.64385;
+  else if(mu.Pt() < 45) return 0.641256;
+  else if(mu.Pt() < 60) return 0.724696;
+  else if(mu.Pt() < 100) return 0.727273;
+  else return 0.730769;
+
+}
+
 void AnalyzerCore::SetupLuminosityMap(bool initialsetup, TString forceperiod){
   if(isData) return ;
 
@@ -431,18 +448,18 @@ float AnalyzerCore::MC_CR_Correction(int syst){
 
   ///  updated 2 Oct
 
-  if(k_sample_name.Contains("WZTo3LNu_powheg")) return 0.974439  + fsyst*0.061763;
-  if(k_sample_name.Contains("ZGto2LG")) return  0.822969 + fsyst*0.141269;
+  if(k_sample_name.Contains("WZTo3LNu_powheg")) return 0.988021 +  fsyst*0.0652167;
+  if(k_sample_name.Contains("ZGto2LG")) return  0.83069 + fsyst*0.174719;
   if(k_sample_name.Contains("WGtoLNuG")) return 1.;
-  if(k_sample_name.Contains("ZZTo4L_powheg")) return 0.922148 + fsyst*0.0859548;
-  if(k_sample_name.Contains("ggZZto2e2mu")) return 0.922148 + fsyst*0.0859548;
-  if(k_sample_name.Contains("ggZZto2e2nu")) return 0.922148 + fsyst*0.0859548;
-  if(k_sample_name.Contains("ggZZto2e2tau")) return 0.922148 + fsyst*0.0859548;
-  if(k_sample_name.Contains("ggZZto2mu2nu")) return 0.922148 + fsyst*0.0859548;
-  if(k_sample_name.Contains("ggZZto2mu2tau")) return 0.922148 + fsyst*0.0859548;
-  if(k_sample_name.Contains("ggZZto4e")) return 0.922148 + fsyst*0.0859548;
-  if(k_sample_name.Contains("ggZZto4mu")) return 0.922148 + fsyst*0.0859548;
-  if(k_sample_name.Contains("ggZZto4tau")) return 0.922148 + fsyst*0.0859548;
+  if(k_sample_name.Contains("ZZTo4L_powheg")) return 0.94117 + fsyst*0.105665;
+  if(k_sample_name.Contains("ggZZto2e2mu")) return 0.94117 + fsyst*0.105665;
+  if(k_sample_name.Contains("ggZZto2e2nu")) return 0.94117 + fsyst*0.105665;
+  if(k_sample_name.Contains("ggZZto2e2tau")) return 0.94117 + fsyst*0.105665;
+  if(k_sample_name.Contains("ggZZto2mu2nu")) return 0.94117 + fsyst*0.105665;
+  if(k_sample_name.Contains("ggZZto2mu2tau")) return 0.94117 + fsyst*0.105665;
+  if(k_sample_name.Contains("ggZZto4e")) return 0.94117 + fsyst*0.105665;
+  if(k_sample_name.Contains("ggZZto4mu")) return 0.94117 + fsyst*0.105665;
+  if(k_sample_name.Contains("ggZZto4tau")) return 0.94117 + fsyst*0.105665;
   
   return 1.;
 }
@@ -521,6 +538,52 @@ void  AnalyzerCore::CorrectedMETRochester( std::vector<snu::KMuon> muall){
 
   return;
 }   
+void  AnalyzerCore::CorrectedMETJMR( std::vector<snu::KFatJet>  fjetall, std::vector<snu::KJet>  jetall){
+
+  /// function returns corrected met + can be used to set event met to corrected met                                                                                                                                          
+
+  float met_x =eventbase->GetEvent().PFMETx();
+  float met_y =eventbase->GetEvent().PFMETy();
+
+  float px_orig(0.), py_orig(0.),px_corrected(0.), py_corrected(0.);
+  float px_orig_ak4(0.), py_orig_ak4(0.),px_corrected_ak4(0.), py_corrected_ak4(0.);
+  for(unsigned int ij=0; ij < fjetall.size() ; ij++){
+
+    px_orig+=  fjetall.at(ij).MiniAODPt()*TMath::Cos( fjetall.at(ij).Phi());
+    py_orig+=  fjetall.at(ij).MiniAODPt()*TMath::Sin( fjetall.at(ij).Phi());
+    px_corrected += fjetall.at(ij).Px();
+    py_corrected += fjetall.at(ij).Py();
+    
+  }
+  
+  for(unsigned int ij=0; ij < jetall.size() ; ij++){
+    for(unsigned int fij=0; fij < fjetall.size() ; fij++){
+      if (jetall[ij].DeltaR(fjetall[fij]) < 0.8){
+	px_orig_ak4+=  (jetall.at(ij).Pt()/jetall.at(ij).SmearedRes())*TMath::Cos( jetall.at(ij).Phi());
+	py_orig_ak4+=  (jetall.at(ij).Pt()/jetall.at(ij).SmearedRes())*TMath::Sin( jetall.at(ij).Phi());
+	px_corrected_ak4 += jetall.at(ij).Px();
+	py_corrected_ak4 += jetall.at(ij).Py();
+      }
+    }
+  }
+
+  if(!eventbase->GetEvent().PropagatedJMRToMET()){
+    met_x = met_x + px_orig - px_corrected - px_orig_ak4 + px_corrected_ak4;
+    met_y = met_y + py_orig - py_corrected - py_orig_ak4 + py_corrected_ak4;
+  }
+  
+  
+  if(!eventbase->GetEvent().PropagatedRochesterToMET()){
+    snu::KEvent tempev = eventbase->GetEvent();
+    tempev.SetMET(snu::KEvent::pfmet,  sqrt(met_x*met_x + met_y*met_y), TMath::ATan2(met_y,met_x), eventbase->GetEvent().SumET());
+    tempev.SetPFMETx(met_x);
+    tempev.SetPFMETy(met_y);
+    tempev.SetPropagatedJMRToMET(true);
+    eventbase->SetEventBase(tempev);
+  }
+
+  return;
+}
 
 
 
@@ -595,8 +658,7 @@ void  AnalyzerCore::CorrectedMETMuon( int sys, std::vector<snu::KMuon> muall,   
 
 
 
-void  AnalyzerCore::CorrectedMETJES(int sys, vector<snu::KJet> jetall, double& OrignialMET, double& OriginalMETPhi){
-
+void  AnalyzerCore::CorrectedMETJES(int sys, vector<snu::KJet> jetall, vector<snu::KFatJet> fjetall,  double& OrignialMET, double& OriginalMETPhi){
 
   if(sys==0) return;
 
@@ -622,6 +684,25 @@ void  AnalyzerCore::CorrectedMETJES(int sys, vector<snu::KJet> jetall, double& O
     }
 
   }
+  for(unsigned int ij=0; ij < fjetall.size() ; ij++){
+
+
+    px_orig+= fjetall.at(ij).Px();
+    py_orig+= fjetall.at(ij).Py();
+    if(sys==1){
+
+      px_shifted += fjetall.at(ij).Px()*fjetall.at(ij).ScaledUpEnergy();
+      py_shifted += fjetall.at(ij).Py()*fjetall.at(ij).ScaledUpEnergy();
+
+    }
+    if(sys==-1){
+      px_shifted += jetall.at(ij).Px()*fjetall.at(ij).ScaledDownEnergy();
+      py_shifted += jetall.at(ij).Py()*fjetall.at(ij).ScaledDownEnergy();
+
+    }
+
+  }
+
   met_x = met_x + px_orig - px_shifted;
   met_y = met_y + py_orig - py_shifted;
 
@@ -632,7 +713,46 @@ void  AnalyzerCore::CorrectedMETJES(int sys, vector<snu::KJet> jetall, double& O
 }
 
 
-void AnalyzerCore::CorrectedMETJER(int sys, vector<snu::KJet> jetall, double& OrignialMET, double& OriginalMETPhi){
+
+void  AnalyzerCore::CorrectedMETJMS(int sys, vector<snu::KFatJet> fjetall,  double& OrignialMET, double& OriginalMETPhi){
+
+  if(sys==0) return;
+
+  float met_x =eventbase->GetEvent().PFMETx();
+  float met_y =eventbase->GetEvent().PFMETy();
+
+  float px_orig(0.), py_orig(0.),px_shifted(0.), py_shifted(0.);
+  for(unsigned int ij=0; ij < fjetall.size() ; ij++){
+
+
+    px_orig+= fjetall.at(ij).Px();
+    py_orig+= fjetall.at(ij).Py();
+    if(sys==1){
+
+      px_shifted += fjetall.at(ij).Px()*fjetall.at(ij).ScaledMassUp();
+      py_shifted += fjetall.at(ij).Py()*fjetall.at(ij).ScaledMassUp();
+
+    }
+    if(sys==-1){
+      px_shifted += fjetall.at(ij).Px()*fjetall.at(ij).ScaledMassDown();
+      py_shifted += fjetall.at(ij).Py()*fjetall.at(ij).ScaledMassDown();
+
+    }
+
+  }
+
+  met_x = met_x + px_orig - px_shifted;
+  met_y = met_y + py_orig - py_shifted;
+
+  OrignialMET =  sqrt(met_x*met_x + met_y*met_y);
+  OriginalMETPhi = TMath::ATan2(met_y,met_x);
+
+
+}
+
+
+
+void AnalyzerCore::CorrectedMETJER(int sys, vector<snu::KJet> jetall, vector<snu::KFatJet> fjetall,   double& OrignialMET, double& OriginalMETPhi){
 
 
   float met_x =eventbase->GetEvent().PFMETx();
@@ -656,6 +776,22 @@ void AnalyzerCore::CorrectedMETJER(int sys, vector<snu::KJet> jetall, double& Or
     }
     
   }
+  for(unsigned int ij=0; ij < fjetall.size() ; ij++){
+
+
+    px_orig+= fjetall.at(ij).Px();
+    py_orig+= fjetall.at(ij).Py();
+    if(sys==1){
+      px_shifted += fjetall.at(ij).Px()*(fjetall.at(ij).SmearedResUp()/ fjetall.at(ij).SmearedRes());
+      py_shifted += fjetall.at(ij).Py()*(fjetall.at(ij).SmearedResUp()/fjetall.at(ij).SmearedRes());
+    }
+    if(sys==-1){
+      px_shifted += fjetall.at(ij).Px()*(fjetall.at(ij).SmearedResDown()/fjetall.at(ij).SmearedRes());
+      py_shifted += fjetall.at(ij).Py()*(fjetall.at(ij).SmearedResDown()/fjetall.at(ij).SmearedRes());
+    }
+  }
+
+
   met_x = met_x + px_orig - px_shifted;
   met_y = met_y + py_orig - py_shifted;
 
@@ -666,6 +802,88 @@ void AnalyzerCore::CorrectedMETJER(int sys, vector<snu::KJet> jetall, double& Or
 
 }
 
+
+void AnalyzerCore::CorrectedMETJMR(int sys, vector<snu::KFatJet> fjetall,   double& OrignialMET, double& OriginalMETPhi){
+
+
+  float met_x =eventbase->GetEvent().PFMETx();
+  float met_y =eventbase->GetEvent().PFMETy();
+
+  float px_orig(0.), py_orig(0.),px_shifted(0.), py_shifted(0.);
+  for(unsigned int ij=0; ij < fjetall.size() ; ij++){
+
+
+    px_orig+= fjetall.at(ij).Px();
+    py_orig+= fjetall.at(ij).Py();
+    if(sys==1){
+      px_shifted += fjetall.at(ij).Px()*(fjetall.at(ij).SmearedMassResUp());
+      py_shifted += fjetall.at(ij).Py()*(fjetall.at(ij).SmearedMassResUp());
+    }
+    if(sys==-1){
+      px_shifted += fjetall.at(ij).Px()*(fjetall.at(ij).SmearedMassResDown());
+      py_shifted += fjetall.at(ij).Py()*(fjetall.at(ij).SmearedMassResDown());
+    }
+  }
+  
+  
+  met_x = met_x + px_orig - px_shifted;
+  met_y = met_y + py_orig - py_shifted;
+
+
+  OrignialMET =  sqrt(met_x*met_x + met_y*met_y);
+  OriginalMETPhi = TMath::ATan2(met_y,met_x);
+
+
+}
+
+
+
+
+float AnalyzerCore::GetFatJetSF(snu::KFatJet fjet, float tau21cut, int sys){
+  
+  float fsys = -1;
+  if(sys > 0) fsys =1;
+  if(sys==0) fsys=0.;
+  if(tau21cut == 0.45){
+    if((fjet.Tau2()/fjet.Tau1())  < 0.45)     return 0.88 + fsys*0.1;
+    else return 1.;
+  }
+  if(tau21cut == 0.6){
+    if((fjet.Tau2()/fjet.Tau1()) < 0.6)     return 1.11 + fsys*0.08;
+    else return 1.;
+  }
+  else return 1.;
+  
+}
+
+
+vector<snu::KFatJet>  AnalyzerCore::GetCorrectedFatJet(vector<snu::KFatJet>   fjets){
+
+  vector<snu::KFatJet>  corr_fatjets;
+  
+  for(unsigned int ifj=0; ifj < fjets.size(); ifj++){
+    snu::KFatJet fjet = fjets[ifj];
+    float L1corr = fjet.L1JetCorr();
+    
+    TLorentzVector v;
+    v.SetPtEtaPhiM(fjet.Pt(), fjet.Eta(), fjet.Phi(), fjet.M());
+    
+    if(L1corr==0.) L1corr = 0.95;
+    /// remove L1 correction (only L2L3 used)
+    v=v* (1./L1corr);
+    
+    /// smear mass with JMR central
+    v=v*fjet.SmearedRes();
+    fjet.SetPrunedMass(fjet.PrunedMass() * fjet.SmearedMassRes()/L1corr);
+    snu::KFatJet fjet_corr(fjet);
+    if(fjet_corr.MiniAODPt() <0)fjet_corr.SetMiniAODPt(fjet_corr.Pt());
+    fjet_corr.SetPtEtaPhiM(v.Pt(), v.Eta(), v.Phi(), v.M());
+    
+    corr_fatjets.push_back(fjet_corr);
+  }
+
+  return corr_fatjets;
+}
 
 snu::KJet AnalyzerCore::GetCorrectedJetCloseToLepton(snu::KElectron el, snu::KJet jet, bool usem){
   //jet_LepAwareJECv2 = (raw_jet * L1 - lepton) * L2L3Res + lepton
@@ -1434,10 +1652,102 @@ float AnalyzerCore::GetDiLepMass(std::vector<snu::KMuon> muons){
   return p.M();
 }
 
-float AnalyzerCore::GetMasses(TString svariable, std::vector<snu::KMuon> muons, std::vector<snu::KJet> jets, vector<int> ijets, bool lowmass){
+
+
+float AnalyzerCore::GetMasses(TString svariable, std::vector<snu::KElectron> electrons, std::vector<snu::KJet> jets,  std::vector<snu::KFatJet> fatjets, vector<int> ijets, bool lowmass){
+  if(electrons.size() != 2) return 0.;
+
+
+  // variable 1 = lljj                                                                                                                                                               
+  // variable 2 = l1jj                                                                                                                                                               
+  // variable 3 = l2jj                                                                                                                                                               
+  // variable 4 = llj                                                                                                                                                                
+  // variable 5 = jj                                                                                                                                                                 
+  // variable 6 = contra JJ mass                                                                                                                                                     
+
+  int variable (-1);
+  if(svariable == "lljj") variable = 1;
+  else if(svariable == "l1jj") variable = 2;
+  else if(svariable == "l2jj") variable = 3;
+  else if(svariable == "llj") variable = 4;
+  else if(svariable == "l1j") variable = 7;
+  else if(svariable == "l2j") variable = 8;
+  else if(svariable == "jj") variable = 5;
+  else if(svariable == "contMT") variable = 6;
+  else if(svariable == "llfj") variable = -1;
+  else if(svariable == "l1fj") variable = -2;
+  else if(svariable == "l2fj") variable = -3;
+  else if(svariable == "fj") variable = -4;
+  else return -999.;
+
+  snu::KFatJet fatjet;
+  float dMFatJet=9999.;
+  for(UInt_t emme=0; emme<fatjets.size(); emme++){
+    if(fabs(fatjets[emme].PrunedMass() -  80.4) < dMFatJet){
+      dMFatJet=fatjets[emme].PrunedMass();
+      fatjet=fatjets[emme];
+    }
+  }
+  fatjet.SetPtEtaPhiM(fatjet.Pt(), fatjet.E(), fatjet.Phi(), fatjet.PrunedMass());
+  if(variable==-1) return (electrons[0] + electrons[1] + fatjet).M();
+  if(variable==-2) return (electrons[0] + fatjet).M();
+  if(variable==-3) return (electrons[1] + fatjet).M();
+  if(variable==-4) return fatjet.PrunedMass();
+
+  if(jets.size() == 1){
+    if(variable==4) return (electrons[0] + electrons[1] + jets[0]).M();
+    if(variable==7) return (electrons[0]  + jets[0]).M();
+    if(variable==8) return (electrons[1] + jets[0]).M();
+
+  }
+  if(jets.size() < 2) return -999.;
+
+
+  float dijetmass_tmp=999.;
+  float dijetmass=9990000.;
+  int m=-999;
+  int n=-999;
+  for(UInt_t emme=0; emme<jets.size(); emme++){
+    for(UInt_t enne=1; enne<jets.size(); enne++) {
+      if(emme == enne) continue;
+      if(lowmass)   dijetmass_tmp = (jets[emme]+jets[enne]+electrons[0] + electrons[1]).M();
+      else dijetmass_tmp = (jets[emme]+jets[enne]).M();
+      if ( fabs(dijetmass_tmp-80.4) < fabs(dijetmass-80.4) ) {
+        dijetmass = dijetmass_tmp;
+        m = emme;
+        n = enne;
+      }
+    }
+  }
+
+  if(ijets.size() ==2){
+    if(ijets[0] != 0){
+      ijets.push_back(m);
+      ijets.push_back(n);
+    }
+  }
+
+  if(variable==1) return (electrons[0] + electrons[1] + jets[m]+jets[n]).M();
+  if(variable==2) return (electrons[0]  + jets[m]+jets[n]).M();
+  if(variable==3) return (electrons[1] + jets[m]+jets[n]).M();
+  if(variable==5) return (jets[m]+jets[n]).M();
+  if(variable==6) {
+    float dPhi = fabs(TVector2::Phi_mpi_pi(jets[m].Phi() - jets[n].Phi()));
+    float contramass=2*jets[m].Pt()*jets[n].Pt()*(1+cos(dPhi));
+    contramass=sqrt(contramass);
+    return contramass;
+  }
+
+  return 0.;
+
+
+
+}
+
+float AnalyzerCore::GetMasses(TString svariable, std::vector<snu::KMuon> muons, std::vector<snu::KJet> jets,  std::vector<snu::KFatJet> fatjets, vector<int> ijets, bool lowmass){
   
   if(muons.size() != 2) return 0.;
-  if(jets.size() == 0) return 0.;
+
 
   // variable 1 = lljj
   // variable 2 = l1jj
@@ -1451,12 +1761,36 @@ float AnalyzerCore::GetMasses(TString svariable, std::vector<snu::KMuon> muons, 
   else if(svariable == "l1jj") variable = 2;
   else if(svariable == "l2jj") variable = 3;
   else if(svariable == "llj") variable = 4;
+  else if(svariable == "l1j") variable = 7;
+  else if(svariable == "l2j") variable = 8;
   else if(svariable == "jj") variable = 5;
   else if(svariable == "contMT") variable = 6;
+  else if(svariable == "llfj") variable = -1;
+  else if(svariable == "l1fj") variable = -2;
+  else if(svariable == "l2fj") variable = -3;
+  else if(svariable == "fj") variable = -4;
   else return -999.;
 
-  if(variable==4) return (muons[0] + muons[1] + jets[0]).M();
+  snu::KFatJet fatjet;
+  float dMFatJet=9999.;
+  for(UInt_t emme=0; emme<fatjets.size(); emme++){
+    if(fabs(fatjets[emme].PrunedMass() -  80.4) < dMFatJet){
+      dMFatJet=fatjets[emme].PrunedMass();
+      fatjet=fatjets[emme];
+    }
+  }
 
+  if(variable==-1) return (muons[0] + muons[1] + fatjet).M();
+  if(variable==-2) return (muons[0] + fatjet).M();
+  if(variable==-3) return (muons[1] + fatjet).M();
+  if(variable==-4) return fatjet.PrunedMass();
+
+  if(jets.size() == 1){
+    if(variable==4) return (muons[0] + muons[1] + jets[0]).M();
+    if(variable==7) return (muons[0]  + jets[0]).M();
+    if(variable==8) return (muons[1] + jets[0]).M();
+    
+  }
   if(jets.size() < 2) return -999.;
 
 
@@ -2434,9 +2768,15 @@ int AnalyzerCore::AssignnNumberOfTruth(){
 
 
 bool AnalyzerCore::IsSignal(){
-  
+
+  if(isData) return false;
   if(k_sample_name.Contains("Majornana")) return true;
-  if(k_sample_name.Contains("HN")) return true;
+  if(k_sample_name.Contains("Tchannel")) return true;
+  if(k_sample_name.Contains("HNE")) return true;
+  if(k_sample_name.Contains("HNM")) return true;
+  if(k_sample_name.Contains("HNDilepton"))  return false;
+  if(k_sample_name.Contains("MM")) return true;
+  
   return false;
 }
 
@@ -2519,6 +2859,60 @@ bool AnalyzerCore::ISCF(snu::KElectron el){
   if(el.GetType() == 21)return true;
   return false;
 }
+
+bool AnalyzerCore::IsInternalConversion(snu::KMuon mu){
+
+  if(isData) return false;
+
+  bool conv=false;
+  std::vector<snu::KTruth> truthColl= eventbase->GetTruth();
+
+  if(GetLeptonType(mu,truthColl )== 4 ||  GetLeptonType(mu,truthColl )==  5) {
+    int tr_index= mu.MCTruthIndex();
+    while(fabs(eventbase->GetTruth().at(tr_index).PdgId()) == 13 || fabs(eventbase->GetTruth().at(tr_index).PdgId()) == 22){
+      tr_index = eventbase->GetTruth().at(tr_index).IndexMother();
+    }
+    if(fabs(eventbase->GetTruth().at(tr_index).PdgId()) == 23 || fabs(eventbase->GetTruth().at(tr_index).PdgId()) == 24 || fabs(eventbase->GetTruth().at(tr_index).PdgId()) == 15) conv=true;
+  }
+  
+  return conv;
+
+}
+
+bool AnalyzerCore::IsInternalConversion(snu::KElectron el){
+
+  if(isData) return false;
+  std::vector<snu::KTruth> truthColl= eventbase->GetTruth();
+
+  bool conv=false;
+  if(GetLeptonType(el,truthColl )== 4 ||  GetLeptonType(el,truthColl )==  5) {
+    int tr_index= el.MCTruthIndex();
+    while(fabs(eventbase->GetTruth().at(tr_index).PdgId()) == 11 || fabs(eventbase->GetTruth().at(tr_index).PdgId()) == 22){
+      tr_index = eventbase->GetTruth().at(tr_index).IndexMother();
+    }
+    if(fabs(eventbase->GetTruth().at(tr_index).PdgId()) == 23 || fabs(eventbase->GetTruth().at(tr_index).PdgId()) == 24 || fabs(eventbase->GetTruth().at(tr_index).PdgId()) == 15) conv=true;
+  }
+
+  return conv;
+
+}
+
+bool AnalyzerCore::IsExternalConversion(snu::KElectron el){
+
+  if(isData) return false;
+
+  std::vector<snu::KTruth> truthColl= eventbase->GetTruth();
+
+  bool conv=false;
+  if(GetLeptonType(el,truthColl )== -5 ||  GetLeptonType(el,truthColl )==  -6) {
+    conv=true;
+  }
+  if(el.GetType()==40) conv=true;
+  return conv;
+
+}
+
+
 
 bool AnalyzerCore::TruthMatched(snu::KElectron el, bool keepCF){
   bool pass=false;
@@ -2623,6 +3017,83 @@ bool AnalyzerCore::TruthMatched(snu::KMuon mu){
   return pass;
 }
 
+vector<int> AnalyzerCore::GetVirtualMassIndex(int mode, int pdgid){
+  
+  vector<int> indexZ;
+  vector<int> indexG;
+  for(unsigned int ig=0; ig < eventbase->GetTruth().size(); ig++){
+    if(eventbase->GetTruth().at(ig).IndexMother() <= 0)continue;
+    if(eventbase->GetTruth().at(ig).IndexMother() >= int(eventbase->GetTruth().size()))continue;
+    if(indexZ.size()==2&&mode==1) return indexZ;
+    if(indexZ.size()>1) continue;
+    if(fabs(eventbase->GetTruth().at(ig).PdgId()) == pdgid){
+      int index_m=eventbase->GetTruth().at(ig).IndexMother() ;
+      if(eventbase->GetTruth().at(ig).GenStatus() ==1  || eventbase->GetTruth().at(ig).GenStatus() ==23 ){
+	int daughter=ig;
+	while(fabs(eventbase->GetTruth().at(index_m).PdgId()) == pdgid){
+	  daughter=index_m;
+	  index_m=eventbase->GetTruth().at(index_m).IndexMother();
+	}
+	if(eventbase->GetTruth().at(index_m).PdgId() == 23 || fabs(eventbase->GetTruth().at(index_m).PdgId()) < 6 ){
+	  cout << "daughter = " << daughter << endl;
+	  indexZ.push_back(daughter);
+	  for(unsigned int ig2=0; ig2 < eventbase->GetTruth().size(); ig2++){
+	    if(eventbase->GetTruth().at(ig2).IndexMother() <= 0)continue;
+	    if(ig2 == daughter) continue;
+	    if(fabs(eventbase->GetTruth().at(ig2).PdgId()) == pdgid){
+	      cout << eventbase->GetTruth().at(ig2).IndexMother() << " ind " << index_m << endl;
+	      if(eventbase->GetTruth().at(ig2).IndexMother()==index_m)           indexZ.push_back(ig2);
+	    }
+	  }
+	}
+      }
+    }
+  }
+  if(mode==1) return indexZ;
+  if(indexZ.size()!=2) return indexG;
+
+  for(unsigned int ig=0; ig < eventbase->GetTruth().size(); ig++){
+  
+  if(eventbase->GetTruth().at(ig).IndexMother() <= 0)continue;
+    if(eventbase->GetTruth().at(ig).IndexMother() >= int(eventbase->GetTruth().size()))continue;
+
+    if(fabs(eventbase->GetTruth().at(ig).PdgId()) == pdgid){
+      if(indexZ[0] == ig || indexZ[1] == ig ) continue;
+      
+      if(eventbase->GetTruth().at(ig).GenStatus() ==1){
+
+	int index_m=eventbase->GetTruth().at(ig).IndexMother() ;
+	
+	while(fabs(eventbase->GetTruth().at(index_m).PdgId()) == pdgid){
+	  index_m=eventbase->GetTruth().at(index_m).IndexMother();
+	}
+	
+	for(unsigned int ig2=0; ig2 < eventbase->GetTruth().size(); ig2++){
+	  
+	  if(eventbase->GetTruth().at(ig2).IndexMother() <= 0)continue;
+	  if(eventbase->GetTruth().at(ig2).IndexMother() >= int(eventbase->GetTruth().size()))continue;
+	  if(fabs(eventbase->GetTruth().at(ig2).PdgId()) == pdgid){
+	    if(indexZ[0] == ig2 || indexZ[1] == ig2 ) continue;
+	    if(ig==ig2) continue;
+	    if(eventbase->GetTruth().at(ig2).GenStatus() ==1){
+	      int index_m2=eventbase->GetTruth().at(ig2).IndexMother() ;
+	      while(fabs(eventbase->GetTruth().at(index_m2).PdgId()) == pdgid){
+		index_m2=eventbase->GetTruth().at(index_m2).IndexMother();
+	      }
+	      if(index_m2 == index_m){
+		indexG.push_back(ig);
+		indexG.push_back(ig2);
+		return indexG;
+	      }
+	    }
+	  }
+	}
+      }
+    }
+  }
+   
+
+}
 float AnalyzerCore::GetVirtualMass(int pdg, bool includenu, bool includeph){
   if(isData) return -999.;
   vector<KTruth> es1;
@@ -2633,7 +3104,14 @@ float AnalyzerCore::GetVirtualMass(int pdg, bool includenu, bool includeph){
     
     if(fabs(eventbase->GetTruth().at(ig).PdgId()) == pdg){
       if(eventbase->GetTruth().at(ig).GenStatus() ==1){
-        es1.push_back(eventbase->GetTruth().at(ig));
+	int index_m=eventbase->GetTruth().at(ig).IndexMother() ;
+	while(fabs(eventbase->GetTruth().at(index_m).PdgId()) == pdg){
+	  index_m=eventbase->GetTruth().at(index_m).IndexMother();
+
+	}
+	if(eventbase->GetTruth().at(index_m).PdgId() == 23 || eventbase->GetTruth().at(index_m).PdgId() ==22){
+	  es1.push_back(eventbase->GetTruth().at(ig));
+	}
       }
     }
     else   if(includenu){
@@ -2654,6 +3132,8 @@ float AnalyzerCore::GetVirtualMass(int pdg, bool includenu, bool includeph){
   if(!includeph){
     if(!includenu){
       if(es1.size()==2){
+	cout << "Mother = " << eventbase->GetTruth().at(es1[0].IndexMother()).PdgId() << endl;
+
 	snu::KParticle ll = es1[0]  + es1[1];
 	return ll.M();
       }
@@ -2733,7 +3213,7 @@ void AnalyzerCore::TruthPrintOut(){
 
     }
     else{
-      cout << ig << " |  " <<  eventbase->GetTruth().at(ig).PdgId() << " |  " << eventbase->GetTruth().at(ig).GenStatus() << " |  " << eventbase->GetTruth().at(eventbase->GetTruth().at(ig).IndexMother()).PdgId()<< " |   " << eventbase->GetTruth().at(ig).Eta() << " | " <<	eventbase->GetTruth().at(ig).Pt() << " | " << eventbase->GetTruth().at(ig).Phi()<< " |   " << eventbase->GetTruth().at(ig).IndexMother()  << " " << eventbase->GetTruth().at(ig).ReadStatusFlag(7) <<  endl;
+      cout << ig << " |  " <<  eventbase->GetTruth().at(ig).PdgId() << " |  " << eventbase->GetTruth().at(ig).GenStatus() << " |  " << eventbase->GetTruth().at(eventbase->GetTruth().at(ig).IndexMother()).PdgId()<< " |   " << eventbase->GetTruth().at(ig).Eta() << " | " <<	eventbase->GetTruth().at(ig).Pt() << " | " << eventbase->GetTruth().at(ig).Phi()<< " |   " << eventbase->GetTruth().at(ig).IndexMother()  << " " << eventbase->GetTruth().at(ig).ReadStatusFlag(7) <<  " " <<  eventbase->GetTruth().at(ig).M() <<endl;
     }
   }
 
@@ -3067,10 +3547,11 @@ void AnalyzerCore::MakeHistograms(TString hname, int nbins, float xmin, float xm
 }
 
 
-void AnalyzerCore::MakeHistograms2D(TString hname, int nbinsx, float xmin, float xmax, int nbinsy, float ymin, float ymax, TString label) {
+void AnalyzerCore::MakeHistograms2D(TString hname, int nbinsx, float xmin, float xmax, int nbinsy, float ymin, float ymax, TString label, TString labely) {
 
   maphist2D[hname] =  new TH2D(hname.Data(),hname.Data(),nbinsx,xmin,xmax, nbinsy,ymin,ymax);
   maphist2D[hname]->GetXaxis()->SetTitle(label);
+  maphist2D[hname]->GetYaxis()->SetTitle(labely);
 }
 
 
@@ -3080,10 +3561,11 @@ void AnalyzerCore::MakeHistograms3D(TString hname, int nbinsx, float xmin, float
   maphist3D[hname]->GetXaxis()->SetTitle(label);
 }
 
-void AnalyzerCore::MakeHistograms2D(TString hname, int nbinsx,  float xbins[], int nbinsy,  float ybins[], TString label) {
+void AnalyzerCore::MakeHistograms2D(TString hname, int nbinsx,  float xbins[], int nbinsy,  float ybins[], TString label, TString labely) {
 
   maphist2D[hname] =  new TH2D(hname.Data(),hname.Data(),nbinsx , xbins, nbinsy,ybins);
   maphist2D[hname]->GetXaxis()->SetTitle(label);
+  maphist2D[hname]->GetYaxis()->SetTitle(labely);
 }
 
 
@@ -3168,7 +3650,7 @@ void AnalyzerCore::FillHist(TString histname, float value, float w, float xmin, 
   
 }
 
-void AnalyzerCore::FillHist(TString histname, float value1, float value2, float w, float xmin, float xmax, int nbinsx, float ymin, float ymax, int nbinsy , TString label){
+void AnalyzerCore::FillHist(TString histname, float value1, float value2, float w, float xmin, float xmax, int nbinsx, float ymin, float ymax, int nbinsy , TString label, TString labely){
 
   m_logger << DEBUG << "FillHist : " << histname << LQLogger::endmsg;
   if(GetHist2D(histname)) GetHist2D(histname)->Fill(value1,value2, w);
@@ -3178,14 +3660,15 @@ void AnalyzerCore::FillHist(TString histname, float value1, float value2, float 
       exit(0);
     }
     m_logger << DEBUG << "Making the histogram" << LQLogger::endmsg;
-    MakeHistograms2D(histname, nbinsx, xmin, xmax,nbinsy, ymin, ymax , label);
+    MakeHistograms2D(histname, nbinsx, xmin, xmax,nbinsy, ymin, ymax , label, labely);
     if(GetHist2D(histname)) GetHist2D(histname)->GetXaxis()->SetTitle(label);
+    if(GetHist2D(histname)) GetHist2D(histname)->GetYaxis()->SetTitle(labely);
     if(GetHist2D(histname)) GetHist2D(histname)->Fill(value1,value2, w);
   }
 
 }
 
-void AnalyzerCore::FillHist(TString histname, float valuex, float valuey, float w, float xbins[], int nxbins, float ybins[], int nybins , TString label){
+void AnalyzerCore::FillHist(TString histname, float valuex, float valuey, float w, float xbins[], int nxbins, float ybins[], int nybins , TString label, TString labely){
   m_logger << DEBUG << "FillHist : " << histname << LQLogger::endmsg;
   if(GetHist2D(histname)) GetHist2D(histname)->Fill(valuex,valuey, w);
 
@@ -3195,7 +3678,7 @@ void AnalyzerCore::FillHist(TString histname, float valuex, float valuey, float 
       exit(0);
     }
     m_logger << DEBUG << "Making the histogram" << LQLogger::endmsg;
-    MakeHistograms2D(histname, nxbins, xbins, nybins, ybins , label);
+    MakeHistograms2D(histname, nxbins, xbins, nybins, ybins , label,labely);
     if(GetHist2D(histname)) GetHist2D(histname)->GetXaxis()->SetTitle(label);
     
     if(GetHist2D(histname)) GetHist2D(histname)->Fill(valuex, valuey, w);
@@ -3828,10 +4311,10 @@ float AnalyzerCore::GetCFweight(int syst, std::vector<snu::KElectron> electrons,
   for(int i=0; i<lep.size(); i++){
     if(apply_sf){
       if(fabs(lep.at(i).SCEta()) < 1.4442){
-        sf.push_back(0.691722 + (syst*0.691722*0.13));
+        sf.push_back(0.693589 + (syst*0.693589*0.11));
       }
       else{
-        sf.push_back(0.68301 + (syst*0.68301*0.09));
+        sf.push_back(0.684761 + (syst*0.684761*0.08));
       }
     }
     else{
@@ -3856,18 +4339,18 @@ float AnalyzerCore::GetCFRates(double el_pt, double el_eta, TString el_ID){
   double invPt = 1./el_pt;
   double a = 999., b= 999.;
   if(el_eta < 0.9){
-    if(invPt< 0.023){a=(-0.00138148); b=(4.33442e-05);}
-    else{a=(0.00101034); b=(-1.14551e-05);}
+    if(invPt< 0.023){a=(-0.001381); b=(4.334e-05);}
+    else{a=(0.001010); b=(-1.146e-05);}
   }
   else if(el_eta < 1.4442){
-    if(invPt< 0.015){a=(-0.042964); b=(0.000866971);}
-    else if(invPt< 0.023){a=(-0.0152852); b=(0.000452217);}
-    else{a=(-0.00154575); b=(0.000127211);}
+    if(invPt< 0.015){a=(-0.04296); b=(0.0008670);}
+    else if(invPt< 0.023){a=(-0.01529); b=(0.0004522);}
+    else{a=(-0.001546); b=(0.0001272);}
   }
   else{
-    if(invPt< 0.012){a=(-0.423831); b=(0.00636555);}
-    else if(invPt< 0.020){a=(-0.103982); b=(0.00254955);}
-    else{a=(-0.0160296); b=(0.000767227);}
+    if(invPt< 0.012){a=(-0.4238); b=(0.006366);}
+    else if(invPt< 0.020){a=(-0.1040); b=(0.002550);}
+    else{a=(-0.01603); b=(0.0007672);}
   }
 
   double rate = (a)*invPt + (b);

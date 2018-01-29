@@ -221,6 +221,8 @@ elif useskim == "SKTree_HNDiLepSkim":
     useskim="HNDiLep"
 elif useskim == "SKTree_HNFakeSkim":
     useskim="HNFake"
+elif useskim == "SKTree_HNFatJetSkim":
+    useskim="HNFatJet"
 elif useskim == "SKTree_TriLepSkim":
     useskim="TriLep"
         
@@ -311,10 +313,11 @@ if not cycle == "SKTreeMaker":
     if not cycle == "SKTreeMakerNoCut":
         if not cycle == "SKTreeMakerDiLep":
             if not cycle == "SKTreeMakerFake":
-                if not cycle == "SKTreeMakerHNDiLep":
-                    if not useskinput == "True":
-                        if not useskinput == "true":
-                            print "You are running on FlatCATntuples. This will be more cpu extensive. This is only advisable if you are testing some new branches NOT in SKTrees."
+                if not cycle == "SKTreeMakerHNFatJet":
+                    if not cycle == "SKTreeMakerHNDiLep":
+                        if not useskinput == "True":
+                            if not useskinput == "true":
+                                print "You are running on FlatCATntuples. This will be more cpu extensive. This is only advisable if you are testing some new branches NOT in SKTrees."
                         
 
 output_mounted="/data2"
@@ -394,6 +397,8 @@ if number_of_cores > 0:
         number_of_cores=nj_def
     if cycle == "SKTreeMakerFakeHN":
         number_of_cores=nj_def
+    if cycle == "SKTreeMakerHNFatJet":
+        number_of_cores=nj_def
 
     if cycle == "SKTreeMakerTriLep":
         number_of_cores=nj_def
@@ -462,11 +467,14 @@ if useskinput == "true":
                     else:
                         if useskim == "HNFake":
                             new_channel="SK" + new_channel + "_hnfake"
-                            
                         else:
-                            if useskim == "TriLep":
-                                new_channel="SK" + new_channel + "_trilep"
+                            if useskim == "HNFatJet":
+                                new_channel="SK" + new_channel + "_hnfatjet"
                                 
+                            else:
+                                if useskim == "TriLep":
+                                    new_channel="SK" + new_channel + "_trilep"
+                                    
 
     else:
         if useskim == "Lepton":
@@ -484,9 +492,12 @@ if useskinput == "true":
                         if useskim == "HNFake":
                             sample="SK" + sample + "_hnfake"
                         else:
-                            if useskim == "TriLep":
-                                sample="SK" + sample + "_trilep"
-                            
+                            if useskim == "HNFatJet":
+                                sample="SK" + sample + "_hnfatjet"
+                            else:
+                                if useskim == "TriLep":
+                                    sample="SK" + sample + "_trilep"
+                                    
 elif useskinput == "True":
 
     if not mc:
@@ -505,8 +516,12 @@ elif useskinput == "True":
                         if useskim == "HNFake":
                             new_channel="SK" + new_channel + "_hnfake"
                         else:
-                            if useskim == "TriLep":
-                                new_channel="SK" + new_channel + "_trilep"
+                            if useskim == "HNFatJet":
+                                new_channel="SK" + new_channel + "_hnfatjet"
+                                
+                            else:
+                                if useskim == "TriLep":
+                                    new_channel="SK" + new_channel + "_trilep"
                             
     else:
         if useskim == "Lepton":
@@ -524,8 +539,11 @@ elif useskinput == "True":
                         if useskim == "HNFake":
                             sample="SK" + sample + "_hnfake"
                         else:
-                            if useskim == "TriLep":
-                                sample="SK" + sample + "_trilep"
+                            if useskim == "HNFatJet":
+                                sample="SK" + sample + "_hnfatjet"
+                            else:
+                                if useskim == "TriLep":
+                                    sample="SK" + sample + "_trilep"
                             
                 
 print "Input sample = " + sample
@@ -583,7 +601,7 @@ output_catversion=os.getenv("CATVERSION")
 iversion=0
 
 
-if "HN" in  sample or "CHT" in sample or "TTToH" in sample:
+if "HeavyNeutrino" in sample or "Majorana" in sample or "HN" in  sample or "CHT" in sample or "TTToH" in sample:
     datasetfile="datasets_snu_sig_CAT_mc_"
 else:
     datasetfile="datasets_snu_nonsig_CAT_mc_"
@@ -1289,16 +1307,20 @@ while not JobSuccess:
                 if "Processing entry" in line:
                     if "LQCycleController" not in line:
                         entries = line.split()
-                        if len(entries)> 6:                        
+                        if len(entries)> 7:                        
                             num = entries[7]
+                            lineok=False
+                            if "/" in num:
+                                lineok=True
                             s = num.replace("/", " ")
                             event_split = s.split()
                             if len(event_split) < 2:
-                                print "Error [2002] " + event_split 
+                                print "Warning [2002] " + s
                                 print line
                                 os.system("cp " + local_sub_dir + '/outlog.txt ~/error_log_'+str(array_batchjobs[i-1]))
-                            nevent_processed_i = float(event_split[0])
-                            nevents_total_i= float(event_split[1])
+                            if lineok:
+                                nevent_processed_i = float(event_split[0])
+                                nevents_total_i= float(event_split[1])
             nevent_processed+=nevent_processed_i                
             nevents_total+=nevents_total_i
 
@@ -1586,6 +1608,46 @@ else:
                 os.system("chmod 777 -R " +  Finaloutputdir)
                 
 
+    if cycle == "SKTreeMakerHNFatJet":
+        doMerge=False
+        if not os.path.exists(SKTreeOutput):
+            os.system("mkdir " + SKTreeOutput)
+        if not mc:
+            Finaloutputdir = SKTreeOutput + "DataHNFatJet/"
+            if not os.path.exists(Finaloutputdir):
+                os.system("mkdir " + Finaloutputdir)
+            if original_channel =="DoubleEG":
+                Finaloutputdir += "DoubleEG/"
+                if not os.path.exists(Finaloutputdir):
+                    os.system("mkdir " + Finaloutputdir)
+            if original_channel =="DoubleMuon":
+                Finaloutputdir += "DoubleMuon/"
+                if not os.path.exists(Finaloutputdir):
+                    os.system("mkdir " + Finaloutputdir)
+
+            if original_channel =="SingleMuon":
+                Finaloutputdir += "SingleMuon/"
+                if not os.path.exists(Finaloutputdir):
+                    os.system("mkdir " + Finaloutputdir)
+            if original_channel =="SingleElectron":
+                Finaloutputdir += "SingleElectron/"
+                if not os.path.exists(Finaloutputdir):
+                    os.system("mkdir " + Finaloutputdir)
+
+            Finaloutputdir += "period" + original_sample + "/"
+            if not os.path.exists(Finaloutputdir):
+                os.system("mkdir " + Finaloutputdir)
+        else:
+            Finaloutputdir = SKTreeOutput + "MCHNFatJet/"
+            if not os.path.exists(Finaloutputdir):
+                os.system("mkdir " + Finaloutputdir)
+            Finaloutputdir +=  original_sample + "/"
+            if not os.path.exists(Finaloutputdir):
+                os.system("mkdir " + Finaloutputdir)
+                os.system("chmod 777 -R " +  Finaloutputdir)
+
+
+
     if cycle == "SKTreeMakerTriLep":
         doMerge=False
         if not os.path.exists(SKTreeOutput):
@@ -1631,6 +1693,7 @@ else:
         if os.path.exists(Finaloutputdir + outfile):
             os.system("rm  "  +  Finaloutputdir   + outfile)
         os.system("mv " +outputdir + "*.root" + " " + mergeoutputdir)
+
         os.system("hadd " + mergeoutputdir +  outfile  + " "+ mergeoutputdir + "*.root")
         
         if mc:
