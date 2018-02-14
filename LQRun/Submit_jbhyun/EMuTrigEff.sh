@@ -3,7 +3,7 @@
 ########################################################################
 ## MC / DATA
 runMC=true
-runData=true
+runData=false
 runFake="False"
 runSignal="False"
 
@@ -11,18 +11,25 @@ runSignal="False"
 ## RUN PARAMETERS
 
 AnalysisCode="Dec2017_EMuTrigEff" 
-Stream="SingleElectron"
-#Stream="SingleMuon"
+#Stream="SingleElectron"
+Stream="SingleMuon"
+#Stream="DoubleMuon"
 #Stream="MuonEG"
-Skim="SKTree_LeptonSkim"  ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
-#Skim="SKTree_DiLepSkim"   ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
+#Skim="FLATCAT"  ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
+#Skim="SKTree_LeptonSkim"  ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
+Skim="SKTree_DiLepSkim"   ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
+#Skim="SKTree_HNDiLepSkim" ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
+#Skim="SKTree_TriLepSkim"   ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
 DataPeriod="ALL"
 job_logstep=1000
 LogLevel="INFO"
 QueueOption="fastq"    #"longq"
-RunningMode="MuLegEffMeas" #MuLegEffMeas #EleLegEffMeas #DzEffMeas
+RunningMode="EffClosure,DiMuTrig,DoubleMuon"
+#"MuLegEffMeas" #"EleLegEffMeas" #"DzEffMeas_EMu" #"DzEffMeas_DiMu"
+#"EffClosure,DiMuTrig,DoubleMuon" #"EffClosure,DiMuTrig,TriMuon"
 
-MCList="CR_DiLep"
+MCList="TrigDiLepClosure"
+#TrigSample #TrigDiLepClosure #TrigTriLepClosure #SignalMajor_All
 
 ########################################################################
 ## OUTPUT PATH CONFIG

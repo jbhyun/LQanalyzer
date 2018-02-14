@@ -9,7 +9,6 @@
 ### ID_ELECTRON_MVA_90   IDFILEDIR mva90.root  EGamma_SF2D TH2F
 ### ID_ELECTRON_MVA_80   IDFILEDIR mva80.root  EGamma_SF2D TH2F
 ### ID_ELECTRON_HN_TIGHTv4   IDFILEDIR HN_MVA.root  EGamma_SF2D TH2F
-### ID_ELECTRON_CH_TRI_TIGHT IDFILEDIR IDSF_Ele_HctoWA_BtoH.root  EGamma_SF2D TH2F
 ### ID_BCDEF_MUON_POG_LOOSE IDFILEDIR EfficienciesAndSF_BCDEF.root MC_NUM_LooseID_DEN_genTracks_PAR_pt_eta/abseta_pt_ratio TH2F
 ### ID_BCDEF_MUON_POG_MEDIUM IDFILEDIR EfficienciesAndSF_BCDEF.root MC_NUM_MediumID_DEN_genTracks_PAR_pt_eta/abseta_pt_ratio TH2F
 ### ID_BCDEF_MUON_POG_TIGHT IDFILEDIR EfficienciesAndSF_BCDEF.root MC_NUM_TightID_DEN_genTracks_PAR_pt_eta/abseta_pt_ratio TH2F
@@ -40,8 +39,6 @@
 ### MUON_MU8_TRIGGER_GH_HNDILEP TRIGGERFILEDIR  MuonTriggerEfficiency_HNDILEP_Mu8_RunGH.root TriggerEff_HNDilepton_GH  TH2F
 ### ID_BCDEF_MUON_HN_TRI_TIGHT IDFILEDIR MuonIDSF_TRILEP_RunBCDEF.root abseta_pt_PLOT TH2F
 ### ID_GH_MUON_HN_TRI_TIGHT IDFILEDIR MuonIDSF_TRILEP_RunGH.root abseta_pt_PLOT TH2F
-### ID_BCDEF_MUON_CH_TRI_TIGHT IDFILEDIR MuonIDEfficiency_CH_RunBCDEF.root abseta_pt_PLOT TH2F
-### ID_GH_MUON_CH_TRI_TIGHT IDFILEDIR MuonIDEfficiency_CH_RunGH.root abseta_pt_PLOT TH2F
 ### ID_BCDEF_MUON_HN_TIGHT IDFILEDIR MuonIDSF_DILEP_RunBCDEF.root abseta_pt_PLOT TH2F
 ### ID_GH_MUON_HN_TIGHT IDFILEDIR MuonIDSF_DILEP_RunGH.root abseta_pt_PLOT TH2F
 ### TRACKING_EFF IDFILEDIR Tracking_EfficienciesAndSF_BCDEFGH.root ratio_eff_eta3_dr030e030_corr TGraphAsymmErrors
@@ -64,4 +61,11 @@
 ### ELECTRON_El17_VTXREWEIGHT  PILEUPFILEDIR Nvtx_reweight_single_electron.root  HLT_Ele17_CaloIdL_TrackIdL_IsoVL_PFJet30_v_ZPeak_Nvtx_data  TH1D
 ### ELECTRON_El12_VTXREWEIGHT  PILEUPFILEDIR Nvtx_reweight_single_electron.root  HLT_Ele12_CaloIdL_TrackIdL_IsoVL_PFJet30_v_ZPeak_Nvtx_data  TH1D
 ### ELECTRON_El8_VTXREWEIGHT  PILEUPFILEDIR Nvtx_reweight_single_electron.root  HLT_Ele8_CaloIdL_TrackIdL_IsoVL_PFJet30_v_ZPeak_Nvtx_data  TH1D
+### ID_ELECTRON_HctoWA_TIGHT IDFILEDIR IDSF_Ele_HctoWA_BtoH.root  EGamma_SF2D TH2F
+### ID_BCDEF_MUON_HctoWA_TIGHT IDFILEDIR IDSF_Mu_HctoWA_RunBCDEF.root abseta_pt_PLOT TH2F
+### ID_GH_MUON_HctoWA_TIGHT IDFILEDIR IDSF_Mu_HctoWA_RunGH.root abseta_pt_PLOT TH2F
+### TRIGEFF_DiMu_Mu17_HctoWA_MC TRIGGERFILEDIR TrigEff_Mu17_TrkIsoVVL_Mu8ORTkMu8_TrkIsoVVL_HctoWA.root TrigEff_Mu17_BtoH_MC TH2F
+### TRIGEFF_DiMu_Mu8ORTkMu8_HctoWA_MC TRIGGERFILEDIR TrigEff_Mu17_TrkIsoVVL_Mu8ORTkMu8_TrkIsoVVL_HctoWA.root TrigEff_Mu8ORTkMu8_BtoH_MC TH2F
+### TRIGEFF_DiMu_Mu17_HctoWA_DATA TRIGGERFILEDIR TrigEff_Mu17_TrkIsoVVL_Mu8ORTkMu8_TrkIsoVVL_HctoWA.root TrigEff_Mu17_BtoH_Data TH2F
+### TRIGEFF_DiMu_Mu8ORTkMu8_HctoWA_DATA TRIGGERFILEDIR TrigEff_Mu17_TrkIsoVVL_Mu8ORTkMu8_TrkIsoVVL_HctoWA.root TrigEff_Mu8ORTkMu8_BtoH_Data TH2F
 #END

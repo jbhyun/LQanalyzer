@@ -33,6 +33,7 @@ class Reweight;
 #include "TDirectory.h"
 #include "TFile.h"
 #include "TROOT.h"
+using namespace std;
 class MCDataCorrections{
 
  public:
@@ -105,6 +106,10 @@ class MCDataCorrections{
   std::vector<TLorentzVector> MakeTLorentz( std::vector<snu::KMuon> mu);
   std::vector<TLorentzVector> MakeTLorentz( std::vector<snu::KJet> jet);
   std::vector<TLorentzVector> MakeTLorentz( std::vector<snu::KFatJet> jet);
+
+
+  float TriggerEfficiency(vector<snu::KElectron>& EleColl, vector<snu::KMuon>& MuColl, TString TrigName, bool ReturnDataEff, TString Option);
+  float GetTriggerSF     (vector<snu::KElectron>& EleColl, vector<snu::KMuon>& MuColl, TString TrigName, TString Option);
 
  private:
   

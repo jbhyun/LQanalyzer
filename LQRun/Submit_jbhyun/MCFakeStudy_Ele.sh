@@ -21,8 +21,10 @@ DataPeriod="ALL"
 job_logstep=1000
 LogLevel="INFO"
 QueueOption="fastq" 
-RunningMode="DetailClosure" #"DetailClosure" #"FREmul" #"HighdXYApproachStudy" #"VJetReductionStudy" #"VetoImpactStudy" #"METMTWCutStudy" #"VetoImpactStudy" #"Scan_AvgFR_MVAIso_2D" #"SelBiasTest" #"TrigBiasTest" #"CompositionCheck" #"FineTune" #"EleFakeIDOpt" #"EleFakeParam"
-MCList="MajorFakeSource" #"MajorFakeSource" #"VJets" #"FR_Prompt" #"TTLL" #"MajorFakeSource" #"FakeMeasRegSample" #"QCD_BCToE" #"QCD_EM" #"TT"
+RunningMode="DetailClosure" 
+#"DetailClosure" #"FREmul" #"HighdXYApproachStudy" #"VJetReductionStudy" #"VetoImpactStudy" #"METMTWCutStudy" #"VetoImpactStudy" #"Scan_AvgFR_MVAIso_2D" #"SelBiasTest" #"TrigBiasTest" #"CompositionCheck" #"FineTune" #"EleFakeIDOpt" #"EleFakeParam"
+MCList="TTLL"
+#"MajorFakeSource" #"VJets" #"FR_Prompt" #"TTLL" #"MajorFakeSource" #"FakeMeasRegSample" #"QCD_BCToE" #"QCD_EM" #"TT"
 
 ########################################################################
 ## OUTPUT PATH CONFIG

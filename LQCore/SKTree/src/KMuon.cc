@@ -1,6 +1,10 @@
 #include "KMuon.h"
+#include <iomanip>
+#include <iostream>
+
 
 using namespace snu;
+using namespace std;
 
 ClassImp(KMuon)
 
@@ -263,6 +267,7 @@ void KMuon::SetIsPromptFlag(bool pflag){
 
 bool KMuon::TriggerMatched(TString path){
   TString trig = k_trig_match;
+  //cout<<k_trig_match<<endl;
   if(trig.Contains(path)) return true;
   return false;
 }

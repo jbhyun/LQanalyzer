@@ -69,7 +69,7 @@ void Jul2017_MCFakeStudy::ExecuteEvents()throw( LQError ){
    FillCutFlow("NoCut", weight*pileup_reweight);
 
 
-   bool Scan_AvgFR_MVAIso_2D=false, FineTune=false, ClosureTest_3l=false, EleOnlyClosure=false, CompositionCheck=false;
+   bool Scan_AvgFR_MVAIso_2D=false, FineTune=false, EleOnlyClosure=false, CompositionCheck=false;
    bool SelBiasTest=false, TrigBiasTest=false, VetoImpactStudy=false, VJetReductionStudy=false, METMTWCutStudy=false;
    bool AppRegCompStudy=false, IPMissHitImpactStudy=false, HighdXYApproachStudy=false, IPOptStudy=false;
    bool FREmul=false, DetailClosure=false;
@@ -80,7 +80,6 @@ void Jul2017_MCFakeStudy::ExecuteEvents()throw( LQError ){
      else if(k_flags.at(i).Contains("FREmul"))               FREmul               =true;
      else if(k_flags.at(i).Contains("DetailClosure"))        DetailClosure        =true;
      else if(k_flags.at(i).Contains("CompositionCheck"))     CompositionCheck     =true;
-     else if(k_flags.at(i).Contains("ClosureTest_3l"))       ClosureTest_3l       =true;
      else if(k_flags.at(i).Contains("EleOnlyClosure"))       EleOnlyClosure       =true;
      else if(k_flags.at(i).Contains("TrigBiasTest"))         TrigBiasTest         =true;
      else if(k_flags.at(i).Contains("SelBiasTest"))          SelBiasTest          =true;
@@ -134,8 +133,8 @@ void Jul2017_MCFakeStudy::ExecuteEvents()throw( LQError ){
      eventbase->GetElectronSel()->SetPt(10.);                eventbase->GetElectronSel()->SetEta(2.5);
      eventbase->GetElectronSel()->SetBETrRegIncl(false);
    std::vector<snu::KElectron> electronPreColl; eventbase->GetElectronSel()->Selection(electronPreColl);
-   if(ClosureTest_3l || AppRegCompStudy){ if( !((muonPreColl.size()>=2 && electronPreColl.size()>=1) || muonPreColl.size()>=3) ) return; }
-   else if(EleOnlyClosure){ if( !(muonPreColl.size()>=2 && electronPreColl.size()>=1) ) return; }
+   if(AppRegCompStudy){ if( !((muonPreColl.size()>=2 && electronPreColl.size()>=1) || muonPreColl.size()>=3) ) return; }
+   else if(DetailClosure || EleOnlyClosure){ if( !(muonPreColl.size()>=2 && electronPreColl.size()>=1) ) return; }
    /**********************************************************************************************************/
 
    //For Fake Study
@@ -179,8 +178,7 @@ void Jul2017_MCFakeStudy::ExecuteEvents()throw( LQError ){
      eventbase->GetElectronSel()->SetHLTSafeCut("CaloIdL_TrackIdL_IsoVL");
      eventbase->GetElectronSel()->SetPt(25.);                eventbase->GetElectronSel()->SetEta(2.5);
      eventbase->GetElectronSel()->SetBETrRegIncl(false);
-     eventbase->GetElectronSel()->SetdxyBEMax(0.05, 0.05); eventbase->GetElectronSel()->SetdzBEMax(0.1, 0.1);
-     //eventbase->GetElectronSel()->SetdxyBEMax(0.025, 0.025); eventbase->GetElectronSel()->SetdzBEMax(0.05, 0.05);
+     eventbase->GetElectronSel()->SetdxyBEMax(0.025, 0.025); eventbase->GetElectronSel()->SetdzBEMax(0.1, 0.1);
      eventbase->GetElectronSel()->SetdxySigMax(4.);
      eventbase->GetElectronSel()->SetApplyConvVeto(true);
    std::vector<snu::KElectron> electronFakeLPreOptColl; eventbase->GetElectronSel()->Selection(electronFakeLPreOptColl);
@@ -195,15 +193,9 @@ void Jul2017_MCFakeStudy::ExecuteEvents()throw( LQError ){
 //     eventbase->GetElectronSel()->SetdxySigMax(3.);
 //     eventbase->GetElectronSel()->SetApplyConvVeto(true);
    std::vector<snu::KElectron> electronFakeLColl; //eventbase->GetElectronSel()->Selection(electronFakeLColl);
-//     for(int i=0; i<electronFakeLPreOptColl.size(); i++){
-//       if(PassIDCriteria(electronFakeLPreOptColl.at(i), "POGMVAMFakeLIso04Opt2")) electronFakeLColl.push_back(electronFakeLPreOptColl.at(i));
-//     }
      for(int i=0; i<electronFakeLPreOptColl.size(); i++){
        if(PassIDCriteria(electronFakeLPreOptColl.at(i), "POGMVAMTIsop06IPp025p05Sig4FakeLIsop4")) electronFakeLColl.push_back(electronFakeLPreOptColl.at(i));
      }
-//     for(int i=0; i<electronFakeLPreOptColl.size(); i++){
-//       if(PassIDCriteria(electronFakeLPreOptColl.at(i), "POGMVATTIsop1IPp025p05Sig4FakeLIsop4")) electronFakeLColl.push_back(electronFakeLPreOptColl.at(i));
-//     }
 
 
 
@@ -315,8 +307,8 @@ void Jul2017_MCFakeStudy::ExecuteEvents()throw( LQError ){
      std::vector<snu::KElectron> FakeColl     = SkimLepColl(electronFakeLPreOptColl, truthColl, "HFake");
      std::vector<snu::KJet>      JetCleanColl = SkimJetColl(jetColl, truthColl, "NoPrNoTau");
      
-     const int NIsoCuts=6, NMVACuts=21;
-     float IsoCuts[NIsoCuts]={0., 0.1, 0.2, 0.3, 0.4, 0.5};
+     const int NIsoCuts=11, NMVACuts=21;
+     float IsoCuts[NIsoCuts]={0., 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5};
      float MVACuts[NMVACuts]={-1., -0.9, -0.8, -0.7, -0.6, -0.5, -0.4, -0.3, -0.2, -0.1, 0., 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.};
 
      const int NPtEdges=8;
@@ -362,13 +354,6 @@ void Jul2017_MCFakeStudy::ExecuteEvents()throw( LQError ){
        //For Scanning with Fine Steps
        const int NIsoCuts=1, NMVACuts=100;
        float IsoCuts[NIsoCuts]={0.4};
-//       float MVACuts[NMVACuts]={-1., -0.99, -0.98, -0.97, -0.96, -0.95, -0.94, -0.93, -0.92, -0.91, -0.9,
-//                                     -0.89, -0.88, -0.87, -0.86, -0.85, -0.84, -0.83, -0.82, -0.81, -0.8,
-//                                     -0.79, -0.78, -0.77, -0.76, -0.75, -0.74, -0.73, -0.72, -0.71, -0.7,
-//                                     -0.69, -0.68, -0.67, -0.66, -0.65, -0.64, -0.63, -0.62, -0.61, -0.6,
-//                                     -0.59, -0.58, -0.57, -0.56, -0.55, -0.54, -0.53, -0.52, -0.51, -0.5,
-//                                     -0.4,   -0.3,  -0.2,  -0.1,    0.,   0.1,   0.2,   0.3,   0.4,  0.5};
-
        float MVACuts[NMVACuts]={-0.99, -0.98, -0.97, -0.96, -0.95, -0.94, -0.93, -0.92, -0.91, -0.9,
                                 -0.89, -0.88, -0.87, -0.86, -0.85, -0.84, -0.83, -0.82, -0.81, -0.8,
                                 -0.79, -0.78, -0.77, -0.76, -0.75, -0.74, -0.73, -0.72, -0.71, -0.7,
@@ -385,53 +370,25 @@ void Jul2017_MCFakeStudy::ExecuteEvents()throw( LQError ){
        for(int it_iso=0; it_iso<NIsoCuts; it_iso++){
          for(int it_mva=0; it_mva<NMVACuts; it_mva++){
 
-//           //TIsop06
-//           ScanFakeRate(FakeColl  , JetCleanColl, MVACuts[it_mva], IsoCuts[it_iso], NPtEdges, PtEdges,
-//                        "LNoMVANoIsoIPp025p05sig4", "POGWP90Isop06IPp025p05sig4", "_POGWP90Isop06IPp025p05sig4", "All");
-//           ScanFakeRate(FakeB1Coll, JetCleanColl, MVACuts[it_mva], IsoCuts[it_iso], NPtEdges, PtEdges,
-//                        "LNoMVANoIsoIPp025p05sig4", "POGWP90Isop06IPp025p05sig4", "_POGWP90Isop06IPp025p05sig4", "B1");
-//           ScanFakeRate(FakeB2Coll, JetCleanColl, MVACuts[it_mva], IsoCuts[it_iso], NPtEdges, PtEdges,
-//                        "LNoMVANoIsoIPp025p05sig4", "POGWP90Isop06IPp025p05sig4", "_POGWP90Isop06IPp025p05sig4", "B2");
-//           ScanFakeRate(FakeEColl , JetCleanColl, MVACuts[it_mva], IsoCuts[it_iso], NPtEdges, PtEdges,
-//                        "LNoMVANoIsoIPp025p05sig4", "POGWP90Isop06IPp025p05sig4", "_POGWP90Isop06IPp025p05sig4", "E");
-
            //TIsop06
            ScanFakeRate(FakeColl  , JetCleanColl, MVACuts[it_mva], IsoCuts[it_iso], NPtEdges, PtEdges,
-                        "LNoMVANoIsoIPp05p1sig4", "POGWP90Isop06IPp05p1sig4", "_POGWP90Isop06IPp05p1sig4", "All");
+                        "LNoMVANoIsoIPp025p1sig4", "POGWP90Isop06IPp025p1sig4", "_POGWP90Isop06IPp025p1sig4", "All");
            ScanFakeRate(FakeB1Coll, JetCleanColl, MVACuts[it_mva], IsoCuts[it_iso], NPtEdges, PtEdges,
-                        "LNoMVANoIsoIPp05p1sig4", "POGWP90Isop06IPp05p1sig4", "_POGWP90Isop06IPp05p1sig4", "B1");
+                        "LNoMVANoIsoIPp025p1sig4", "POGWP90Isop06IPp025p1sig4", "_POGWP90Isop06IPp025p1sig4", "B1");
            ScanFakeRate(FakeB2Coll, JetCleanColl, MVACuts[it_mva], IsoCuts[it_iso], NPtEdges, PtEdges,
-                        "LNoMVANoIsoIPp05p1sig4", "POGWP90Isop06IPp05p1sig4", "_POGWP90Isop06IPp05p1sig4", "B2");
+                        "LNoMVANoIsoIPp025p1sig4", "POGWP90Isop06IPp025p1sig4", "_POGWP90Isop06IPp025p1sig4", "B2");
            ScanFakeRate(FakeEColl , JetCleanColl, MVACuts[it_mva], IsoCuts[it_iso], NPtEdges, PtEdges,
-                        "LNoMVANoIsoIPp05p1sig4", "POGWP90Isop06IPp05p1sig4", "_POGWP90Isop06IPp05p1sig4", "E");
+                        "LNoMVANoIsoIPp025p1sig4", "POGWP90Isop06IPp025p1sig4", "_POGWP90Isop06IPp025p1sig4", "E");
 
          }
        }
      }
      if(ScanSpecificWPs){
-//       Draw1DFakePlot(FakeColl  , JetCleanColl, -0.76, -0.76, -0.67, 0.4, NPtEdges, PtEdges, "All");
-//       Draw1DFakePlot(FakeB1Coll, JetCleanColl, -0.76, -0.76, -0.67, 0.4, NPtEdges, PtEdges, "B1" );
-//       Draw1DFakePlot(FakeB2Coll, JetCleanColl, -0.76, -0.76, -0.67, 0.4, NPtEdges, PtEdges, "B2" );
-//       Draw1DFakePlot(FakeEColl , JetCleanColl, -0.76, -0.76, -0.67, 0.4, NPtEdges, PtEdges, "E"  );
-
-//       Draw1DFakePlot(FakeColl  , JetCleanColl, -0.92, -0.85, -0.76, 0.4, NPtEdges, PtEdges, "All");
-//       Draw1DFakePlot(FakeB1Coll, JetCleanColl, -0.92, -0.85, -0.76, 0.4, NPtEdges, PtEdges, "B1" );
-//       Draw1DFakePlot(FakeB2Coll, JetCleanColl, -0.92, -0.85, -0.76, 0.4, NPtEdges, PtEdges, "B2" );
-//       Draw1DFakePlot(FakeEColl , JetCleanColl, -0.92, -0.85, -0.76, 0.4, NPtEdges, PtEdges, "E"  );
-
-//       Draw1DFakePlot(FakeColl  , JetCleanColl, -0.76, -0.72, -0.71, 0.4, NPtEdges, PtEdges, "All");
-//       Draw1DFakePlot(FakeB1Coll, JetCleanColl, -0.76, -0.72, -0.71, 0.4, NPtEdges, PtEdges, "B1" );
-//       Draw1DFakePlot(FakeB2Coll, JetCleanColl, -0.76, -0.72, -0.71, 0.4, NPtEdges, PtEdges, "B2" );
-//       Draw1DFakePlot(FakeEColl , JetCleanColl, -0.76, -0.72, -0.71, 0.4, NPtEdges, PtEdges, "E"  );
-//
-       Draw1DFakePlot(FakeColl  , JetCleanColl, -0.92, -0.88, -0.81, 0.4, NPtEdges, PtEdges, "All");
-       Draw1DFakePlot(FakeB1Coll, JetCleanColl, -0.92, -0.88, -0.81, 0.4, NPtEdges, PtEdges, "B1" );
-       Draw1DFakePlot(FakeB2Coll, JetCleanColl, -0.92, -0.88, -0.81, 0.4, NPtEdges, PtEdges, "B2" );
-       Draw1DFakePlot(FakeEColl , JetCleanColl, -0.92, -0.88, -0.81, 0.4, NPtEdges, PtEdges, "E"  );
-
-
+       Draw1DFakePlot(FakeColl  , JetCleanColl, -0.92, -0.88, -0.78, 0.4, NPtEdges, PtEdges, "All");
+       Draw1DFakePlot(FakeB1Coll, JetCleanColl, -0.92, -0.88, -0.78, 0.4, NPtEdges, PtEdges, "B1" );
+       Draw1DFakePlot(FakeB2Coll, JetCleanColl, -0.92, -0.88, -0.78, 0.4, NPtEdges, PtEdges, "B2" );
+       Draw1DFakePlot(FakeEColl , JetCleanColl, -0.92, -0.88, -0.78, 0.4, NPtEdges, PtEdges, "E"  );
      }
-
    }
    if(FREmul){
      const int NPtEdges=7; float PtEdges[NPtEdges]={0., 25., 35., 50., 70., 100., 200.};
@@ -439,36 +396,30 @@ void Jul2017_MCFakeStudy::ExecuteEvents()throw( LQError ){
 //     EmulateFRMeasurement(electronPreColl, muonLooseColl, jetColl, bjetColl, met, met_x, met_y, weight, NPtEdges, PtEdges,
 //                         "LMVA06Isop4IPp025p05sig4", "POGWP90Isop06IPp025p05sig4", "_WP90Isop06_L928576Isop4", "");
 
-     EmulateFRMeasurement(electronPreColl, muonLooseColl, jetColl, bjetColl, met, met_x, met_y, weight, NPtEdges, PtEdges,
-                         "LMVA928576Isop4IPp05p1sig4", "POGWP90Isop06IPp05p1sig4", "_WP90Isop06IPp05p1sig4_L928576Isop4", "");
 
      EmulateFRMeasurement(electronPreColl, muonLooseColl, jetColl, bjetColl, met, met_x, met_y, weight, NPtEdges, PtEdges,
-                         "LMVA767271Isop4IPp05p1sig4", "POGWP90Isop06IPp05p1sig4", "_WP90Isop06IPp05p1sig4_L767271Isop4", "");
-
-     EmulateFRMeasurement(electronPreColl, muonLooseColl, jetColl, bjetColl, met, met_x, met_y, weight, NPtEdges, PtEdges,
-                         "LMVA928881Isop4IPp05p1sig4", "POGWP90Isop06IPp05p1sig4", "_WP90Isop06IPp05p1sig4_L928881Isop4", "");
+                         "HctoWAFakeLoose", "POGWP90Isop06IPp025p1sig4", "_WP90Isop06IPp025p1sig4_L928878Isop4", "");
 
 
    }
    if(CompositionCheck){
      //Check Src Flav Composition in 1) Meas Reg(QCD) 2) Application Reg(DY,TT)(But except TTT evts)
      
-     std::vector<snu::KElectron> electronFakeL1Coll;
-       for(int i=0; i<electronFakeLPreOptColl.size(); i++){
-         if(PassIDCriteria(electronFakeLPreOptColl.at(i), "POGMVAMFakeLIso04Opt1")) electronFakeL1Coll.push_back(electronFakeLPreOptColl.at(i));
+     std::vector<snu::KElectron> electronFakeLColl;
+       for(int i=0; i<(int) electronFakeLPreOptColl.size(); i++){
+         if(PassIDCriteria(electronFakeLPreOptColl.at(i), "HctoWAFakeLoose")) electronFakeLColl.push_back(electronFakeLPreOptColl.at(i));
        }
 
 
-     for(int i=0; i<electronFakeL1Coll.size(); i++){
+     for(int i=0; i<(int) electronFakeLColl.size(); i++){
        if(k_sample_name.Contains("DY") || k_sample_name.Contains("TT")){
-         if(PassIDCriteria(electronFakeL1Coll.at(i), "POGMVAMIP")) continue;
-         int LepType=GetLeptonType(electronFakeL1Coll.at(i), truthColl);
+         if(PassIDCriteria(electronFakeLColl.at(i), "POGWP90Isop06IPp025p1sig4")) continue;
+         int LepType=GetLeptonType(electronFakeLColl.at(i), truthColl);
          if(LepType>0 || LepType<-4) continue;
+         FillHist("FakeLepType", LepType, weight, -5., 5., 10);
        }
-       int FakeSrcType=GetFakeLepSrcType(electronFakeL1Coll.at(i), jetColl);
-       float PTCorr=ConeCorrectedPT(electronFakeL1Coll.at(i), 0.1);
-       FillHist("FakeSrcType_IDOpt1", FakeSrcType, weight, -5., 5., 10);
-       FillHist("JetPtSrc_IDOpt1", PTCorr, weight, 0., 500., 25); 
+       int FakeSrcType=GetFakeLepSrcType(electronFakeLColl.at(i), jetColl);
+       FillHist("FakeSrcType", FakeSrcType, weight, -5., 5., 10);
      }
 
    }
@@ -489,28 +440,19 @@ void Jul2017_MCFakeStudy::ExecuteEvents()throw( LQError ){
      std::vector<snu::KElectron> FakeEColl    = SkimLepColl(FakeColl, "E");
      std::vector<snu::KJet>      JetCleanColl = SkimJetColl(jetColl, truthColl, "NoPrNoTau");
 
-     const int NPtEdges=8;
-     float PtEdges[NPtEdges]={0., 25., 35., 50., 70., 100., 150., 200.};
+     const int NPtEdges=6;
+     float PtEdges[NPtEdges]={0., 25., 35., 50., 70., 100.};
 
-
-     Draw1DFakePlot(FakeB1Coll, JetCleanColl, -0.2, -0.1, -0.3, 0.4, NPtEdges, PtEdges, "B1Opt1");
-     Draw1DFakePlot(FakeB2Coll, JetCleanColl, -0.2, -0.1, -0.3, 0.4, NPtEdges, PtEdges, "B2Opt1");
-     Draw1DFakePlot(FakeEColl, JetCleanColl, -0.2, -0.1, -0.3, 0.4, NPtEdges, PtEdges, "EOpt1");
-
-     Draw1DFakePlot(FakeB1Coll, JetCleanColl, -0.7, -0.5, -0.6, 0.4, NPtEdges, PtEdges, "B1Opt2");
-     Draw1DFakePlot(FakeB2Coll, JetCleanColl, -0.7, -0.5, -0.6, 0.4, NPtEdges, PtEdges, "B2Opt2");
-     Draw1DFakePlot(FakeEColl, JetCleanColl, -0.7, -0.5, -0.6, 0.4, NPtEdges, PtEdges, "EOpt2");
-
+     Draw1DFakePlot(FakeB1Coll, JetCleanColl, -0.92, -0.88, -0.78, 0.4, NPtEdges, PtEdges, "All");
+     Draw1DFakePlot(FakeB1Coll, JetCleanColl, -0.92, -0.88, -0.78, 0.4, NPtEdges, PtEdges, "B1");
+     Draw1DFakePlot(FakeB2Coll, JetCleanColl, -0.92, -0.88, -0.78, 0.4, NPtEdges, PtEdges, "B2");
+     Draw1DFakePlot(FakeEColl,  JetCleanColl, -0.92, -0.88, -0.78, 0.4, NPtEdges, PtEdges, "E");
      if(PassTrigger("HLT_Ele23_CaloIdL_TrackIdL_IsoVL_PFJet30_v")){
-       Draw1DFakePlot(FakeB1Coll, JetCleanColl, -0.2, -0.1, -0.3, 0.4, NPtEdges, PtEdges, "B1Opt1Trig");
-       Draw1DFakePlot(FakeB2Coll, JetCleanColl, -0.2, -0.1, -0.3, 0.4, NPtEdges, PtEdges, "B2Opt1Trig");
-       Draw1DFakePlot(FakeEColl, JetCleanColl, -0.2, -0.1, -0.3, 0.4, NPtEdges, PtEdges, "EOpt1Trig");
-  
-       Draw1DFakePlot(FakeB1Coll, JetCleanColl, -0.7, -0.5, -0.6, 0.4, NPtEdges, PtEdges, "B1Opt2Trig");
-       Draw1DFakePlot(FakeB2Coll, JetCleanColl, -0.7, -0.5, -0.6, 0.4, NPtEdges, PtEdges, "B2Opt2Trig");
-       Draw1DFakePlot(FakeEColl, JetCleanColl, -0.7, -0.5, -0.6, 0.4, NPtEdges, PtEdges, "EOpt2Trig");
+       Draw1DFakePlot(FakeB1Coll, JetCleanColl, -0.92, -0.88, -0.78, 0.4, NPtEdges, PtEdges, "AllTrig");
+       Draw1DFakePlot(FakeB1Coll, JetCleanColl, -0.92, -0.88, -0.78, 0.4, NPtEdges, PtEdges, "B1Trig");
+       Draw1DFakePlot(FakeB2Coll, JetCleanColl, -0.92, -0.88, -0.78, 0.4, NPtEdges, PtEdges, "B2Trig");
+       Draw1DFakePlot(FakeEColl,  JetCleanColl, -0.92, -0.88, -0.78, 0.4, NPtEdges, PtEdges, "ETrig");
      }
-
    }
    if(SelBiasTest){
      std::vector<snu::KElectron> electronFakeL1Coll;
@@ -702,140 +644,6 @@ void Jul2017_MCFakeStudy::ExecuteEvents()throw( LQError ){
          else continue;
        }
        //FillHist("NEvt_METMTW_2D", met, MTW, weight, METEdges, NMETEdges-1, MTWEdges, NMTWEdges-1); 
-     }
-
-   }
-   if(ClosureTest_3l){
-
-     bool EMuMuClosure=true, TriMuClosure=true;
-     bool IsCand=false;
-     //m_datadriven_bkg->GetFakeObj()->SetUseQCDFake(true);
-     float fakeweight=-1.;
-
-     int NValidEleL   = NPromptFake_Ele(electronFakeLColl, truthColl, "EWPromptHFake");
-     int NValidMuL    = NPromptFake_Mu (muonHN2FakeLColl , truthColl, "EWPromptHFake");
-     int NValidEleT   = NPromptFake_Ele(electronMVAMColl , truthColl, "EWPromptHFake");
-     int NValidMuT    = NPromptFake_Mu (muonHN2FakeTColl , truthColl, "EWPromptHFake");
-     int NValidEMuMuL = NValidEleL+NValidMuL;
-     int NValidEMuMuT = NValidEleT+NValidMuT;
-     int NHFakeEleL   = NPromptFake_Ele(electronFakeLColl, truthColl, "HFake");
-     int NHFakeEleT   = NPromptFake_Ele(electronMVAMColl , truthColl, "HFake");
-     int NHFakeMuL    = NPromptFake_Mu (muonHN2FakeLColl , truthColl, "HFake");
-     int NHFakeMuT    = NPromptFake_Mu (muonHN2FakeTColl , truthColl, "HFake");
-     int NHFakeL      = NHFakeEleL+NHFakeMuL;
-     int NHFakeT      = NHFakeEleT+NHFakeMuT;
-
-     //Fake Composition Test
-     for(int i=0; i<electronFakeLColl.size(); i++){
-       int EleType=GetLeptonType(electronFakeLColl.at(i),truthColl);
-       if(EleType>0 && EleType<4) continue;
-       FillHist("EleFakeType", EleType, weight, -10., 10., 20);
-       if(!PassIDCriteria(electronFakeLColl.at(i), "POGMVAMIP")){
-         FillHist("EleFakeType_TfLp", EleType, weight, -10., 10., 20);
-       }
-     }
-     for(int i=0; i<muonHN2FakeLColl.size(); i++){
-       int MuType=GetLeptonType(muonHN2FakeLColl.at(i), truthColl);
-       if(MuType>0 && MuType<4) continue;
-       FillHist("MuFakeType", MuType, weight, -10., 10., 20);
-       if(muonHN2FakeLColl.at(i).RelIso04()>0.1){
-         FillHist("MuFakeType_TfLp", MuType, weight, -10., 10., 20);
-       }
-     }
-
-
-     //Use only 3 valid leptons 
-     if(EMuMuClosure){ if( NValidMuL==2 && NValidEleL==1 ) IsCand=true; }
-     if(TriMuClosure){ if( NValidMuL==3 ) IsCand=true; }
-       
-     if(!IsCand) return;
-     
-
-
-     for(int i=0; i<muonHN2FakeLColl.size(); i++){
-       if(muonHN2FakeLColl.at(i).RelIso04()>0.1){
-        float FR=0.;
-        //float FR=m_datadriven_bkg->GetFakeObj()->getTrilepFakeRate_muon(false, muonHN2FakeLColl.at(i).Pt(), muonHN2FakeLColl.at(i).Eta());
-        fakeweight*=-FR/(1-FR);
-       }
-     }
-     for(int i=0; i<electronFakeLColl.size(); i++){
-       if(!PassIDCriteria(electronFakeLColl.at(i), "POGMVAMIP")){
-       //if(!PassIDCriteria(electronFakeLColl.at(i), "POGMVATIP")){
-         //float FR=FakeRateMC(electronFakeLColl.at(i), "QCD_EGM");
-         //float FR=FakeRateMC(electronFakeLColl.at(i), "QCD_WP90TIsop06IPp025p05sig4_LIsop4");
-         //float FR=FakeRateMC(electronFakeLColl.at(i), "QCD_WP80TIsop1IPp025p05sig4_LIsop4");
-         float FR=FakeRateMC(electronFakeLColl.at(i), "QCD_WP90TIsop06IPp025p05sig4_LIsop4_Meas");
-         //float FR=FakeRateMC(electronFakeLColl.at(i), "QCD_WP80TIsop1IPp025p05sig4_LIsop4_Meas");
-         //float FR=FakeRateMC(electronFakeLColl.at(i), "DY");
-         //float FR=FakeRateMC(electronFakeLColl.at(i), "TT_powheg");
-         fakeweight*=-FR/(1-FR);
-       }
-     }
-     if(EMuMuClosure && electronFakeLColl.size()==1 && electronMVAMColl.size()==1 
-                     && muonHN2FakeLColl.size()==2 && muonHN2FakeTColl.size()==2 ) fakeweight=0;
-     if(TriMuClosure && muonHN2FakeLColl.size()==3 && muonHN2FakeTColl.size()==3 ) fakeweight=0;
-
-
-
-     if(TriMuClosure){
-       if( PassTrigger("HLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_DZ_v") || PassTrigger("HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_v") ){
-         if(muonHN2FakeLColl.size()==3 && electronFakeLColl.size()==0 && NValidMuL==3){
-           int NStepPassed_exp=StepPassed(muonHN2FakeLColl, electronFakeLColl, jetColl, bjetColl, met, "TriMu");
-           if(NStepPassed_exp>=5) FillHist("NStepPassed_3mu_exp", 5., weight*fakeweight, 0., 10., 10);
-           if(NStepPassed_exp>=4) FillHist("NStepPassed_3mu_exp", 4., weight*fakeweight, 0., 10., 10);
-           if(NStepPassed_exp>=3) FillHist("NStepPassed_3mu_exp", 3., weight*fakeweight, 0., 10., 10);
-           if(NStepPassed_exp>=2) FillHist("NStepPassed_3mu_exp", 2., weight*fakeweight, 0., 10., 10);
-           if(NStepPassed_exp>=1) FillHist("NStepPassed_3mu_exp", 1., weight*fakeweight, 0., 10., 10);
-           if(NStepPassed_exp>=0) FillHist("NStepPassed_3mu_exp", 0., weight*fakeweight, 0., 10., 10);
-         }
-         if(muonHN2FakeTColl.size()==3 && electronFakeLColl.size()==0 && NValidMuT==3 ){
-           int NStepPassed_obs=StepPassed(muonHN2FakeTColl, electronMVAMColl, jetColl, bjetColl, met, "TriMu");
-           if(NStepPassed_obs>=5) FillHist("NStepPassed_3mu_obs", 5., weight, 0., 10., 10);
-           if(NStepPassed_obs>=4) FillHist("NStepPassed_3mu_obs", 4., weight, 0., 10., 10);
-           if(NStepPassed_obs>=3) FillHist("NStepPassed_3mu_obs", 3., weight, 0., 10., 10);
-           if(NStepPassed_obs>=2) FillHist("NStepPassed_3mu_obs", 2., weight, 0., 10., 10);
-           if(NStepPassed_obs>=1) FillHist("NStepPassed_3mu_obs", 1., weight, 0., 10., 10);
-           if(NStepPassed_obs>=0) FillHist("NStepPassed_3mu_obs", 0., weight, 0., 10., 10);
-         }
-       }
-     }
-     if(EMuMuClosure){
-
-       int Pass_Trigger1=0, Pass_Trigger2=0;
-       if( PassTrigger("HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v") ) Pass_Trigger1++;
-       if( PassTrigger("HLT_Mu12_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ_v") ) Pass_Trigger2++;
-  
-       float trigger_period_weight=1.;
-       bool Pass_Trigger=false;
-       if( Pass_Trigger1>0 || Pass_Trigger2>0 ) Pass_Trigger=true;
-       trigger_period_weight=(Pass_Trigger1*27.257618+Pass_Trigger2*8.605696)/35.863314;
-
-
-       if(Pass_Trigger){
-         weight *= trigger_period_weight;
-         if(muonHN2FakeLColl.size()==2 && electronFakeLColl.size()==1 && NValidEleL==1 && NValidMuL==2 ){
-           int NStepPassed_exp=StepPassed(muonHN2FakeLColl, electronFakeLColl, jetColl, bjetColl, met, "EMuMu");
-           if(NStepPassed_exp>=6) FillHist("NStepPassed_1e2mu_exp", 6., weight*fakeweight, 0., 10., 10);
-           if(NStepPassed_exp>=5) FillHist("NStepPassed_1e2mu_exp", 5., weight*fakeweight, 0., 10., 10);
-           if(NStepPassed_exp>=4) FillHist("NStepPassed_1e2mu_exp", 4., weight*fakeweight, 0., 10., 10);
-           if(NStepPassed_exp>=3) FillHist("NStepPassed_1e2mu_exp", 3., weight*fakeweight, 0., 10., 10);
-           if(NStepPassed_exp>=2) FillHist("NStepPassed_1e2mu_exp", 2., weight*fakeweight, 0., 10., 10);
-           if(NStepPassed_exp>=1) FillHist("NStepPassed_1e2mu_exp", 1., weight*fakeweight, 0., 10., 10);
-           if(NStepPassed_exp>=0) FillHist("NStepPassed_1e2mu_exp", 0., weight*fakeweight, 0., 10., 10);
-         }
-         if(muonHN2FakeTColl.size()==2 && electronMVAMColl.size()==1 && NValidEleT==1 && NValidMuT==2 ){
-           int NStepPassed_obs=StepPassed(muonHN2FakeTColl, electronMVAMColl, jetColl, bjetColl, met, "EMuMu");
-           if(NStepPassed_obs>=6) FillHist("NStepPassed_1e2mu_obs", 6., weight, 0., 10., 10);
-           if(NStepPassed_obs>=5) FillHist("NStepPassed_1e2mu_obs", 5., weight, 0., 10., 10);
-           if(NStepPassed_obs>=4) FillHist("NStepPassed_1e2mu_obs", 4., weight, 0., 10., 10);
-           if(NStepPassed_obs>=3) FillHist("NStepPassed_1e2mu_obs", 3., weight, 0., 10., 10);
-           if(NStepPassed_obs>=2) FillHist("NStepPassed_1e2mu_obs", 2., weight, 0., 10., 10);
-           if(NStepPassed_obs>=1) FillHist("NStepPassed_1e2mu_obs", 1., weight, 0., 10., 10);
-           if(NStepPassed_obs>=0) FillHist("NStepPassed_1e2mu_obs", 0., weight, 0., 10., 10);
-         }
-       }
-
      }
 
    }
@@ -1197,23 +1005,18 @@ void Jul2017_MCFakeStudy::ExecuteEvents()throw( LQError ){
      }
    }//End of IP optimisation
    if(DetailClosure){
-     
+
+     CheckMCClosure(muonPreColl, electronPreColl, jetColl, bjetColl, truthColl,
+       "LMVA06Isop4IPp025p05sig4", "POGWP90Isop06IPp025p05sig4", "Test_POGLIsop4IPp5p1Chi100", "Test_POGTIsop20IPp01p05sig4Chi4",
+       "_WP90Isop06LMVA928576Isop4", "TrkIsoVVLConeSUSY");
+
 //     CheckMCClosure(muonPreColl, electronPreColl, jetColl, bjetColl, truthColl,
-//       "LMVA06Isop4IPp025p05sig4", "POGWP90Isop06IPp025p05sig4", "Test_POGLIsop4IPp5p1Chi100", "Test_POGTIsop20IPp01p05sig4Chi4", 
-//       "_WP90Isop06LMVA928576Isop4", "TrkIsoVVLConeSUSY");
-
+//            "LMVA06Isop4IPp025p05sig4", "POGWP90Isop06IPp025p05sig4", "POGLIsop4IPp5p1Chi100", "POGTIsop20IPp01p05sig4Chi4", 
+//            "_WP90Isop06LMVA928576Isop4", "TrkIsoVVLConeSUSY");
+     
      CheckMCClosure(muonPreColl, electronPreColl, jetColl, bjetColl, truthColl,
-       "LMVA767271Isop4IPp05p1sig4", "POGWP90Isop06IPp05p1sig4", "Test_POGLIsop4IPp5p1Chi100", "Test_POGTIsop20IPp01p05sig4Chi4", 
-       "_WP90Isop06IPp05p1sig4_L767271Isop4", "TrkIsoVVLConeSUSY");
-
-     CheckMCClosure(muonPreColl, electronPreColl, jetColl, bjetColl, truthColl,
-       "LMVA928881Isop4IPp05p1sig4", "POGWP90Isop06IPp05p1sig4", "Test_POGLIsop4IPp5p1Chi100", "Test_POGTIsop20IPp01p05sig4Chi4", 
-       "_WP90Isop06IPp05p1sig4_L928881Isop4", "TrkIsoVVLConeSUSY");
-
-     CheckMCClosure(muonPreColl, electronPreColl, jetColl, bjetColl, truthColl,
-       "LMVA928576Isop4IPp05p1sig4", "POGWP90Isop06IPp05p1sig4", "Test_POGLIsop4IPp5p1Chi100", "Test_POGTIsop20IPp01p05sig4Chi4", 
-       "_WP90Isop06IPp05p1sig4_L928576Isop4", "TrkIsoVVLConeSUSY");
-
+       "HctoWAFakeLoose", "POGWP90Isop06IPp025p1sig4", "POGLIsop4IPp5p1Chi100", "POGTIsop20IPp01p05sig4Chi4", 
+       "_WP90Isop06IPp025p1sig4_L928878Isop4", "TrkIsoVVLConeSUSY");
 
    }
  
@@ -1292,6 +1095,7 @@ void Jul2017_MCFakeStudy::CheckMCClosure(std::vector<snu::KMuon> MuPreColl, std:
   int   NLooseLep  = MuLColl.size()+EleLColl.size();
   int   NTightLep  = MuTColl.size()+EleTColl.size();
   if(NLooseLep!=3) return;
+  //cout<<"NHFakeMu "<<NHFakeMu<<" NHFakeEle "<<NHFakeEle<<endl;
   if(NHFakeLep==0) return;//Include at least 1 fake in the sample
   
 
@@ -1299,17 +1103,18 @@ void Jul2017_MCFakeStudy::CheckMCClosure(std::vector<snu::KMuon> MuPreColl, std:
     if(!PassIDCriteria(MuLColl.at(i), MuTID)){
       float FR=FakeRateMC(MuLColl.at(i), "QCD_"+MuTID.ReplaceAll("Test_","")+"_"+MuLID.ReplaceAll("Test_","")+"_"+FilterInfo+ConeMethod);
       fakeweight*=-FR/(1-FR);
-      //cout<<"MuFR"<<FR<<endl;
+  //    cout<<"MuFR"<<FR<<endl;
     }
   }
   for(int i=0; i<EleLColl.size(); i++){
     if(!PassIDCriteria(EleLColl.at(i), EleTID)){
       float FR=FakeRateMC(EleLColl.at(i), "QCD_"+EleTID.ReplaceAll("Test_","")+"_"+EleLID.ReplaceAll("Test_","")+"_"+ConeMethod);
       fakeweight*=-FR/(1-FR);
-      //cout<<"EleFR"<<FR<<endl;
+   //   cout<<"EleFR"<<FR<<endl;
     }
   }
-  if( NLooseLep==3 && NTightLep==3 ) fakeweight=0;
+  //if( NLooseLep==NTightLep ) fakeweight=0;
+  if( NLooseLep==3 && NTightLep==3 ) fakeweight=0.;
 
   int Pass_Trigger1=0, Pass_Trigger2=0;
   if( PassTrigger("HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v") ) Pass_Trigger1++;
@@ -1319,10 +1124,11 @@ void Jul2017_MCFakeStudy::CheckMCClosure(std::vector<snu::KMuon> MuPreColl, std:
   bool Pass_Trigger=false;
   if( Pass_Trigger1>0 || Pass_Trigger2>0 ) Pass_Trigger=true;
   trigger_period_weight=(Pass_Trigger1*27.257618+Pass_Trigger2*8.605696)/35.863314;
+  //weight*=trigger_period_weight;
 
 
   if(Pass_Trigger){
-    if(MuLColl.size()==2 && EleLColl.size()==1){
+    if(MuLColl.size()==2 && EleLColl.size()==1 && NTightLep!=3 ){
       bool PassSel=true;
       float Mmumu=(MuLColl.at(0)+MuLColl.at(1)).M();
       if( !(EleLColl.at(0).Pt()>25 && MuLColl.at(0).Pt()>10 && MuLColl.at(1).Pt()>10) ) PassSel=false;
@@ -1476,8 +1282,8 @@ void Jul2017_MCFakeStudy::Draw2DFakePlot(std::vector<snu::KElectron> FakeColl, s
 
   for(int i=0; i<FakeColl.size(); i++){
        
-    float MotherPt = ConeCorrectedPT(FakeColl.at(i), 0.1);
-    int FakeSrcType = GetFakeLepSrcType(FakeColl.at(i), JetColl);
+    float MotherPt    = ConeCorrectedPT(FakeColl.at(i), 0.06);
+    int   FakeSrcType = GetFakeLepSrcType(FakeColl.at(i), JetColl);
     if(JetPtParam){
       int NearJetIdx  = GetNearJetIdx(FakeColl.at(i), JetColl);
       if(NearJetIdx==-1) return;
@@ -1494,55 +1300,55 @@ void Jul2017_MCFakeStudy::Draw2DFakePlot(std::vector<snu::KElectron> FakeColl, s
           if(fabs(FakeColl.at(i).Eta())<0.8){//Barrel1
             //All fake regardless of near jets.
             FillHist("EleB1SumW_All_ltIsoltMVA_FR2D", IsoCuts[it_iso-1], MVACuts[it_mva], weight, IsoCuts, NIsoCuts-1, MVACuts, NMVACuts-1);   
-            if(PassIDCriteria(FakeColl.at(i), "POGMVAMIP")) FillHist("EleB1IDSumW_All_ltIsoltMVA_FR2D", IsoCuts[it_iso-1], MVACuts[it_mva], weight, IsoCuts, NIsoCuts-1, MVACuts, NMVACuts-1);
+            if(PassIDCriteria(FakeColl.at(i), "POGWP90Isop06IPp025p1sig4")) FillHist("EleB1IDSumW_All_ltIsoltMVA_FR2D", IsoCuts[it_iso-1], MVACuts[it_mva], weight, IsoCuts, NIsoCuts-1, MVACuts, NMVACuts-1);
 
             if(FakeSrcType==3){
               FillHist("EleB1SumW_BjMatch_ltIsoltMVA_FR2D", IsoCuts[it_iso-1], MVACuts[it_mva], weight, IsoCuts, NIsoCuts-1, MVACuts, NMVACuts-1);   
-              if(PassIDCriteria(FakeColl.at(i), "POGMVAMIP")) FillHist("EleB1IDSumW_BjMatch_ltIsoltMVA_FR2D", IsoCuts[it_iso-1], MVACuts[it_mva], weight, IsoCuts, NIsoCuts-1, MVACuts, NMVACuts-1);
+              if(PassIDCriteria(FakeColl.at(i), "POGWP90Isop06IPp025p1sig4")) FillHist("EleB1IDSumW_BjMatch_ltIsoltMVA_FR2D", IsoCuts[it_iso-1], MVACuts[it_mva], weight, IsoCuts, NIsoCuts-1, MVACuts, NMVACuts-1);
             }//End of B-nearjet loop
             if(FakeSrcType==2){
               FillHist("EleB1SumW_CjMatch_ltIsoltMVA_FR2D", IsoCuts[it_iso-1], MVACuts[it_mva], weight, IsoCuts, NIsoCuts-1, MVACuts, NMVACuts-1);   
-              if(PassIDCriteria(FakeColl.at(i), "POGMVAMIP")) FillHist("EleB1IDSumW_CjMatch_ltIsoltMVA_FR2D", IsoCuts[it_iso-1], MVACuts[it_mva], weight, IsoCuts, NIsoCuts-1, MVACuts, NMVACuts-1);
+              if(PassIDCriteria(FakeColl.at(i), "POGWP90Isop06IPp025p1sig4")) FillHist("EleB1IDSumW_CjMatch_ltIsoltMVA_FR2D", IsoCuts[it_iso-1], MVACuts[it_mva], weight, IsoCuts, NIsoCuts-1, MVACuts, NMVACuts-1);
             }//End of C-near jet loop
             if(FakeSrcType==1){
               FillHist("EleB1SumW_LjMatch_ltIsoltMVA_FR2D", IsoCuts[it_iso-1], MVACuts[it_mva], weight, IsoCuts, NIsoCuts-1, MVACuts, NMVACuts-1);   
-              if(PassIDCriteria(FakeColl.at(i), "POGMVAMIP")) FillHist("EleB1IDSumW_LjMatch_ltIsoltMVA_FR2D", IsoCuts[it_iso-1], MVACuts[it_mva], weight, IsoCuts, NIsoCuts-1, MVACuts, NMVACuts-1);
+              if(PassIDCriteria(FakeColl.at(i), "POGWP90Isop06IPp025p1sig4")) FillHist("EleB1IDSumW_LjMatch_ltIsoltMVA_FR2D", IsoCuts[it_iso-1], MVACuts[it_mva], weight, IsoCuts, NIsoCuts-1, MVACuts, NMVACuts-1);
             }//End of L-near jet loop
           }
           else if(fabs(FakeColl.at(i).Eta())<1.479){//Barrel2
             //All fake regardless of near jets.
             FillHist("EleB2SumW_All_ltIsoltMVA_FR2D", IsoCuts[it_iso-1], MVACuts[it_mva], weight, IsoCuts, NIsoCuts-1, MVACuts, NMVACuts-1);   
-            if(PassIDCriteria(FakeColl.at(i), "POGMVAMIP")) FillHist("EleB2IDSumW_All_ltIsoltMVA_FR2D", IsoCuts[it_iso-1], MVACuts[it_mva], weight, IsoCuts, NIsoCuts-1, MVACuts, NMVACuts-1);
+            if(PassIDCriteria(FakeColl.at(i), "POGWP90Isop06IPp025p1sig4")) FillHist("EleB2IDSumW_All_ltIsoltMVA_FR2D", IsoCuts[it_iso-1], MVACuts[it_mva], weight, IsoCuts, NIsoCuts-1, MVACuts, NMVACuts-1);
 
             if(FakeSrcType==3){
               FillHist("EleB2SumW_BjMatch_ltIsoltMVA_FR2D", IsoCuts[it_iso-1], MVACuts[it_mva], weight, IsoCuts, NIsoCuts-1, MVACuts, NMVACuts-1);   
-              if(PassIDCriteria(FakeColl.at(i), "POGMVAMIP")) FillHist("EleB2IDSumW_BjMatch_ltIsoltMVA_FR2D", IsoCuts[it_iso-1], MVACuts[it_mva], weight, IsoCuts, NIsoCuts-1, MVACuts, NMVACuts-1);
+              if(PassIDCriteria(FakeColl.at(i), "POGWP90Isop06IPp025p1sig4")) FillHist("EleB2IDSumW_BjMatch_ltIsoltMVA_FR2D", IsoCuts[it_iso-1], MVACuts[it_mva], weight, IsoCuts, NIsoCuts-1, MVACuts, NMVACuts-1);
             }//End of B-nearjet loop
             if(FakeSrcType==2){
               FillHist("EleB2SumW_CjMatch_ltIsoltMVA_FR2D", IsoCuts[it_iso-1], MVACuts[it_mva], weight, IsoCuts, NIsoCuts-1, MVACuts, NMVACuts-1);   
-              if(PassIDCriteria(FakeColl.at(i), "POGMVAMIP")) FillHist("EleB2IDSumW_CjMatch_ltIsoltMVA_FR2D", IsoCuts[it_iso-1], MVACuts[it_mva], weight, IsoCuts, NIsoCuts-1, MVACuts, NMVACuts-1);
+              if(PassIDCriteria(FakeColl.at(i), "POGWP90Isop06IPp025p1sig4")) FillHist("EleB2IDSumW_CjMatch_ltIsoltMVA_FR2D", IsoCuts[it_iso-1], MVACuts[it_mva], weight, IsoCuts, NIsoCuts-1, MVACuts, NMVACuts-1);
             }//End of C-near jet loop
             if(FakeSrcType==1){
               FillHist("EleB2SumW_LjMatch_ltIsoltMVA_FR2D", IsoCuts[it_iso-1], MVACuts[it_mva], weight, IsoCuts, NIsoCuts-1, MVACuts, NMVACuts-1);   
-              if(PassIDCriteria(FakeColl.at(i), "POGMVAMIP")) FillHist("EleB2IDSumW_LjMatch_ltIsoltMVA_FR2D", IsoCuts[it_iso-1], MVACuts[it_mva], weight, IsoCuts, NIsoCuts-1, MVACuts, NMVACuts-1);
+              if(PassIDCriteria(FakeColl.at(i), "POGWP90Isop06IPp025p1sig4")) FillHist("EleB2IDSumW_LjMatch_ltIsoltMVA_FR2D", IsoCuts[it_iso-1], MVACuts[it_mva], weight, IsoCuts, NIsoCuts-1, MVACuts, NMVACuts-1);
             }//End of L-near jet loop
           }
           else if(fabs(FakeColl.at(i).Eta())<2.5){//EndCap
             //All fake regardless of near jets.
             FillHist("EleESumW_All_ltIsoltMVA_FR2D", IsoCuts[it_iso-1], MVACuts[it_mva], weight, IsoCuts, NIsoCuts-1, MVACuts, NMVACuts-1);   
-            if(PassIDCriteria(FakeColl.at(i), "POGMVAMIP")) FillHist("EleEIDSumW_All_ltIsoltMVA_FR2D", IsoCuts[it_iso-1], MVACuts[it_mva], weight, IsoCuts, NIsoCuts-1, MVACuts, NMVACuts-1);
+            if(PassIDCriteria(FakeColl.at(i), "POGWP90Isop06IPp025p1sig4")) FillHist("EleEIDSumW_All_ltIsoltMVA_FR2D", IsoCuts[it_iso-1], MVACuts[it_mva], weight, IsoCuts, NIsoCuts-1, MVACuts, NMVACuts-1);
 
             if(FakeSrcType==3){
               FillHist("EleESumW_BjMatch_ltIsoltMVA_FR2D", IsoCuts[it_iso-1], MVACuts[it_mva], weight, IsoCuts, NIsoCuts-1, MVACuts, NMVACuts-1);   
-              if(PassIDCriteria(FakeColl.at(i), "POGMVAMIP")) FillHist("EleEIDSumW_BjMatch_ltIsoltMVA_FR2D", IsoCuts[it_iso-1], MVACuts[it_mva], weight, IsoCuts, NIsoCuts-1, MVACuts, NMVACuts-1);
+              if(PassIDCriteria(FakeColl.at(i), "POGWP90Isop06IPp025p1sig4")) FillHist("EleEIDSumW_BjMatch_ltIsoltMVA_FR2D", IsoCuts[it_iso-1], MVACuts[it_mva], weight, IsoCuts, NIsoCuts-1, MVACuts, NMVACuts-1);
             }//End of B-nearjet loop
             if(FakeSrcType==2){
               FillHist("EleESumW_CjMatch_ltIsoltMVA_FR2D", IsoCuts[it_iso-1], MVACuts[it_mva], weight, IsoCuts, NIsoCuts-1, MVACuts, NMVACuts-1);   
-              if(PassIDCriteria(FakeColl.at(i), "POGMVAMIP")) FillHist("EleEIDSumW_CjMatch_ltIsoltMVA_FR2D", IsoCuts[it_iso-1], MVACuts[it_mva], weight, IsoCuts, NIsoCuts-1, MVACuts, NMVACuts-1);
+              if(PassIDCriteria(FakeColl.at(i), "POGWP90Isop06IPp025p1sig4")) FillHist("EleEIDSumW_CjMatch_ltIsoltMVA_FR2D", IsoCuts[it_iso-1], MVACuts[it_mva], weight, IsoCuts, NIsoCuts-1, MVACuts, NMVACuts-1);
             }//End of C-near jet loop
             if(FakeSrcType==1){
               FillHist("EleESumW_LjMatch_ltIsoltMVA_FR2D", IsoCuts[it_iso-1], MVACuts[it_mva], weight, IsoCuts, NIsoCuts-1, MVACuts, NMVACuts-1);   
-              if(PassIDCriteria(FakeColl.at(i), "POGMVAMIP")) FillHist("EleEIDSumW_LjMatch_ltIsoltMVA_FR2D", IsoCuts[it_iso-1], MVACuts[it_mva], weight, IsoCuts, NIsoCuts-1, MVACuts, NMVACuts-1);
+              if(PassIDCriteria(FakeColl.at(i), "POGWP90Isop06IPp025p1sig4")) FillHist("EleEIDSumW_LjMatch_ltIsoltMVA_FR2D", IsoCuts[it_iso-1], MVACuts[it_mva], weight, IsoCuts, NIsoCuts-1, MVACuts, NMVACuts-1);
             }//End of L-near jet loop
           }
         }//End of if Iso<Cut && MVA<Cut
@@ -1638,20 +1444,20 @@ void Jul2017_MCFakeStudy::Draw1DFakePlot(std::vector<snu::KElectron> FakeColl, s
 
     //AllFakes
     FillHist("Ele"+Option+"SumW_iso"+Str_IsoCut+"_All_PT_FR1D", PTCorr, weight, PtEdges, NPtEdges-1);   
-    if(PassIDCriteria(FakeColl.at(i), "POGWP90Isop06IPp025p05sig4")) FillHist("Ele"+Option+"IDSumW_iso"+Str_IsoCut+"_All_PT_FR1D", PTCorr, weight, PtEdges, NPtEdges-1);
+    if(PassIDCriteria(FakeColl.at(i), "POGWP90Isop06IPp025p1sig4")) FillHist("Ele"+Option+"IDSumW_iso"+Str_IsoCut+"_All_PT_FR1D", PTCorr, weight, PtEdges, NPtEdges-1);
 
     //PerSources(Only for matched ones)
     if     (FakeSrcType==3){
       FillHist("Ele"+Option+"SumW_iso"+Str_IsoCut+"_BjMatch_PT_FR1D", PTCorr, weight, PtEdges, NPtEdges-1);   
-      if(PassIDCriteria(FakeColl.at(i), "POGWP90Isop06IPp025p05sig4")) FillHist("Ele"+Option+"IDSumW_iso"+Str_IsoCut+"_BjMatch_PT_FR1D", PTCorr, weight, PtEdges, NPtEdges-1);
+      if(PassIDCriteria(FakeColl.at(i), "POGWP90Isop06IPp025p1sig4")) FillHist("Ele"+Option+"IDSumW_iso"+Str_IsoCut+"_BjMatch_PT_FR1D", PTCorr, weight, PtEdges, NPtEdges-1);
     }
     else if(FakeSrcType==2){
       FillHist("Ele"+Option+"SumW_iso"+Str_IsoCut+"_CjMatch_PT_FR1D", PTCorr, weight, PtEdges, NPtEdges-1);   
-      if(PassIDCriteria(FakeColl.at(i), "POGWP90Isop06IPp025p05sig4")) FillHist("Ele"+Option+"IDSumW_iso"+Str_IsoCut+"_CjMatch_PT_FR1D", PTCorr, weight, PtEdges, NPtEdges-1);
+      if(PassIDCriteria(FakeColl.at(i), "POGWP90Isop06IPp025p1sig4")) FillHist("Ele"+Option+"IDSumW_iso"+Str_IsoCut+"_CjMatch_PT_FR1D", PTCorr, weight, PtEdges, NPtEdges-1);
     }
     else if(FakeSrcType==1){
       FillHist("Ele"+Option+"SumW_iso"+Str_IsoCut+"_LjMatch_PT_FR1D", PTCorr, weight, PtEdges, NPtEdges-1);   
-      if(PassIDCriteria(FakeColl.at(i), "POGWP90Isop06IPp025p05sig4")) FillHist("Ele"+Option+"IDSumW_iso"+Str_IsoCut+"_LjMatch_PT_FR1D", PTCorr, weight, PtEdges, NPtEdges-1);
+      if(PassIDCriteria(FakeColl.at(i), "POGWP90Isop06IPp025p1sig4")) FillHist("Ele"+Option+"IDSumW_iso"+Str_IsoCut+"_LjMatch_PT_FR1D", PTCorr, weight, PtEdges, NPtEdges-1);
     }
 
   }//End of Fake Lepton Loop 
@@ -1808,202 +1614,24 @@ float Jul2017_MCFakeStudy::FakeRateMC(snu::KElectron Ele, TString Option){
     if(Option.Contains("FOPt")) PTCorr=Ele.Pt();
   float fEta=fabs(Ele.Eta());
 
-  if(Option=="QCD_POGWP90Isop06IPp025p05sig4_LMVA06v1Isop4IPp025p05sig4_FOPt"){
+  if(Option=="QCD_POGWP90Isop06IPp025p1sig4_HctoWAFakeLoose_ConeSUSY"){
     if(fEta<0.8){
-      if     (PTCorr<35)  FR=0.091501;
-      else if(PTCorr<50)  FR=0.122422;
-      else if(PTCorr<70)  FR=0.117447;
-      else if(PTCorr<100) FR=0.123902;
-      else                FR=0.117241;
+      if     (PTCorr<35)  FR=0.0927136;
+      else if(PTCorr<50)  FR=0.0720359;
+      else if(PTCorr<70)  FR=0.0711901;
+      else                FR=0.0624766;
     }
     else if(fEta<1.479){
-      if     (PTCorr<35)  FR=0.150037;
-      else if(PTCorr<50)  FR=0.096399;
-      else if(PTCorr<70)  FR=0.143739;
-      else if(PTCorr<100) FR=0.103254;
-      else                FR=0.147577;
+      if     (PTCorr<35)  FR=0.149674 ;
+      else if(PTCorr<50)  FR=0.0613648;
+      else if(PTCorr<70)  FR=0.0846761;
+      else                FR=0.0534003;
     }
     else{
-      if     (PTCorr<35)  FR=0.157985;
-      else if(PTCorr<50)  FR=0.164083;
-      else if(PTCorr<70)  FR=0.173226;
-      else if(PTCorr<100) FR=0.186485;
-      else                FR=0.155806;
-    }
-  }
-  else if(Option=="QCD_POGWP90Isop06IPp05p1sig4_LMVA767271Isop4IPp05p1sig4_ConeSUSY"){
-    if(fEta<0.8){
-      if     (PTCorr<35)  FR=0.108821 ;
-      else if(PTCorr<50)  FR=0.0868851;
-      else if(PTCorr<70)  FR=0.091792 ;
-      else                FR=0.0853498;
-    }
-    else if(fEta<1.479){
-      if     (PTCorr<35)  FR=0.171474 ;
-      else if(PTCorr<50)  FR=0.0747781;
-      else if(PTCorr<70)  FR=0.105437 ;
-      else                FR=0.0680482;
-    }
-    else{
-      if     (PTCorr<35)  FR=0.185273;
-      else if(PTCorr<50)  FR=0.111431;
-      else if(PTCorr<70)  FR=0.118434;
-      else                FR=0.132355;
-    }
-  }
-  else if(Option=="QCD_POGWP90Isop06IPp05p1sig4_LMVA928881Isop4IPp05p1sig4_ConeSUSY"){
-    if(fEta<0.8){
-      if     (PTCorr<35)  FR=0.0921417;
-      else if(PTCorr<50)  FR=0.0717986;
-      else if(PTCorr<70)  FR=0.0706067;
-      else                FR=0.0622013;
-    }
-    else if(fEta<1.479){
-      if     (PTCorr<35)  FR=0.144645 ;
-      else if(PTCorr<50)  FR=0.0590654;
-      else if(PTCorr<70)  FR=0.0821126;
-      else                FR=0.0560044;
-    }
-    else{
-      if     (PTCorr<35)  FR=0.162462 ;
-      else if(PTCorr<50)  FR=0.09669  ;
-      else if(PTCorr<70)  FR=0.0995883;
-      else                FR=0.110279 ;
-    }
-  }
-  else if(Option=="QCD_POGWP90Isop06IPp05p1sig4_LMVA928576Isop4IPp05p1sig4_ConeSUSY"){
-    if(fEta<0.8){
-      if     (PTCorr<35)  FR=0.0921417;
-      else if(PTCorr<50)  FR=0.0717979;
-      else if(PTCorr<70)  FR=0.0706067;
-      else                FR=0.0622013;
-    }
-    else if(fEta<1.479){
-      if     (PTCorr<35)  FR=0.151321 ;
-      else if(PTCorr<50)  FR=0.0635403;
-      else if(PTCorr<70)  FR=0.0889128;
-      else                FR=0.0585634;
-    }
-    else{
-      if     (PTCorr<35)  FR=0.17309 ;
-      else if(PTCorr<50)  FR=0.104258;
-      else if(PTCorr<70)  FR=0.109567;
-      else                FR=0.121668;
-    }
-  }
-  else if(Option=="QCD_POGWP90Isop06IPp025p05sig4_LMVA06v2Isop4IPp025p05sig4_FOPt"){
-    if(fEta<0.8){
-      if     (PTCorr<35)  FR=0.0797982;
-      else if(PTCorr<50)  FR=0.103689 ;
-      else if(PTCorr<70)  FR=0.100002 ;
-      else if(PTCorr<100) FR=0.09494  ;
-      else                FR=0.0879307;
-    }
-    else if(fEta<1.479){
-      if     (PTCorr<35)  FR=0.132051 ;
-      else if(PTCorr<50)  FR=0.0870981;
-      else if(PTCorr<70)  FR=0.125262 ;
-      else if(PTCorr<100) FR=0.0746698;
-      else                FR=0.123667 ;
-    }
-    else{
-      if     (PTCorr<35)  FR=0.151123;
-      else if(PTCorr<50)  FR=0.154873;
-      else if(PTCorr<70)  FR=0.16231 ;
-      else if(PTCorr<100) FR=0.175213;
-      else                FR=0.144953;
-    }
-  }
-  else if(Option=="QCD_POGWP90Isop08IPp025p05sig4_LMVA08v1Isop4IPp025p05sig4_FOPt"){
-    if(fEta<0.8){
-      if     (PTCorr<35)  FR=0.125244;
-      else if(PTCorr<50)  FR=0.172478;
-      else if(PTCorr<70)  FR=0.152892;
-      else if(PTCorr<100) FR=0.172568;
-      else                FR=0.153378;
-    }
-    else if(fEta<1.479){
-      if     (PTCorr<35)  FR=0.193829;
-      else if(PTCorr<50)  FR=0.127899;
-      else if(PTCorr<70)  FR=0.19615 ;
-      else if(PTCorr<100) FR=0.143386;
-      else                FR=0.209315;
-    }
-    else{
-      if     (PTCorr<35)  FR=0.21779 ;
-      else if(PTCorr<50)  FR=0.229913;
-      else if(PTCorr<70)  FR=0.245743;
-      else if(PTCorr<100) FR=0.280731;
-      else                FR=0.226573;
-    }
-  }
-  else if(Option=="QCD_POGWP90Isop08IPp025p05sig4_LMVA08v2Isop4IPp025p05sig4_FOPt"){
-    if(fEta<0.8){
-      if     (PTCorr<35)  FR=0.104691;
-      else if(PTCorr<50)  FR=0.146683;
-      else if(PTCorr<70)  FR=0.130427;
-      else if(PTCorr<100) FR=0.13962 ;
-      else                FR=0.12503 ;
-    }
-    else if(fEta<1.479){
-      if     (PTCorr<35)  FR=0.183751;
-      else if(PTCorr<50)  FR=0.123308;
-      else if(PTCorr<70)  FR=0.181698;
-      else if(PTCorr<100) FR=0.131692;
-      else                FR=0.188743;
-    }
-    else{
-      if     (PTCorr<35)  FR=0.213187;
-      else if(PTCorr<50)  FR=0.222791;
-      else if(PTCorr<70)  FR=0.237109;
-      else if(PTCorr<100) FR=0.267733;
-      else                FR=0.216563;
-    }
-  }
-  else if(Option=="QCD_POGWP90Isop1IPp025p05sig4_LMVA1v1Isop4IPp025p05sig4_FOPt"){
-    if(fEta<0.8){
-      if     (PTCorr<35)  FR=0.189239;
-      else if(PTCorr<50)  FR=0.218034;
-      else if(PTCorr<70)  FR=0.197416;
-      else if(PTCorr<100) FR=0.2165  ;
-      else                FR=0.223877;
-    }
-    else if(fEta<1.479){
-      if     (PTCorr<35)  FR=0.230655;
-      else if(PTCorr<50)  FR=0.197618;
-      else if(PTCorr<70)  FR=0.262456;
-      else if(PTCorr<100) FR=0.215438;
-      else                FR=0.276381;
-    }
-    else{
-      if     (PTCorr<35)  FR=0.288004;
-      else if(PTCorr<50)  FR=0.3072  ;
-      else if(PTCorr<70)  FR=0.327769;
-      else if(PTCorr<100) FR=0.342581;
-      else                FR=0.30422 ;
-    }
-  }
-  else if(Option=="QCD_POGWP90Isop1IPp025p05sig4_LMVA1v2Isop4IPp025p05sig4_FOPt"){
-    if(fEta<0.8){
-      if     (PTCorr<35)  FR=0.164291;
-      else if(PTCorr<50)  FR=0.186148;
-      else if(PTCorr<70)  FR=0.171744;
-      else if(PTCorr<100) FR=0.184932;
-      else                FR=0.179449;
-    }
-    else if(fEta<1.479){
-      if     (PTCorr<35)  FR=0.225725;
-      else if(PTCorr<50)  FR=0.191406;
-      else if(PTCorr<70)  FR=0.254012;
-      else if(PTCorr<100) FR=0.206582;
-      else                FR=0.260633;
-    }
-    else{
-      if     (PTCorr<35)  FR=0.286367;
-      else if(PTCorr<50)  FR=0.305535;
-      else if(PTCorr<70)  FR=0.325535;
-      else if(PTCorr<100) FR=0.339856;
-      else                FR=0.300392;
+      if     (PTCorr<35)  FR=0.159323;
+      else if(PTCorr<50)  FR=0.104854;
+      else if(PTCorr<70)  FR=0.109523;
+      else                FR=0.120316;
     }
   }
   else if(Option=="QCD_POGWP90Isop06IPp025p05sig4_LMVA06Isop4IPp025p05sig4_ConeSUSY"){
@@ -2024,468 +1652,6 @@ float Jul2017_MCFakeStudy::FakeRateMC(snu::KElectron Ele, TString Option){
       else if(PTCorr<50)  FR=0.109329;
       else if(PTCorr<70)  FR=0.114383;
       else                FR=0.126938;
-    }
-  }
-  else if(Option=="QCD_POGWP90Isop06IPp025p05sig4_LMVA06v1Isop4IPp025p05sig4_ConeSUSY"){
-    if(fEta<0.8){
-      if     (PTCorr<35)  FR=0.109946 ;
-      else if(PTCorr<50)  FR=0.087342 ;
-      else if(PTCorr<70)  FR=0.0930129;
-      else if(PTCorr<100) FR=0.0861247;
-      else                FR=0.0813871;
-    }
-    else if(fEta<1.479){
-      if     (PTCorr<35)  FR=0.171459 ;
-      else if(PTCorr<50)  FR=0.0743428;
-      else if(PTCorr<70)  FR=0.1033   ;
-      else if(PTCorr<100) FR=0.0626968;
-      else                FR=0.101264 ;
-    }
-    else{
-      if     (PTCorr<35)  FR=0.180358;
-      else if(PTCorr<50)  FR=0.123105;
-      else if(PTCorr<70)  FR=0.129848;
-      else if(PTCorr<100) FR=0.146601;
-      else                FR=0.115862;
-    }
-  }
-  else if(Option=="QCD_POGWP90Isop06IPp025p05sig4_LMVA06v2Isop4IPp025p05sig4_ConeSUSY"){
-    if(fEta<0.8){
-      if     (PTCorr<35)  FR=0.0933608;
-      else if(PTCorr<50)  FR=0.0722026;
-      else if(PTCorr<70)  FR=0.0714611;
-      else if(PTCorr<100) FR=0.0627619;
-      else                FR=0.0554329;
-    }
-    else if(fEta<1.479){
-      if     (PTCorr<35)  FR=0.14649  ;
-      else if(PTCorr<50)  FR=0.0611227;
-      else if(PTCorr<70)  FR=0.083328 ;
-      else if(PTCorr<100) FR=0.0529076;
-      else                FR=0.0797046;
-    }
-    else{
-      if     (PTCorr<35)  FR=0.161256 ;
-      else if(PTCorr<50)  FR=0.109329 ;
-      else if(PTCorr<70)  FR=0.11441  ;
-      else if(PTCorr<100) FR=0.126938 ;
-      else                FR=0.0978612;
-    }
-  }
-  else if(Option=="QCD_POGWP90Isop08IPp025p05sig4_LMVA08v1Isop4IPp025p05sig4_ConeSUSY"){
-    if(fEta<0.8){
-      if     (PTCorr<35)  FR=0.141798;
-      else if(PTCorr<50)  FR=0.129997;
-      else if(PTCorr<70)  FR=0.123745;
-      else if(PTCorr<100) FR=0.11896 ;
-      else                FR=0.113926;
-    }
-    else if(fEta<1.479){
-      if     (PTCorr<35)  FR=0.237345;
-      else if(PTCorr<50)  FR=0.101752;
-      else if(PTCorr<70)  FR=0.152267;
-      else if(PTCorr<100) FR=0.103114;
-      else                FR=0.152473;
-    }
-    else{
-      if     (PTCorr<35)  FR=0.252915;
-      else if(PTCorr<50)  FR=0.178066;
-      else if(PTCorr<70)  FR=0.191302;
-      else if(PTCorr<100) FR=0.227136;
-      else                FR=0.175338;
-    }
-  }
-  else if(Option=="QCD_POGWP90Isop08IPp025p05sig4_LMVA08v2Isop4IPp025p05sig4_ConeSUSY"){
-    if(fEta<0.8){
-      if     (PTCorr<35)  FR=0.117631 ;
-      else if(PTCorr<50)  FR=0.105495 ;
-      else if(PTCorr<70)  FR=0.0987839;
-      else if(PTCorr<100) FR=0.0897637;
-      else                FR=0.0810223;
-    }
-    else if(fEta<1.479){
-      if     (PTCorr<35)  FR=0.203559 ;
-      else if(PTCorr<50)  FR=0.0909429;
-      else if(PTCorr<70)  FR=0.125706 ;
-      else if(PTCorr<100) FR=0.0891492;
-      else                FR=0.124093 ;
-    }
-    else{
-      if     (PTCorr<35)  FR=0.223975;
-      else if(PTCorr<50)  FR=0.160782;
-      else if(PTCorr<70)  FR=0.170991;
-      else if(PTCorr<100) FR=0.201036;
-      else                FR=0.151625;
-    }
-  }
-  else if(Option=="QCD_POGWP90Isop1IPp025p05sig4_LMVA1v1Isop4IPp025p05sig4_ConeSUSY"){
-    if(fEta<0.8){
-      if     (PTCorr<35)  FR=0.220016;
-      else if(PTCorr<50)  FR=0.167288;
-      else if(PTCorr<70)  FR=0.1585  ;
-      else if(PTCorr<100) FR=0.159652;
-      else                FR=0.167458;
-    }
-    else if(fEta<1.479){
-      if     (PTCorr<35)  FR=0.274491;
-      else if(PTCorr<50)  FR=0.162536;
-      else if(PTCorr<70)  FR=0.201938;
-      else if(PTCorr<100) FR=0.15953 ;
-      else                FR=0.210184;
-    }
-    else{
-      if     (PTCorr<35)  FR=0.328136;
-      else if(PTCorr<50)  FR=0.245036;
-      else if(PTCorr<70)  FR=0.261075;
-      else if(PTCorr<100) FR=0.285969;
-      else                FR=0.244441;
-    }
-  }
-  else if(Option=="QCD_POGWP90Isop1IPp025p05sig4_LMVA1v2Isop4IPp025p05sig4_ConeSUSY"){
-    if(fEta<0.8){
-      if     (PTCorr<35)  FR=0.174485;
-      else if(PTCorr<50)  FR=0.13319 ;
-      else if(PTCorr<70)  FR=0.133659;
-      else if(PTCorr<100) FR=0.12399 ;
-      else                FR=0.125841;
-    }
-    else if(fEta<1.479){
-      if     (PTCorr<35)  FR=0.255073;
-      else if(PTCorr<50)  FR=0.13758 ;
-      else if(PTCorr<70)  FR=0.176497;
-      else if(PTCorr<100) FR=0.130526;
-      else                FR=0.183095;
-    }
-    else{
-      if     (PTCorr<35)  FR=0.301993;
-      else if(PTCorr<50)  FR=0.218452;
-      else if(PTCorr<70)  FR=0.233875;
-      else if(PTCorr<100) FR=0.259812;
-      else                FR=0.217638;
-    }
-  }
-  else if(Option=="TT_powheg"){
-    if(fEta<0.8){
-      if(PTCorr<35) FR=0.1459;
-      else if(PTCorr<50) FR=0.1138;
-      else if(PTCorr<70) FR=0.09918;
-      else if(PTCorr<100) FR=0.0831;
-      else FR=0.09295;
-    }
-    else if(fEta<1.479){
-      if(PTCorr<35) FR=0.1676;
-      else if(PTCorr<50) FR=0.1313;
-      else if(PTCorr<70) FR=0.1235;
-      else if(PTCorr<100) FR=0.1129;
-      else FR=0.1289;
-    }
-    else{
-      if(PTCorr<35) FR=0.2567;
-      else if(PTCorr<50) FR=0.2371;
-      else if(PTCorr<70) FR=0.2257;
-      else if(PTCorr<100) FR=0.2275;
-      else FR=0.2407;
-    }
-  }
-  else if(Option=="TT_Iso04"){
-    if(fEta<0.8){
-      if(PTCorr<35) FR=0.217223;
-      else if(PTCorr<50) FR=0.097823;
-      else if(PTCorr<70) FR=0.0765813;
-      else if(PTCorr<100) FR=0.0651159;
-      else FR=0.06603;
-    }
-    else if(fEta<1.479){
-      if(PTCorr<35) FR=0.243832;
-      else if(PTCorr<50) FR=0.115953;
-      else if(PTCorr<70) FR=0.106106;
-      else if(PTCorr<100) FR=0.0941181;
-      else FR=0.0965011;
-    }
-    else{
-      if(PTCorr<35) FR=0.314817;
-      else if(PTCorr<50) FR=0.193874;
-      else if(PTCorr<70) FR=0.177807;
-      else if(PTCorr<100) FR=0.172306;
-      else FR=0.171792;
-    }
-  }
-  else if(Option=="QCD_EGM"){
-    if(fEta<0.8){
-      //if(PTCorr<35) FR=0.09618;//@PT10
-      if(PTCorr<35) FR=0.1636;//@PT25
-      else if(PTCorr<50) FR=0.1187;
-      else if(PTCorr<70) FR=0.1699;
-      else if(PTCorr<100) FR=0.1384;
-      else FR=0.1430;
-    }
-    else if(fEta<1.479){
-      //if(PTCorr<35) FR=0.1297;//@PT10
-      if(PTCorr<35) FR=0.2244;//@PT25
-      else if(PTCorr<50) FR=0.1582;
-      else if(PTCorr<70) FR=0.158;
-      else if(PTCorr<100) FR=0.1148;
-      else FR=0.2209;
-    }
-    else{
-      //if(PTCorr<35) FR=0.2479;//@PT10
-      if(PTCorr<35) FR=0.3798;//@PT25
-      else if(PTCorr<50) FR=0.2129;
-      else if(PTCorr<70) FR=0.2157;
-      else if(PTCorr<100) FR=0.2727;
-      else FR=0.2477;
-    }
-  }
-  else if(Option=="QCD_Iso03"){
-    if(fEta<0.8){
-      if(PTCorr<35) FR=0.1389;
-      else if(PTCorr<50) FR=0.1136;
-      else if(PTCorr<70) FR=0.1549;
-      else if(PTCorr<100) FR=0.1158;
-      else FR=0.1187;
-    }
-    else if(fEta<1.479){
-      if(PTCorr<35) FR=0.1911;
-      else if(PTCorr<50) FR=0.1478;
-      else if(PTCorr<70) FR=0.1435;
-      else if(PTCorr<100) FR=0.09653;
-      else FR=0.1797;
-    }
-    else{
-      if(PTCorr<35) FR=0.3239;//@PT25
-      else if(PTCorr<50) FR=0.1998;
-      else if(PTCorr<70) FR=0.1908;
-      else if(PTCorr<100) FR=0.2346;
-      else FR=0.2070;
-    }
-  }
-  else if(Option=="QCD_Iso04"){
-    if(fEta<0.8){
-      if(PTCorr<35) FR=0.1185;//@PT25
-      else if(PTCorr<50) FR=0.08259;
-      else if(PTCorr<70) FR=0.1231;
-      else if(PTCorr<100) FR=0.08276;
-      else FR=0.08602;
-    }
-    else if(fEta<1.479){
-      if(PTCorr<35) FR=0.1737;
-      else if(PTCorr<50) FR=0.1199;
-      else if(PTCorr<70) FR=0.1153;
-      else if(PTCorr<100) FR=0.07766;
-      else FR=0.1483;
-    }
-    else{
-      if(PTCorr<35) FR=0.2912;//@PT25
-      else if(PTCorr<50) FR=0.1568;
-      else if(PTCorr<70) FR=0.15865;
-      else if(PTCorr<100) FR=0.193951;
-      else FR=0.166254;
-    }
-  }
-  else if(Option=="QCD_Iso05"){
-    if(fEta<0.8){
-      if(PTCorr<35) FR=0.1185;//@PT25
-      else if(PTCorr<50) FR=0.07862;
-      else if(PTCorr<70) FR=0.1182;
-      else if(PTCorr<100) FR=0.0796;
-      else FR=0.08313;
-    }
-    else if(fEta<1.479){
-      if(PTCorr<35) FR=0.1593;//@PT25
-      else if(PTCorr<50) FR=0.1043;
-      else if(PTCorr<70) FR=0.09615;
-      else if(PTCorr<100) FR=0.07045;
-      else FR=0.1297;
-    }
-    else{
-      if(PTCorr<35) FR=0.291249;//@PT25
-      else if(PTCorr<50) FR=0.149709;
-      else if(PTCorr<70) FR=0.149482;
-      else if(PTCorr<100) FR=0.185653;
-      else FR=0.16068;
-    }
-  }
-  else if(Option=="DY"){
-    if(fEta<0.8){
-      if(PTCorr<35) FR=0.222;//@PT25
-      else if(PTCorr<50) FR=0.215;
-      else if(PTCorr<70) FR=0.183;
-      else if(PTCorr<100) FR=0.219;
-      else FR=0.2143;
-    }
-    else if(fEta<1.479){
-      if(PTCorr<35) FR=0.2266;//@PT25
-      else if(PTCorr<50) FR=0.2278;
-      else if(PTCorr<70) FR=0.2705;
-      else if(PTCorr<100) FR=0.2280;
-      else FR=0.4105;
-    }
-    else{
-      if(PTCorr<35) FR=0.3865;//@PT25
-      else if(PTCorr<50) FR=0.3448;
-      else if(PTCorr<70) FR=0.3467;
-      else if(PTCorr<100) FR=0.3912;
-      else FR=0.3640;
-    }
-  }
-  else if(Option=="DY_Iso04"){
-    if(fEta<0.8){
-      if(PTCorr<35) FR=0.148342;//@PT25
-      else if(PTCorr<50) FR=0.144186;
-      else if(PTCorr<70) FR=0.129305;
-      else if(PTCorr<100) FR=0.138778;
-      else FR=0.126477;
-    }
-    else if(fEta<1.479){
-      if(PTCorr<35) FR=0.153721;//@PT25
-      else if(PTCorr<50) FR=0.17511;
-      else if(PTCorr<70) FR=0.180541;
-      else if(PTCorr<100) FR=0.171512;
-      else FR=0.294216;
-    }
-    else{
-      if(PTCorr<35) FR=0.285454;//@PT25
-      else if(PTCorr<50) FR=0.256927;
-      else if(PTCorr<70) FR=0.262726;
-      else if(PTCorr<100) FR=0.295326;
-      else FR=0.212645;
-    }
-  }
-  else if(Option=="QCD_WP90TIsop06IPp025p05sig4_LIsop4"){
-// OLD Optimisation(upto 1digit)
-//    if(fEta<0.8){
-//      if     (PTCorr<35)  FR= 0.0720456;//@PT25
-//      else if(PTCorr<50)  FR= 0.0460224;
-//      else if(PTCorr<70)  FR= 0.0507844;
-//      else if(PTCorr<100) FR= 0.0450814;
-//      else                FR= 0.0481338;
-//    }
-//    else if(fEta<1.479){
-//      if     (PTCorr<35)  FR= 0.079692 ;//@PT25
-//      else if(PTCorr<50)  FR= 0.0567841; 
-//      else if(PTCorr<70)  FR= 0.0450817;
-//      else if(PTCorr<100) FR= 0.031059 ;
-//      else                FR= 0.0607711;
-//    }
-//    else{
-//      if     (PTCorr<35)  FR= 0.175827 ;//@PT25
-//      else if(PTCorr<50)  FR= 0.078798 ;
-//      else if(PTCorr<70)  FR= 0.0699886;
-//      else if(PTCorr<100) FR= 0.109059 ;
-//      else                FR= 0.0756557;
-//    }
-
-    if(fEta<0.8){
-      if     (PTCorr<35)  FR= 0.0690209;
-      else if(PTCorr<50)  FR= 0.0440945;
-      else if(PTCorr<70)  FR= 0.0483912;
-      else if(PTCorr<100) FR= 0.0426386;
-      else                FR= 0.0447583;
-    }
-    else if(fEta<1.479){
-      if     (PTCorr<35)  FR= 0.0868652;
-      else if(PTCorr<50)  FR= 0.0623573;
-      else if(PTCorr<70)  FR= 0.0498396;
-      else if(PTCorr<100) FR= 0.0364948;
-      else                FR= 0.0692111;
-    }
-    else{
-      if     (PTCorr<35)  FR= 0.180339 ;
-      else if(PTCorr<50)  FR= 0.0821142;
-      else if(PTCorr<70)  FR= 0.0728829;
-      else if(PTCorr<100) FR= 0.113876 ;
-      else                FR= 0.0794707;
-    }
-  }
-  else if(Option=="QCD_WP90TIsop06IPp025p05sig4_LIsop4_Meas"){
-// OLD optimisation upto 1digit
-//    if(fEta<0.8){
-//      if     (PTCorr<35)  FR= 0.114704 ;//@PT25
-//      else if(PTCorr<50)  FR= 0.0531938;
-//      else if(PTCorr<70)  FR= 0.0535009;
-//      else if(PTCorr<100) FR= 0.0502975;
-//      else                FR= 0.048669 ;
-//    }
-//    else if(fEta<1.479){
-//      if     (PTCorr<35)  FR= 0.216444 ;//@PT25
-//      else if(PTCorr<50)  FR= 0.029688 ; 
-//      else if(PTCorr<70)  FR= 0.109813 ;
-//      else if(PTCorr<100) FR= 0.0482444;
-//      else                FR= 0.0665797;
-//    }
-//    else{
-//      if     (PTCorr<35)  FR= 0.182393 ;//@PT25
-//      else if(PTCorr<50)  FR= 0.0783405;
-//      else if(PTCorr<70)  FR= 0.0851523;
-//      else if(PTCorr<100) FR= 0.116949 ;
-//      else                FR= 0.107589 ;
-//    }
-    if(fEta<0.8){
-      if     (PTCorr<35)  FR= 0.110768 ;
-      else if(PTCorr<50)  FR= 0.0505515;
-      else if(PTCorr<70)  FR= 0.0511072;
-      else if(PTCorr<100) FR= 0.0462395;
-      else                FR= 0.0443412;
-    }
-    else if(fEta<1.479){
-      if     (PTCorr<35)  FR= 0.229101 ;
-      else if(PTCorr<50)  FR= 0.0315502;
-      else if(PTCorr<70)  FR= 0.117951 ;
-      else if(PTCorr<100) FR= 0.0527282;
-      else                FR= 0.0763335;
-    }
-    else{
-      if     (PTCorr<35)  FR= 0.185864 ;
-      else if(PTCorr<50)  FR= 0.0814238;
-      else if(PTCorr<70)  FR= 0.0880235;
-      else if(PTCorr<100) FR= 0.120601 ;
-      else                FR= 0.111554 ;
-    }
-  }
-  else if(Option=="QCD_WP80TIsop1IPp025p05sig4_LIsop4"){
-    if(fEta<0.8){
-      if     (PTCorr<35)  FR= 0.0880542;//@PT25
-      else if(PTCorr<50)  FR= 0.0577207;
-      else if(PTCorr<70)  FR= 0.0494798;
-      else if(PTCorr<100) FR= 0.0664294;
-      else                FR= 0.10774  ;
-    }
-    else if(fEta<1.479){
-      if     (PTCorr<35)  FR= 0.125754 ;//@PT25
-      else if(PTCorr<50)  FR= 0.0742944; 
-      else if(PTCorr<70)  FR= 0.118062 ;
-      else if(PTCorr<100) FR= 0.0767991;
-      else                FR= 0.139251 ;
-    }
-    else{
-      if     (PTCorr<35)  FR= 0.210828;//@PT25
-      else if(PTCorr<50)  FR= 0.117833;
-      else if(PTCorr<70)  FR= 0.125338;
-      else if(PTCorr<100) FR= 0.160274;
-      else                FR= 0.144114;
-    }
-  }
-  else if(Option=="QCD_WP80TIsop1IPp025p05sig4_LIsop4_Meas"){
-    if(fEta<0.8){
-      if     (PTCorr<35)  FR= 0.224205 ;//@PT25
-      else if(PTCorr<50)  FR= 0.0372589;
-      else if(PTCorr<70)  FR= 0.105434 ;
-      else if(PTCorr<100) FR= 0.0649142;
-      else                FR= 0.0932459;
-    }
-    else if(fEta<1.479){
-      if     (PTCorr<35)  FR= 0.170866 ;//@PT25
-      else if(PTCorr<50)  FR= 0.0486774; 
-      else if(PTCorr<70)  FR= 0.243978 ;
-      else if(PTCorr<100) FR= 0.112456 ;
-      else                FR= 0.129348 ;
-    }
-    else{
-      if     (PTCorr<35)  FR= 0.190498;//@PT25
-      else if(PTCorr<50)  FR= 0.110786;
-      else if(PTCorr<70)  FR= 0.137065;
-      else if(PTCorr<100) FR= 0.195735;
-      else                FR= 0.130998;
     }
   }
 

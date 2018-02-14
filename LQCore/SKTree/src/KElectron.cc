@@ -295,6 +295,7 @@ void  KElectron::SetType(int type){
 
 bool KElectron::TriggerMatched(TString path){
   TString trig = k_trig_match;
+  //cout<<k_trig_match<<endl;
   if(trig.Contains(path)) return true;
   return false;
 }

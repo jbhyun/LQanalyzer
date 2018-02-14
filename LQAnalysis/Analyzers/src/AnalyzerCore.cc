@@ -6468,29 +6468,20 @@ bool AnalyzerCore::PassIDCriteria(snu::KElectron Ele, TString ID, TString Option
     if( !(fabs(Ele.dz())<0.1)    ) PassID=false;
     if( !(fabs(Ele.dxySig())<3.) ) PassID=false;
   }
+  else if(ID=="POGMVATIP"){
+    if( !(Ele.PassNotrigMVATight())  ) PassID=false;
+    if( !(Ele.IsTrigMVAValid())      ) PassID=false;
+    if( !(Ele.PassesConvVeto())      ) PassID=false;
+    if( !(Ele.PFRelIso(0.3)<0.1)     ) PassID=false;
+    if( !(fabs(Ele.dxy())<0.025)     ) PassID=false;
+    if( !(fabs(Ele.dz())<0.05)       ) PassID=false;
+    if( !(fabs(Ele.dxySig())<4.)     ) PassID=false;
+  }
   else if(ID=="POGMVAMIP"){
     if( !(Ele.PassNotrigMVAMedium()) ) PassID=false;
     if( !(Ele.IsTrigMVAValid())      ) PassID=false;
     if( !(Ele.PassesConvVeto())      ) PassID=false;
     if( !(Ele.PFRelIso(0.3)<0.1)     ) PassID=false;
-    if( !(fabs(Ele.dxy())<0.025)     ) PassID=false;
-    if( !(fabs(Ele.dz())<0.05)       ) PassID=false;
-    if( !(fabs(Ele.dxySig())<4.)     ) PassID=false;
-  }
-  else if(ID=="POGWP90Isop1IPp025p05sig4"){
-    if( !(Ele.PassNotrigMVAMedium()) ) PassID=false;
-    if( !(Ele.IsTrigMVAValid())      ) PassID=false;
-    if( !(Ele.PassesConvVeto())      ) PassID=false;
-    if( !(Ele.PFRelIso(0.3)<0.1)     ) PassID=false;
-    if( !(fabs(Ele.dxy())<0.025)     ) PassID=false;
-    if( !(fabs(Ele.dz())<0.05)       ) PassID=false;
-    if( !(fabs(Ele.dxySig())<4.)     ) PassID=false;
-  }
-  else if(ID=="POGWP90Isop08IPp025p05sig4"){
-    if( !(Ele.PassNotrigMVAMedium()) ) PassID=false;
-    if( !(Ele.IsTrigMVAValid())      ) PassID=false;
-    if( !(Ele.PassesConvVeto())      ) PassID=false;
-    if( !(Ele.PFRelIso(0.3)<0.08)    ) PassID=false;
     if( !(fabs(Ele.dxy())<0.025)     ) PassID=false;
     if( !(fabs(Ele.dz())<0.05)       ) PassID=false;
     if( !(fabs(Ele.dxySig())<4.)     ) PassID=false;
@@ -6504,50 +6495,26 @@ bool AnalyzerCore::PassIDCriteria(snu::KElectron Ele, TString ID, TString Option
     if( !(fabs(Ele.dz())<0.05)       ) PassID=false;
     if( !(fabs(Ele.dxySig())<4.)     ) PassID=false;
   }
-  else if(ID=="POGWP90Isop06IPp05p1sig4"){
+  else if(ID=="POGWP90Isop06IPp025p1sig4"){
     if( !(Ele.PassNotrigMVAMedium()) ) PassID=false;
     if( !(Ele.IsTrigMVAValid())      ) PassID=false;
     if( !(Ele.PassesConvVeto())      ) PassID=false;
     if( !(Ele.PFRelIso(0.3)<0.06)    ) PassID=false;
-    if( !(fabs(Ele.dxy())<0.05)      ) PassID=false;
+    if( !(fabs(Ele.dxy())<0.025)     ) PassID=false;
     if( !(fabs(Ele.dz())<0.1)        ) PassID=false;
     if( !(fabs(Ele.dxySig())<4.)     ) PassID=false;
   }
-  else if(ID=="LMVA928576Isop4IPp05p1sig4"){
+  else if(ID=="HctoWAFakeLoose"){
     if( !(Ele.IsTrigMVAValid())      ) PassID=false;
     if( !(Ele.PassesConvVeto())      ) PassID=false;
     if( !(Ele.PFRelIso(0.3)<0.4)     ) PassID=false;
-    if( !(fabs(Ele.dxy())<0.05)     ) PassID=false;
-    if( !(fabs(Ele.dz())<0.1)       ) PassID=false;
-    if( !(fabs(Ele.dxySig())<4.)     ) PassID=false;
-
-    if     ( fabs(Ele.Eta())<0.8   ){ if(Ele.MVA()<-0.92) PassID=false; }
-    else if( fabs(Ele.Eta())<1.479 ){ if(Ele.MVA()<-0.85) PassID=false; }
-    else                            { if(Ele.MVA()<-0.76) PassID=false; }
-  }
-  else if(ID=="LMVA767271Isop4IPp05p1sig4"){
-    if( !(Ele.IsTrigMVAValid())      ) PassID=false;
-    if( !(Ele.PassesConvVeto())      ) PassID=false;
-    if( !(Ele.PFRelIso(0.3)<0.4)     ) PassID=false;
-    if( !(fabs(Ele.dxy())<0.05)      ) PassID=false;
-    if( !(fabs(Ele.dz())<0.1)        ) PassID=false;
-    if( !(fabs(Ele.dxySig())<4.)     ) PassID=false;
-
-    if     ( fabs(Ele.Eta())<0.8   ){ if(Ele.MVA()<-0.76) PassID=false; }
-    else if( fabs(Ele.Eta())<1.479 ){ if(Ele.MVA()<-0.72) PassID=false; }
-    else                            { if(Ele.MVA()<-0.71) PassID=false; }
-  }
-  else if(ID=="LMVA928881Isop4IPp05p1sig4"){
-    if( !(Ele.IsTrigMVAValid())      ) PassID=false;
-    if( !(Ele.PassesConvVeto())      ) PassID=false;
-    if( !(Ele.PFRelIso(0.3)<0.4)     ) PassID=false;
-    if( !(fabs(Ele.dxy())<0.05)      ) PassID=false;
-    if( !(fabs(Ele.dz())<0.1)        ) PassID=false;
+    if( !(fabs(Ele.dxy())<0.025)     ) PassID=false;
+    if( !(fabs(Ele.dz())<0.1   )     ) PassID=false;
     if( !(fabs(Ele.dxySig())<4.)     ) PassID=false;
 
     if     ( fabs(Ele.Eta())<0.8   ){ if(Ele.MVA()<-0.92) PassID=false; }
     else if( fabs(Ele.Eta())<1.479 ){ if(Ele.MVA()<-0.88) PassID=false; }
-    else                            { if(Ele.MVA()<-0.81) PassID=false; }
+    else                            { if(Ele.MVA()<-0.78) PassID=false; }
   }
   else if(ID=="LMVA06Isop4IPp025p05sig4"){
     if( !(Ele.IsTrigMVAValid())      ) PassID=false;
@@ -6564,63 +6531,6 @@ bool AnalyzerCore::PassIDCriteria(snu::KElectron Ele, TString ID, TString Option
     else if( fabs(Ele.Eta())<1.479 ){ if(Ele.MVA()<-0.85) PassID=false; }
     else                            { if(Ele.MVA()<-0.76) PassID=false; }
   }
-  else if(ID=="LMVA08v1Isop4IPp025p05sig4"){
-    if( !(Ele.IsTrigMVAValid())      ) PassID=false;
-    if( !(Ele.PassesConvVeto())      ) PassID=false;
-    if( !(Ele.PFRelIso(0.3)<0.4)     ) PassID=false;
-    if( !(fabs(Ele.dxy())<0.025)     ) PassID=false;
-    if( !(fabs(Ele.dz())<0.05)       ) PassID=false;
-    if( !(fabs(Ele.dxySig())<4.)     ) PassID=false;
-
-    if     ( fabs(Ele.Eta())<0.8   ){ if(Ele.MVA()<-0.57) PassID=false; }
-    else if( fabs(Ele.Eta())<1.479 ){ if(Ele.MVA()<-0.51) PassID=false; }
-    else                            { if(Ele.MVA()<-0.5) PassID=false; }
-  }
-  else if(ID=="LMVA1v1Isop4IPp025p05sig4"){
-    if( !(Ele.IsTrigMVAValid())      ) PassID=false;
-    if( !(Ele.PassesConvVeto())      ) PassID=false;
-    if( !(Ele.PFRelIso(0.3)<0.4)     ) PassID=false;
-    if( !(fabs(Ele.dxy())<0.025)     ) PassID=false;
-    if( !(fabs(Ele.dz())<0.05)       ) PassID=false;
-    if( !(fabs(Ele.dxySig())<4.)     ) PassID=false;
-
-    if     ( fabs(Ele.Eta())<0.8   ){ if(Ele.MVA()<-0.29) PassID=false; }
-    else if( fabs(Ele.Eta())<1.479 ){ if(Ele.MVA()<-0.28) PassID=false; }
-    else                            { if(Ele.MVA()<-0.36) PassID=false; }
-  }
-  else if(ID=="LMVA06v1Isop4IPp5p1"){
-    if( !(Ele.IsTrigMVAValid())      ) PassID=false;
-    if( !(Ele.PassesConvVeto())      ) PassID=false;
-    if( !(Ele.PFRelIso(0.3)<0.4)     ) PassID=false;
-    if( !(fabs(Ele.dxy())<0.5)     ) PassID=false;
-    if( !(fabs(Ele.dz())<0.1)       ) PassID=false;
-
-    if     ( fabs(Ele.Eta())<0.8   ){ if(Ele.MVA()<-0.76) PassID=false; }
-    else if( fabs(Ele.Eta())<1.479 ){ if(Ele.MVA()<-0.76) PassID=false; }
-    else                            { if(Ele.MVA()<-0.67) PassID=false; }
-  }
-  else if(ID=="LMVA08v1Isop4IPp5p1"){
-    if( !(Ele.IsTrigMVAValid())      ) PassID=false;
-    if( !(Ele.PassesConvVeto())      ) PassID=false;
-    if( !(Ele.PFRelIso(0.3)<0.4)     ) PassID=false;
-    if( !(fabs(Ele.dxy())<0.5)     ) PassID=false;
-    if( !(fabs(Ele.dz())<0.1)       ) PassID=false;
-
-    if     ( fabs(Ele.Eta())<0.8   ){ if(Ele.MVA()<-0.57) PassID=false; }
-    else if( fabs(Ele.Eta())<1.479 ){ if(Ele.MVA()<-0.51) PassID=false; }
-    else                            { if(Ele.MVA()<-0.5) PassID=false; }
-  }
-  else if(ID=="LMVA1v1Isop4IPp5p1"){
-    if( !(Ele.IsTrigMVAValid())      ) PassID=false;
-    if( !(Ele.PassesConvVeto())      ) PassID=false;
-    if( !(Ele.PFRelIso(0.3)<0.4)     ) PassID=false;
-    if( !(fabs(Ele.dxy())<0.5)       ) PassID=false;
-    if( !(fabs(Ele.dz())<0.1)        ) PassID=false;
-
-    if     ( fabs(Ele.Eta())<0.8   ){ if(Ele.MVA()<-0.29) PassID=false; }
-    else if( fabs(Ele.Eta())<1.479 ){ if(Ele.MVA()<-0.28) PassID=false; }
-    else                            { if(Ele.MVA()<-0.36) PassID=false; }
-  }
   else if(ID=="LNoMVANoIsoIPp025p05sig4"){
     if( !(Ele.IsTrigMVAValid())      ) PassID=false;
     if( !(Ele.PassesConvVeto())      ) PassID=false;
@@ -6628,215 +6538,12 @@ bool AnalyzerCore::PassIDCriteria(snu::KElectron Ele, TString ID, TString Option
     if( !(fabs(Ele.dz())<0.05)       ) PassID=false;
     if( !(fabs(Ele.dxySig())<4.)     ) PassID=false;
   }
-  else if(ID=="LNoMVANoIsoIPp05p1sig4"){
+  else if(ID=="LNoMVANoIsoIPp025p1sig4"){
     if( !(Ele.IsTrigMVAValid())      ) PassID=false;
     if( !(Ele.PassesConvVeto())      ) PassID=false;
-    if( !(fabs(Ele.dxy())<0.05)     ) PassID=false;
+    if( !(fabs(Ele.dxy())<0.025)     ) PassID=false;
     if( !(fabs(Ele.dz())<0.1)       ) PassID=false;
     if( !(fabs(Ele.dxySig())<4.)     ) PassID=false;
-  }
-  else if(ID=="POGMVAMIso"){
-    if( !(Ele.PassNotrigMVAMedium()) ) PassID=false;
-    if( !(Ele.IsTrigMVAValid())      ) PassID=false;
-    if( !(Ele.PassesConvVeto())      ) PassID=false;
-    if( !(Ele.PFRelIso(0.3)<0.1)     ) PassID=false;
-  }
-  else if(ID=="POGMVAM"){
-    if( !(Ele.PassNotrigMVAMedium()) ) PassID=false;
-    if( !(Ele.IsTrigMVAValid())      ) PassID=false;
-    if( !(Ele.PassesConvVeto())      ) PassID=false;
-  }
-  else if(ID=="POGMVAMIPQ"){
-    if( !(Ele.PassNotrigMVAMedium()) ) PassID=false;
-    if( !(Ele.IsTrigMVAValid())      ) PassID=false;
-    if( !(Ele.PassesConvVeto())      ) PassID=false;
-    if( !(Ele.PFRelIso(0.3)<0.1)     ) PassID=false;
-    if( !(fabs(Ele.dxy())<0.05)      ) PassID=false;
-    if( !(fabs(Ele.dz())<0.1)        ) PassID=false;
-    if( !(fabs(Ele.dxySig())<3.)     ) PassID=false;
-    if( !(Ele.GsfCtfScPixChargeConsistency()) ) PassID=false;
-  }
-  else if(ID=="POGMVATIP"){
-    if( !(Ele.PassNotrigMVATight())  ) PassID=false;
-    if( !(Ele.IsTrigMVAValid())      ) PassID=false;
-    if( !(Ele.PassesConvVeto())      ) PassID=false;
-    if( !(Ele.PFRelIso(0.3)<0.1)     ) PassID=false;
-    if( !(fabs(Ele.dxy())<0.025)     ) PassID=false;
-    if( !(fabs(Ele.dz())<0.05)       ) PassID=false;
-    if( !(fabs(Ele.dxySig())<4.)     ) PassID=false;
-  }
-  else if(ID=="POGMVATIPQ"){
-    if( !(Ele.PassNotrigMVATight())  ) PassID=false;
-    if( !(Ele.IsTrigMVAValid())      ) PassID=false;
-    if( !(Ele.PassesConvVeto())      ) PassID=false;
-    if( !(Ele.PFRelIso(0.3)<0.1)     ) PassID=false;
-    if( !(fabs(Ele.dxy())<0.05)      ) PassID=false;
-    if( !(fabs(Ele.dz())<0.1)        ) PassID=false;
-    if( !(fabs(Ele.dxySig())<3.)     ) PassID=false;
-    if( !(Ele.GsfCtfScPixChargeConsistency()) ) PassID=false;
-  }
-  else if(ID=="HctoWAFakeLoose"){
-    if( !(Ele.IsTrigMVAValid())      ) PassID=false;
-    if( !(Ele.PassesConvVeto())      ) PassID=false;
-    if( !(Ele.PFRelIso(0.3)<0.4)     ) PassID=false;
-    if( !(fabs(Ele.dxy())<0.025)     ) PassID=false;
-    if( !(fabs(Ele.dz())<0.05  )     ) PassID=false;
-    if( !(fabs(Ele.dxySig())<4.)     ) PassID=false;
-
-    if     ( fabs(Ele.Eta())<0.8   ){ if(Ele.MVA()<-0.92) PassID=false; }
-    else if( fabs(Ele.Eta())<1.479 ){ if(Ele.MVA()<-0.85) PassID=false; }
-    else                            { if(Ele.MVA()<-0.78) PassID=false; }
-  }
-  else if(ID=="HNMVATIPQ"){
-    if( !(Ele.PassTrigMVAHNTight())  ) PassID=false;
-    if( !(Ele.IsTrigMVAValid())      ) PassID=false;
-    if( !(Ele.PassesConvVeto())      ) PassID=false;
-    if( !(Ele.PFRelIso(0.3)<0.05)    ) PassID=false;
-    if( !(fabs(Ele.dxy())<0.01)      ) PassID=false;
-    if( !(fabs(Ele.dz())<0.04)       ) PassID=false;
-    if( !(fabs(Ele.dxySig())<3.)     ) PassID=false;
-    if( !(Ele.GsfCtfScPixChargeConsistency()) ) PassID=false;
-  }
-  else if(ID=="POGMVAMFakeLIso04Opt1"){
-    if( !(Ele.IsTrigMVAValid())      ) PassID=false;
-    if( !(Ele.PassesConvVeto())      ) PassID=false;
-    if( !(Ele.PFRelIso(0.3)<0.4)     ) PassID=false;
-    if( !(fabs(Ele.dxy())<0.05)      ) PassID=false;
-    if( !(fabs(Ele.dz())<0.1)        ) PassID=false;
-    if( !(fabs(Ele.dxySig())<3.)     ) PassID=false;
-
-    if     ( fabs(Ele.Eta())<0.8   ){ if(Ele.MVA()<-0.2) PassID=false; }
-    else if( fabs(Ele.Eta())<1.479 ){ if(Ele.MVA()<-0.1) PassID=false; }
-    else                            { if(Ele.MVA()<-0.3) PassID=false; }
-  }
-  else if(ID=="POGMVAMFakeLIso04Opt2"){
-    if( !(Ele.IsTrigMVAValid())      ) PassID=false;
-    if( !(Ele.PassesConvVeto())      ) PassID=false;
-    if( !(Ele.PFRelIso(0.3)<0.4)     ) PassID=false;
-    if( !(fabs(Ele.dxy())<0.01)      ) PassID=false;
-    if( !(fabs(Ele.dz())<0.04)        ) PassID=false;
-    if( !(fabs(Ele.dxySig())<4.)     ) PassID=false;
-
-    if     ( fabs(Ele.Eta())<0.8   ){ if(Ele.MVA()<-0.7) PassID=false; }
-    else if( fabs(Ele.Eta())<1.479 ){ if(Ele.MVA()<-0.5) PassID=false; }
-    else                            { if(Ele.MVA()<-0.6) PassID=false; }
-  }
-  else if(ID=="POGMVAMFakeLIso06Opt2"){
-    if( !(Ele.IsTrigMVAValid())      ) PassID=false;
-    if( !(Ele.PassesConvVeto())      ) PassID=false;
-    if( !(Ele.PFRelIso(0.3)<0.6)     ) PassID=false;
-    if( !(fabs(Ele.dxy())<0.05)      ) PassID=false;
-    if( !(fabs(Ele.dz())<0.1)        ) PassID=false;
-    if( !(fabs(Ele.dxySig())<3.)     ) PassID=false;
-
-    if     ( fabs(Ele.Eta())<0.8   ){ if(Ele.MVA()<-0.7) PassID=false; }
-    else if( fabs(Ele.Eta())<1.479 ){ if(Ele.MVA()<-0.5) PassID=false; }
-    else                            { if(Ele.MVA()<-0.6) PassID=false; }
-  }
-  else if(ID=="POGMVAMTIsop1IPp025p05Sig4FakeLIsop4"){
-    if( !(Ele.IsTrigMVAValid())      ) PassID=false;
-    if( !(Ele.PassesConvVeto())      ) PassID=false;
-    if( !(Ele.PFRelIso(0.3)<0.4)     ) PassID=false;
-    if( !(fabs(Ele.dxy())<0.025)     ) PassID=false;
-    if( !(fabs(Ele.dz())<0.05)       ) PassID=false;
-    if( !(fabs(Ele.dxySig())<4.)     ) PassID=false;
-
-    if     ( fabs(Ele.Eta())<0.8   ){ if(Ele.MVA()<-0.6) PassID=false; }
-    else if( fabs(Ele.Eta())<1.479 ){ if(Ele.MVA()<-0.5) PassID=false; }
-    else                            { if(Ele.MVA()<-0.5) PassID=false; }
-  }
-  else if(ID=="POGMVAMTIsop06IPp025p05Sig4FakeLIsop4"){
-    if( !(Ele.IsTrigMVAValid())      ) PassID=false;
-    if( !(Ele.PassesConvVeto())      ) PassID=false;
-    if( !(Ele.PFRelIso(0.3)<0.4)     ) PassID=false;
-    if( !(fabs(Ele.dxy())<0.025)     ) PassID=false;
-    if( !(fabs(Ele.dz())<0.05)       ) PassID=false;
-    if( !(fabs(Ele.dxySig())<4.)     ) PassID=false;
-
-    if     ( fabs(Ele.Eta())<0.8   ){ if(Ele.MVA()<-0.9) PassID=false; }
-    else if( fabs(Ele.Eta())<1.479 ){ if(Ele.MVA()<-0.9) PassID=false; }
-    else                            { if(Ele.MVA()<-0.8) PassID=false; }
-
-//    if     ( fabs(Ele.Eta())<0.8   ){ if(Ele.MVA()<-0.92) PassID=false; }
-//    else if( fabs(Ele.Eta())<1.479 ){ if(Ele.MVA()<-0.85) PassID=false; }
-//    else                            { if(Ele.MVA()<-0.78) PassID=false; }
-
-  }
-  else if(ID=="POGMVATTIsop1IPp025p05Sig4FakeLIsop4"){
-    if( !(Ele.IsTrigMVAValid())      ) PassID=false;
-    if( !(Ele.PassesConvVeto())      ) PassID=false;
-    if( !(Ele.PFRelIso(0.3)<0.4)     ) PassID=false;
-    if( !(fabs(Ele.dxy())<0.025)     ) PassID=false;
-    if( !(fabs(Ele.dz())<0.05)       ) PassID=false;
-    if( !(fabs(Ele.dxySig())<4.)     ) PassID=false;
-
-    if     ( fabs(Ele.Eta())<0.8   ){ if(Ele.MVA()<0.) PassID=false; }
-    else if( fabs(Ele.Eta())<1.479 ){ if(Ele.MVA()<0.1) PassID=false; }
-    else                            { if(Ele.MVA()<-0.1) PassID=false; }
-  }
-  else if(ID=="POGMVATTIsop06IPp025p05Sig4FakeLIsop4"){
-    if( !(Ele.IsTrigMVAValid())      ) PassID=false;
-    if( !(Ele.PassesConvVeto())      ) PassID=false;
-    if( !(Ele.PFRelIso(0.3)<0.4)     ) PassID=false;
-    if( !(fabs(Ele.dxy())<0.025)     ) PassID=false;
-    if( !(fabs(Ele.dz())<0.05)       ) PassID=false;
-    if( !(fabs(Ele.dxySig())<4.)     ) PassID=false;
-
-    if     ( fabs(Ele.Eta())<0.8   ){ if(Ele.MVA()<-0.7) PassID=false; }
-    else if( fabs(Ele.Eta())<1.479 ){ if(Ele.MVA()<-0.6) PassID=false; }
-    else                            { if(Ele.MVA()<-0.6) PassID=false; }
-  }
-  else if(ID=="POGMVAMFakeLIso04Opt2Nod0"){
-    if( !(Ele.IsTrigMVAValid())      ) PassID=false;
-    if( !(Ele.PassesConvVeto())      ) PassID=false;
-    if( !(Ele.PFRelIso(0.3)<0.4)     ) PassID=false;
-    if( !(fabs(Ele.dz())<0.1)        ) PassID=false;
-
-    if     ( fabs(Ele.Eta())<0.8   ){ if(Ele.MVA()<-0.7) PassID=false; }
-    else if( fabs(Ele.Eta())<1.479 ){ if(Ele.MVA()<-0.5) PassID=false; }
-    else                            { if(Ele.MVA()<-0.6) PassID=false; }
-  }
-  else if(ID=="POGMVAMFakeLIso04Opt2NoTrig"){
-    if( !(Ele.PassesConvVeto())      ) PassID=false;
-    if( !(Ele.PFRelIso(0.3)<0.6)     ) PassID=false;
-    if( !(fabs(Ele.dxy())<0.05)      ) PassID=false;
-    if( !(fabs(Ele.dz())<0.1)        ) PassID=false;
-
-    if     ( fabs(Ele.Eta())<0.8   ){ if(Ele.MVA()<-0.7) PassID=false; }
-    else if( fabs(Ele.Eta())<1.479 ){ if(Ele.MVA()<-0.5) PassID=false; }
-    else                            { if(Ele.MVA()<-0.6) PassID=false; }
-  }
-  else if(ID=="POGMVAMFakeLIso05Opt2"){
-    if( !(Ele.IsTrigMVAValid())      ) PassID=false;
-    if( !(Ele.PassesConvVeto())      ) PassID=false;
-    if( !(Ele.PFRelIso(0.3)<0.5)     ) PassID=false;
-    if( !(fabs(Ele.dxy())<0.05)      ) PassID=false;
-    if( !(fabs(Ele.dz())<0.1)        ) PassID=false;
-    if( !(fabs(Ele.dxySig())<3.)     ) PassID=false;
-
-    if     ( fabs(Ele.Eta())<0.8   ){ if(Ele.MVA()<-0.7) PassID=false; }
-    else if( fabs(Ele.Eta())<1.479 ){ if(Ele.MVA()<-0.6) PassID=false; }
-    else                            { if(Ele.MVA()<-0.6) PassID=false; }
-  }
-  else if(ID=="POGMVAMFakeLIso04NoMVA"){
-    if( !(Ele.IsTrigMVAValid())      ) PassID=false;
-    if( !(Ele.PassesConvVeto())      ) PassID=false;
-    if( !(Ele.PFRelIso(0.3)<0.4)     ) PassID=false;
-    if( !(fabs(Ele.dxy())<0.05)      ) PassID=false;
-    if( !(fabs(Ele.dz())<0.1)        ) PassID=false;
-    if( !(fabs(Ele.dxySig())<3.)     ) PassID=false;
-  }
-  else if(ID=="POGMVAMFakeLIso04Opt2Data"){
-    if( !(Ele.IsTrigMVAValid())      ) PassID=false;
-    if( !(Ele.PassesConvVeto())      ) PassID=false;
-    if( !(Ele.PFRelIso(0.3)<0.4)     ) PassID=false;
-    if( !(fabs(Ele.dxy())<0.05)      ) PassID=false;
-    if( !(fabs(Ele.dz())<0.1)        ) PassID=false;
-    if( !(fabs(Ele.dxySig())<3.)     ) PassID=false;
-
-    if     ( fabs(Ele.Eta())<0.8   ){ if(Ele.MVA()<-0.9) PassID=false; }
-    else if( fabs(Ele.Eta())<1.479 ){ if(Ele.MVA()<-0.8) PassID=false; }
-    else                            { if(Ele.MVA()<-0.9) PassID=false; }
   }
   else return false;
 
@@ -6873,7 +6580,23 @@ bool AnalyzerCore::PassIDCriteria(snu::KMuon Mu, TString ID, TString Option){
     if( !(fabs(Mu.dZ()) <0.04 ) ) PassID=false;
     if( !(fabs(Mu.dXYSig())<3.)) PassID=false;
   }
-
+  else if(ID=="POGLIsop4IPp5p1Chi100"){
+    if     ( !RochCorr && !(Mu.RelIso04()<0.4)     ) PassID=false;
+    else if(  RochCorr && !(RochIso(Mu,"0.4")<0.4) ) PassID=false;
+    if     ( !(Mu.IsLoose())            ) PassID=false;
+    if     ( !(fabs(Mu.dXY())<0.5)      ) PassID=false;
+    if     ( !(fabs(Mu.dZ())<0.1)       ) PassID=false;
+    if     ( !(fabs(Mu.GlobalChi2())<100.)) PassID=false;
+  }
+  else if(ID=="POGTIsop20IPp01p05sig4Chi4"){
+    if     ( !RochCorr && !(Mu.RelIso04()    <0.20) ) PassID=false;
+    else if(  RochCorr && !(RochIso(Mu,"0.4")<0.20) ) PassID=false;
+    if     ( !(Mu.IsTight())            ) PassID=false;
+    if     ( !(fabs(Mu.dXY())<0.01)     ) PassID=false;
+    if     ( !(fabs(Mu.dZ() )<0.05)    ) PassID=false;
+    if     ( !(fabs(Mu.dXYSig())<4.)    ) PassID=false;
+    if     ( !(fabs(Mu.GlobalChi2())<4.)) PassID=false;
+  }
   else if(ID=="POGLNoIso"){
     if( !(Mu.IsLoose()) ) PassID=false;
   }

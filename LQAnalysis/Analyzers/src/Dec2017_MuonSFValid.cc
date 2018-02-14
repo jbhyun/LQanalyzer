@@ -295,8 +295,8 @@ void Dec2017_MuonSFValid::CheckMuIDSFValidity(std::vector<snu::KMuon> MuTColl, s
   vector<snu::KMuon> Mu1Coll; Mu1Coll.push_back(MuTColl.at(1));
 
   float trk_weight_mu      = mcdata_correction->MuonTrackingEffScaleFactor(MuTColl);
-  float id_weight_mu_ch    = mcdata_correction->MuonScaleFactor("MUON_CH_TRI_TIGHT", MuTColl);
-  float id_weight_mu2_ch   = mcdata_correction->MuonScaleFactor("MUON_CH_TRI_TIGHT", Mu1Coll);
+  float id_weight_mu_ch    = mcdata_correction->MuonScaleFactor("MUON_HctoWA_TIGHT", MuTColl);
+  float id_weight_mu2_ch   = mcdata_correction->MuonScaleFactor("MUON_HctoWA_TIGHT", Mu1Coll);
   float id_weight_mu1_pog  = mcdata_correction->MuonScaleFactor("MUON_POG_TIGHT", Mu0Coll);
   float iso_weight_mu1_pog = mcdata_correction->MuonISOScaleFactor("MUON_POG_TIGHT", Mu0Coll);
   float trigger_sf_mu1_pog = mcdata_correction->TriggerScaleFactor(EleTColl, Mu0Coll, "HLT_IsoMu24_v" );
