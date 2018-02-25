@@ -5,31 +5,31 @@
 runMC=true
 runData=false
 runFake="False"
-runSignal="False"
+runSignal="True"
 
 ########################################################################
 ## RUN PARAMETERS
 
 AnalysisCode="Dec2017_EMuTrigEff" 
 #Stream="SingleElectron"
-Stream="SingleMuon"
+#Stream="SingleMuon"
 #Stream="DoubleMuon"
-#Stream="MuonEG"
-#Skim="FLATCAT"  ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
-#Skim="SKTree_LeptonSkim"  ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
-Skim="SKTree_DiLepSkim"   ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
-#Skim="SKTree_HNDiLepSkim" ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
-#Skim="SKTree_TriLepSkim"   ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
-DataPeriod="ALL"
+Stream="MuonEG"
+#Skim="FLATCAT"             ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
+#Skim="SKTree_LeptonSkim"   ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
+#Skim="SKTree_DiLepSkim"    ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
+#Skim="SKTree_HNDiLepSkim"  ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
+Skim="SKTree_TriLepSkim"   ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
+DataPeriod="ALL"            #"ALL" #"G"
 job_logstep=1000
 LogLevel="INFO"
-QueueOption="fastq"    #"longq"
-RunningMode="EffClosure,DiMuTrig,DoubleMuon"
+QueueOption="fastq"         #"longq"
+RunningMode="EffClosure,EMuTrig,ElectronDiMuon,SystRun"
 #"MuLegEffMeas" #"EleLegEffMeas" #"DzEffMeas_EMu" #"DzEffMeas_DiMu"
-#"EffClosure,DiMuTrig,DoubleMuon" #"EffClosure,DiMuTrig,TriMuon"
+#"EffClosure,DiMuTrig,DoubleMuon" #"EffClosure,DiMuTrig,TriMuon" #"EffClosure,EMuTrig,ElectronMuon" #"EffClosure,EMuTrig,ElectronDiMuon"
 
-MCList="TrigDiLepClosure"
-#TrigSample #TrigDiLepClosure #TrigTriLepClosure #SignalMajor_All
+MCList="SignalMajor_All"
+#"TrigSample" #"TrigDiLepClosure" #"TrigTriLepClosure" #"SignalMajor_All"
 
 ########################################################################
 ## OUTPUT PATH CONFIG

@@ -2,34 +2,32 @@
 
 ########################################################################
 ## MC / DATA
-runMC=false
-runData=true
+runMC=true
+runData=false
 runFake="False"
-runSignal="False"
+runSignal="True"
 
 ########################################################################
 ## RUN PARAMETERS
 
-AnalysisCode="Dec2017_MuonSFValid" 
-#Stream="SingleElectron"
-#Stream="MuonEG"
-#Stream="SingleMuon"
+AnalysisCode="Feb2018_TrigAccept"
 Stream="DoubleMuon"
-#Stream="DoubleEG"
-#Skim="SKTree_LeptonSkim"  ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
-Skim="SKTree_DiLepSkim"   ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
-#Skim="SKTree_TriLepSkim"   ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
+Skim="FLATCAT"  ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
+#Skim="SKTree_TriLepSkim"  ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
 DataPeriod="ALL"
 job_logstep=1000
 LogLevel="INFO"
 QueueOption="fastq"    #"longq"
-RunningMode="MuIDValid"
+RunningMode="CheckTrigAccept"
+#"PDFQ2Syst,MultiLep" #"TopPtCheck" #"MultiLep,LOvsNLOBias"
 
-#MCList="SignalMajor_All"
-#MCList="Signal_1e2mu"
-#MCList="Signal_All"
-MCList="CR_MuMu50_fast"
-#MCList="MajorFakeSource"
+#MCList="TopPtMeasSample_Sig"
+#MCList="TopPtMeasSample_SM"
+MCList="SignalMajor_All"
+#MCList="SignalMajor_Old"
+#MCList="Analysis_bkg"
+#MCList="GenSystAnaTargetBkg"
+
 
 ########################################################################
 ## OUTPUT PATH CONFIG

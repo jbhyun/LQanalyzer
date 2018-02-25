@@ -37,43 +37,58 @@ void SKTreeMaker::ExecuteEvents()throw( LQError ){
   //////////////////////////////////////////////////////
   //////////// Select objetcs
   //////////////////////////////////////////////////////   
+
+ 
+  bool _SiglEG =isData? k_channel.Contains("SingleElectron"):true;
+  bool _SiglMu =isData? k_channel.Contains("SingleMuon")    :true;
+  bool _DiMu   =isData? k_channel.Contains("DoubleMuon")    :true;
+  bool _MuonEG =isData? k_channel.Contains("MuonEG")        :true;
+
+  bool _PassRefTrig=false;
+  if     (_SiglEG &&  PassTrigger("HLT_Ele27_WPTight_Gsf_v"))                             _PassRefTrig=true;
+  else if(_SiglMu && (PassTrigger("HLT_IsoTkMu24_v")
+                     ||PassTrigger("HLT_IsoMu24_v")))                                     _PassRefTrig=true;
+  else if(_DiMu   && (PassTrigger("HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_v")
+                     ||PassTrigger("HLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_v")) )             _PassRefTrig=true;
+  else if(_MuonEG && (PassTrigger("HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v")
+                     ||PassTrigger("HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v")
+                     ||PassTrigger("HLT_Mu23_TrkIsoVVL_Ele8_CaloIdL_TrackIdL_IsoVL_v")) ) _PassRefTrig=true;
+
+  if(!_PassRefTrig) throw LQError( "Remove events not passing reference trigger.", LQError::SkipEvent );
   
+  
+  float LeadLepPtCut = 0.;
+  if     (_SiglEG) LeadLepPtCut = 27.;
+  else if(_SiglMu) LeadLepPtCut = 24.;
+  else if(_DiMu  ) LeadLepPtCut = 17.;
+  else if(_MuonEG) LeadLepPtCut = 23.;
+
+  if(!isData) LeadLepPtCut=17.;
 
   //######   MUON SELECTION ###############
   Message("Selecting Muons", DEBUG);
   std::vector<snu::KMuon> skim_muons;
-  /// Apart from eta/pt muons are required to have a global OR tracker track    && be PF
   eventbase->GetMuonSel()->SetPt(5.); 
   eventbase->GetMuonSel()->SetEta(3.);
   eventbase->GetMuonSel()->BasicSelection(out_muons, false); /// Muons For SKTree
   SetCorrectedMomentum(out_muons);
 
-
-
   Message("Skimming Muons", DEBUG);
-  /// Selection for event skim
-  /// Apart from eta/pt muons are required to have a global OR tracker track && be PF
   eventbase->GetMuonSel()->SetPt(5.);
   eventbase->GetMuonSel()->SetEta(2.5);
   eventbase->GetMuonSel()->SkimSelection(skim_muons, false);
-  SetCorrectedMomentum(skim_muons);
+  
+
 
   //###### JET SELECTION  ################
-  Message("Selecting jets", DEBUG);  eventbase->GetJetSel()->SetPt(20);
-  eventbase->GetJetSel()->SetPt(10);
-  eventbase->GetJetSel()->SetEta(5.);
+  Message("Selecting jets", DEBUG);
+  eventbase->GetJetSel()->SetPt(20);
+  eventbase->GetJetSel()->SetEta(2.4);
   eventbase->GetJetSel()->BasicSelection(out_jets);
-
-
-  //###### FATJET SELECTION  ################                                                                                                                                       
-  Message("Selecting fat jets", DEBUG);
-  eventbase->GetFatJetSel()->SetPt(15);
-  eventbase->GetFatJetSel()->SetEta(5.);
-  eventbase->GetFatJetSel()->BasicSelection(out_fatjets);
-
+  
 
   //###### GenJet Selection ##########
-  if(!k_isdata) eventbase->GetGenJetSel()->BasicSelection(out_genjets);
+  //if(!k_isdata) eventbase->GetGenJetSel()->BasicSelection(out_genjets);
   
   //###### Electron Selection ########
   Message("Selecting electrons", DEBUG);
@@ -81,37 +96,116 @@ void SKTreeMaker::ExecuteEvents()throw( LQError ){
   eventbase->GetElectronSel()->SetPt(5.); 
   eventbase->GetElectronSel()->SetEta(3.); 
   eventbase->GetElectronSel()->BasicSelection(out_electrons); 
-  eventbase->GetElectronSel()->SetPt(8.);
+  eventbase->GetElectronSel()->SetPt(5.);
   eventbase->GetElectronSel()->SetEta(2.5);
   eventbase->GetElectronSel()->SkimSelection(skim_electrons);
-  
-  
-  std::vector<snu::KElectron> skim_photons;
-  eventbase->GetPhotonSel()->SetPt(15);
-  eventbase->GetPhotonSel()->SetEta(3.);
-  eventbase->GetPhotonSel()->BasicSelection(out_photons);
 
   int nlep = skim_electrons.size() + skim_muons.size();
-  bool pass15gevlep = false;
-  if(skim_electrons.size() > 0){
-    if(skim_electrons.at(0).Pt()> 10. ) pass15gevlep = true;
+    
+  /// select events  with 2 leptons with pt > 15
+  if(! ((nlep > 1) )) throw LQError( "Not enough leptons",  LQError::SkipEvent );
+  
+  bool PassLeadLepPtCut=false;
+  
+  if(skim_electrons.size() > 0 ) {
+    if(skim_electrons.at(0).Pt() > LeadLepPtCut) PassLeadLepPtCut =true;
   }
   if(skim_muons.size() > 0){
-    float mupt = skim_muons.at(0).Pt();
+    float mupt=skim_muons.at(0).Pt();
     if(skim_muons.at(0).RochPt() < skim_muons.at(0).Pt()) mupt=skim_muons.at(0).RochPt();
     if(skim_muons.at(0).RochPt() < 0.) mupt=skim_muons.at(0).Pt();
-    if(mupt  > 5. ) pass15gevlep = true;
+
+    if(mupt > LeadLepPtCut)  PassLeadLepPtCut=true;
   }
-  /// select events with either 1 lepton with pt > 15  gev or 2 leptons with pt > 15
-  if(! ((nlep > 1) || ( nlep ==1 && pass15gevlep))) {
-    throw LQError( "Not Lepton Event",  LQError::SkipEvent );
-  }
+  if(!PassLeadLepPtCut) throw LQError( "Not passing lead pt cut",  LQError::SkipEvent );
+
+
 
   out_event   = eventbase->GetEvent();
-  out_trigger = eventbase->GetTrigger();  
+  out_trigger = eventbase->GetTrigger();
   out_truth   = eventbase->GetTruth();
+  
+  return;
 
-   return;
+
+//  //////////////////////////////////////////////////////
+//  //////////// Select objetcs
+//  //////////////////////////////////////////////////////   
+//  
+//
+//  //######   MUON SELECTION ###############
+//  Message("Selecting Muons", DEBUG);
+//  std::vector<snu::KMuon> skim_muons;
+//  /// Apart from eta/pt muons are required to have a global OR tracker track    && be PF
+//  eventbase->GetMuonSel()->SetPt(5.); 
+//  eventbase->GetMuonSel()->SetEta(3.);
+//  eventbase->GetMuonSel()->BasicSelection(out_muons, false); /// Muons For SKTree
+//  SetCorrectedMomentum(out_muons);
+//
+//
+//
+//  Message("Skimming Muons", DEBUG);
+//  /// Selection for event skim
+//  /// Apart from eta/pt muons are required to have a global OR tracker track && be PF
+//  eventbase->GetMuonSel()->SetPt(5.);
+//  eventbase->GetMuonSel()->SetEta(2.5);
+//  eventbase->GetMuonSel()->SkimSelection(skim_muons, false);
+//  SetCorrectedMomentum(skim_muons);
+//
+//  //###### JET SELECTION  ################
+//  Message("Selecting jets", DEBUG);  eventbase->GetJetSel()->SetPt(20);
+//  eventbase->GetJetSel()->SetPt(10);
+//  eventbase->GetJetSel()->SetEta(5.);
+//  eventbase->GetJetSel()->BasicSelection(out_jets);
+//
+//
+//  //###### FATJET SELECTION  ################                                                                                                                                       
+//  Message("Selecting fat jets", DEBUG);
+//  eventbase->GetFatJetSel()->SetPt(15);
+//  eventbase->GetFatJetSel()->SetEta(5.);
+//  eventbase->GetFatJetSel()->BasicSelection(out_fatjets);
+//
+//
+//  //###### GenJet Selection ##########
+//  if(!k_isdata) eventbase->GetGenJetSel()->BasicSelection(out_genjets);
+//  
+//  //###### Electron Selection ########
+//  Message("Selecting electrons", DEBUG);
+//  std::vector<snu::KElectron> skim_electrons;
+//  eventbase->GetElectronSel()->SetPt(5.); 
+//  eventbase->GetElectronSel()->SetEta(3.); 
+//  eventbase->GetElectronSel()->BasicSelection(out_electrons); 
+//  eventbase->GetElectronSel()->SetPt(8.);
+//  eventbase->GetElectronSel()->SetEta(2.5);
+//  eventbase->GetElectronSel()->SkimSelection(skim_electrons);
+//  
+//  
+//  std::vector<snu::KElectron> skim_photons;
+//  eventbase->GetPhotonSel()->SetPt(15);
+//  eventbase->GetPhotonSel()->SetEta(3.);
+//  eventbase->GetPhotonSel()->BasicSelection(out_photons);
+//
+//  int nlep = skim_electrons.size() + skim_muons.size();
+//  bool pass15gevlep = false;
+//  if(skim_electrons.size() > 0){
+//    if(skim_electrons.at(0).Pt()> 10. ) pass15gevlep = true;
+//  }
+//  if(skim_muons.size() > 0){
+//    float mupt = skim_muons.at(0).Pt();
+//    if(skim_muons.at(0).RochPt() < skim_muons.at(0).Pt()) mupt=skim_muons.at(0).RochPt();
+//    if(skim_muons.at(0).RochPt() < 0.) mupt=skim_muons.at(0).Pt();
+//    if(mupt  > 5. ) pass15gevlep = true;
+//  }
+//  /// select events with either 1 lepton with pt > 15  gev or 2 leptons with pt > 15
+//  if(! ((nlep > 1) || ( nlep ==1 && pass15gevlep))) {
+//    throw LQError( "Not Lepton Event",  LQError::SkipEvent );
+//  }
+//
+//  out_event   = eventbase->GetEvent();
+//  out_trigger = eventbase->GetTrigger();  
+//  out_truth   = eventbase->GetTruth();
+//
+//   return;
 }// End of execute event loop
   
 

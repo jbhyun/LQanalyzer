@@ -39,26 +39,22 @@ void GetEffectiveLuminosityPrivateSamples(){
   map<TString, Double_t> xsmap;
   /// key=  "Name of FlatCatuple dir"  = xsec;
   //xsmap["VBF_HToMuMu_M125_13TeV_powheg_pythia8"] =0.000828308;
-  xsmap["13TeV_HN40_mumumu_width_AUTO_VmuN_0p1"] = 8.605;
-  xsmap["13TeV_HN60_mumumu_width_AUTO_VmuN_0p1"] = 3.416;
-  xsmap["13TeV_HN150_mumumu_width_AUTO_VmuN_0p1"] = 0.0004561;
-  xsmap["13TeV_HN700_mumumu_width_AUTO_VmuN_0p1"] = 0.000002644;
+  xsmap["DYJetsToLL_M-10to50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_TrigInfoSample"] = 18610.00000;
+  xsmap["DYJetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_TrigInfoSample"    ] = 5765.40000;
+  xsmap["TT_TuneCUETP8M2T4_13TeV-powheg-pythia_TrigInfoSample"                     ] = 831.76000;
 
   map<TString, TString> lqmap;
   //  key=  "Name of FlatCatuple dir"  = name to use in sktree -i <SAMPLENAME> 
   //lqmap["VBF_HToMuMu_M125_13TeV_powheg_pythia8"] ="vhf_Htomm_Powheg";
-  lqmap["13TeV_HN40_mumumu_width_AUTO_VmuN_0p1"] ="HN40_mumumu_VmuN_0p1";
-  lqmap["13TeV_HN60_mumumu_width_AUTO_VmuN_0p1"] ="HN60_mumumu_VmuN_0p1";
-  lqmap["13TeV_HN150_mumumu_width_AUTO_VmuN_0p1"] ="HN150_mumumu_VmuN_0p1";
-  lqmap["13TeV_HN700_mumumu_width_AUTO_VmuN_0p1"] ="HN700_mumumu_VmuN_0p1";
+  lqmap["DYJetsToLL_M-10to50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_TrigInfoSample"] = "DYJets_MG_10to50_TrigInfoSample";
+  lqmap["DYJetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_TrigInfoSample"    ] = "DYJets_MG_TrigInfoSample";
+  lqmap["TT_TuneCUETP8M2T4_13TeV-powheg-pythia_TrigInfoSample"                     ] = "TT_powheg_TrigInfoSample";
 
   //// version must be the version in the directoy name of your flat catuples 
   map<TString, TString> catversion_map;
-  //catversion_map["VBF_HToMuMu_M125_13TeV_powheg_pythia8"] = "v7-6-4"; /// This specifies what directory to look in
-  catversion_map["13TeV_HN40_mumumu_width_AUTO_VmuN_0p1"] = "v7-6-4";
-  catversion_map["13TeV_HN60_mumumu_width_AUTO_VmuN_0p1"] = "v7-6-4";
-  catversion_map["13TeV_HN150_mumumu_width_AUTO_VmuN_0p1"] = "v7-6-4";
-  catversion_map["13TeV_HN700_mumumu_width_AUTO_VmuN_0p1"] = "v7-6-4";
+  catversion_map["DYJetsToLL_M-10to50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_TrigInfoSample"] = "v8-0-7"; 
+  catversion_map["DYJetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_TrigInfoSample"    ] = "v8-0-7";
+  catversion_map["TT_TuneCUETP8M2T4_13TeV-powheg-pythia_TrigInfoSample"                     ] = "v8-0-7";
   for(std::map<TString, Double_t>::iterator mit =xsmap.begin(); mit != xsmap.end();++mit){
     std::map<TString, TString>::iterator mitv = catversion_map.find(mit->first);
     if(mitv== catversion_map.end()) {cout << "Error in naming datasets in map" << endl; return;}

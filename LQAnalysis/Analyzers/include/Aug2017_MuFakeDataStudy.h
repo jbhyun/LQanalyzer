@@ -30,7 +30,8 @@ class Aug2017_MuFakeDataStudy : public AnalyzerCore {
   float ConeCorrectedPT(snu::KMuon Mu, float TightIsoCut);
   int   GetFakeLepJetSrcType(snu::KMuon Mu, std::vector<snu::KJet> JetColl);
   float FakeRateData(snu::KMuon Mu, TString Option);
-  float GetFakeWeight(std::vector<snu::KMuon> MuLColl, TString MuLID, TString MuTID, TString Option);
+  float GetFakeWeight(std::vector<snu::KMuon>& MuLColl, TString MuLID, TString MuTID, TString Option);
+  float GetFakeWeight(std::vector<snu::KMuon>& MuLColl, TString MuLID, TString MuTID, vector<snu::KJet>& BJetNoVetoColl, TString Option);
 
   float NvtxWeight(int Nvtx, TString Option);
   bool IsNearBJet(snu::KMuon Mu, std::vector<snu::KJet> bjetNoVetoColl);
@@ -43,7 +44,7 @@ class Aug2017_MuFakeDataStudy : public AnalyzerCore {
   void CheckNormCR(std::vector<snu::KMuon> MuTColl, std::vector<snu::KMuon> MuLColl, std::vector<snu::KElectron> EleLColl, std::vector<snu::KJet> JetColl, float MET, float MET_x, float MET_y, float weight, TString Label, TString Option);
   void MeasureFakeRate(std::vector<snu::KMuon> MuLColl, std::vector<snu::KElectron> EleLColl, std::vector<snu::KJet> JetColl, std::vector<snu::KJet> BJetColl, float MET, float METx, float METy, float weight, TString TightID, TString Label, TString Option);
   void ValidateID(std::vector<snu::KMuon> MuTColl, float weight, TString Label);
-  void CheckTrilepCRs(std::vector<snu::KMuon> MuTColl, std::vector<snu::KMuon> MuLColl, std::vector<snu::KElectron> EleTColl, std::vector<snu::KElectron> EleLColl, std::vector<snu::KJet> JetColl, std::vector<snu::KJet> BJetColl, float MET, float METx, float METy, float weight, TString Label, TString Option);
+  void CheckTrilepCRs(std::vector<snu::KMuon> MuTColl, std::vector<snu::KMuon> MuLColl, std::vector<snu::KElectron> EleTColl, std::vector<snu::KElectron> EleLColl, std::vector<snu::KJet> JetNoVetoColl, std::vector<snu::KJet> BJetNoVetoColl, float MET, float METx, float METy, float weight, TString Label, TString Option);
 
   int GetFakeLepSrcIdx(snu::KMuon Mu, std::vector<snu::KTruth> TruthColl);
  private:

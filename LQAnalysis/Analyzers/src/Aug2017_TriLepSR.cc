@@ -87,27 +87,6 @@ void Aug2017_TriLepSR::ExecuteEvents()throw( LQError ){
      else if(k_flags.at(i).Contains("TestRun"))     TestRun    = true;
    }
 
-   if(TestRun){
-     
-     std::vector<Float_t> PdfWVec  = eventbase->GetEvent().PdfWeights();
-     std::vector<Float_t> ScaleWVec= eventbase->GetEvent().ScaleWeights();
-
-     cout<<"Scale Vec Info"<<endl;
-     cout<<"Size "<<ScaleWVec.size()<<endl;
-     for(int i=0; i<ScaleWVec.size(); i++){
-       cout<<i<<" "<<ScaleWVec.at(i)<<endl;
-     }
-     cout<<endl;
-
-     cout<<"Pdf Vec Info"<<endl;
-     cout<<"Size "<<PdfWVec.size()<<endl;
-     for(int i=0; i<PdfWVec.size(); i++){
-       cout<<i<<" "<<PdfWVec.at(i)<<endl;
-     }
-
-     return;
-   }
-
     
    /***************************************************************************************
    **Trigger Treatment
@@ -177,53 +156,18 @@ void Aug2017_TriLepSR::ExecuteEvents()throw( LQError ){
    //Primary Object Collection
    std::vector<snu::KTruth> truthColl; eventbase->GetTruthSel()->Selection(truthColl);
 
-//     eventbase->GetMuonSel()->SetID(BaseSelection::MUON_POG_TIGHT);
-//     eventbase->GetMuonSel()->SetPt(10.);                    eventbase->GetMuonSel()->SetEta(2.4);
-//     eventbase->GetMuonSel()->SetBSdxy(0.01);                eventbase->GetMuonSel()->SetdxySigMax(3.);
-//     eventbase->GetMuonSel()->SetBSdz(0.1);
-//     eventbase->GetMuonSel()->SetRelIsoType("PFRelIso04");   eventbase->GetMuonSel()->SetRelIso(0.4);
-//   std::vector<snu::KMuon> muonLooseColl; eventbase->GetMuonSel()->Selection(muonLooseColl, true);
-//
-//     eventbase->GetMuonSel()->SetID(BaseSelection::MUON_POG_TIGHT);
-//     eventbase->GetMuonSel()->SetPt(10.);                    eventbase->GetMuonSel()->SetEta(2.4);
-//     eventbase->GetMuonSel()->SetBSdxy(0.01);                eventbase->GetMuonSel()->SetdxySigMax(3.);
-//     eventbase->GetMuonSel()->SetBSdz(0.1);
-//     eventbase->GetMuonSel()->SetRelIsoType("PFRelIso04");  eventbase->GetMuonSel()->SetRelIso(0.1);
-//   std::vector<snu::KMuon> muonTightColl; eventbase->GetMuonSel()->Selection(muonTightColl,true);
    std::vector<snu::KMuon> muonLooseColl, muonTightColl;
      for(int i=0; i<muonPreColl.size(); i++){
-       if(PassIDCriteria(muonPreColl.at(i),"Test_POGLIsop4IPp5p1Chi100"))      muonLooseColl.push_back(muonPreColl.at(i));
-       if(PassIDCriteria(muonPreColl.at(i),"Test_POGTIsop20IPp01p05sig4Chi4")) muonTightColl.push_back(muonPreColl.at(i));
+       if(PassIDCriteria(muonPreColl.at(i),"POGTIsop6IPp2p1sig4"))        muonLooseColl.push_back(muonPreColl.at(i));
+       if(PassIDCriteria(muonPreColl.at(i),"POGTIsop20IPp01p05sig4Chi4")) muonTightColl.push_back(muonPreColl.at(i));
      }
    std::vector<snu::KMuon> muonColl;  if(k_running_nonprompt){ muonColl=muonLooseColl;} else{ muonColl=muonTightColl;}
 
 
-//     eventbase->GetElectronSel()->SetID(BaseSelection::ELECTRON_HctoWA_FAKELOOSE);
-//     eventbase->GetElectronSel()->SetHLTSafeCut("CaloIdL_TrackIdL_IsoVL");
-//     eventbase->GetElectronSel()->SetPt(10.);                eventbase->GetElectronSel()->SetEta(2.5);
-//     eventbase->GetElectronSel()->SetBETrRegIncl(false);
-//     eventbase->GetElectronSel()->SetRelIsoType("Default");  eventbase->GetElectronSel()->SetRelIsoBEMax(0.4, 0.4);
-//     eventbase->GetElectronSel()->SetdxyBEMax(0.025, 0.025); eventbase->GetElectronSel()->SetdzBEMax(0.05, 0.05);
-//     eventbase->GetElectronSel()->SetdxySigMax(4.);
-//     eventbase->GetElectronSel()->SetApplyConvVeto(true);
-//   std::vector<snu::KElectron> electronLooseColl; eventbase->GetElectronSel()->Selection(electronLooseColl);
-//
-//     eventbase->GetElectronSel()->SetID(BaseSelection::ELECTRON_POG_MVA_WP90);
-//     eventbase->GetElectronSel()->SetHLTSafeCut("CaloIdL_TrackIdL_IsoVL");
-//     eventbase->GetElectronSel()->SetPt(10.);                eventbase->GetElectronSel()->SetEta(2.5);
-//     eventbase->GetElectronSel()->SetBETrRegIncl(false);
-//     eventbase->GetElectronSel()->SetRelIsoType("Default");  eventbase->GetElectronSel()->SetRelIsoBEMax(0.06, 0.06);
-//     eventbase->GetElectronSel()->SetdxyBEMax(0.025, 0.025); eventbase->GetElectronSel()->SetdzBEMax(0.05, 0.05);
-//     eventbase->GetElectronSel()->SetdxySigMax(4.);
-//     eventbase->GetElectronSel()->SetApplyConvVeto(true);
-//   std::vector<snu::KElectron> electronTightColl; eventbase->GetElectronSel()->Selection(electronTightColl);
-
-   
      std::vector<snu::KElectron> electronLooseColl, electronTightColl;
        for(int i=0; i<electronPreColl.size(); i++){
-        //if(PassIDCriteria(electronPreColl.at(i), "LMVA06v1Isop4IPp5p1")) electronLooseColl.push_back(electronPreColl.at(i));
-        if(PassIDCriteria(electronPreColl.at(i), "LMVA06Isop4IPp025p05sig4")) electronLooseColl.push_back(electronPreColl.at(i));
-        if(PassIDCriteria(electronPreColl.at(i), "POGWP90Isop06IPp025p05sig4")) electronTightColl.push_back(electronPreColl.at(i));
+        if(PassIDCriteria(electronPreColl.at(i), "HctoWAFakeLoose"))            electronLooseColl.push_back(electronPreColl.at(i));
+        if(PassIDCriteria(electronPreColl.at(i), "POGWP90Isop06IPp025p1sig4")) electronTightColl.push_back(electronPreColl.at(i));
        }
    std::vector<snu::KElectron> electronColl;  if(!k_running_nonprompt){ electronColl=electronTightColl;} else{ electronColl=electronLooseColl;}
 

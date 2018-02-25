@@ -6458,6 +6458,8 @@ float AnalyzerCore::SignalNorm(TString SampleName, float Xsec){
 
 }
 
+
+
 bool AnalyzerCore::PassIDCriteria(snu::KElectron Ele, TString ID, TString Option){
 
   bool PassID=true;
@@ -6468,6 +6470,15 @@ bool AnalyzerCore::PassIDCriteria(snu::KElectron Ele, TString ID, TString Option
     if( !(fabs(Ele.dz())<0.1)    ) PassID=false;
     if( !(fabs(Ele.dxySig())<3.) ) PassID=false;
   }
+  else if(ID=="POGMVAMIP"){
+    if( !(Ele.PassNotrigMVAMedium()) ) PassID=false;
+    if( !(Ele.IsTrigMVAValid())      ) PassID=false;
+    if( !(Ele.PassesConvVeto())      ) PassID=false;
+    if( !(Ele.PFRelIso(0.3)<0.1)     ) PassID=false;
+    if( !(fabs(Ele.dxy())<0.025)     ) PassID=false;
+    if( !(fabs(Ele.dz())<0.05)       ) PassID=false;
+    if( !(fabs(Ele.dxySig())<4.)     ) PassID=false;
+  }
   else if(ID=="POGMVATIP"){
     if( !(Ele.PassNotrigMVATight())  ) PassID=false;
     if( !(Ele.IsTrigMVAValid())      ) PassID=false;
@@ -6477,11 +6488,20 @@ bool AnalyzerCore::PassIDCriteria(snu::KElectron Ele, TString ID, TString Option
     if( !(fabs(Ele.dz())<0.05)       ) PassID=false;
     if( !(fabs(Ele.dxySig())<4.)     ) PassID=false;
   }
-  else if(ID=="POGMVAMIP"){
+  else if(ID=="POGWP90Isop1IPp025p05sig4"){
     if( !(Ele.PassNotrigMVAMedium()) ) PassID=false;
     if( !(Ele.IsTrigMVAValid())      ) PassID=false;
     if( !(Ele.PassesConvVeto())      ) PassID=false;
     if( !(Ele.PFRelIso(0.3)<0.1)     ) PassID=false;
+    if( !(fabs(Ele.dxy())<0.025)     ) PassID=false;
+    if( !(fabs(Ele.dz())<0.05)       ) PassID=false;
+    if( !(fabs(Ele.dxySig())<4.)     ) PassID=false;
+  }
+  else if(ID=="POGWP90Isop08IPp025p05sig4"){
+    if( !(Ele.PassNotrigMVAMedium()) ) PassID=false;
+    if( !(Ele.IsTrigMVAValid())      ) PassID=false;
+    if( !(Ele.PassesConvVeto())      ) PassID=false;
+    if( !(Ele.PFRelIso(0.3)<0.08)    ) PassID=false;
     if( !(fabs(Ele.dxy())<0.025)     ) PassID=false;
     if( !(fabs(Ele.dz())<0.05)       ) PassID=false;
     if( !(fabs(Ele.dxySig())<4.)     ) PassID=false;
@@ -6494,6 +6514,36 @@ bool AnalyzerCore::PassIDCriteria(snu::KElectron Ele, TString ID, TString Option
     if( !(fabs(Ele.dxy())<0.025)     ) PassID=false;
     if( !(fabs(Ele.dz())<0.05)       ) PassID=false;
     if( !(fabs(Ele.dxySig())<4.)     ) PassID=false;
+  }
+  else if(ID=="LMVA06Isop4IPp025p05sig4"){
+    if( !(Ele.IsTrigMVAValid())      ) PassID=false;
+    if( !(Ele.PassesConvVeto())      ) PassID=false;
+    if( !(Ele.PFRelIso(0.3)<0.4)     ) PassID=false;
+    if( !(fabs(Ele.dxy())<0.025)     ) PassID=false;
+    if( !(fabs(Ele.dz())<0.05)       ) PassID=false;
+    if( !(fabs(Ele.dxySig())<4.)     ) PassID=false;
+
+    if     ( fabs(Ele.Eta())<0.8   ){ if(Ele.MVA()<-0.92) PassID=false; }
+    else if( fabs(Ele.Eta())<1.479 ){ if(Ele.MVA()<-0.85) PassID=false; }
+    else                            { if(Ele.MVA()<-0.76) PassID=false; }
+  }
+  else if(ID=="LNoMVANoIsoIPp05p1sig4"){
+    if( !(Ele.IsTrigMVAValid())      ) PassID=false;
+    if( !(Ele.PassesConvVeto())      ) PassID=false;
+    if( !(fabs(Ele.dxy())<0.05)     ) PassID=false;
+    if( !(fabs(Ele.dz())<0.1)       ) PassID=false;
+    if( !(fabs(Ele.dxySig())<4.)     ) PassID=false;
+  }
+  else if(ID=="POGMVAMIso"){
+    if( !(Ele.PassNotrigMVAMedium()) ) PassID=false;
+    if( !(Ele.IsTrigMVAValid())      ) PassID=false;
+    if( !(Ele.PassesConvVeto())      ) PassID=false;
+    if( !(Ele.PFRelIso(0.3)<0.1)     ) PassID=false;
+  }
+  else if(ID=="POGMVAM"){
+    if( !(Ele.PassNotrigMVAMedium()) ) PassID=false;
+    if( !(Ele.IsTrigMVAValid())      ) PassID=false;
+    if( !(Ele.PassesConvVeto())      ) PassID=false;
   }
   else if(ID=="POGWP90Isop06IPp025p1sig4"){
     if( !(Ele.PassNotrigMVAMedium()) ) PassID=false;
@@ -6516,36 +6566,7 @@ bool AnalyzerCore::PassIDCriteria(snu::KElectron Ele, TString ID, TString Option
     else if( fabs(Ele.Eta())<1.479 ){ if(Ele.MVA()<-0.88) PassID=false; }
     else                            { if(Ele.MVA()<-0.78) PassID=false; }
   }
-  else if(ID=="LMVA06Isop4IPp025p05sig4"){
-    if( !(Ele.IsTrigMVAValid())      ) PassID=false;
-    if( !(Ele.PassesConvVeto())      ) PassID=false;
-    if( !(Ele.PFRelIso(0.3)<0.4)     ) PassID=false;
-    if( !(fabs(Ele.dxy())<0.025)     ) PassID=false;
-    if( !(fabs(Ele.dz())<0.05)       ) PassID=false;
-    if( !(fabs(Ele.dxySig())<4.)     ) PassID=false;
-
-    //if     ( fabs(Ele.Eta())<0.8   ){ if(Ele.MVA()<-0.76) PassID=false; }
-    //else if( fabs(Ele.Eta())<1.479 ){ if(Ele.MVA()<-0.76) PassID=false; }
-    //else                            { if(Ele.MVA()<-0.67) PassID=false; }
-    if     ( fabs(Ele.Eta())<0.8   ){ if(Ele.MVA()<-0.92) PassID=false; }
-    else if( fabs(Ele.Eta())<1.479 ){ if(Ele.MVA()<-0.85) PassID=false; }
-    else                            { if(Ele.MVA()<-0.76) PassID=false; }
-  }
-  else if(ID=="LNoMVANoIsoIPp025p05sig4"){
-    if( !(Ele.IsTrigMVAValid())      ) PassID=false;
-    if( !(Ele.PassesConvVeto())      ) PassID=false;
-    if( !(fabs(Ele.dxy())<0.025)     ) PassID=false;
-    if( !(fabs(Ele.dz())<0.05)       ) PassID=false;
-    if( !(fabs(Ele.dxySig())<4.)     ) PassID=false;
-  }
-  else if(ID=="LNoMVANoIsoIPp025p1sig4"){
-    if( !(Ele.IsTrigMVAValid())      ) PassID=false;
-    if( !(Ele.PassesConvVeto())      ) PassID=false;
-    if( !(fabs(Ele.dxy())<0.025)     ) PassID=false;
-    if( !(fabs(Ele.dz())<0.1)       ) PassID=false;
-    if( !(fabs(Ele.dxySig())<4.)     ) PassID=false;
-  }
-  else return false;
+  else{ cout<<"Error: No Matched ID!"<<endl; return false;}
 
   return PassID;
 
@@ -6554,6 +6575,7 @@ bool AnalyzerCore::PassIDCriteria(snu::KElectron Ele, TString ID, TString Option
 bool AnalyzerCore::PassIDCriteria(snu::KMuon Mu, TString ID, TString Option){
 
   bool PassID=true;
+  bool Debug=Option.Contains("Debug"); Debug=true; int IdxCase=0;
   bool RochCorr=Option.Contains("Roch");
   float fEta=fabs(Mu.Eta());
   if(ID=="HNTrilepFakeL2"){
@@ -6564,21 +6586,229 @@ bool AnalyzerCore::PassIDCriteria(snu::KMuon Mu, TString ID, TString Option){
     if( !(fabs(Mu.dZ()) <0.1 ) ) PassID=false;
     if( !(fabs(Mu.dXYSig())<3.)) PassID=false;
   }
-  else if(ID=="HNTrilepTight2"){
-    if( !(Mu.IsTight())      ) PassID=false;
-    if     ( !RochCorr && !(Mu.RelIso04()<0.1) ) PassID=false;
-    else if(  RochCorr && Mu.RochPt()>0 && !(Mu.RelIso04()*Mu.MiniAODPt()/Mu.RochPt()<0.1) ) PassID=false;
-    if( !(fabs(Mu.dXY())<0.01) ) PassID=false;
-    if( !(fabs(Mu.dZ()) <0.1 ) ) PassID=false;
-    if( !(fabs(Mu.dXYSig())<3.)) PassID=false;
+//  else if(ID=="HNTrilepTight2"){
+//    if( !(Mu.IsTight())      ) PassID=false;
+//    if     ( !RochCorr && !(Mu.RelIso04()<0.1) ) PassID=false;
+//    else if(  RochCorr && Mu.RochPt()>0 && !(Mu.RelIso04()*Mu.MiniAODPt()/Mu.RochPt()<0.1) ) PassID=false;
+//    if( !(fabs(Mu.dXY())<0.01) ) PassID=false;
+//    if( !(fabs(Mu.dZ()) <0.1 ) ) PassID=false;
+//    if( !(fabs(Mu.dXYSig())<3.)) PassID=false;
+//  }
+//  else if(ID=="HNDilepTight"){
+//    if( !(Mu.IsTight())      ) PassID=false;
+//    if     ( !RochCorr && !(Mu.RelIso04()<0.07) ) PassID=false;
+//    else if(  RochCorr && Mu.RochPt()>0 && !(Mu.RelIso04()*Mu.MiniAODPt()/Mu.RochPt()<0.07) ) PassID=false;
+//    if( !(fabs(Mu.dXY())<0.005) ) PassID=false;
+//    if( !(fabs(Mu.dZ()) <0.04 ) ) PassID=false;
+//    if( !(fabs(Mu.dXYSig())<3.)) PassID=false;
+//  }
+  else if(ID=="POGLNoIso"){
+    if( !(Mu.IsLoose()) ) PassID=false;
   }
-  else if(ID=="HNDilepTight"){
-    if( !(Mu.IsTight())      ) PassID=false;
-    if     ( !RochCorr && !(Mu.RelIso04()<0.07) ) PassID=false;
-    else if(  RochCorr && Mu.RochPt()>0 && !(Mu.RelIso04()*Mu.MiniAODPt()/Mu.RochPt()<0.07) ) PassID=false;
-    if( !(fabs(Mu.dXY())<0.005) ) PassID=false;
-    if( !(fabs(Mu.dZ()) <0.04 ) ) PassID=false;
-    if( !(fabs(Mu.dXYSig())<3.)) PassID=false;
+//  else if(ID=="Test_POGLIsop6IPpXp1"){
+//    if     ( !RochCorr && !(Mu.RelIso04()<0.6)     ) PassID=false;
+//    else if(  RochCorr && !(RochIso(Mu,"0.4")<0.6) ) PassID=false;
+//    if     ( !(Mu.IsLoose())     ) PassID=false;
+//    if     ( !(fabs(Mu.dZ())<0.1)) PassID=false;
+//  }
+//  else if(ID=="Test_POGLIsop4IPpXp1"){
+//    if     ( !RochCorr && !(Mu.RelIso04()    <0.4) ) PassID=false;
+//    else if(  RochCorr && !(RochIso(Mu,"0.4")<0.4) ) PassID=false;
+//    if     ( !(Mu.IsLoose())     ) PassID=false;
+//    if     ( !(fabs(Mu.dZ())<0.1)) PassID=false;
+//  }
+//  else if(ID=="Test_POGLIsop6IPp5p1"){
+//    if     ( !RochCorr && !(Mu.RelIso04()<0.6)     ) PassID=false;
+//    else if(  RochCorr && !(RochIso(Mu,"0.4")<0.6) ) PassID=false;
+//    if     ( !(Mu.IsLoose())            ) PassID=false;
+//    if     ( !(fabs(Mu.dXY())<0.5)      ) PassID=false;
+//    if     ( !(fabs(Mu.dZ())<0.1)       ) PassID=false;
+//  }
+//  else if(ID=="Test_POGLIsop4IPp5p1"){
+//    if     ( !RochCorr && !(Mu.RelIso04()<0.4)     ) PassID=false;
+//    else if(  RochCorr && !(RochIso(Mu,"0.4")<0.4) ) PassID=false;
+//    if     ( !(Mu.IsLoose())            ) PassID=false;
+//    if     ( !(fabs(Mu.dXY())<0.5)      ) PassID=false;
+//    if     ( !(fabs(Mu.dZ())<0.1)       ) PassID=false;
+//  }
+//  else if(ID=="Test_POGLIsop6IPp5p1sig4"){
+//    if     ( !RochCorr && !(Mu.RelIso04()<0.6)     ) PassID=false;
+//    else if(  RochCorr && !(RochIso(Mu,"0.4")<0.6) ) PassID=false;
+//    if     ( !(Mu.IsLoose())            ) PassID=false;
+//    if     ( !(fabs(Mu.dXY())<0.5)      ) PassID=false;
+//    if     ( !(fabs(Mu.dZ())<0.1)       ) PassID=false;
+//    if     ( !(fabs(Mu.dXYSig())<4.)    ) PassID=false;
+//  }
+//  else if(ID=="Test_POGLIsop4IPp5p1sig4"){
+//    if     ( !RochCorr && !(Mu.RelIso04()<0.4)     ) PassID=false;
+//    else if(  RochCorr && !(RochIso(Mu,"0.4")<0.4) ) PassID=false;
+//    if     ( !(Mu.IsLoose())            ) PassID=false;
+//    if     ( !(fabs(Mu.dXY())<0.5)      ) PassID=false;
+//    if     ( !(fabs(Mu.dZ())<0.1)       ) PassID=false;
+//    if     ( !(fabs(Mu.dXYSig())<4.)    ) PassID=false;
+//  }
+//  else if(ID=="Test_POGLIsop6IPp5p1sig8"){
+//    if     ( !RochCorr && !(Mu.RelIso04()<0.6)     ) PassID=false;
+//    else if(  RochCorr && !(RochIso(Mu,"0.4")<0.6) ) PassID=false;
+//    if     ( !(Mu.IsLoose())            ) PassID=false;
+//    if     ( !(fabs(Mu.dXY())<0.5)      ) PassID=false;
+//    if     ( !(fabs(Mu.dZ())<0.1)       ) PassID=false;
+//    if     ( !(fabs(Mu.dXYSig())<8.)    ) PassID=false;
+//  }
+//  else if(ID=="Test_POGLIsop4IPp5p1sig8"){
+//    if     ( !RochCorr && !(Mu.RelIso04()<0.4)     ) PassID=false;
+//    else if(  RochCorr && !(RochIso(Mu,"0.4")<0.4) ) PassID=false;
+//    if     ( !(Mu.IsLoose())            ) PassID=false;
+//    if     ( !(fabs(Mu.dXY())<0.5)      ) PassID=false;
+//    if     ( !(fabs(Mu.dZ())<0.1)       ) PassID=false;
+//    if     ( !(fabs(Mu.dXYSig())<8.)    ) PassID=false;
+//  }
+//  else if(ID=="Test_POGLIsop4IPp5p1Chi100_NoIso"){
+//    if     ( !(Mu.IsLoose())            ) PassID=false;
+//    if     ( !(fabs(Mu.dXY())<0.5)      ) PassID=false;
+//    if     ( !(fabs(Mu.dZ())<0.1)       ) PassID=false;
+//    if     ( !(fabs(Mu.GlobalChi2())<100.)) PassID=false;
+//  }
+//  else if(ID=="Test_POGLIsop6IPp5p1Chi30"){
+//    if     ( !RochCorr && !(Mu.RelIso04()<0.6)     ) PassID=false;
+//    else if(  RochCorr && !(RochIso(Mu,"0.4")<0.6) ) PassID=false;
+//    if     ( !(Mu.IsLoose())     ) PassID=false;
+//    if     ( !(fabs(Mu.dXY())<0.5 )     ) PassID=false;
+//    if     ( !(fabs(Mu.dZ() )<0.1 )     ) PassID=false;
+//    if     ( !(fabs(Mu.GlobalChi2())<30.)) PassID=false;
+//  }
+//  else if(ID=="POGTIsop15"){
+//    if     ( !RochCorr && !(Mu.RelIso04()    <0.15) ) PassID=false;
+//    else if(  RochCorr && !(RochIso(Mu,"0.4")<0.15) ) PassID=false;
+//    if     ( !(Mu.IsTight())        ) PassID=false;
+//  }
+//  else if(ID=="Test_POGTIsop15IPp01p1"){
+//    if     ( !RochCorr && !(Mu.RelIso04()    <0.15) ) PassID=false;
+//    else if(  RochCorr && !(RochIso(Mu,"0.4")<0.15) ) PassID=false;
+//    if     ( !(Mu.IsTight())        ) PassID=false;
+//    if     ( !(fabs(Mu.dXY())<0.01) ) PassID=false;
+//    if     ( !(fabs(Mu.dZ() )<0.1 ) ) PassID=false;
+//  }
+//  else if(ID=="Test_POGTIsop25IPp01p1Chi3"){
+//    if     ( !RochCorr && !(Mu.RelIso04()    <0.25) ) PassID=false;
+//    else if(  RochCorr && !(RochIso(Mu,"0.4")<0.25) ) PassID=false;
+//    if     ( !(Mu.IsTight())            ) PassID=false;
+//    if     ( !(fabs(Mu.dXY())<0.01)     ) PassID=false;
+//    if     ( !(fabs(Mu.dZ() )<0.1 )     ) PassID=false;
+//    if     ( !(fabs(Mu.GlobalChi2())<3.)) PassID=false;
+//  }
+//  else if(ID=="Test_POGTIsop20IPp01p1Chi3"){
+//    if     ( !RochCorr && !(Mu.RelIso04()    <0.20) ) PassID=false;
+//    else if(  RochCorr && !(RochIso(Mu,"0.4")<0.20) ) PassID=false;
+//    if     ( !(Mu.IsTight())            ) PassID=false;
+//    if     ( !(fabs(Mu.dXY())<0.01)     ) PassID=false;
+//    if     ( !(fabs(Mu.dZ() )<0.1 )     ) PassID=false;
+//    if     ( !(fabs(Mu.GlobalChi2())<3.)) PassID=false;
+//  }
+//  else if(ID=="Test_POGTIsop20IPp01p05sig4Chi3"){
+//    if     ( !RochCorr && !(Mu.RelIso04()    <0.20) ) PassID=false;
+//    else if(  RochCorr && !(RochIso(Mu,"0.4")<0.20) ) PassID=false;
+//    if     ( !(Mu.IsTight())            ) PassID=false;
+//    if     ( !(fabs(Mu.dXY())<0.01)     ) PassID=false;
+//    if     ( !(fabs(Mu.dZ() )<0.05 )    ) PassID=false;
+//    if     ( !(fabs(Mu.dXYSig())<4.)    ) PassID=false;
+//    if     ( !(fabs(Mu.GlobalChi2())<3.)) PassID=false;
+//  }
+//  else if(ID=="Test_POGTIsop15IPp01p1Chi3"){
+//    if     ( !RochCorr && !(Mu.RelIso04()    <0.15) ) PassID=false;
+//    else if(  RochCorr && !(RochIso(Mu,"0.4")<0.15) ) PassID=false;
+//    if     ( !(Mu.IsTight())            ) PassID=false;
+//    if     ( !(fabs(Mu.dXY())<0.01)     ) PassID=false;
+//    if     ( !(fabs(Mu.dZ() )<0.1 )     ) PassID=false;
+//    if     ( !(fabs(Mu.GlobalChi2())<3.)) PassID=false;
+//  }
+//  else if(ID=="Test_POGTIsop20IPp01p05sig4Chi4NoIso"){
+//    if     ( !(Mu.IsTight())            ) PassID=false;
+//    if     ( !(fabs(Mu.dXY())<0.01)     ) PassID=false;
+//    if     ( !(fabs(Mu.dZ() )<0.05)    ) PassID=false;
+//    if     ( !(fabs(Mu.dXYSig())<4.)    ) PassID=false;
+//    if     ( !(fabs(Mu.GlobalChi2())<4.)) PassID=false;
+//  }
+//  else if(ID=="Test_POGTIsop20IPp01p1sig4Chi4"){
+//    if     ( !RochCorr && !(Mu.RelIso04()    <0.20) ) PassID=false;
+//    else if(  RochCorr && !(RochIso(Mu,"0.4")<0.20) ) PassID=false;
+//    if     ( !(Mu.IsTight())            ) PassID=false;
+//    if     ( !(fabs(Mu.dXY())<0.01)     ) PassID=false;
+//    if     ( !(fabs(Mu.dZ() )<0.1)      ) PassID=false;
+//    if     ( !(fabs(Mu.dXYSig())<4.)    ) PassID=false;
+//    if     ( !(fabs(Mu.GlobalChi2())<4.)) PassID=false;
+//  }
+  else if(ID=="POGTIsop4IPp2p1NoChi"){
+    if     ( !RochCorr && !(Mu.RelIso04()<0.4)     ) PassID=false;
+    else if(  RochCorr && !(RochIso(Mu,"0.4")<0.4) ) PassID=false;
+    if     ( !(Mu.IsPF() && Mu.IsGlobal())         ) PassID=false;
+    if     ( !( Mu.validHits()    >0
+             && Mu.validPixHits() >0
+             && Mu.validStations()>1
+             && Mu.ActiveLayer()  >5 )  ) PassID=false;
+    if     ( !(fabs(Mu.dXY())<0.2)      ) PassID=false;
+    if     ( !(fabs(Mu.dZ())<0.1)       ) PassID=false;
+  }
+  else if(ID=="POGTIsop6IPp2p1NoChi"){
+    if     ( !RochCorr && !(Mu.RelIso04()<0.6)     ) PassID=false;
+    else if(  RochCorr && !(RochIso(Mu,"0.4")<0.6) ) PassID=false;
+    if     ( !(Mu.IsPF() && Mu.IsGlobal())         ) PassID=false;
+    if     ( !( Mu.validHits()    >0
+             && Mu.validPixHits() >0
+             && Mu.validStations()>1
+             && Mu.ActiveLayer()  >5 )  ) PassID=false;
+    if     ( !(fabs(Mu.dXY())<0.2)      ) PassID=false;
+    if     ( !(fabs(Mu.dZ())<0.1)       ) PassID=false;
+  }
+  else if(ID=="POGTIsop4IPp2p1sig4NoChi"){
+    if     ( !RochCorr && !(Mu.RelIso04()<0.4)     ) PassID=false;
+    else if(  RochCorr && !(RochIso(Mu,"0.4")<0.4) ) PassID=false;
+    if     ( !(Mu.IsPF() && Mu.IsGlobal())         ) PassID=false;
+    if     ( !( Mu.validHits()    >0
+             && Mu.validPixHits() >0
+             && Mu.validStations()>1
+             && Mu.ActiveLayer()  >5 )  ) PassID=false;
+    if     ( !(fabs(Mu.dXY())<0.2)      ) PassID=false;
+    if     ( !(fabs(Mu.dZ())<0.1)       ) PassID=false;
+    if     ( !(fabs(Mu.dXYSig())<4.)    ) PassID=false;
+  }
+  else if(ID=="POGTIsop6IPp2p1sig4NoChi"){
+    if     ( !RochCorr && !(Mu.RelIso04()<0.6)     ) PassID=false;
+    else if(  RochCorr && !(RochIso(Mu,"0.4")<0.6) ) PassID=false;
+    if     ( !(Mu.IsPF() && Mu.IsGlobal())         ) PassID=false;
+    if     ( !( Mu.validHits()    >0
+             && Mu.validPixHits() >0
+             && Mu.validStations()>1
+             && Mu.ActiveLayer()  >5 )  ) PassID=false;
+    if     ( !(fabs(Mu.dXY())<0.2)      ) PassID=false;
+    if     ( !(fabs(Mu.dZ())<0.1)       ) PassID=false;
+    if     ( !(fabs(Mu.dXYSig())<4.)    ) PassID=false;
+  }
+  else if(ID=="POGTIsop6IPp2p1sig4"){
+    if     ( !RochCorr && !(Mu.RelIso04()<0.6)     ) PassID=false;
+    else if(  RochCorr && !(RochIso(Mu,"0.4")<0.6) ) PassID=false;
+    if     ( !(Mu.IsTight())                       ) PassID=false;
+    if     ( !(fabs(Mu.dXY())<0.2)      ) PassID=false;
+    if     ( !(fabs(Mu.dZ())<0.1)       ) PassID=false;
+    if     ( !(fabs(Mu.dXYSig())<4.)    ) PassID=false;
+  }
+  else if(ID=="POGTIsop4IPp01p05sig4Chi4"){
+    if     ( !RochCorr && !(Mu.RelIso04()<0.4)     ) PassID=false;
+    else if(  RochCorr && !(RochIso(Mu,"0.4")<0.4) ) PassID=false;
+    if     ( !(Mu.IsTight())                       ) PassID=false;
+    if     ( !(fabs(Mu.dXY())<0.01)     ) PassID=false;
+    if     ( !(fabs(Mu.dZ() )<0.05)     ) PassID=false;
+    if     ( !(fabs(Mu.dXYSig())<4.)    ) PassID=false;
+    if     ( !(fabs(Mu.GlobalChi2())<4.)) PassID=false;
+  }
+  else if(ID=="POGTIsop6IPp01p05sig4Chi4"){
+    if     ( !RochCorr && !(Mu.RelIso04()<0.6)     ) PassID=false;
+    else if(  RochCorr && !(RochIso(Mu,"0.4")<0.6) ) PassID=false;
+    if     ( !(Mu.IsTight())                       ) PassID=false;
+    if     ( !(fabs(Mu.dXY())<0.01)     ) PassID=false;
+    if     ( !(fabs(Mu.dZ() )<0.05)     ) PassID=false;
+    if     ( !(fabs(Mu.dXYSig())<4.)    ) PassID=false;
+    if     ( !(fabs(Mu.GlobalChi2())<4.)) PassID=false;
   }
   else if(ID=="POGLIsop4IPp5p1Chi100"){
     if     ( !RochCorr && !(Mu.RelIso04()<0.4)     ) PassID=false;
@@ -6597,163 +6827,11 @@ bool AnalyzerCore::PassIDCriteria(snu::KMuon Mu, TString ID, TString Option){
     if     ( !(fabs(Mu.dXYSig())<4.)    ) PassID=false;
     if     ( !(fabs(Mu.GlobalChi2())<4.)) PassID=false;
   }
-  else if(ID=="POGLNoIso"){
-    if( !(Mu.IsLoose()) ) PassID=false;
-  }
-  else if(ID=="Test_POGLIsop6IPpXp1"){
-    if     ( !RochCorr && !(Mu.RelIso04()<0.6)     ) PassID=false;
-    else if(  RochCorr && !(RochIso(Mu,"0.4")<0.6) ) PassID=false;
-    if     ( !(Mu.IsLoose())     ) PassID=false;
-    if     ( !(fabs(Mu.dZ())<0.1)) PassID=false;
-  }
-  else if(ID=="Test_POGLIsop4IPpXp1"){
-    if     ( !RochCorr && !(Mu.RelIso04()    <0.4) ) PassID=false;
-    else if(  RochCorr && !(RochIso(Mu,"0.4")<0.4) ) PassID=false;
-    if     ( !(Mu.IsLoose())     ) PassID=false;
-    if     ( !(fabs(Mu.dZ())<0.1)) PassID=false;
-  }
-  else if(ID=="Test_POGLIsop6IPp5p1"){
-    if     ( !RochCorr && !(Mu.RelIso04()<0.6)     ) PassID=false;
-    else if(  RochCorr && !(RochIso(Mu,"0.4")<0.6) ) PassID=false;
-    if     ( !(Mu.IsLoose())            ) PassID=false;
-    if     ( !(fabs(Mu.dXY())<0.5)      ) PassID=false;
-    if     ( !(fabs(Mu.dZ())<0.1)       ) PassID=false;
-  }
-  else if(ID=="Test_POGLIsop4IPp5p1"){
-    if     ( !RochCorr && !(Mu.RelIso04()<0.4)     ) PassID=false;
-    else if(  RochCorr && !(RochIso(Mu,"0.4")<0.4) ) PassID=false;
-    if     ( !(Mu.IsLoose())            ) PassID=false;
-    if     ( !(fabs(Mu.dXY())<0.5)      ) PassID=false;
-    if     ( !(fabs(Mu.dZ())<0.1)       ) PassID=false;
-  }
-  else if(ID=="Test_POGLIsop6IPp5p1sig4"){
-    if     ( !RochCorr && !(Mu.RelIso04()<0.6)     ) PassID=false;
-    else if(  RochCorr && !(RochIso(Mu,"0.4")<0.6) ) PassID=false;
-    if     ( !(Mu.IsLoose())            ) PassID=false;
-    if     ( !(fabs(Mu.dXY())<0.5)      ) PassID=false;
-    if     ( !(fabs(Mu.dZ())<0.1)       ) PassID=false;
-    if     ( !(fabs(Mu.dXYSig())<4.)    ) PassID=false;
-  }
-  else if(ID=="Test_POGLIsop4IPp5p1sig4"){
-    if     ( !RochCorr && !(Mu.RelIso04()<0.4)     ) PassID=false;
-    else if(  RochCorr && !(RochIso(Mu,"0.4")<0.4) ) PassID=false;
-    if     ( !(Mu.IsLoose())            ) PassID=false;
-    if     ( !(fabs(Mu.dXY())<0.5)      ) PassID=false;
-    if     ( !(fabs(Mu.dZ())<0.1)       ) PassID=false;
-    if     ( !(fabs(Mu.dXYSig())<4.)    ) PassID=false;
-  }
-  else if(ID=="Test_POGLIsop6IPp5p1sig8"){
-    if     ( !RochCorr && !(Mu.RelIso04()<0.6)     ) PassID=false;
-    else if(  RochCorr && !(RochIso(Mu,"0.4")<0.6) ) PassID=false;
-    if     ( !(Mu.IsLoose())            ) PassID=false;
-    if     ( !(fabs(Mu.dXY())<0.5)      ) PassID=false;
-    if     ( !(fabs(Mu.dZ())<0.1)       ) PassID=false;
-    if     ( !(fabs(Mu.dXYSig())<8.)    ) PassID=false;
-  }
-  else if(ID=="Test_POGLIsop4IPp5p1sig8"){
-    if     ( !RochCorr && !(Mu.RelIso04()<0.4)     ) PassID=false;
-    else if(  RochCorr && !(RochIso(Mu,"0.4")<0.4) ) PassID=false;
-    if     ( !(Mu.IsLoose())            ) PassID=false;
-    if     ( !(fabs(Mu.dXY())<0.5)      ) PassID=false;
-    if     ( !(fabs(Mu.dZ())<0.1)       ) PassID=false;
-    if     ( !(fabs(Mu.dXYSig())<8.)    ) PassID=false;
-  }
-  else if(ID=="Test_POGLIsop4IPp5p1Chi100"){
-    if     ( !RochCorr && !(Mu.RelIso04()<0.4)     ) PassID=false;
-    else if(  RochCorr && !(RochIso(Mu,"0.4")<0.4) ) PassID=false;
-    if     ( !(Mu.IsLoose())            ) PassID=false;
-    if     ( !(fabs(Mu.dXY())<0.5)      ) PassID=false;
-    if     ( !(fabs(Mu.dZ())<0.1)       ) PassID=false;
-    if     ( !(fabs(Mu.GlobalChi2())<100.)) PassID=false;
-  }
-  else if(ID=="Test_POGLIsop4IPp5p1Chi100_NoIso"){
-    if     ( !(Mu.IsLoose())            ) PassID=false;
-    if     ( !(fabs(Mu.dXY())<0.5)      ) PassID=false;
-    if     ( !(fabs(Mu.dZ())<0.1)       ) PassID=false;
-    if     ( !(fabs(Mu.GlobalChi2())<100.)) PassID=false;
-  }
-  else if(ID=="Test_POGLIsop6IPp5p1Chi30"){
-    if     ( !RochCorr && !(Mu.RelIso04()<0.6)     ) PassID=false;
-    else if(  RochCorr && !(RochIso(Mu,"0.4")<0.6) ) PassID=false;
-    if     ( !(Mu.IsLoose())     ) PassID=false;
-    if     ( !(fabs(Mu.dXY())<0.5 )     ) PassID=false;
-    if     ( !(fabs(Mu.dZ() )<0.1 )     ) PassID=false;
-    if     ( !(fabs(Mu.GlobalChi2())<30.)) PassID=false;
-  }
-  else if(ID=="POGTIsop15"){
-    if     ( !RochCorr && !(Mu.RelIso04()    <0.15) ) PassID=false;
-    else if(  RochCorr && !(RochIso(Mu,"0.4")<0.15) ) PassID=false;
-    if     ( !(Mu.IsTight())        ) PassID=false;
-  }
-  else if(ID=="Test_POGTIsop15IPp01p1"){
-    if     ( !RochCorr && !(Mu.RelIso04()    <0.15) ) PassID=false;
-    else if(  RochCorr && !(RochIso(Mu,"0.4")<0.15) ) PassID=false;
-    if     ( !(Mu.IsTight())        ) PassID=false;
-    if     ( !(fabs(Mu.dXY())<0.01) ) PassID=false;
-    if     ( !(fabs(Mu.dZ() )<0.1 ) ) PassID=false;
-  }
-  else if(ID=="Test_POGTIsop25IPp01p1Chi3"){
-    if     ( !RochCorr && !(Mu.RelIso04()    <0.25) ) PassID=false;
-    else if(  RochCorr && !(RochIso(Mu,"0.4")<0.25) ) PassID=false;
-    if     ( !(Mu.IsTight())            ) PassID=false;
-    if     ( !(fabs(Mu.dXY())<0.01)     ) PassID=false;
-    if     ( !(fabs(Mu.dZ() )<0.1 )     ) PassID=false;
-    if     ( !(fabs(Mu.GlobalChi2())<3.)) PassID=false;
-  }
-  else if(ID=="Test_POGTIsop20IPp01p1Chi3"){
-    if     ( !RochCorr && !(Mu.RelIso04()    <0.20) ) PassID=false;
-    else if(  RochCorr && !(RochIso(Mu,"0.4")<0.20) ) PassID=false;
-    if     ( !(Mu.IsTight())            ) PassID=false;
-    if     ( !(fabs(Mu.dXY())<0.01)     ) PassID=false;
-    if     ( !(fabs(Mu.dZ() )<0.1 )     ) PassID=false;
-    if     ( !(fabs(Mu.GlobalChi2())<3.)) PassID=false;
-  }
-  else if(ID=="Test_POGTIsop20IPp01p05sig4Chi3"){
-    if     ( !RochCorr && !(Mu.RelIso04()    <0.20) ) PassID=false;
-    else if(  RochCorr && !(RochIso(Mu,"0.4")<0.20) ) PassID=false;
-    if     ( !(Mu.IsTight())            ) PassID=false;
-    if     ( !(fabs(Mu.dXY())<0.01)     ) PassID=false;
-    if     ( !(fabs(Mu.dZ() )<0.05 )    ) PassID=false;
-    if     ( !(fabs(Mu.dXYSig())<4.)    ) PassID=false;
-    if     ( !(fabs(Mu.GlobalChi2())<3.)) PassID=false;
-  }
-  else if(ID=="Test_POGTIsop15IPp01p1Chi3"){
-    if     ( !RochCorr && !(Mu.RelIso04()    <0.15) ) PassID=false;
-    else if(  RochCorr && !(RochIso(Mu,"0.4")<0.15) ) PassID=false;
-    if     ( !(Mu.IsTight())            ) PassID=false;
-    if     ( !(fabs(Mu.dXY())<0.01)     ) PassID=false;
-    if     ( !(fabs(Mu.dZ() )<0.1 )     ) PassID=false;
-    if     ( !(fabs(Mu.GlobalChi2())<3.)) PassID=false;
-  }
-  else if(ID=="Test_POGTIsop20IPp01p05sig4Chi4"){
-    if     ( !RochCorr && !(Mu.RelIso04()    <0.20) ) PassID=false;
-    else if(  RochCorr && !(RochIso(Mu,"0.4")<0.20) ) PassID=false;
-    if     ( !(Mu.IsTight())            ) PassID=false;
-    if     ( !(fabs(Mu.dXY())<0.01)     ) PassID=false;
-    if     ( !(fabs(Mu.dZ() )<0.05)    ) PassID=false;
-    if     ( !(fabs(Mu.dXYSig())<4.)    ) PassID=false;
-    if     ( !(fabs(Mu.GlobalChi2())<4.)) PassID=false;
-  }
-  else if(ID=="Test_POGTIsop20IPp01p05sig4Chi4NoIso"){
-    if     ( !(Mu.IsTight())            ) PassID=false;
-    if     ( !(fabs(Mu.dXY())<0.01)     ) PassID=false;
-    if     ( !(fabs(Mu.dZ() )<0.05)    ) PassID=false;
-    if     ( !(fabs(Mu.dXYSig())<4.)    ) PassID=false;
-    if     ( !(fabs(Mu.GlobalChi2())<4.)) PassID=false;
-  }
-  else if(ID=="Test_POGTIsop20IPp01p1sig4Chi4"){
-    if     ( !RochCorr && !(Mu.RelIso04()    <0.20) ) PassID=false;
-    else if(  RochCorr && !(RochIso(Mu,"0.4")<0.20) ) PassID=false;
-    if     ( !(Mu.IsTight())            ) PassID=false;
-    if     ( !(fabs(Mu.dXY())<0.01)     ) PassID=false;
-    if     ( !(fabs(Mu.dZ() )<0.1)      ) PassID=false;
-    if     ( !(fabs(Mu.dXYSig())<4.)    ) PassID=false;
-    if     ( !(fabs(Mu.GlobalChi2())<4.)) PassID=false;
-  }
-  else return false;
+  else{ cout<<"Error: No Matched ID!"<<endl; return false;}
 
   return PassID;
 }
+
 
 
 bool AnalyzerCore::HasStrangeEleCand(std::vector<snu::KElectron> EleColl){

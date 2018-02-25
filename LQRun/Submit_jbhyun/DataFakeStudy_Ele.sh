@@ -22,7 +22,8 @@ DataPeriod="ALL"
 job_logstep=1000
 LogLevel="INFO"
 QueueOption="fastq"    #"longq"
-RunningMode="FRMeasure,SiglWP,SiglPreTrig" #"Closure,SystRun" #"FRMeasure,SiglWP,SiglPreTrig" #"OptMETMTWCuts,SiglPreTrig" #"NormCheck,SiglPreTrig,SystRun" #"NormCheck,UnPreTrig,SystRun" #"IDValidation" #"IsoIPOpt" #"NormCheck,SiglPreTrig" #"HighdXYCheck,SiglPreTrig" #"FRScan,SiglPreTrig" #"Closure" #"EleFR,PreTrig" #"TrigSel"
+RunningMode="NormCheck,SiglPreTrig"
+#"Closure,SystRun" #"FRMeasure,SiglWP,SiglPreTrig" #"OptMETMTWCuts,SiglPreTrig" #"NormCheck,SiglPreTrig,SystRun" #"NormCheck,UnPreTrig,SystRun" #"IDValidation" #"IsoIPOpt" #"NormCheck,SiglPreTrig" #"HighdXYCheck,SiglPreTrig" #"FRScan,SiglPreTrig" #"Closure" #"EleFR,PreTrig" #"TrigSel"
 
 #MCList="TT"
 #MCList="DY"

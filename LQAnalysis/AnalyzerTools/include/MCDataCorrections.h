@@ -108,8 +108,8 @@ class MCDataCorrections{
   std::vector<TLorentzVector> MakeTLorentz( std::vector<snu::KFatJet> jet);
 
 
-  float TriggerEfficiency(vector<snu::KElectron>& EleColl, vector<snu::KMuon>& MuColl, TString TrigName, bool ReturnDataEff, TString Option);
-  float GetTriggerSF     (vector<snu::KElectron>& EleColl, vector<snu::KMuon>& MuColl, TString TrigName, TString Option);
+  float TriggerEfficiency(vector<snu::KElectron>& EleColl, vector<snu::KMuon>& MuColl, TString TrigName, bool ReturnDataEff, TString Option="");
+  float GetTriggerSF     (vector<snu::KElectron>& EleColl, vector<snu::KMuon>& MuColl, TString TrigName, TString Option="");
 
  private:
   

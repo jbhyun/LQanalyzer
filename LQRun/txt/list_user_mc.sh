@@ -6,10 +6,10 @@
 declare -a tchannel_hn=('HNMoriondLL_Tchannel_EpEp_100' 'HNMoriondLL_Tchannel_EpEp_200' 'HNMoriondLL_Tchannel_EpEp_500' 'HNMoriondLL_Tchannel_EpEp_1100' 'HNMoriondLL_Tchannel_MupMup_100' 'HNMoriondLL_Tchannel_MupMup_200' 'HNMoriondLL_Tchannel_MupMup_500' 'HNMoriondLL_Tchannel_MupMup_1100' 'HNMumMum_40' 'HNMumMum_50' 'HNMumMum_200' 'HNMumMum_500' 'HNMumMum_1500'  'HNEmEm_40' 'HNEmEm_50' 'HNEmEm_200' 'HNEmEm_500' 'HNEmEm_1500'  'HNMupMup_40' 'HNMupMup_50' 'HNMupMup_200' 'HNMupMup_500' 'HNMupMup_1500' 'HNMupMup_100' 'HNMupMup_700' 'HNMupMup_1000' )
 declare -a  mc_conv=('ZGto2LG' 'WGtoLNuG' 'TG' 'TTG' 'WZG' 'WWG' )
 
-declare -a ListToProd=("DYJets_MG_10to50_TrigInfoSample" "DYJets_MG_TrigInfoSample" "TT_powheg_TrigInfoSample")
+declare -a ListToProd=('DYJets_MG_10to50_TrigInfoSample' 'DYJets_MG_TrigInfoSample' 'TT_powheg_TrigInfoSample')
 
 declare -a AllSample=('WJets' 'DYJets_10to50' 'DYJets' 'SingleTop_s' 'SingleTbar_t' 'SingleTop_t' 'SingleTbar_tW' 'SingleTop_tW' 'TT_powheg' 'ZZ' 'WZ' 'WW' 'WGtoLNuG' 'WGtoLNuEE' 'WGtoLNuMM' 'ZGto2LG' 'ttH_nonbb' 'ttH_bb' 'ttW' 'ttZ') 
-declare -a UnRun=("TT_powheg_TrigInfoSample")
+declare -a UnRun=('DYJets_MG_10to50')
 
 
 #####################################################################################
@@ -41,7 +41,7 @@ declare -a Analysis_bkg=('WZTo3LNu_powheg' 'ZZTo4L_powheg' "ZGto2LG" 'TTG' 'ttWT
 declare -a CR_DiLep=('DYJets_10to50' 'DYJets' 'SingleTbar_tW_noHadron' 'SingleTop_tW_noHadron' 'TT_powheg' 'WZ' 'ZZ' 'WW')
 declare -a CR_EMu=('DYJets_10to50' 'LowStat_DYJets' 'SingleTbar_tW_noHadron' 'SingleTop_tW_noHadron' 'TT_powheg' 'WZ' 'ZZ' 'WW')
 declare -a CR_MuMu_fast=('DYJets_10to50' 'DYJets' 'TT_powheg')
-declare -a CR_MuMu50_fast=('DYJets' 'TT_powheg')
+declare -a CR_MuMu50_fast=('LowStat_DYJets' 'TT_powheg')
 declare -a CR_EE_fast=('DYJets_10to50' 'LowStat_DYJets' 'TT_powheg')
 
 #4lepton CR
@@ -59,12 +59,12 @@ declare -a BtagEffSample=('TT_powheg')
 declare -a ObjEff=('TT_powheg' 'DYJets' 'ZGto2LG')
 declare -a IDSample=('DYJets_MG')
 declare -a TrigSample=("DYJets_MG_10to50_TrigInfoSample" "DYJets_MG_TrigInfoSample" "TT_powheg_TrigInfoSample")
-declare -a TrigDiLepClosure=('TT_powheg' 'DYJets_MG' 'DYJets_10to50' )
+declare -a TrigDiLepClosure=('TT_powheg' 'DYJets_MG' 'DYJets_MG_10to50' )
 declare -a TrigTriLepClosure=('WZTo3LNu_powheg' 'ttZ' 'ZZTo4L_powheg' )
 declare -a FR_Prompt=('WJets' 'DYJets_10to50' 'DYJets' 'TT_powheg' 'SingleTop_t' 'SingleTop_s' 'SingleTbar_t' 'SingleTbar_tW_noHadron' 'SingleTop_tW_noHadron' 'WW' 'WZ' 'ZZ')
 #declare -a FR_Prompt=('LowStat_WJets' 'DYJets_10to50' 'LowStat_DYJets' 'TT_powheg' 'SingleTop_t' 'SingleTop_s' 'SingleTbar_t' 'SingleTbar_tW_noHadron' 'SingleTop_tW_noHadron' 'WW' 'WZ' 'ZZ')
-#declare -a MajorFakeSource=('DYJets_10to50' 'DYJets' 'TTLL_powheg' 'TT_powheg')
-declare -a MajorFakeSource=('DYJets_10to50' 'DYJets' 'TT_powheg')
+declare -a MajorFakeSource=('DYJets_10to50' 'DYJets' 'TTLL_powheg' 'TT_powheg')
+#declare -a MajorFakeSource=('DYJets_10to50' 'DYJets' 'TT_powheg')
 declare -a FakeMeasRegSample=("qcd_15to20_bctoe" "qcd_20to30_bctoe" "qcd_30to80_bctoe" "qcd_80to170_bctoe" "qcd_170to250_bctoe" "qcd_250toinf_bctoe" "QCD_Pt-20to30_EMEnriched" "QCD_Pt-30to50_EMEnriched" "QCD_Pt-50to80_EMEnriched" "QCD_Pt-80to120_EMEnriched" "QCD_Pt-120to170_EMEnriched" "QCD_Pt-170to300_EMEnriched" "QCD_Pt-300toInf_EMEnriched")
 declare -a QCD_BCToE=("qcd_15to20_bctoe" "qcd_20to30_bctoe" "qcd_30to80_bctoe" "qcd_80to170_bctoe" "qcd_170to250_bctoe" "qcd_250toinf_bctoe")
 declare -a QCD_EM=("QCD_Pt-20to30_EMEnriched" "QCD_Pt-30to50_EMEnriched" "QCD_Pt-50to80_EMEnriched" "QCD_Pt-80to120_EMEnriched" "QCD_Pt-120to170_EMEnriched" "QCD_Pt-170to300_EMEnriched" "QCD_Pt-300toInf_EMEnriched")

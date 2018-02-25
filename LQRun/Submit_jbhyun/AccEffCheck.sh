@@ -25,9 +25,9 @@ LogLevel="INFO"
 QueueOption="fastq"    #"longq"
 RunningMode="AccEffCheck" #AccEffCheck
 
-#MCList="SignalMajor_All"
+MCList="SignalMajor_All"
 #MCList="Signal_1e2mu"
-MCList="Signal_All"
+#MCList="Signal_All"
 #MCList="Analysis_bkg"
 #MCList="MajorFakeSource"
 

@@ -42,7 +42,7 @@ class Aug2017_MuFakeMCStudy : public AnalyzerCore {
   void InspectFakeRate(std::vector<snu::KMuon> muonLooseColl, std::vector<snu::KJet> JetColl, std::vector<snu::KTruth> truthColl, TString LooseID, TString TightID, float weight, TString Label, TString Option);
   void ScanFakeRate(std::vector<snu::KMuon> muonLooseColl, std::vector<snu::KElectron> EleLColl, std::vector<snu::KJet> JetColl, std::vector<snu::KTruth> truthColl, TString LooseID, TString TightID, int Nd0Cuts, float d0Cuts[], int NChi2Cuts, float Chi2Cuts[], float weight, TString Label, TString Option);
   void CheckTriggerBias(std::vector<snu::KMuon> muonLooseColl, std::vector<snu::KJet> JetColl, std::vector<snu::KTruth> truthColl, TString LooseID, TString TightID, float weight, TString Label, TString Option);
-  void EmulateFRMeasurement(std::vector<snu::KMuon> MuLColl, std::vector<snu::KElectron> EleLColl, std::vector<snu::KJet> JetColl, float MET, float METx, float METy, std::vector<snu::KTruth> truthColl, TString TightID, float weight, TString Label, TString Option);
+  void EmulateFRMeasurement(std::vector<snu::KMuon> MuLColl, std::vector<snu::KElectron> EleLColl, std::vector<snu::KJet> JetColl, float MET, float METx, float METy, std::vector<snu::KTruth> truthColl, TString LooseID, TString TightID, float weight, TString Label, TString Option);
   void CheckMCClosure(std::vector<snu::KMuon> MuPreColl, std::vector<snu::KElectron> EleLColl, std::vector<snu::KJet> JetNoVetoColl, std::vector<snu::KTruth> TruthColl, TString LooseID, TString TightID, float weight, TString Label, TString Option);
 
   int GetFakeLepSrcIdx(snu::KMuon Mu, std::vector<snu::KTruth> TruthColl);

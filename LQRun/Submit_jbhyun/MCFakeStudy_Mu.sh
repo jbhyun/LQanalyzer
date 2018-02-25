@@ -13,15 +13,16 @@ AnalysisCode="Aug2017_MuFakeMCStudy"
 Stream="DoubleMuon"     
 #Stream="DoubleEG"
 #Stream="MuonEG"
-Skim="SKTree_LeptonSkim"  ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
+#Skim="SKTree_LeptonSkim"  ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
 #Skim="SKTree_DiLepSkim"  ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
-#Skim="SKTree_TriLepSkim"  ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
+Skim="SKTree_TriLepSkim"  ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
 DataPeriod="ALL"
 job_logstep=1000
 LogLevel="INFO"
 QueueOption="fastq" 
-RunningMode="FRInspection,SiglWP" #"Closure" #"FRMeasEmul" #"TrigBiasCheck" #"TrigBiasCheck" #"FRInspection,ScanFR" #"IDVarSensitivity" #"IDEffCheck" #"FakeCompCheck" 
-MCList="TT" #UnRun #"MajorFakeSource" #"TT" #"DY50" #"QCD_Mu" #"SignalMajor_All"
+RunningMode="Closure"
+#"Closure" #"FRMeasEmul" #"TrigBiasCheck" #"TrigBiasCheck" #"FRInspection,SiglWP" #"FRInspection,ScanFR" #"IDVarSensitivity" #"IDEffCheck" #"FakeCompCheck" 
+MCList="MajorFakeSource" #UnRun #"MajorFakeSource" #"TT" #"DY50" #"QCD_Mu" #"SignalMajor_All"
 
 ########################################################################
 ## OUTPUT PATH CONFIG

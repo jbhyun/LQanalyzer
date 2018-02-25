@@ -25,6 +25,8 @@
 
 //#endif // __CINT__
 //Jihwan Bhyun Modification///////////
+#pragma link C++ class Feb2018_TrigAccept+;
+#pragma link C++ class Feb2018_IDTrigSFValid+;
 #pragma link C++ class Feb2018_SihyunsProblem+;
 #pragma link C++ class Jan2018_ForEGMSlot+;
 #pragma link C++ class Jan2018_EleIPQuickCheck+;

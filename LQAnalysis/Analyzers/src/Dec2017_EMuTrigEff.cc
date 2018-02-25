@@ -71,8 +71,9 @@ void Dec2017_EMuTrigEff::ExecuteEvents()throw( LQError ){
 
    bool EleLegEffMeas=false, MuLegEffMeas=false, DzEffMeas_EMu=false, DzEffMeas_DiMu=false;
    bool EffClosure=false, DiMuTrig=false, EMuTrig=false;
-   bool DoubleMuon=false, TriMuon=false, ElectronMuon=false;
-   for(int i=0; i<k_flags.size(); i++){
+   bool DoubleMuon=false, TriMuon=false, ElectronMuon=false, ElectronDiMuon=false;
+   bool SystRun=false;
+   for(int i=0; i<(int) k_flags.size(); i++){
      if     (k_flags.at(i).Contains("EleLegEffMeas"))  EleLegEffMeas  = true;
      else if(k_flags.at(i).Contains("MuLegEffMeas"))   MuLegEffMeas   = true;
      else if(k_flags.at(i).Contains("DzEffMeas_EMu"))  DzEffMeas_EMu  = true;
@@ -83,6 +84,8 @@ void Dec2017_EMuTrigEff::ExecuteEvents()throw( LQError ){
      else if(k_flags.at(i).Contains("DoubleMuon"))     DoubleMuon     = true;
      else if(k_flags.at(i).Contains("TriMuon"))        TriMuon        = true;
      else if(k_flags.at(i).Contains("ElectronMuon"))   ElectronMuon   = true;
+     else if(k_flags.at(i).Contains("ElectronDiMuon")) ElectronDiMuon = true;
+     else if(k_flags.at(i).Contains("SystRun"))        SystRun        = true;
    }
 
     
@@ -148,48 +151,58 @@ void Dec2017_EMuTrigEff::ExecuteEvents()throw( LQError ){
        if( !(electronPreColl.size()>=1 && muonPreColl.size()>=1) ) return;
      }
      if(EffClosure & DiMuTrig){ if( !(muonPreColl.size()>=2) ) return; }
+     if(EffClosure & EMuTrig ){ if( !(muonPreColl.size()>=1 && electronPreColl.size()>=1) ) return; }
      FillCutFlow("PreSel", weight);
    //******************************************************************************************************//
 
    //Primary Object Collection
    std::vector<snu::KTruth> truthColl; eventbase->GetTruthSel()->Selection(truthColl);
 
+
+   //Muon Section------------------------//
+     eventbase->GetMuonSel()->SetID(BaseSelection::MUON_POG_LOOSE);
+     eventbase->GetMuonSel()->SetPt(5.);                    eventbase->GetMuonSel()->SetEta(2.4);
+     eventbase->GetMuonSel()->SetRelIsoType("PFRelIso04");  eventbase->GetMuonSel()->SetRelIso(0.25);
+   std::vector<snu::KMuon> muonPOGLColl; eventbase->GetMuonSel()->Selection(muonPOGLColl,true);
+     eventbase->GetMuonSel()->SetID(BaseSelection::MUON_POG_TIGHT);
+     eventbase->GetMuonSel()->SetPt(5.);                    eventbase->GetMuonSel()->SetEta(2.4);
+     eventbase->GetMuonSel()->SetRelIsoType("PFRelIso04");  eventbase->GetMuonSel()->SetRelIso(0.15);
+   std::vector<snu::KMuon> muonPOGTColl; eventbase->GetMuonSel()->Selection(muonPOGTColl,true);
+
    std::vector<snu::KMuon> muonLooseColl, muonTightColl;
+    if(EleLegEffMeas){ muonTightColl=muonPOGTColl; muonLooseColl=muonPOGLColl;}
+    else{
+     muonLooseColl=muonPOGLColl;
      for(int i=0; i<muonPreColl.size(); i++){
-       if(PassIDCriteria(muonPreColl.at(i),"Test_POGLIsop4IPp5p1Chi100"))      muonLooseColl.push_back(muonPreColl.at(i));
-       if(PassIDCriteria(muonPreColl.at(i),"Test_POGTIsop20IPp01p05sig4Chi4")) muonTightColl.push_back(muonPreColl.at(i));
+       //if(PassIDCriteria(muonPreColl.at(i),"POGLIsop4IPp5p1Chi100"))      muonLooseColl.push_back(muonPreColl.at(i));
+       if(PassIDCriteria(muonPreColl.at(i),"POGTIsop20IPp01p05sig4Chi4")) muonTightColl.push_back(muonPreColl.at(i));
      }
+    }
    std::vector<snu::KMuon> muonColl;  if(k_running_nonprompt){ muonColl=muonLooseColl;} else{ muonColl=muonTightColl;}
 
 
-//     std::vector<snu::KElectron> electronLooseColl, electronTightColl;
-//       for(int i=0; i<electronPreColl.size(); i++){
-//        if(PassIDCriteria(electronPreColl.at(i), "LMVA06Isop4IPp025p1sig4"))   electronLooseColl.push_back(electronPreColl.at(i));
-//        if(PassIDCriteria(electronPreColl.at(i), "POGWP90Isop06IPp025p1sig4")) electronTightColl.push_back(electronPreColl.at(i));
-//       }
-//   std::vector<snu::KElectron> electronColl;  if(!k_running_nonprompt){ electronColl=electronTightColl;} else{ electronColl=electronLooseColl;}
-
-     eventbase->GetElectronSel()->SetID(BaseSelection::ELECTRON_HN_MVA_LOOSE);
-     eventbase->GetElectronSel()->SetHLTSafeCut("CaloIdL_TrackIdL_IsoVL");
+   //Electron Section---------------------------------//
+     eventbase->GetElectronSel()->SetID(BaseSelection::ELECTRON_POG_MVA_WP90);
      eventbase->GetElectronSel()->SetPt(10.);                eventbase->GetElectronSel()->SetEta(2.5);
      eventbase->GetElectronSel()->SetBETrRegIncl(false);
-     eventbase->GetElectronSel()->SetRelIsoType("Default");  eventbase->GetElectronSel()->SetRelIsoBEMax(0.6, 0.6);
-     eventbase->GetElectronSel()->SetdxyBEMax(0.2, 0.2);     eventbase->GetElectronSel()->SetdzBEMax(0.5, 0.5);
-   std::vector<snu::KElectron> electronLooseColl; eventbase->GetElectronSel()->Selection(electronLooseColl);
-
-     eventbase->GetElectronSel()->SetID(BaseSelection::ELECTRON_HN_MVA_TIGHT);
-     eventbase->GetElectronSel()->SetHLTSafeCut("CaloIdL_TrackIdL_IsoVL");
+   std::vector<snu::KElectron> electronPOGWP90Coll; eventbase->GetElectronSel()->Selection(electronPOGWP90Coll);
+     eventbase->GetElectronSel()->SetID(BaseSelection::ELECTRON_POG_MVA_WP80);
      eventbase->GetElectronSel()->SetPt(10.);                eventbase->GetElectronSel()->SetEta(2.5);
      eventbase->GetElectronSel()->SetBETrRegIncl(false);
-     eventbase->GetElectronSel()->SetRelIsoType("Default");  eventbase->GetElectronSel()->SetRelIsoBEMax(0.08, 0.08);
-     eventbase->GetElectronSel()->SetdxyBEMax(0.01, 0.01);   eventbase->GetElectronSel()->SetdzBEMax(0.04, 0.04);
-     eventbase->GetElectronSel()->SetdxySigMax(4.);
-     eventbase->GetElectronSel()->SetApplyConvVeto(true);
-     eventbase->GetElectronSel()->SetCheckCharge(true);
-   std::vector<snu::KElectron> electronTightColl; eventbase->GetElectronSel()->Selection(electronTightColl);
+   std::vector<snu::KElectron> electronPOGWP80Coll; eventbase->GetElectronSel()->Selection(electronPOGWP80Coll);
+
+   std::vector<snu::KElectron> electronLooseColl, electronTightColl;
+   if(MuLegEffMeas){ electronTightColl=electronPOGWP80Coll; electronLooseColl=electronPOGWP90Coll;}
+   else{
+     electronLooseColl=electronPOGWP90Coll;
+     for(int i=0; i<electronPreColl.size(); i++){
+      //if(PassIDCriteria(electronPreColl.at(i), "HctoWAFakeLoose"))           electronLooseColl.push_back(electronPreColl.at(i));
+      if(PassIDCriteria(electronPreColl.at(i), "POGWP90Isop06IPp025p1sig4")) electronTightColl.push_back(electronPreColl.at(i));
+     }
+   }
    std::vector<snu::KElectron> electronColl;  if(!k_running_nonprompt){ electronColl=electronTightColl;} else{ electronColl=electronLooseColl;}
 
-
+   //JMET Section----------------------------------------------------//
      bool LeptonVeto=true;
      eventbase->GetJetSel()->SetID(BaseSelection::PFJET_LOOSE);
      eventbase->GetJetSel()->SetPt(25.);                     eventbase->GetJetSel()->SetEta(2.4);
@@ -209,14 +222,13 @@ void Dec2017_EMuTrigEff::ExecuteEvents()throw( LQError ){
    float metphi = eventbase->GetEvent().METPhi();
    float met_x  = eventbase->GetEvent().PFMETx();
    float met_y  = eventbase->GetEvent().PFMETy();
-   float Pzv, Pzv1, Pzv2;
    snu::KParticle v; v.SetPxPyPzE(met_x, met_y, 0, sqrt(met_x*met_x+met_y*met_y));
    //snu::KParticle v[4]; v[0].SetPx(met_x); v[0].SetPy(met_y);
    //                     v[1].SetPx(met_x); v[1].SetPy(met_y);
 
    int nbjets=bjetColl.size(); int njets=jetColl.size(); const int nljets=ljetColl.size();
    int Nvtx=eventbase->GetEvent().nVertices();
-   //------------------------------------------------------------------------------------------------------------------//
+   //==================================================================================================================//
   
 
    //=====================================================//
@@ -286,10 +298,78 @@ void Dec2017_EMuTrigEff::ExecuteEvents()throw( LQError ){
    }//End of DzEffMeas_EMu
    if(EffClosure){
      if(DiMuTrig && DoubleMuon){
-       ClosureTest_DiMuTrig_DiMu(muonColl, muonLooseColl, electronColl, electronLooseColl, jetColl, bjetColl, met, met*cos(metphi), met*sin(metphi), weight, "", "");
+       ClosureTest_DiMuTrig_DiMu(muonColl, muonLooseColl, electronColl, electronLooseColl, jetColl, bjetColl, met, met*cos(metphi), met*sin(metphi), weight, "_NonDZ", "");
+       ClosureTest_DiMuTrig_DiMu(muonColl, muonLooseColl, electronColl, electronLooseColl, jetColl, bjetColl, met, met*cos(metphi), met*sin(metphi), weight, "_DZ", "UseDZ");
+       if(SystRun){
+         ClosureTest_DiMuTrig_DiMu(muonColl, muonLooseColl, electronColl, electronLooseColl, jetColl, bjetColl, met, met*cos(metphi), met*sin(metphi), weight, "_NonDZ_Leg1_systup", "SystUpLeg1");
+         ClosureTest_DiMuTrig_DiMu(muonColl, muonLooseColl, electronColl, electronLooseColl, jetColl, bjetColl, met, met*cos(metphi), met*sin(metphi), weight, "_NonDZ_Leg2_systup", "SystUpLeg2");
+         ClosureTest_DiMuTrig_DiMu(muonColl, muonLooseColl, electronColl, electronLooseColl, jetColl, bjetColl, met, met*cos(metphi), met*sin(metphi), weight, "_NonDZ_Leg1_systdown", "SystDownLeg1");
+         ClosureTest_DiMuTrig_DiMu(muonColl, muonLooseColl, electronColl, electronLooseColl, jetColl, bjetColl, met, met*cos(metphi), met*sin(metphi), weight, "_NonDZ_Leg2_systdown", "SystDownLeg2");
+
+
+         ClosureTest_DiMuTrig_DiMu(muonColl, muonLooseColl, electronColl, electronLooseColl, jetColl, bjetColl, met, met*cos(metphi), met*sin(metphi), weight, "_DZ_Leg1_systup", "UseDZSystUpLeg1");
+         ClosureTest_DiMuTrig_DiMu(muonColl, muonLooseColl, electronColl, electronLooseColl, jetColl, bjetColl, met, met*cos(metphi), met*sin(metphi), weight, "_DZ_Leg2_systup", "UseDZSystUpLeg2");
+         ClosureTest_DiMuTrig_DiMu(muonColl, muonLooseColl, electronColl, electronLooseColl, jetColl, bjetColl, met, met*cos(metphi), met*sin(metphi), weight, "_DZ_DZ_systup", "UseDZSystUpDZ");
+         ClosureTest_DiMuTrig_DiMu(muonColl, muonLooseColl, electronColl, electronLooseColl, jetColl, bjetColl, met, met*cos(metphi), met*sin(metphi), weight, "_DZ_Leg1_systdown", "UseDZSystDownLeg1");
+         ClosureTest_DiMuTrig_DiMu(muonColl, muonLooseColl, electronColl, electronLooseColl, jetColl, bjetColl, met, met*cos(metphi), met*sin(metphi), weight, "_DZ_Leg2_systdown", "UseDZSystDownLeg2");
+         ClosureTest_DiMuTrig_DiMu(muonColl, muonLooseColl, electronColl, electronLooseColl, jetColl, bjetColl, met, met*cos(metphi), met*sin(metphi), weight, "_DZ_DZ_systdown", "UseDZSystDownDZ");
+       }
      }
      if(DiMuTrig && TriMuon){
-       ClosureTest_DiMuTrig_TriMu(muonColl, muonLooseColl, electronColl, electronLooseColl, jetColl, bjetColl, met, met*cos(metphi), met*sin(metphi), weight, "", "");
+       ClosureTest_DiMuTrig_TriMu(muonColl, muonLooseColl, electronColl, electronLooseColl, jetColl, bjetColl, met, met*cos(metphi), met*sin(metphi), weight, "_NonDZ", "");
+       ClosureTest_DiMuTrig_TriMu(muonColl, muonLooseColl, electronColl, electronLooseColl, jetColl, bjetColl, met, met*cos(metphi), met*sin(metphi), weight, "_DZ", "UseDZ");
+       if(SystRun){
+         ClosureTest_DiMuTrig_TriMu(muonColl, muonLooseColl, electronColl, electronLooseColl, jetColl, bjetColl, met, met*cos(metphi), met*sin(metphi), weight, "_NonDZ_Leg1_systup", "SystUpLeg1");
+         ClosureTest_DiMuTrig_TriMu(muonColl, muonLooseColl, electronColl, electronLooseColl, jetColl, bjetColl, met, met*cos(metphi), met*sin(metphi), weight, "_NonDZ_Leg2_systup", "SystUpLeg2");
+         ClosureTest_DiMuTrig_TriMu(muonColl, muonLooseColl, electronColl, electronLooseColl, jetColl, bjetColl, met, met*cos(metphi), met*sin(metphi), weight, "_NonDZ_Leg1_systdown", "SystDownLeg1");
+         ClosureTest_DiMuTrig_TriMu(muonColl, muonLooseColl, electronColl, electronLooseColl, jetColl, bjetColl, met, met*cos(metphi), met*sin(metphi), weight, "_NonDZ_Leg2_systdown", "SystDownLeg2");
+
+
+         ClosureTest_DiMuTrig_TriMu(muonColl, muonLooseColl, electronColl, electronLooseColl, jetColl, bjetColl, met, met*cos(metphi), met*sin(metphi), weight, "_DZ_Leg1_systup", "UseDZSystUpLeg1");
+         ClosureTest_DiMuTrig_TriMu(muonColl, muonLooseColl, electronColl, electronLooseColl, jetColl, bjetColl, met, met*cos(metphi), met*sin(metphi), weight, "_DZ_Leg2_systup", "UseDZSystUpLeg2");
+         ClosureTest_DiMuTrig_TriMu(muonColl, muonLooseColl, electronColl, electronLooseColl, jetColl, bjetColl, met, met*cos(metphi), met*sin(metphi), weight, "_DZ_DZ_systup", "UseDZSystUpDZ");
+         ClosureTest_DiMuTrig_TriMu(muonColl, muonLooseColl, electronColl, electronLooseColl, jetColl, bjetColl, met, met*cos(metphi), met*sin(metphi), weight, "_DZ_Leg1_systdown", "UseDZSystDownLeg1");
+         ClosureTest_DiMuTrig_TriMu(muonColl, muonLooseColl, electronColl, electronLooseColl, jetColl, bjetColl, met, met*cos(metphi), met*sin(metphi), weight, "_DZ_Leg2_systdown", "UseDZSystDownLeg2");
+         ClosureTest_DiMuTrig_TriMu(muonColl, muonLooseColl, electronColl, electronLooseColl, jetColl, bjetColl, met, met*cos(metphi), met*sin(metphi), weight, "_DZ_DZ_systdown", "UseDZSystDownDZ");
+       }
+     }
+     if(EMuTrig && ElectronMuon){
+       ClosureTest_EMuTrig_EMu(muonColl, muonLooseColl, electronColl, electronLooseColl, jetColl, bjetColl, met, met*cos(metphi), met*sin(metphi), weight, "_NonDZ", "");
+       ClosureTest_EMuTrig_EMu(muonColl, muonLooseColl, electronColl, electronLooseColl, jetColl, bjetColl, met, met*cos(metphi), met*sin(metphi), weight, "_DZ", "UseDZ");
+       if(SystRun){
+         ClosureTest_EMuTrig_EMu(muonColl, muonLooseColl, electronColl, electronLooseColl, jetColl, bjetColl, met, met*cos(metphi), met*sin(metphi), weight, "_NonDZ_Leg1_systup", "SystUpLeg1");
+         ClosureTest_EMuTrig_EMu(muonColl, muonLooseColl, electronColl, electronLooseColl, jetColl, bjetColl, met, met*cos(metphi), met*sin(metphi), weight, "_NonDZ_Leg2_systup", "SystUpLeg2");
+         ClosureTest_EMuTrig_EMu(muonColl, muonLooseColl, electronColl, electronLooseColl, jetColl, bjetColl, met, met*cos(metphi), met*sin(metphi), weight, "_NonDZ_Leg1_systdown", "SystDownLeg1");
+         ClosureTest_EMuTrig_EMu(muonColl, muonLooseColl, electronColl, electronLooseColl, jetColl, bjetColl, met, met*cos(metphi), met*sin(metphi), weight, "_NonDZ_Leg2_systdown", "SystDownLeg2");
+
+
+         ClosureTest_EMuTrig_EMu(muonColl, muonLooseColl, electronColl, electronLooseColl, jetColl, bjetColl, met, met*cos(metphi), met*sin(metphi), weight, "_DZ_Leg1_systup", "UseDZSystUpLeg1");
+         ClosureTest_EMuTrig_EMu(muonColl, muonLooseColl, electronColl, electronLooseColl, jetColl, bjetColl, met, met*cos(metphi), met*sin(metphi), weight, "_DZ_Leg2_systup", "UseDZSystUpLeg2");
+         ClosureTest_EMuTrig_EMu(muonColl, muonLooseColl, electronColl, electronLooseColl, jetColl, bjetColl, met, met*cos(metphi), met*sin(metphi), weight, "_DZ_DZ_systup", "UseDZSystUpDZ");
+         ClosureTest_EMuTrig_EMu(muonColl, muonLooseColl, electronColl, electronLooseColl, jetColl, bjetColl, met, met*cos(metphi), met*sin(metphi), weight, "_DZ_Leg1_systdown", "UseDZSystDownLeg1");
+         ClosureTest_EMuTrig_EMu(muonColl, muonLooseColl, electronColl, electronLooseColl, jetColl, bjetColl, met, met*cos(metphi), met*sin(metphi), weight, "_DZ_Leg2_systdown", "UseDZSystDownLeg2");
+         ClosureTest_EMuTrig_EMu(muonColl, muonLooseColl, electronColl, electronLooseColl, jetColl, bjetColl, met, met*cos(metphi), met*sin(metphi), weight, "_DZ_DZ_systdown", "UseDZSystDownDZ");
+       }
+
+     }
+     if(EMuTrig && ElectronDiMuon){
+       ClosureTest_EMuTrig_1E2Mu(muonColl, muonLooseColl, electronColl, electronLooseColl, jetColl, bjetColl, met, met*cos(metphi), met*sin(metphi), weight, "_NonDZ", "");
+       ClosureTest_EMuTrig_1E2Mu(muonColl, muonLooseColl, electronColl, electronLooseColl, jetColl, bjetColl, met, met*cos(metphi), met*sin(metphi), weight, "_DZ", "_UseDZ");
+       if(SystRun){
+         ClosureTest_EMuTrig_1E2Mu(muonColl, muonLooseColl, electronColl, electronLooseColl, jetColl, bjetColl, met, met*cos(metphi), met*sin(metphi), weight, "_NonDZ_Leg1_systup", "SystUpLeg1");
+         ClosureTest_EMuTrig_1E2Mu(muonColl, muonLooseColl, electronColl, electronLooseColl, jetColl, bjetColl, met, met*cos(metphi), met*sin(metphi), weight, "_NonDZ_Leg2_systup", "SystUpLeg2");
+         ClosureTest_EMuTrig_1E2Mu(muonColl, muonLooseColl, electronColl, electronLooseColl, jetColl, bjetColl, met, met*cos(metphi), met*sin(metphi), weight, "_NonDZ_Leg1_systdown", "SystDownLeg1");
+         ClosureTest_EMuTrig_1E2Mu(muonColl, muonLooseColl, electronColl, electronLooseColl, jetColl, bjetColl, met, met*cos(metphi), met*sin(metphi), weight, "_NonDZ_Leg2_systdown", "SystDownLeg2");
+
+
+         ClosureTest_EMuTrig_1E2Mu(muonColl, muonLooseColl, electronColl, electronLooseColl, jetColl, bjetColl, met, met*cos(metphi), met*sin(metphi), weight, "_DZ_Leg1_systup", "UseDZSystUpLeg1");
+         ClosureTest_EMuTrig_1E2Mu(muonColl, muonLooseColl, electronColl, electronLooseColl, jetColl, bjetColl, met, met*cos(metphi), met*sin(metphi), weight, "_DZ_Leg2_systup", "UseDZSystUpLeg2");
+         ClosureTest_EMuTrig_1E2Mu(muonColl, muonLooseColl, electronColl, electronLooseColl, jetColl, bjetColl, met, met*cos(metphi), met*sin(metphi), weight, "_DZ_DZ_systup", "UseDZSystUpDZ");
+         ClosureTest_EMuTrig_1E2Mu(muonColl, muonLooseColl, electronColl, electronLooseColl, jetColl, bjetColl, met, met*cos(metphi), met*sin(metphi), weight, "_DZ_Leg1_systdown", "UseDZSystDownLeg1");
+         ClosureTest_EMuTrig_1E2Mu(muonColl, muonLooseColl, electronColl, electronLooseColl, jetColl, bjetColl, met, met*cos(metphi), met*sin(metphi), weight, "_DZ_Leg2_systdown", "UseDZSystDownLeg2");
+         ClosureTest_EMuTrig_1E2Mu(muonColl, muonLooseColl, electronColl, electronLooseColl, jetColl, bjetColl, met, met*cos(metphi), met*sin(metphi), weight, "_DZ_DZ_systdown", "UseDZSystDownDZ");
+       }
+
      }
    }
 
@@ -392,9 +472,9 @@ void Dec2017_EMuTrigEff::MeasureMuLegEfficiency(std::vector<snu::KMuon> MuTColl,
 //  if( MuTColl.at(0).Pt()>20 ) return;
 
 
-  const int NPtBinEdges=10, NfEtaBinEdges=5;
-  float PtBinEdges[NPtBinEdges]={0.,5.,8.,10.,15.,20.,40.,60.,120.,200.};
-  float fEtaBinEdges[NfEtaBinEdges]={0., 0.9, 1.2, 2.1, 2.4};
+  const int NPtBinEdges=8, NfEtaBinEdges=4;
+  float PtBinEdges[NPtBinEdges]={0.,5.,8.,10.,20.,40.,60.,120.};
+  float fEtaBinEdges[NfEtaBinEdges]={0., 0.9, 1.6, 2.4};
   float PTMu=MuTColl.at(0).Pt(), fEtaMu=fabs(MuTColl.at(0).Eta());
   int  DataPeriod   = GetDataPeriod();
   bool PeriodBtoG   = isData? (DataPeriod>0 && DataPeriod<7):true;
@@ -550,9 +630,11 @@ void Dec2017_EMuTrigEff::MeasureEleLegEfficiency(std::vector<snu::KMuon> MuTColl
   if( MuTColl.at(0).DeltaR(EleTColl.at(0))<0.4 ) return;//Fake Veto + Uncorrelated Leg efficiency
 
 
-  const int NPtBinEdges=10, NfEtaBinEdges=3;
+  const int NPtBinEdges=10, NfEtaBinEdges=4;
   float PtBinEdges[NPtBinEdges]={0.,10.,20.,23.,25.,30.,40.,60.,100.,200.};
-  float fEtaBinEdges[NfEtaBinEdges]={0., 1.479, 2.5};
+
+  //float fEtaBinEdges[NfEtaBinEdges]={0., 1.479, 2.5};
+  float fEtaBinEdges[NfEtaBinEdges]={0., 0.8, 1.479, 2.5};
   float PTEle=EleTColl.at(0).Pt(), fEtaEle=fabs(EleTColl.at(0).Eta());
   int  DataPeriod=GetDataPeriod();
   //bool PassPeriodCut=isData? (DataPeriod>0 && DataPeriod<7):true;
@@ -563,6 +645,7 @@ void Dec2017_EMuTrigEff::MeasureEleLegEfficiency(std::vector<snu::KMuon> MuTColl
   bool PassEleLeg   = EleTColl.at(0).TriggerMatched("hltMu8TrkIsoVVLEle23CaloIdLTrackIdLIsoVLElectronlegTrackIsoFilter");
   bool PassMuLeg    =  MuTColl.at(0).TriggerMatched("hltMu8TrkIsoVVLEle23CaloIdLTrackIdLIsoVLMuonlegL3IsoFiltered8");
   bool PassDZFilter = EleTColl.at(0).TriggerMatched("hltMu8TrkIsoVVLEle23CaloIdLTrackIdLIsoVLDZFilter");
+  //bool PassEleLeg   = EleTColl.at(0).TriggerMatched("hltMu23TrkIsoVVLEle8CaloIdLTrackIdLIsoVLElectronlegTrackIsoFilter");//Ele8
   
   //Ele Leg Section==================================================//
   //=================================================================//
@@ -670,11 +753,11 @@ void Dec2017_EMuTrigEff::MeasureDzEfficiency_EMu(std::vector<snu::KMuon> MuTColl
   if( MuTColl.at(0).DeltaR(EleTColl.at(0))<0.4 ) return;//Fake Veto + Uncorrelated Leg efficiency
  
 
-  const int NElePtBinEdges=5, NMuPtBinEdges=6, NMufEtaBinEdges=5, NElefEtaBinEdges=5;
-  float ElePtBinEdges[NElePtBinEdges]    ={25., 40., 80., 120., 200.};
-  float MuPtBinEdges[NMuPtBinEdges]      ={10., 20., 40., 80., 120., 200.};
-  float ElefEtaBinEdges[NElefEtaBinEdges]={0., 0.8, 1.5, 2.0, 2.5};
-  float MufEtaBinEdges[NMufEtaBinEdges]  ={0., 0.9, 1.2, 2.1, 2.4};
+  const int NElePtBinEdges=4, NMuPtBinEdges=5, NMufEtaBinEdges=4, NElefEtaBinEdges=4;
+  float ElePtBinEdges[NElePtBinEdges]    ={25., 40., 80., 200.};
+  float MuPtBinEdges[NMuPtBinEdges]      ={10., 20., 40., 80., 200.};
+  float ElefEtaBinEdges[NElefEtaBinEdges]={0., 0.8, 1.479, 2.5};
+  float MufEtaBinEdges[NMufEtaBinEdges]  ={0., 0.9, 1.6, 2.4};
   float PTMu=MuTColl.at(0).Pt(), fEtaMu=fabs(MuTColl.at(0).Eta()), PTEle=EleTColl.at(0).Pt(), fEtaEle=fabs(EleTColl.at(0).Eta());
   float DzEleMu=fabs(MuTColl.at(0).dZ()-EleTColl.at(0).dz());
   int   DataPeriod=GetDataPeriod();
@@ -695,29 +778,16 @@ void Dec2017_EMuTrigEff::MeasureDzEfficiency_EMu(std::vector<snu::KMuon> MuTColl
     }
 
     //With low mass METCut
-    if( EleTColl.at(0).Pt()>30 && MuTColl.at(0).Pt()>30 ){
-      FillHist("NEMu_PT3030", 0., weight, 0., 1., 1);
-      FillHist("NEMu_PT3030_Dz_1D", DzEleMu, weight, 0., 0.2, 20);
-      FillHist("NEMu_PT3030_fEtafEta_2D", fEtaMu, fEtaEle, weight, MufEtaBinEdges, NMufEtaBinEdges-1, ElefEtaBinEdges, NElefEtaBinEdges-1);
-      if( PassTrigger("HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ_v")
-         &&  MuTColl.at(0).TriggerMatched("hltMu8TrkIsoVVLEle23CaloIdLTrackIdLIsoVLDZFilter")
-         && EleTColl.at(0).TriggerMatched("hltMu8TrkIsoVVLEle23CaloIdLTrackIdLIsoVLDZFilter")){
-        FillHist("NEMuDZ_PT3030", 0., weight, 0., 1., 1);
-        FillHist("NEMuDZ_PT3030_Dz_1D", DzEleMu, weight, 0., 0.2, 20);
-        FillHist("NEMuDZ_PT3030_fEtafEta_2D", fEtaMu, fEtaEle, weight, MufEtaBinEdges, NMufEtaBinEdges-1, ElefEtaBinEdges, NElefEtaBinEdges-1);
-      }
-
-    }
     if( MET>50 ){
-      FillHist("NEMu_MET50", 0., weight, 0., 1., 1);
-      FillHist("NEMu_MET50_Dz_1D", DzEleMu, weight, 0., 0.2, 20);
-      FillHist("NEMu_MET50_fEtafEta_2D", fEtaMu, fEtaEle, weight, MufEtaBinEdges, NMufEtaBinEdges-1, ElefEtaBinEdges, NElefEtaBinEdges-1);
+      FillHist("NEMu_HMET", 0., weight, 0., 1., 1);
+      FillHist("NEMu_HMET_Dz_1D", DzEleMu, weight, 0., 0.2, 20);
+      FillHist("NEMu_HMET_fEtafEta_2D", fEtaMu, fEtaEle, weight, MufEtaBinEdges, NMufEtaBinEdges-1, ElefEtaBinEdges, NElefEtaBinEdges-1);
       if( PassTrigger("HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ_v")
          &&  MuTColl.at(0).TriggerMatched("hltMu8TrkIsoVVLEle23CaloIdLTrackIdLIsoVLDZFilter")
          && EleTColl.at(0).TriggerMatched("hltMu8TrkIsoVVLEle23CaloIdLTrackIdLIsoVLDZFilter")){
-        FillHist("NEMuDZ_MET50", 0., weight, 0., 1., 1);
-        FillHist("NEMuDZ_MET50_Dz_1D", DzEleMu, weight, 0., 0.2, 20);
-        FillHist("NEMuDZ_MET50_fEtafEta_2D", fEtaMu, fEtaEle, weight, MufEtaBinEdges, NMufEtaBinEdges-1, ElefEtaBinEdges, NElefEtaBinEdges-1);
+        FillHist("NEMuDZ_HMET", 0., weight, 0., 1., 1);
+        FillHist("NEMuDZ_HMET_Dz_1D", DzEleMu, weight, 0., 0.2, 20);
+        FillHist("NEMuDZ_HMET_fEtafEta_2D", fEtaMu, fEtaEle, weight, MufEtaBinEdges, NMufEtaBinEdges-1, ElefEtaBinEdges, NElefEtaBinEdges-1);
       }
     }
   }
@@ -773,28 +843,11 @@ void Dec2017_EMuTrigEff::MeasureDzEfficiency_DiMu(std::vector<snu::KMuon> MuTCol
       }
     }
 
-    //With low mass METCut
-    if( MuTColl.at(0).Pt()>30 && MuTColl.at(1).Pt()>30 ){
-      FillHist("NDiMu_PT3030", 0., weight, 0., 1., 1);
-      FillHist("NDiMu_PT3030_Dz_1D", DzDiMu, weight, 0., 0.2, 20);
-      FillHist("NDiMu_PT3030_fEtafEta_2D", fEtaMu1, fEtaMu2, weight, Mu1fEtaBinEdges, NMu1fEtaBinEdges-1, Mu2fEtaBinEdges, NMu2fEtaBinEdges-1);
-      if(PassTrigger("HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_v")
-         ||PassTrigger("HLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_DZ_v")){
-        if( (MuTColl.at(0).TriggerMatched("hltDiMuonGlb17Glb8RelTrkIsoFiltered0p4DzFiltered0p2")
-           &&MuTColl.at(1).TriggerMatched("hltDiMuonGlb17Glb8RelTrkIsoFiltered0p4DzFiltered0p2"))
-          or(MuTColl.at(0).TriggerMatched("hltDiMuonGlb17Trk8RelTrkIsoFiltered0p4DzFiltered0p2")
-           &&MuTColl.at(1).TriggerMatched("hltDiMuonGlb17Trk8RelTrkIsoFiltered0p4DzFiltered0p2"))
-          ){ 
-          FillHist("NDiMuDZ_PT3030", 0., weight, 0., 1., 1);
-          FillHist("NDiMuDZ_PT3030_Dz_1D", DzDiMu, weight, 0., 0.2, 20);
-          FillHist("NDiMuDZ_PT3030_fEtafEta_2D", fEtaMu1, fEtaMu2, weight, Mu1fEtaBinEdges, NMu1fEtaBinEdges-1, Mu2fEtaBinEdges, NMu2fEtaBinEdges-1);
-        }
-      }
-    }
+    //Syst. Unc. : Checking Fake Bias by applying MET cut
     if( MET>50 ){
-      FillHist("NDiMu_MET50", 0., weight, 0., 1., 1);
-      FillHist("NDiMu_MET50_Dz_1D", DzDiMu, weight, 0., 0.2, 20);
-      FillHist("NDiMu_MET50_fEtafEta_2D", fEtaMu1, fEtaMu2, weight, Mu1fEtaBinEdges, NMu1fEtaBinEdges-1, Mu2fEtaBinEdges, NMu2fEtaBinEdges-1);
+      FillHist("NDiMu_HMET", 0., weight, 0., 1., 1);
+      FillHist("NDiMu_HMET_Dz_1D", DzDiMu, weight, 0., 0.2, 20);
+      FillHist("NDiMu_HMET_fEtafEta_2D", fEtaMu1, fEtaMu2, weight, Mu1fEtaBinEdges, NMu1fEtaBinEdges-1, Mu2fEtaBinEdges, NMu2fEtaBinEdges-1);
       if(PassTrigger("HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_v")
          ||PassTrigger("HLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_DZ_v")){
         if( (MuTColl.at(0).TriggerMatched("hltDiMuonGlb17Glb8RelTrkIsoFiltered0p4DzFiltered0p2")
@@ -802,15 +855,127 @@ void Dec2017_EMuTrigEff::MeasureDzEfficiency_DiMu(std::vector<snu::KMuon> MuTCol
           or(MuTColl.at(0).TriggerMatched("hltDiMuonGlb17Trk8RelTrkIsoFiltered0p4DzFiltered0p2")
            &&MuTColl.at(1).TriggerMatched("hltDiMuonGlb17Trk8RelTrkIsoFiltered0p4DzFiltered0p2"))
           ){ 
-          FillHist("NDiMuDZ_MET50", 0., weight, 0., 1., 1);
-          FillHist("NDiMuDZ_MET50_Dz_1D", DzDiMu, weight, 0., 0.2, 20);
-          FillHist("NDiMuDZ_MET50_fEtafEta_2D", fEtaMu1, fEtaMu2, weight, Mu1fEtaBinEdges, NMu1fEtaBinEdges-1, Mu2fEtaBinEdges, NMu2fEtaBinEdges-1);
+          FillHist("NDiMuDZ_HMET", 0., weight, 0., 1., 1);
+          FillHist("NDiMuDZ_HMET_Dz_1D", DzDiMu, weight, 0., 0.2, 20);
+          FillHist("NDiMuDZ_HMET_fEtafEta_2D", fEtaMu1, fEtaMu2, weight, Mu1fEtaBinEdges, NMu1fEtaBinEdges-1, Mu2fEtaBinEdges, NMu2fEtaBinEdges-1);
         }
       }
     }
   }//End of PeriodG
 
 }
+
+
+void Dec2017_EMuTrigEff::ClosureTest_EMuTrig_EMu(std::vector<snu::KMuon> MuTColl, std::vector<snu::KMuon> MuLColl, std::vector<snu::KElectron> EleTColl, std::vector<snu::KElectron> EleLColl, std::vector<snu::KJet> JetColl, std::vector<snu::KJet> BJetColl, float MET, float METx, float METy, float weight, TString Label, TString Option){
+
+  if( isData ) return;
+  if( !(MuLColl.size()==1 && EleLColl.size()==1) ) return;
+  if( !(MuTColl.size()==1 && EleTColl.size()==1) ) return;
+  if( !(MuTColl.at(0).Pt()>10 && EleTColl.at(0).Pt()>25) ) return;
+
+  TString DZFlag = Option.Contains("UseDZ") ? "_DZ":"";
+  bool  PassTrig = PassTrigger("HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL"+DZFlag+"_v");
+  float ExpEff   = mcdata_correction->TriggerEfficiency(EleTColl, MuTColl, "HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL"+DZFlag+"_v", false, Option);
+
+  const int NElePtBinEdges=4, NMuPtBinEdges=5, NMufEtaBinEdges=4, NElefEtaBinEdges=4;
+  float ElePtBinEdges[NElePtBinEdges]    ={25., 40., 80., 200.};
+  float MuPtBinEdges[NMuPtBinEdges]      ={10., 20., 40., 80., 200.};
+  float ElefEtaBinEdges[NElefEtaBinEdges]={0., 0.8, 1.479, 2.5};
+  float MufEtaBinEdges[NMufEtaBinEdges]  ={0., 0.9, 1.6, 2.4};
+  float PTMu=MuTColl.at(0).Pt(), fEtaMu=fabs(MuTColl.at(0).Eta()), PTEle=EleTColl.at(0).Pt(), fEtaEle=fabs(EleTColl.at(0).Eta());
+
+
+  FillHist("Norm_EMuTrig_EMu"+Label, 0., weight, 0., 1., 1);
+  FillHist("Closure_EMuTrig_EMu"+Label, 0., weight, 0., 5., 5);
+  if(PassTrig) FillHist("Closure_EMuTrig_EMu"+Label, 1., weight, 0., 5., 5);
+  FillHist("Closure_EMuTrig_EMu"+Label, 2., weight*ExpEff, 0., 5., 5);
+
+  FillHist("Closure_N_PtEle_EMuTrig_EMu"    +Label, PTEle  , weight       , ElePtBinEdges  , NElePtBinEdges-1);
+  FillHist("Closure_N_PtMu_EMuTrig_EMu"     +Label, PTMu   , weight       , MuPtBinEdges   , NMuPtBinEdges-1);
+  FillHist("Closure_N_fEtaEle_EMuTrig_EMu"  +Label, fEtaEle, weight       , ElefEtaBinEdges, NElefEtaBinEdges-1);
+  FillHist("Closure_N_fEtaMu_EMuTrig_EMu"   +Label, fEtaMu , weight       , MufEtaBinEdges , NMufEtaBinEdges-1);
+  FillHist("Closure_Exp_PtEle_EMuTrig_EMu"  +Label, PTEle  , weight*ExpEff, ElePtBinEdges  , NElePtBinEdges-1);
+  FillHist("Closure_Exp_PtMu_EMuTrig_EMu"   +Label, PTMu   , weight*ExpEff, MuPtBinEdges   , NMuPtBinEdges-1);
+  FillHist("Closure_Exp_fEtaEle_EMuTrig_EMu"+Label, fEtaEle, weight*ExpEff, ElefEtaBinEdges, NElefEtaBinEdges-1);
+  FillHist("Closure_Exp_fEtaMu_EMuTrig_EMu" +Label, fEtaMu , weight*ExpEff, MufEtaBinEdges , NMufEtaBinEdges-1);
+  if(PassTrig){
+    FillHist("Closure_Obs_PtEle_EMuTrig_EMu"  +Label, PTEle  , weight, ElePtBinEdges  , NElePtBinEdges-1);
+    FillHist("Closure_Obs_PtMu_EMuTrig_EMu"   +Label, PTMu   , weight, MuPtBinEdges   , NMuPtBinEdges-1);
+    FillHist("Closure_Obs_fEtaEle_EMuTrig_EMu"+Label, fEtaEle, weight, ElefEtaBinEdges, NElefEtaBinEdges-1);
+    FillHist("Closure_Obs_fEtaMu_EMuTrig_EMu" +Label, fEtaMu , weight, MufEtaBinEdges , NMufEtaBinEdges-1);
+  }
+
+  if(EleTColl.at(0).DeltaR(MuTColl.at(0))>0.4){
+    FillHist("Closure_EMuTrig_EMu_dR04"+Label, 0., weight, 0., 5., 5);
+    if(PassTrig) FillHist("Closure_EMuTrig_EMu_dR04"+Label, 1., weight, 0., 5., 5);
+    FillHist("Closure_EMuTrig_EMu_dR04"+Label, 2., weight*ExpEff, 0., 5., 5);
+  }
+}
+
+
+void Dec2017_EMuTrigEff::ClosureTest_EMuTrig_1E2Mu(std::vector<snu::KMuon> MuTColl, std::vector<snu::KMuon> MuLColl, std::vector<snu::KElectron> EleTColl, std::vector<snu::KElectron> EleLColl, std::vector<snu::KJet> JetColl, std::vector<snu::KJet> BJetColl, float MET, float METx, float METy, float weight, TString Label, TString Option){
+
+  if( isData ) return;
+  if( !(MuLColl.size()==2 && EleLColl.size()==1) ) return;
+  if( !(MuTColl.size()==2 && EleTColl.size()==1) ) return;
+  if( !(MuTColl.at(1).Pt()>10 && EleTColl.at(0).Pt()>25) ) return;
+
+  TString DZFlag = Option.Contains("UseDZ") ? "_DZ":"";
+  bool  PassTrig = PassTrigger("HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL"+DZFlag+"_v");
+  float ExpEff   = mcdata_correction->TriggerEfficiency(EleTColl, MuTColl, "HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL"+DZFlag+"_v", false, Option);
+    std::vector<snu::KMuon> LeadMuColl; LeadMuColl.push_back(MuTColl.at(0));
+  float ExpEff_LeadEMu = mcdata_correction->TriggerEfficiency(EleTColl, LeadMuColl, "HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL"+DZFlag+"_v", false, Option);
+
+
+  const int NElePtBinEdges=4, NMu1PtBinEdges=5, NMu2PtBinEdges=5, NElefEtaBinEdges=4, NMu1fEtaBinEdges=4, NMu2fEtaBinEdges=4;
+  float ElePtBinEdges[NElePtBinEdges]    ={25., 40., 80., 200.};
+  float Mu1PtBinEdges[NMu1PtBinEdges]    ={10., 20., 40., 80., 200.};
+  float Mu2PtBinEdges[NMu2PtBinEdges]    ={10., 20., 40., 80., 200.};
+  float ElefEtaBinEdges[NElefEtaBinEdges]={0., 0.8, 1.479, 2.5};
+  float Mu1fEtaBinEdges[NMu1fEtaBinEdges]  ={0., 0.9, 1.6, 2.4};
+  float Mu2fEtaBinEdges[NMu2fEtaBinEdges]  ={0., 0.9, 1.6, 2.4};
+  float PTMu1=MuTColl.at(0).Pt(), fEtaMu1=fabs(MuTColl.at(0).Eta()), PTMu2=MuTColl.at(1).Pt(), fEtaMu2=fabs(MuTColl.at(1).Eta()),
+        PTEle=EleTColl.at(0).Pt(), fEtaEle=fabs(EleTColl.at(0).Eta());
+
+
+  FillHist("Norm_EMuTrig_1E2Mu"   +Label, 0., weight, 0., 1., 1);
+  FillHist("Closure_EMuTrig_1E2Mu"+Label, 0., weight, 0., 5., 5);
+  if(PassTrig) FillHist("Closure_EMuTrig_1E2Mu"+Label, 1., weight, 0., 5., 5);
+  FillHist("Closure_EMuTrig_1E2Mu"+Label, 2., weight*ExpEff, 0., 5., 5);
+  FillHist("Closure_EMuTrig_1E2Mu"+Label, 3., weight*ExpEff_LeadEMu, 0., 5., 5);
+
+  FillHist("Closure_N_PtEle_EMuTrig_1E2Mu"     +Label, PTEle  , weight       , ElePtBinEdges  , NElePtBinEdges-1);
+  FillHist("Closure_N_PtMu1_EMuTrig_1E2Mu1"    +Label, PTMu1  , weight       , Mu1PtBinEdges  , NMu1PtBinEdges-1);
+  FillHist("Closure_N_PtMu2_EMuTrig_1E2Mu2"    +Label, PTMu2  , weight       , Mu2PtBinEdges  , NMu2PtBinEdges-1);
+  FillHist("Closure_N_fEtaEle_EMuTrig_1E2Mu"   +Label, fEtaEle, weight       , ElefEtaBinEdges, NElefEtaBinEdges-1);
+  FillHist("Closure_N_fEtaMu1_EMuTrig_1E2Mu1"  +Label, fEtaMu1, weight       , Mu1fEtaBinEdges, NMu1fEtaBinEdges-1);
+  FillHist("Closure_N_fEtaMu2_EMuTrig_1E2Mu2"  +Label, fEtaMu2, weight       , Mu2fEtaBinEdges, NMu2fEtaBinEdges-1);
+  FillHist("Closure_Exp_PtEle_EMuTrig_1E2Mu"   +Label, PTEle  , weight*ExpEff, ElePtBinEdges  , NElePtBinEdges-1);
+  FillHist("Closure_Exp_PtMu1_EMuTrig_1E2Mu1"  +Label, PTMu1  , weight*ExpEff, Mu1PtBinEdges  , NMu1PtBinEdges-1);
+  FillHist("Closure_Exp_PtMu2_EMuTrig_1E2Mu2"  +Label, PTMu2  , weight*ExpEff, Mu2PtBinEdges  , NMu2PtBinEdges-1);
+  FillHist("Closure_Exp_fEtaEle_EMuTrig_1E2Mu" +Label, fEtaEle, weight*ExpEff, ElefEtaBinEdges, NElefEtaBinEdges-1);
+  FillHist("Closure_Exp_fEtaMu1_EMuTrig_1E2Mu1"+Label, fEtaMu1, weight*ExpEff, Mu1fEtaBinEdges, NMu1fEtaBinEdges-1);
+  FillHist("Closure_Exp_fEtaMu2_EMuTrig_1E2Mu2"+Label, fEtaMu2, weight*ExpEff, Mu2fEtaBinEdges, NMu2fEtaBinEdges-1);
+  if(PassTrig){
+    FillHist("Closure_Obs_PtEle_EMuTrig_1E2Mu"    +Label, PTEle  , weight, ElePtBinEdges  , NElePtBinEdges-1);
+    FillHist("Closure_Obs_PtMu1_EMu1Trig_1E2Mu1"  +Label, PTMu1  , weight, Mu1PtBinEdges  , NMu1PtBinEdges-1);
+    FillHist("Closure_Obs_PtMu2_EMu2Trig_1E2Mu2"  +Label, PTMu2  , weight, Mu2PtBinEdges  , NMu2PtBinEdges-1);
+    FillHist("Closure_Obs_fEtaEle_EMuTrig_1E2Mu"  +Label, fEtaEle, weight, ElefEtaBinEdges, NElefEtaBinEdges-1);
+    FillHist("Closure_Obs_fEtaMu1_EMu1Trig_1E2Mu1"+Label, fEtaMu1, weight, Mu1fEtaBinEdges, NMu1fEtaBinEdges-1);
+    FillHist("Closure_Obs_fEtaMu2_EMu2Trig_1E2Mu2"+Label, fEtaMu2, weight, Mu2fEtaBinEdges, NMu2fEtaBinEdges-1);
+  }
+
+  bool MutuallyIsolated = EleTColl.at(0).DeltaR(MuTColl.at(0))>0.4 && EleTColl.at(0).DeltaR(MuTColl.at(1))>0.4 && MuTColl.at(0).DeltaR(MuTColl.at(1))>0.4;
+  if(MutuallyIsolated){
+    FillHist("Closure_EMuTrig_1E2Mu_dR04"+Label, 0., weight, 0., 5., 5);
+    if(PassTrig) FillHist("Closure_EMuTrig_1E2Mu_dR04"+Label, 1., weight, 0., 5., 5);
+    FillHist("Closure_EMuTrig_1E2Mu_dR04"+Label, 2., weight*ExpEff, 0., 5., 5);
+    FillHist("Closure_EMuTrig_1E2Mu_dR04"+Label, 3., weight*ExpEff_LeadEMu, 0., 5., 5);
+  }
+
+}
+
+
 
 
 void Dec2017_EMuTrigEff::ClosureTest_DiMuTrig_DiMu(std::vector<snu::KMuon> MuTColl, std::vector<snu::KMuon> MuLColl, std::vector<snu::KElectron> EleTColl, std::vector<snu::KElectron> EleLColl, std::vector<snu::KJet> JetColl, std::vector<snu::KJet> BJetColl, float MET, float METx, float METy, float weight, TString Label, TString Option){
@@ -820,12 +985,11 @@ void Dec2017_EMuTrigEff::ClosureTest_DiMuTrig_DiMu(std::vector<snu::KMuon> MuTCo
   if( !(MuTColl.size()==2 && EleTColl.size()==0) ) return;
   if( !(MuTColl.at(0).Pt()>20 && MuTColl.at(1).Pt()>10) ) return;
 
-//  bool  PassTrig        = PassTrigger("HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_v") or PassTrigger("HLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_v");
-//  float ExpEff_NoCorr   = mcdata_correction->TriggerEfficiency(EleTColl, MuTColl, "HLT_Mu17_TrkIsoVVL_Mu8ORTkMu8_TrkIsoVVL_v", false, "NoCorr");
-//  float ExpEff_FullCorr = mcdata_correction->TriggerEfficiency(EleTColl, MuTColl, "HLT_Mu17_TrkIsoVVL_Mu8ORTkMu8_TrkIsoVVL_v", false, "FullCorr");
-  bool  PassTrig        = PassTrigger("HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_v") or PassTrigger("HLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_DZ_v");
-  float ExpEff_NoCorr   = mcdata_correction->TriggerEfficiency(EleTColl, MuTColl, "HLT_Mu17_TrkIsoVVL_Mu8ORTkMu8_TrkIsoVVL_DZ_v", false, "NoCorr");
-  float ExpEff_FullCorr = mcdata_correction->TriggerEfficiency(EleTColl, MuTColl, "HLT_Mu17_TrkIsoVVL_Mu8ORTkMu8_TrkIsoVVL_DZ_v", false, "FullCorr");
+  TString DZFlag        = Option.Contains("UseDZ") ? "_DZ":"";
+  Option.ReplaceAll("UseDZ","");
+  bool  PassTrig        = PassTrigger("HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL"+DZFlag+"_v") or PassTrigger("HLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL"+DZFlag+"_v");
+  float ExpEff_NoCorr   = mcdata_correction->TriggerEfficiency(EleTColl, MuTColl, "HLT_Mu17_TrkIsoVVL_Mu8ORTkMu8_TrkIsoVVL"+DZFlag+"_v", false, "NoCorr"+Option);
+  float ExpEff_FullCorr = mcdata_correction->TriggerEfficiency(EleTColl, MuTColl, "HLT_Mu17_TrkIsoVVL_Mu8ORTkMu8_TrkIsoVVL"+DZFlag+"_v", false, "FullCorr"+Option);
 
 
   const int NMu1PtBinEdges=6, NMu2PtBinEdges=7, NMu1fEtaBinEdges=5, NMu2fEtaBinEdges=5;
@@ -833,31 +997,32 @@ void Dec2017_EMuTrigEff::ClosureTest_DiMuTrig_DiMu(std::vector<snu::KMuon> MuTCo
   float Mu2PtBinEdges[NMu2PtBinEdges]      ={10., 20., 30., 50., 80., 120., 200.};
   float Mu1fEtaBinEdges[NMu1fEtaBinEdges]  ={0., 0.9, 1.2, 2.1, 2.4};
   float Mu2fEtaBinEdges[NMu2fEtaBinEdges]  ={0., 0.9, 1.2, 2.1, 2.4};
+  float PTMu1=MuTColl.at(0).Pt(), fEtaMu1=fabs(MuTColl.at(0).Eta()), PTMu2=MuTColl.at(1).Pt(), fEtaMu2=fabs(MuTColl.at(1).Eta());
 
 
-  FillHist("Norm_DiMuTrig_DiMu"+Label, 0., weight, 0., 1., 1);
+  FillHist("Norm_DiMuTrig_DiMu"   +Label, 0., weight, 0., 1., 1);
   FillHist("Closure_DiMuTrig_DiMu"+Label, 0., weight, 0., 5., 5);
   if(PassTrig) FillHist("Closure_DiMuTrig_DiMu"+Label, 1., weight, 0., 5., 5);
   FillHist("Closure_DiMuTrig_DiMu"+Label, 2., weight*ExpEff_NoCorr  , 0., 5., 5);
   FillHist("Closure_DiMuTrig_DiMu"+Label, 3., weight*ExpEff_FullCorr, 0., 5., 5);
 
-  FillHist("Closure_N_PtMu1_DiMuTrig_DiMu"+Label, MuTColl.at(0).Pt(), weight, Mu1PtBinEdges, NMu1PtBinEdges-1);
-  FillHist("Closure_N_PtMu2_DiMuTrig_DiMu"+Label, MuTColl.at(1).Pt(), weight, Mu2PtBinEdges, NMu2PtBinEdges-1);
-  FillHist("Closure_N_fEtaMu1_DiMuTrig_DiMu"+Label, fabs(MuTColl.at(0).Eta()), weight, Mu1fEtaBinEdges, NMu1fEtaBinEdges-1);
-  FillHist("Closure_N_fEtaMu2_DiMuTrig_DiMu"+Label, fabs(MuTColl.at(1).Eta()), weight, Mu2fEtaBinEdges, NMu2fEtaBinEdges-1);
-  FillHist("Closure_ExpFullC_PtMu1_DiMuTrig_DiMu"+Label, MuTColl.at(0).Pt(), weight*ExpEff_FullCorr, Mu1PtBinEdges, NMu1PtBinEdges-1);
-  FillHist("Closure_ExpFullC_PtMu2_DiMuTrig_DiMu"+Label, MuTColl.at(1).Pt(), weight*ExpEff_FullCorr, Mu2PtBinEdges, NMu2PtBinEdges-1);
-  FillHist("Closure_ExpFullC_fEtaMu1_DiMuTrig_DiMu"+Label, fabs(MuTColl.at(0).Eta()), weight*ExpEff_FullCorr, Mu1fEtaBinEdges, NMu1fEtaBinEdges-1);
-  FillHist("Closure_ExpFullC_fEtaMu2_DiMuTrig_DiMu"+Label, fabs(MuTColl.at(1).Eta()), weight*ExpEff_FullCorr, Mu2fEtaBinEdges, NMu2fEtaBinEdges-1);
-  FillHist("Closure_ExpNoC_PtMu1_DiMuTrig_DiMu"+Label, MuTColl.at(0).Pt(), weight*ExpEff_NoCorr, Mu1PtBinEdges, NMu1PtBinEdges-1);
-  FillHist("Closure_ExpNoC_PtMu2_DiMuTrig_DiMu"+Label, MuTColl.at(1).Pt(), weight*ExpEff_NoCorr, Mu2PtBinEdges, NMu2PtBinEdges-1);
-  FillHist("Closure_ExpNoC_fEtaMu1_DiMuTrig_DiMu"+Label, fabs(MuTColl.at(0).Eta()), weight*ExpEff_NoCorr, Mu1fEtaBinEdges, NMu1fEtaBinEdges-1);
-  FillHist("Closure_ExpNoC_fEtaMu2_DiMuTrig_DiMu"+Label, fabs(MuTColl.at(1).Eta()), weight*ExpEff_NoCorr, Mu2fEtaBinEdges, NMu2fEtaBinEdges-1);
+  FillHist("Closure_N_PtMu1_DiMuTrig_DiMu"         +Label, PTMu1  , weight                , Mu1PtBinEdges  , NMu1PtBinEdges-1);
+  FillHist("Closure_N_PtMu2_DiMuTrig_DiMu"         +Label, PTMu2  , weight                , Mu2PtBinEdges  , NMu2PtBinEdges-1);
+  FillHist("Closure_N_fEtaMu1_DiMuTrig_DiMu"       +Label, fEtaMu1, weight                , Mu1fEtaBinEdges, NMu1fEtaBinEdges-1);
+  FillHist("Closure_N_fEtaMu2_DiMuTrig_DiMu"       +Label, fEtaMu2, weight                , Mu2fEtaBinEdges, NMu2fEtaBinEdges-1);
+  FillHist("Closure_ExpFullC_PtMu1_DiMuTrig_DiMu"  +Label, PTMu1  , weight*ExpEff_FullCorr, Mu1PtBinEdges  , NMu1PtBinEdges-1);
+  FillHist("Closure_ExpFullC_PtMu2_DiMuTrig_DiMu"  +Label, PTMu2  , weight*ExpEff_FullCorr, Mu2PtBinEdges  , NMu2PtBinEdges-1);
+  FillHist("Closure_ExpFullC_fEtaMu1_DiMuTrig_DiMu"+Label, fEtaMu1, weight*ExpEff_FullCorr, Mu1fEtaBinEdges, NMu1fEtaBinEdges-1);
+  FillHist("Closure_ExpFullC_fEtaMu2_DiMuTrig_DiMu"+Label, fEtaMu2, weight*ExpEff_FullCorr, Mu2fEtaBinEdges, NMu2fEtaBinEdges-1);
+  FillHist("Closure_ExpNoC_PtMu1_DiMuTrig_DiMu"    +Label, PTMu1  , weight*ExpEff_NoCorr  , Mu1PtBinEdges  , NMu1PtBinEdges-1);
+  FillHist("Closure_ExpNoC_PtMu2_DiMuTrig_DiMu"    +Label, PTMu2  , weight*ExpEff_NoCorr  , Mu2PtBinEdges  , NMu2PtBinEdges-1);
+  FillHist("Closure_ExpNoC_fEtaMu1_DiMuTrig_DiMu"  +Label, fEtaMu1, weight*ExpEff_NoCorr  , Mu1fEtaBinEdges, NMu1fEtaBinEdges-1);
+  FillHist("Closure_ExpNoC_fEtaMu2_DiMuTrig_DiMu"  +Label, fEtaMu2, weight*ExpEff_NoCorr  , Mu2fEtaBinEdges, NMu2fEtaBinEdges-1);
   if(PassTrig){
-    FillHist("Closure_Obs_PtMu1_DiMuTrig_DiMu"+Label, MuTColl.at(0).Pt(), weight, Mu1PtBinEdges, NMu1PtBinEdges-1);
-    FillHist("Closure_Obs_PtMu2_DiMuTrig_DiMu"+Label, MuTColl.at(1).Pt(), weight, Mu2PtBinEdges, NMu2PtBinEdges-1);
-    FillHist("Closure_Obs_fEtaMu1_DiMuTrig_DiMu"+Label, fabs(MuTColl.at(0).Eta()), weight, Mu1fEtaBinEdges, NMu1fEtaBinEdges-1);
-    FillHist("Closure_Obs_fEtaMu2_DiMuTrig_DiMu"+Label, fabs(MuTColl.at(1).Eta()), weight, Mu2fEtaBinEdges, NMu2fEtaBinEdges-1);
+    FillHist("Closure_Obs_PtMu1_DiMuTrig_DiMu"  +Label, PTMu1  , weight, Mu1PtBinEdges  , NMu1PtBinEdges-1);
+    FillHist("Closure_Obs_PtMu2_DiMuTrig_DiMu"  +Label, PTMu2  , weight, Mu2PtBinEdges  , NMu2PtBinEdges-1);
+    FillHist("Closure_Obs_fEtaMu1_DiMuTrig_DiMu"+Label, fEtaMu1, weight, Mu1fEtaBinEdges, NMu1fEtaBinEdges-1);
+    FillHist("Closure_Obs_fEtaMu2_DiMuTrig_DiMu"+Label, fEtaMu2, weight, Mu2fEtaBinEdges, NMu2fEtaBinEdges-1);
   }
 
   if(MuTColl.at(0).DeltaR(MuTColl.at(1))>0.4){
@@ -876,11 +1041,12 @@ void Dec2017_EMuTrigEff::ClosureTest_DiMuTrig_TriMu(std::vector<snu::KMuon> MuTC
   if( !(MuTColl.size()==3 && EleTColl.size()==0) ) return;
   if( !(MuTColl.at(0).Pt()>20 && MuTColl.at(2).Pt()>10) ) return;
 
-  bool  PassTrig        = PassTrigger("HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_v") or PassTrigger("HLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_v");
-  float ExpEff_NoCorr   = mcdata_correction->TriggerEfficiency(EleTColl, MuTColl, "HLT_Mu17_TrkIsoVVL_Mu8ORTkMu8_TrkIsoVVL_v", false, "NoCorr");
-  float ExpEff_FullCorr = mcdata_correction->TriggerEfficiency(EleTColl, MuTColl, "HLT_Mu17_TrkIsoVVL_Mu8ORTkMu8_TrkIsoVVL_v", false, "FullCorr");
+  TString DZFlag        = Option.Contains("UseDZ") ? "_DZ":"";
+  bool  PassTrig        = PassTrigger("HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL"+DZFlag+"_v") or PassTrigger("HLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL"+DZFlag+"_v");
+  float ExpEff_NoCorr   = mcdata_correction->TriggerEfficiency(EleTColl, MuTColl, "HLT_Mu17_TrkIsoVVL_Mu8ORTkMu8_TrkIsoVVL"+DZFlag+"_v", false, "NoCorr"+Option);
+  float ExpEff_FullCorr = mcdata_correction->TriggerEfficiency(EleTColl, MuTColl, "HLT_Mu17_TrkIsoVVL_Mu8ORTkMu8_TrkIsoVVL"+DZFlag+"_v", false, "FullCorr"+Option);
     std::vector<snu::KMuon> LeadDiMuColl; LeadDiMuColl.push_back(MuTColl.at(0)); LeadDiMuColl.push_back(MuTColl.at(1));
-  float ExpEff_LeadDiMu = mcdata_correction->TriggerEfficiency(EleTColl, LeadDiMuColl, "HLT_Mu17_TrkIsoVVL_Mu8ORTkMu8_TrkIsoVVL_v", false, "FullCorr");
+  float ExpEff_LeadDiMu = mcdata_correction->TriggerEfficiency(EleTColl, LeadDiMuColl, "HLT_Mu17_TrkIsoVVL_Mu8ORTkMu8_TrkIsoVVL"+DZFlag+"_v", false, "FullCorr");
 
   const int NMu1PtBinEdges=6, NMu2PtBinEdges=7, NMu3PtBinEdges=7, NMu1fEtaBinEdges=5, NMu2fEtaBinEdges=5, NMu3fEtaBinEdges=5;
   float Mu1PtBinEdges[NMu1PtBinEdges]      ={20., 30., 50., 80., 120., 200.};
@@ -889,6 +1055,8 @@ void Dec2017_EMuTrigEff::ClosureTest_DiMuTrig_TriMu(std::vector<snu::KMuon> MuTC
   float Mu1fEtaBinEdges[NMu1fEtaBinEdges]  ={0., 0.9, 1.2, 2.1, 2.4};
   float Mu2fEtaBinEdges[NMu2fEtaBinEdges]  ={0., 0.9, 1.2, 2.1, 2.4};
   float Mu3fEtaBinEdges[NMu3fEtaBinEdges]  ={0., 0.9, 1.2, 2.1, 2.4};
+  float PTMu1=MuTColl.at(0).Pt(), fEtaMu1=fabs(MuTColl.at(0).Eta()), PTMu2=MuTColl.at(1).Pt(), fEtaMu2=fabs(MuTColl.at(1).Eta()),
+        PTMu3=MuTColl.at(2).Pt(), fEtaMu3=fabs(MuTColl.at(2).Eta());
 
 
   FillHist("Closure_DiMuTrig_TriMu"+Label, 0., weight, 0., 5., 5);
@@ -897,31 +1065,31 @@ void Dec2017_EMuTrigEff::ClosureTest_DiMuTrig_TriMu(std::vector<snu::KMuon> MuTC
   FillHist("Closure_DiMuTrig_TriMu"+Label, 3., weight*ExpEff_FullCorr, 0., 5., 5);
   FillHist("Closure_DiMuTrig_TriMu"+Label, 4., weight*ExpEff_LeadDiMu, 0., 5., 5);
 
-  FillHist("Closure_N_PtMu1_DiMuTrig_TriMu"+Label, MuTColl.at(0).Pt(), weight, Mu1PtBinEdges, NMu1PtBinEdges-1);
-  FillHist("Closure_N_PtMu2_DiMuTrig_TriMu"+Label, MuTColl.at(1).Pt(), weight, Mu2PtBinEdges, NMu2PtBinEdges-1);
-  FillHist("Closure_N_PtMu3_DiMuTrig_TriMu"+Label, MuTColl.at(2).Pt(), weight, Mu3PtBinEdges, NMu3PtBinEdges-1);
-  FillHist("Closure_N_fEtaMu1_DiMuTrig_TriMu"+Label, fabs(MuTColl.at(0).Eta()), weight, Mu1fEtaBinEdges, NMu1fEtaBinEdges-1);
-  FillHist("Closure_N_fEtaMu2_DiMuTrig_TriMu"+Label, fabs(MuTColl.at(1).Eta()), weight, Mu2fEtaBinEdges, NMu2fEtaBinEdges-1);
-  FillHist("Closure_N_fEtaMu3_DiMuTrig_TriMu"+Label, fabs(MuTColl.at(2).Eta()), weight, Mu3fEtaBinEdges, NMu3fEtaBinEdges-1);
-  FillHist("Closure_ExpFullC_PtMu1_DiMuTrig_TriMu"+Label, MuTColl.at(0).Pt(), weight*ExpEff_FullCorr, Mu1PtBinEdges, NMu1PtBinEdges-1);
-  FillHist("Closure_ExpFullC_PtMu2_DiMuTrig_TriMu"+Label, MuTColl.at(1).Pt(), weight*ExpEff_FullCorr, Mu2PtBinEdges, NMu2PtBinEdges-1);
-  FillHist("Closure_ExpFullC_PtMu3_DiMuTrig_TriMu"+Label, MuTColl.at(2).Pt(), weight*ExpEff_FullCorr, Mu3PtBinEdges, NMu3PtBinEdges-1);
-  FillHist("Closure_ExpFullC_fEtaMu1_DiMuTrig_TriMu"+Label, fabs(MuTColl.at(0).Eta()), weight*ExpEff_FullCorr, Mu1fEtaBinEdges, NMu1fEtaBinEdges-1);
-  FillHist("Closure_ExpFullC_fEtaMu2_DiMuTrig_TriMu"+Label, fabs(MuTColl.at(1).Eta()), weight*ExpEff_FullCorr, Mu2fEtaBinEdges, NMu2fEtaBinEdges-1);
-  FillHist("Closure_ExpFullC_fEtaMu3_DiMuTrig_TriMu"+Label, fabs(MuTColl.at(2).Eta()), weight*ExpEff_FullCorr, Mu3fEtaBinEdges, NMu3fEtaBinEdges-1);
-  FillHist("Closure_ExpNoC_PtMu1_DiMuTrig_TriMu"+Label, MuTColl.at(0).Pt(), weight*ExpEff_NoCorr, Mu1PtBinEdges, NMu1PtBinEdges-1);
-  FillHist("Closure_ExpNoC_PtMu2_DiMuTrig_TriMu"+Label, MuTColl.at(1).Pt(), weight*ExpEff_NoCorr, Mu2PtBinEdges, NMu2PtBinEdges-1);
-  FillHist("Closure_ExpNoC_PtMu3_DiMuTrig_TriMu"+Label, MuTColl.at(2).Pt(), weight*ExpEff_NoCorr, Mu3PtBinEdges, NMu3PtBinEdges-1);
-  FillHist("Closure_ExpNoC_fEtaMu1_DiMuTrig_TriMu"+Label, fabs(MuTColl.at(0).Eta()), weight*ExpEff_NoCorr, Mu1fEtaBinEdges, NMu1fEtaBinEdges-1);
-  FillHist("Closure_ExpNoC_fEtaMu2_DiMuTrig_TriMu"+Label, fabs(MuTColl.at(1).Eta()), weight*ExpEff_NoCorr, Mu2fEtaBinEdges, NMu2fEtaBinEdges-1);
-  FillHist("Closure_ExpNoC_fEtaMu3_DiMuTrig_TriMu"+Label, fabs(MuTColl.at(2).Eta()), weight*ExpEff_NoCorr, Mu3fEtaBinEdges, NMu3fEtaBinEdges-1);
+  FillHist("Closure_N_PtMu1_DiMuTrig_TriMu"         +Label, PTMu1  , weight                 , Mu1PtBinEdges  , NMu1PtBinEdges-1);
+  FillHist("Closure_N_PtMu2_DiMuTrig_TriMu"         +Label, PTMu2  , weight                 , Mu2PtBinEdges  , NMu2PtBinEdges-1);
+  FillHist("Closure_N_PtMu3_DiMuTrig_TriMu"         +Label, PTMu3  , weight                 , Mu3PtBinEdges  , NMu3PtBinEdges-1);
+  FillHist("Closure_N_fEtaMu1_DiMuTrig_TriMu"       +Label, fEtaMu1, weight                 , Mu1fEtaBinEdges, NMu1fEtaBinEdges-1);
+  FillHist("Closure_N_fEtaMu2_DiMuTrig_TriMu"       +Label, fEtaMu2, weight                 , Mu2fEtaBinEdges, NMu2fEtaBinEdges-1);
+  FillHist("Closure_N_fEtaMu3_DiMuTrig_TriMu"       +Label, fEtaMu3, weight                 , Mu3fEtaBinEdges, NMu3fEtaBinEdges-1);
+  FillHist("Closure_ExpFullC_PtMu1_DiMuTrig_TriMu"  +Label, PTMu1  , weight*ExpEff_FullCorr , Mu1PtBinEdges  , NMu1PtBinEdges-1);
+  FillHist("Closure_ExpFullC_PtMu2_DiMuTrig_TriMu"  +Label, PTMu2  , weight*ExpEff_FullCorr , Mu2PtBinEdges  , NMu2PtBinEdges-1);
+  FillHist("Closure_ExpFullC_PtMu3_DiMuTrig_TriMu"  +Label, PTMu3  , weight*ExpEff_FullCorr , Mu3PtBinEdges  , NMu3PtBinEdges-1);
+  FillHist("Closure_ExpFullC_fEtaMu1_DiMuTrig_TriMu"+Label, fEtaMu1, weight*ExpEff_FullCorr , Mu1fEtaBinEdges, NMu1fEtaBinEdges-1);
+  FillHist("Closure_ExpFullC_fEtaMu2_DiMuTrig_TriMu"+Label, fEtaMu2, weight*ExpEff_FullCorr , Mu2fEtaBinEdges, NMu2fEtaBinEdges-1);
+  FillHist("Closure_ExpFullC_fEtaMu3_DiMuTrig_TriMu"+Label, fEtaMu3, weight*ExpEff_FullCorr , Mu3fEtaBinEdges, NMu3fEtaBinEdges-1);
+  FillHist("Closure_ExpNoC_PtMu1_DiMuTrig_TriMu"    +Label, PTMu1  , weight*ExpEff_NoCorr   , Mu1PtBinEdges  , NMu1PtBinEdges-1);
+  FillHist("Closure_ExpNoC_PtMu2_DiMuTrig_TriMu"    +Label, PTMu2  , weight*ExpEff_NoCorr   , Mu2PtBinEdges  , NMu2PtBinEdges-1);
+  FillHist("Closure_ExpNoC_PtMu3_DiMuTrig_TriMu"    +Label, PTMu3  , weight*ExpEff_NoCorr   , Mu3PtBinEdges  , NMu3PtBinEdges-1);
+  FillHist("Closure_ExpNoC_fEtaMu1_DiMuTrig_TriMu"  +Label, fEtaMu1, weight*ExpEff_NoCorr   , Mu1fEtaBinEdges, NMu1fEtaBinEdges-1);
+  FillHist("Closure_ExpNoC_fEtaMu2_DiMuTrig_TriMu"  +Label, fEtaMu2, weight*ExpEff_NoCorr   , Mu2fEtaBinEdges, NMu2fEtaBinEdges-1);
+  FillHist("Closure_ExpNoC_fEtaMu3_DiMuTrig_TriMu"  +Label, fEtaMu3, weight*ExpEff_NoCorr   , Mu3fEtaBinEdges, NMu3fEtaBinEdges-1);
   if(PassTrig){
-    FillHist("Closure_Obs_PtMu1_DiMuTrig_TriMu"+Label, MuTColl.at(0).Pt(), weight, Mu1PtBinEdges, NMu1PtBinEdges-1);
-    FillHist("Closure_Obs_PtMu2_DiMuTrig_TriMu"+Label, MuTColl.at(1).Pt(), weight, Mu2PtBinEdges, NMu2PtBinEdges-1);
-    FillHist("Closure_Obs_PtMu3_DiMuTrig_TriMu"+Label, MuTColl.at(2).Pt(), weight, Mu3PtBinEdges, NMu3PtBinEdges-1);
-    FillHist("Closure_Obs_fEtaMu1_DiMuTrig_TriMu"+Label, fabs(MuTColl.at(0).Eta()), weight, Mu1fEtaBinEdges, NMu1fEtaBinEdges-1);
-    FillHist("Closure_Obs_fEtaMu2_DiMuTrig_TriMu"+Label, fabs(MuTColl.at(1).Eta()), weight, Mu2fEtaBinEdges, NMu2fEtaBinEdges-1);
-    FillHist("Closure_Obs_fEtaMu3_DiMuTrig_TriMu"+Label, fabs(MuTColl.at(2).Eta()), weight, Mu3fEtaBinEdges, NMu3fEtaBinEdges-1);
+    FillHist("Closure_Obs_PtMu1_DiMuTrig_TriMu"  +Label, PTMu1  , weight, Mu1PtBinEdges  , NMu1PtBinEdges-1);
+    FillHist("Closure_Obs_PtMu2_DiMuTrig_TriMu"  +Label, PTMu2  , weight, Mu2PtBinEdges  , NMu2PtBinEdges-1);
+    FillHist("Closure_Obs_PtMu3_DiMuTrig_TriMu"  +Label, PTMu3  , weight, Mu3PtBinEdges  , NMu3PtBinEdges-1);
+    FillHist("Closure_Obs_fEtaMu1_DiMuTrig_TriMu"+Label, fEtaMu1, weight, Mu1fEtaBinEdges, NMu1fEtaBinEdges-1);
+    FillHist("Closure_Obs_fEtaMu2_DiMuTrig_TriMu"+Label, fEtaMu2, weight, Mu2fEtaBinEdges, NMu2fEtaBinEdges-1);
+    FillHist("Closure_Obs_fEtaMu3_DiMuTrig_TriMu"+Label, fEtaMu3, weight, Mu3fEtaBinEdges, NMu3fEtaBinEdges-1);
   }
 
 
@@ -959,7 +1127,7 @@ void Dec2017_EMuTrigEff::DoSystRun(TString Cycle, TString Mode, std::vector<snu:
 
 
   if(Cycle=="SRYield"){
-    CheckSRYield(MuColl, MuLColl, EleColl, EleLColl, JetColl,  BJetColl, MET, METx, METy, weight, SystDirLabel+SystKindLabel, ChannelLabel);
+//    CheckSRYield(MuColl, MuLColl, EleColl, EleLColl, JetColl,  BJetColl, MET, METx, METy, weight, SystDirLabel+SystKindLabel, ChannelLabel);
   }//End of Closure Cycle
 
   return;
@@ -2120,3 +2288,43 @@ void Dec2017_EMuTrigEff::ClearOutputVectors() throw(LQError) {
   out_muons.clear();
   out_electrons.clear();
 }
+
+//Temporary Unnecessaries
+//     eventbase->GetElectronSel()->SetID(BaseSelection::ELECTRON_HN_MVA_LOOSE);
+//     eventbase->GetElectronSel()->SetHLTSafeCut("CaloIdL_TrackIdL_IsoVL");
+//     eventbase->GetElectronSel()->SetPt(15.);                eventbase->GetElectronSel()->SetEta(2.5);
+//     eventbase->GetElectronSel()->SetBETrRegIncl(false);
+//     eventbase->GetElectronSel()->SetRelIsoType("Default");  eventbase->GetElectronSel()->SetRelIsoBEMax(0.6, 0.6);
+//     eventbase->GetElectronSel()->SetdxyBEMax(0.2, 0.2);     eventbase->GetElectronSel()->SetdzBEMax(0.5, 0.5);
+//   std::vector<snu::KElectron> electronLooseColl; eventbase->GetElectronSel()->Selection(electronLooseColl);
+//     eventbase->GetElectronSel()->SetID(BaseSelection::ELECTRON_HN_MVA_LOOSE);
+//     eventbase->GetElectronSel()->SetHLTSafeCut("WPLoose");
+//     eventbase->GetElectronSel()->SetPt(10.,15.);            eventbase->GetElectronSel()->SetEta(2.5);
+//     eventbase->GetElectronSel()->SetBETrRegIncl(false);
+//     eventbase->GetElectronSel()->SetRelIsoType("Default");  eventbase->GetElectronSel()->SetRelIsoBEMax(0.6, 0.6);
+//     eventbase->GetElectronSel()->SetdxyBEMax(0.2, 0.2);     eventbase->GetElectronSel()->SetdzBEMax(0.5, 0.5);
+//   std::vector<snu::KElectron> electronL10to15Coll; eventbase->GetElectronSel()->Selection(electronL10to15Coll);
+//     for(int i=0; i<(int) electronL10to15Coll.size(); i++){ electronLooseColl.push_back(electronL10to15Coll.at(i)); }
+//     eventbase->GetElectronSel()->SetID(BaseSelection::ELECTRON_HN_MVA_TIGHT);
+//     eventbase->GetElectronSel()->SetHLTSafeCut("CaloIdL_TrackIdL_IsoVL");
+//     eventbase->GetElectronSel()->SetPt(15.);                eventbase->GetElectronSel()->SetEta(2.5);
+//     eventbase->GetElectronSel()->SetBETrRegIncl(false);
+//     eventbase->GetElectronSel()->SetRelIsoType("Default");  eventbase->GetElectronSel()->SetRelIsoBEMax(0.08, 0.08);
+//     eventbase->GetElectronSel()->SetdxyBEMax(0.01, 0.01);   eventbase->GetElectronSel()->SetdzBEMax(0.04, 0.04);
+//     eventbase->GetElectronSel()->SetdxySigMax(4.);
+//     eventbase->GetElectronSel()->SetApplyConvVeto(true);
+//     eventbase->GetElectronSel()->SetCheckCharge(true);
+//   std::vector<snu::KElectron> electronTightColl; eventbase->GetElectronSel()->Selection(electronTightColl);
+//     eventbase->GetElectronSel()->SetID(BaseSelection::ELECTRON_HN_MVA_TIGHT);
+//     eventbase->GetElectronSel()->SetHLTSafeCut("WPLoose");
+//     eventbase->GetElectronSel()->SetPt(10.,15.);            eventbase->GetElectronSel()->SetEta(2.5);
+//     eventbase->GetElectronSel()->SetBETrRegIncl(false);
+//     eventbase->GetElectronSel()->SetRelIsoType("Default");  eventbase->GetElectronSel()->SetRelIsoBEMax(0.08, 0.08);
+//     eventbase->GetElectronSel()->SetdxyBEMax(0.01, 0.01);   eventbase->GetElectronSel()->SetdzBEMax(0.04, 0.04);
+//     eventbase->GetElectronSel()->SetdxySigMax(4.);
+//     eventbase->GetElectronSel()->SetApplyConvVeto(true);
+//     eventbase->GetElectronSel()->SetCheckCharge(true);
+//   std::vector<snu::KElectron> electronT10to15Coll; eventbase->GetElectronSel()->Selection(electronT10to15Coll);
+//     for(int i=0; i<(int) electronT10to15Coll.size(); i++){ electronTightColl.push_back(electronT10to15Coll.at(i)); }
+//   std::vector<snu::KElectron> electronColl;  if(!k_running_nonprompt){ electronColl=electronTightColl;} else{ electronColl=electronLooseColl;}
+

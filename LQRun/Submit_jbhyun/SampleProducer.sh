@@ -7,6 +7,8 @@
 
 #List="SignalMajor_All"
 List="ListToProd"
-nohup bash ${LQANALYZER_BIN_PATH}/submitSKTree.sh -b True -M True -a SKTreeMaker -list ${List} -c ${CATVERSION} -m "First production of new sample" -q fastq -SIG
+#nohup bash ${LQANALYZER_BIN_PATH}/submitSKTree.sh -b True -M True -a SKTreeMaker -list ${List} -c ${CATVERSION} -m "First production of new sample" -q fastq -SIG
+nohup bash ${LQANALYZER_BIN_PATH}/submitSKTree.sh -b True -M True -a SKTreeMaker -list ${List} -c ${CATVERSION} -m "First production of new sample" -q fastq 
+#nohup bash ${LQANALYZER_BIN_PATH}/submitSKTree.sh -b True -M True -a SKTreeMakerDiLep -list ${List} -c ${CATVERSION} -m "First production of new sample" -q fastq
 #nohup bash ${LQANALYZER_BIN_PATH}/submitSKTree.sh -b True -M True -a SKTreeMakerDiLep -list ${List} -c ${CATVERSION} -m "First production of new sample" -q fastq -SIG
 #nohup bash ${LQANALYZER_BIN_PATH}/submitSKTree.sh -b True -M True -a SKTreeMakerTriLep -list ${List} -c ${CATVERSION} -m "First production of new sample" -q fastq -SIG
