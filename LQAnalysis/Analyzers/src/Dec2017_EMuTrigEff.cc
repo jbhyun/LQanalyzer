@@ -419,7 +419,7 @@ Dec2017_EMuTrigEff::~Dec2017_EMuTrigEff() {
 
 void Dec2017_EMuTrigEff::MeasureMuLegEfficiency(std::vector<snu::KMuon> MuTColl, std::vector<snu::KMuon> MuLColl, std::vector<snu::KElectron> EleTColl, std::vector<snu::KElectron> EleLColl, std::vector<snu::KJet> JetColl, std::vector<snu::KJet> BJetColl, float MET, float METx, float METy, float weight, TString Label, TString Option){
 
-  if( !(MuLColl.size()==1      && EleLColl.size()==1)      ) return;
+//  if( !(MuLColl.size()==1      && EleLColl.size()==1)      ) return;
   if( !(MuTColl.size()==1      && EleTColl.size()==1)      ) return;
   if( !(MuTColl.at(0).Charge() != EleTColl.at(0).Charge()) ) return; //QCD Veto 
   if( !(EleTColl.at(0).Pt()>30 && EleTColl.at(0).TriggerMatched("HLT_Ele27_WPTight_Gsf_v")) ) return;
@@ -504,10 +504,6 @@ void Dec2017_EMuTrigEff::MeasureMuLegEfficiency(std::vector<snu::KMuon> MuTColl,
     if( PassTrigger("HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v") ){
       FillHist("NMuTrig_BtoG_Pt_1D", PTMu, weight, PtBinEdges, NPtBinEdges-1);
       FillHist("NMuTrig_BtoG_PtEta_2D", PTMu, fEtaMu, weight, PtBinEdges, NPtBinEdges-1, fEtaBinEdges, NfEtaBinEdges-1);
-
-      if( !PassMuLeg && PTMu>10 && PTMu<20 ){
-        cout<<"(Run:Lumi:Evt) = ("<<eventbase->GetEvent().RunNumber()<<":"<<eventbase->GetEvent().LumiSection()<<":"<<eventbase->GetEvent().EventNumber()<<")"<<endl;
-      }
     }
   }
 
@@ -577,7 +573,7 @@ void Dec2017_EMuTrigEff::MeasureMuLegEfficiency(std::vector<snu::KMuon> MuTColl,
 
 void Dec2017_EMuTrigEff::MeasureEleLegEfficiency(std::vector<snu::KMuon> MuTColl, std::vector<snu::KMuon> MuLColl, std::vector<snu::KElectron> EleTColl, std::vector<snu::KElectron> EleLColl, std::vector<snu::KJet> JetColl, std::vector<snu::KJet> BJetColl, float MET, float METx, float METy, float weight, TString Label, TString Option){
 
-  if( !(MuLColl.size()==1      && EleLColl.size()==1)      ) return;
+//  if( !(MuLColl.size()==1      && EleLColl.size()==1)      ) return;
   if( !(MuTColl.size()==1      && EleTColl.size()==1)      ) return;
   if( !(MuTColl.at(0).Charge() != EleTColl.at(0).Charge()) ) return; //QCD Veto 
   if( !(MuTColl.at(0).Pt()>27 && MuTColl.at(0).TriggerMatched("HLT_IsoMu24_v")) ) return;
@@ -734,7 +730,7 @@ void Dec2017_EMuTrigEff::MeasureEleLegEfficiency(std::vector<snu::KMuon> MuTColl
 
 void Dec2017_EMuTrigEff::MeasureDzEfficiency_EMu(std::vector<snu::KMuon> MuTColl, std::vector<snu::KMuon> MuLColl, std::vector<snu::KElectron> EleTColl, std::vector<snu::KElectron> EleLColl, std::vector<snu::KJet> JetColl, std::vector<snu::KJet> BJetColl, float MET, float METx, float METy, float weight, TString Label, TString Option){
 
-  if( !(MuLColl.size()==1      && EleLColl.size()==1)      ) return;
+  //if( !(MuLColl.size()==1      && EleLColl.size()==1)      ) return;
   if( !(MuTColl.size()==1      && EleTColl.size()==1)      ) return;
   if( !(MuTColl.at(0).Charge() != EleTColl.at(0).Charge()) ) return; //QCD Veto 
   if( !PassTrigger("HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v") ) return;
@@ -797,7 +793,7 @@ void Dec2017_EMuTrigEff::MeasureDzEfficiency_EMu(std::vector<snu::KMuon> MuTColl
 
 void Dec2017_EMuTrigEff::MeasureDzEfficiency_DiMu(std::vector<snu::KMuon> MuTColl, std::vector<snu::KMuon> MuLColl, std::vector<snu::KElectron> EleTColl, std::vector<snu::KElectron> EleLColl, std::vector<snu::KJet> JetColl, std::vector<snu::KJet> BJetColl, float MET, float METx, float METy, float weight, TString Label, TString Option){
 
-  if( !(MuLColl.size()==2      && EleLColl.size()==0)      ) return;
+  //if( !(MuLColl.size()==2      && EleLColl.size()==0)      ) return;
   if( !(MuTColl.size()==2      && EleTColl.size()==0)      ) return;
   if( !(MuTColl.at(0).Charge() != MuTColl.at(1).Charge())  ) return; //QCD Veto 
   if( !(fabs((MuTColl.at(0)+MuTColl.at(1)).M()-91.2)<20)   ) return;
@@ -823,6 +819,7 @@ void Dec2017_EMuTrigEff::MeasureDzEfficiency_DiMu(std::vector<snu::KMuon> MuTCol
   float DzDiMu=fabs(MuTColl.at(0).dZ()-MuTColl.at(1).dz());
   int   DataPeriod=GetDataPeriod();
   bool  PeriodG=isData? DataPeriod==6:true;
+  bool  AltSel = fabs((MuTColl.at(0)+MuTColl.at(1)).M()-91.2)<10.;
   
   if(PeriodG){
     FillHist("NDiMu", 0., weight, 0., 1., 1);
@@ -844,10 +841,10 @@ void Dec2017_EMuTrigEff::MeasureDzEfficiency_DiMu(std::vector<snu::KMuon> MuTCol
     }
 
     //Syst. Unc. : Checking Fake Bias by applying MET cut
-    if( MET>50 ){
-      FillHist("NDiMu_HMET", 0., weight, 0., 1., 1);
-      FillHist("NDiMu_HMET_Dz_1D", DzDiMu, weight, 0., 0.2, 20);
-      FillHist("NDiMu_HMET_fEtafEta_2D", fEtaMu1, fEtaMu2, weight, Mu1fEtaBinEdges, NMu1fEtaBinEdges-1, Mu2fEtaBinEdges, NMu2fEtaBinEdges-1);
+    if( AltSel ){
+      FillHist("NDiMu_AltEvtSel", 0., weight, 0., 1., 1);
+      FillHist("NDiMu_AltEvtSel_Dz_1D", DzDiMu, weight, 0., 0.2, 20);
+      FillHist("NDiMu_AltEvtSel_fEtafEta_2D", fEtaMu1, fEtaMu2, weight, Mu1fEtaBinEdges, NMu1fEtaBinEdges-1, Mu2fEtaBinEdges, NMu2fEtaBinEdges-1);
       if(PassTrigger("HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_v")
          ||PassTrigger("HLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_DZ_v")){
         if( (MuTColl.at(0).TriggerMatched("hltDiMuonGlb17Glb8RelTrkIsoFiltered0p4DzFiltered0p2")
@@ -855,9 +852,9 @@ void Dec2017_EMuTrigEff::MeasureDzEfficiency_DiMu(std::vector<snu::KMuon> MuTCol
           or(MuTColl.at(0).TriggerMatched("hltDiMuonGlb17Trk8RelTrkIsoFiltered0p4DzFiltered0p2")
            &&MuTColl.at(1).TriggerMatched("hltDiMuonGlb17Trk8RelTrkIsoFiltered0p4DzFiltered0p2"))
           ){ 
-          FillHist("NDiMuDZ_HMET", 0., weight, 0., 1., 1);
-          FillHist("NDiMuDZ_HMET_Dz_1D", DzDiMu, weight, 0., 0.2, 20);
-          FillHist("NDiMuDZ_HMET_fEtafEta_2D", fEtaMu1, fEtaMu2, weight, Mu1fEtaBinEdges, NMu1fEtaBinEdges-1, Mu2fEtaBinEdges, NMu2fEtaBinEdges-1);
+          FillHist("NDiMuDZ_AltEvtSel", 0., weight, 0., 1., 1);
+          FillHist("NDiMuDZ_AltEvtSel_Dz_1D", DzDiMu, weight, 0., 0.2, 20);
+          FillHist("NDiMuDZ_AltEvtSel_fEtafEta_2D", fEtaMu1, fEtaMu2, weight, Mu1fEtaBinEdges, NMu1fEtaBinEdges-1, Mu2fEtaBinEdges, NMu2fEtaBinEdges-1);
         }
       }
     }

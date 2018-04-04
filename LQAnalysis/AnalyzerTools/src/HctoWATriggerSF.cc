@@ -4,11 +4,25 @@ float MCDataCorrections::GetTriggerSF(vector<snu::KElectron>& EleColl, vector<sn
 
   if(corr_isdata) return 1.;
 
-  float TriggerEff_Data = TriggerEfficiency(EleColl, MuColl, TrigName, true,  Option);
-  float TriggerEff_MC   = TriggerEfficiency(EleColl, MuColl, TrigName, false, Option);
+  TString NominalOpt=Option; NominalOpt.ReplaceAll("Syst","");
+  bool SystRun=Option.Contains("Syst");
+  float SystDir=0., RelSystData=0., RelSystMC=0., TotRelSyst=0.;
+
+  float TriggerEff_Data = TriggerEfficiency(EleColl, MuColl, TrigName, true,  NominalOpt);
+  float TriggerEff_MC   = TriggerEfficiency(EleColl, MuColl, TrigName, false, NominalOpt);
+  if(SystRun){
+    float TriggerEff_Data_syst = TriggerEfficiency(EleColl, MuColl, TrigName, true,  Option);
+    float TriggerEff_MC_syst   = TriggerEfficiency(EleColl, MuColl, TrigName, false, Option);
+    RelSystData = TriggerEff_Data!=0.? (TriggerEff_Data_syst-TriggerEff_Data)/TriggerEff_Data:0.;
+    RelSystMC   = TriggerEff_MC  !=0.? (TriggerEff_MC_syst  -TriggerEff_MC  )/TriggerEff_MC  :0.;
+    TotRelSyst  = sqrt(pow(RelSystData,2.)+pow(RelSystMC,2.));
+    if     (Option.Contains("Up"))   SystDir =  1.;
+    else if(Option.Contains("Down")) SystDir = -1.;
+  }
   
   float TriggerScaleFactor = TriggerEff_MC!=0.? TriggerEff_Data/TriggerEff_MC:0.;
    if(TriggerScaleFactor<0) TriggerScaleFactor=0.;
+   if(SystRun) TriggerScaleFactor *= (1.+SystDir*TotRelSyst);
 
   return TriggerScaleFactor;
 
@@ -25,6 +39,7 @@ float MCDataCorrections::TriggerEfficiency(vector<snu::KElectron>& EleColl, vect
   if(corr_isdata) return 1.;
 
   bool NoCorr=Option.Contains("NoCorr"), FullCorr=Option.Contains("FullCorr");
+  if(!NoCorr && !FullCorr) FullCorr=true;
   TString StrMCorData = ReturnDataEff? "_DATA":"_MC";
   float TriggerEff=-1.;
   float SystDir=0;
@@ -38,98 +53,7 @@ float MCDataCorrections::TriggerEfficiency(vector<snu::KElectron>& EleColl, vect
   }
 
 
-  if(TrigName.Contains("HLT_Mu17_TrkIsoVVL_v")){
-    float MinPt=10., MaxPt=120.;
-    if(MuColl.size()==1){
-      float mu1pt = MuColl.at(0).Pt(), mu1feta = fabs(MuColl.at(0).Eta());
-      if     (mu1pt<MinPt) mu1pt=MinPt;
-      else if(mu1pt>MaxPt) mu1pt=MaxPt-1;
-
-      TH2F* HistEff_LegMu = GetCorrectionHist("TRIGEFF_DiMu_Mu17_HctoWA"+StrMCorData);
-
-      float Eff_Mu1LegMu = HistEff_LegMu->GetBinContent(HistEff_LegMu->FindBin(mu1feta, mu1pt));
-
-      TriggerEff = Eff_Mu1LegMu;
-
-    }//End of 2Mu
-    if(MuColl.size()==2){
-      float mu1pt = MuColl.at(0).Pt(), mu1feta = fabs(MuColl.at(0).Eta());
-      float mu2pt = MuColl.at(1).Pt(), mu2feta = fabs(MuColl.at(1).Eta());
-      if     (mu1pt<MinPt) mu1pt=MinPt;
-      else if(mu1pt>MaxPt) mu1pt=MaxPt-1;
-      if     (mu2pt<MinPt) mu2pt=MinPt;
-      else if(mu2pt>MaxPt) mu2pt=MaxPt-1;
-
-      TH2F* HistEff_LegMu = GetCorrectionHist("TRIGEFF_DiMu_Mu17_HctoWA"+StrMCorData);
-
-      float Eff_Mu1LegMu = HistEff_LegMu->GetBinContent(HistEff_LegMu->FindBin(mu1feta, mu1pt));
-      float Eff_Mu2LegMu = HistEff_LegMu->GetBinContent(HistEff_LegMu->FindBin(mu2feta, mu2pt));
-
-      TriggerEff = 1.-(1.-Eff_Mu1LegMu)*(1.-Eff_Mu2LegMu);
-
-    }//End of 2Mu
-  }
-  else if(TrigName.Contains("HLT_Mu8_TrkIsoVVL_v")){
-    float MinPt=10., MaxPt=120.;
-    if(MuColl.size()==1){
-      float mu1pt = MuColl.at(0).Pt(), mu1feta = fabs(MuColl.at(0).Eta());
-      if     (mu1pt<MinPt) mu1pt=MinPt;
-      else if(mu1pt>MaxPt) mu1pt=MaxPt-1;
-
-      TH2F* HistEff_LegMu = GetCorrectionHist("TRIGEFF_EMu_Mu8_HctoWA"+StrMCorData);
-
-      float Eff_Mu1LegMu = HistEff_LegMu->GetBinContent(HistEff_LegMu->FindBin(mu1pt, mu1feta));
-
-      TriggerEff = Eff_Mu1LegMu;
-
-    }//End of 2Mu
-    if(MuColl.size()==2){
-      float mu1pt = MuColl.at(0).Pt(), mu1feta = fabs(MuColl.at(0).Eta());
-      float mu2pt = MuColl.at(1).Pt(), mu2feta = fabs(MuColl.at(1).Eta());
-      if     (mu1pt<MinPt) mu1pt=MinPt;
-      else if(mu1pt>MaxPt) mu1pt=MaxPt-1;
-      if     (mu2pt<MinPt) mu2pt=MinPt;
-      else if(mu2pt>MaxPt) mu2pt=MaxPt-1;
-
-      TH2F* HistEff_LegMu = GetCorrectionHist("TRIGEFF_EMu_Mu8_HctoWA"+StrMCorData);
-
-      float Eff_Mu1LegMu = HistEff_LegMu->GetBinContent(HistEff_LegMu->FindBin(mu1pt, mu1feta));
-      float Eff_Mu2LegMu = HistEff_LegMu->GetBinContent(HistEff_LegMu->FindBin(mu2pt, mu2feta));
-
-      TriggerEff = 1.-(1.-Eff_Mu1LegMu)*(1.-Eff_Mu2LegMu);
-
-    }//End of 2Mu
-  }
-  else if(TrigName.Contains("HLT_Ele23_CaloIdL_TrackIdL_IsoVL_PFJet30_v")){
-    float MinPt=25., MaxPt=200.;
-    if(EleColl.size()==1){
-      float elpt = EleColl.at(0).Pt(), elfeta = fabs(EleColl.at(0).Eta());
-      if     (elpt<MinPt) elpt=MinPt;
-      else if(elpt>MaxPt) elpt=MaxPt-1;
-
-      TH2F* HistEff_LegEl = GetCorrectionHist("TRIGEFF_EMu_Ele23_HctoWA"+StrMCorData);
-
-      float Eff_El1LegEl = HistEff_LegEl->GetBinContent(HistEff_LegEl->FindBin(elpt, elfeta));
-
-      TriggerEff = Eff_El1LegEl;
-    }//End of 2Mu
-    if(EleColl.size()==2){
-      float el1pt = EleColl.at(0).Pt(), el1feta = fabs(EleColl.at(0).Eta());
-      float el2pt = EleColl.at(1).Pt(), el2feta = fabs(EleColl.at(1).Eta());
-      if     (el1pt<MinPt) el1pt=MinPt;
-      else if(el1pt>MaxPt) el1pt=MaxPt-1;
-      if     (el2pt<MinPt) el2pt=MinPt;
-      else if(el2pt>MaxPt) el2pt=MaxPt-1;
-
-      TH2F* HistEff_LegEl = GetCorrectionHist("TRIGEFF_EMu_Ele23_HctoWA"+StrMCorData);
-
-      float Eff_El1LegEl = HistEff_LegEl->GetBinContent(HistEff_LegEl->FindBin(el1pt, el1feta));
-      float Eff_El2LegEl = HistEff_LegEl->GetBinContent(HistEff_LegEl->FindBin(el2pt, el2feta));
-
-      TriggerEff = 1.-(1.-Eff_El1LegEl)*(1.-Eff_El2LegEl);
-    }//End of 2Mu
-  }
-  else if(TrigName.Contains("HLT_Mu17_TrkIsoVVL_Mu8ORTkMu8_TrkIsoVVL")){
+  if(TrigName.Contains("HLT_Mu17_TrkIsoVVL_Mu8ORTkMu8_TrkIsoVVL")){
     float MinPt=10., MaxPt=120.;
     if(MuColl.size()==2){
       float mu1pt = MuColl.at(0).Pt(), mu1feta = fabs(MuColl.at(0).Eta());
@@ -146,13 +70,13 @@ float MCDataCorrections::TriggerEfficiency(vector<snu::KElectron>& EleColl, vect
       float Eff_Mu1Leg2 = HistEff_Leg2->GetBinContent(HistEff_Leg2->FindBin(mu1feta, mu1pt));
       float Eff_Mu2Leg1 = HistEff_Leg1->GetBinContent(HistEff_Leg1->FindBin(mu2feta, mu2pt));
       float Eff_Mu2Leg2 = HistEff_Leg2->GetBinContent(HistEff_Leg2->FindBin(mu2feta, mu2pt));
-      float Eff_dz      = ReturnDataEff? 0.979389:0.989453;
+      float Eff_dz      = ReturnDataEff? 0.979363:0.989381;
 
       if(Syst_Leg1){ Eff_Mu1Leg1+=SystDir*HistEff_Leg1->GetBinError(HistEff_Leg1->FindBin(mu1feta, mu1pt));
                      Eff_Mu2Leg1+=SystDir*HistEff_Leg1->GetBinError(HistEff_Leg1->FindBin(mu2feta, mu2pt)); }
       if(Syst_Leg2){ Eff_Mu1Leg2+=SystDir*HistEff_Leg2->GetBinError(HistEff_Leg2->FindBin(mu1feta, mu1pt));
                      Eff_Mu2Leg2+=SystDir*HistEff_Leg2->GetBinError(HistEff_Leg2->FindBin(mu2feta, mu2pt)); }
-      if(Syst_DZ  ){ Eff_dz     +=SystDir*( ReturnDataEff? 0.00269428:0.00397434); }
+      if(Syst_DZ  ){ Eff_dz     +=SystDir*( ReturnDataEff? 0.00063707:0.000458166); }
 
       if(!TrigName.Contains("DZ")) Eff_dz=1.;
 
@@ -184,7 +108,7 @@ float MCDataCorrections::TriggerEfficiency(vector<snu::KElectron>& EleColl, vect
       float Eff_Mu2Leg2 = HistEff_Leg2->GetBinContent(HistEff_Leg2->FindBin(mu2feta, mu2pt));
       float Eff_Mu3Leg1 = HistEff_Leg1->GetBinContent(HistEff_Leg1->FindBin(mu3feta, mu3pt));
       float Eff_Mu3Leg2 = HistEff_Leg2->GetBinContent(HistEff_Leg2->FindBin(mu3feta, mu3pt));
-      float Eff_dz      = ReturnDataEff? 0.979389:0.989453;
+      float Eff_dz      = ReturnDataEff? 0.979363:0.989381;
 
       if(Syst_Leg1){ Eff_Mu1Leg1+=SystDir*HistEff_Leg1->GetBinError(HistEff_Leg1->FindBin(mu1feta, mu1pt));
                      Eff_Mu2Leg1+=SystDir*HistEff_Leg1->GetBinError(HistEff_Leg1->FindBin(mu2feta, mu2pt)); 
@@ -192,7 +116,7 @@ float MCDataCorrections::TriggerEfficiency(vector<snu::KElectron>& EleColl, vect
       if(Syst_Leg2){ Eff_Mu1Leg2+=SystDir*HistEff_Leg2->GetBinError(HistEff_Leg2->FindBin(mu1feta, mu1pt));
                      Eff_Mu2Leg2+=SystDir*HistEff_Leg2->GetBinError(HistEff_Leg2->FindBin(mu2feta, mu2pt)); 
                      Eff_Mu3Leg2+=SystDir*HistEff_Leg2->GetBinError(HistEff_Leg2->FindBin(mu3feta, mu3pt)); }
-      if(Syst_DZ  ){ Eff_dz     +=SystDir*( ReturnDataEff? 0.00269428:0.00397434); }
+      if(Syst_DZ  ){ Eff_dz     +=SystDir*( ReturnDataEff? 0.00063707:0.000458166); }
 
       if(!TrigName.Contains("DZ")) Eff_dz=1.;
 
@@ -230,7 +154,7 @@ float MCDataCorrections::TriggerEfficiency(vector<snu::KElectron>& EleColl, vect
       float Eff_Mu3Leg1 = HistEff_Leg1->GetBinContent(HistEff_Leg1->FindBin(mu3feta, mu3pt));
       float Eff_Mu3Leg2 = HistEff_Leg2->GetBinContent(HistEff_Leg2->FindBin(mu3feta, mu3pt));
       float Eff_Mu4Leg2 = HistEff_Leg2->GetBinContent(HistEff_Leg2->FindBin(mu4feta, mu4pt));
-      float Eff_dz      = ReturnDataEff? 0.979389:0.989453;
+      float Eff_dz      = ReturnDataEff? 0.979363:0.989381;
 
       if(Syst_Leg1){ Eff_Mu1Leg1+=SystDir*HistEff_Leg1->GetBinError(HistEff_Leg1->FindBin(mu1feta, mu1pt));
                      Eff_Mu2Leg1+=SystDir*HistEff_Leg1->GetBinError(HistEff_Leg1->FindBin(mu2feta, mu2pt));
@@ -238,7 +162,7 @@ float MCDataCorrections::TriggerEfficiency(vector<snu::KElectron>& EleColl, vect
       if(Syst_Leg2){ Eff_Mu2Leg2+=SystDir*HistEff_Leg2->GetBinError(HistEff_Leg2->FindBin(mu2feta, mu2pt));
                      Eff_Mu3Leg2+=SystDir*HistEff_Leg2->GetBinError(HistEff_Leg2->FindBin(mu3feta, mu3pt));
                      Eff_Mu4Leg2+=SystDir*HistEff_Leg2->GetBinError(HistEff_Leg2->FindBin(mu4feta, mu4pt)); }
-      if(Syst_DZ  ){ Eff_dz     +=SystDir*( ReturnDataEff? 0.00269428:0.00397434); }
+      if(Syst_DZ  ){ Eff_dz     +=SystDir*( ReturnDataEff? 0.00063707:0.000458166); }
 
       if(!TrigName.Contains("DZ")) Eff_dz=1.;
 
@@ -266,11 +190,11 @@ float MCDataCorrections::TriggerEfficiency(vector<snu::KElectron>& EleColl, vect
 
       float Eff_LegMu = HistEff_LegMu->GetBinContent(HistEff_LegMu->FindBin(mupt, mufeta));
       float Eff_LegEl = HistEff_LegEl->GetBinContent(HistEff_LegEl->FindBin(elpt, elfeta));
-      float Eff_dz    = ReturnDataEff? 0.962337:0.991454;
+      float Eff_dz    = ReturnDataEff? 0.962167:0.991415;
 
       if(Syst_Leg1){ Eff_LegMu+=SystDir*HistEff_LegMu->GetBinError(HistEff_LegMu->FindBin(mupt, mufeta));  }
       if(Syst_Leg2){ Eff_LegEl+=SystDir*HistEff_LegEl->GetBinError(HistEff_LegEl->FindBin(elpt , elfeta)); }
-      if(Syst_DZ  ){ Eff_dz   +=SystDir*( ReturnDataEff? 0.00500431:0.00239173 ); }
+      if(Syst_DZ  ){ Eff_dz   +=SystDir*( ReturnDataEff? 0.00493499:0.002383 ); }
 
       if(!TrigName.Contains("DZ")) Eff_dz=1.;
 
@@ -295,12 +219,12 @@ float MCDataCorrections::TriggerEfficiency(vector<snu::KElectron>& EleColl, vect
       float Eff_Mu1LegMu = HistEff_LegMu->GetBinContent(HistEff_LegMu->FindBin(mu1pt, mu1feta));
       float Eff_Mu2LegMu = HistEff_LegMu->GetBinContent(HistEff_LegMu->FindBin(mu2pt, mu2feta));
       float Eff_LegEl    = HistEff_LegEl->GetBinContent(HistEff_LegEl->FindBin(elpt , elfeta ));
-      float Eff_dz       = ReturnDataEff? 0.962337:0.991454;
+      float Eff_dz       = ReturnDataEff? 0.962167:0.991415;
 
       if(Syst_Leg1){ Eff_Mu1LegMu+=SystDir*HistEff_LegMu->GetBinError(HistEff_LegMu->FindBin(mu1pt, mu1feta));
                      Eff_Mu2LegMu+=SystDir*HistEff_LegMu->GetBinError(HistEff_LegMu->FindBin(mu2pt, mu2feta)); }
       if(Syst_Leg2){ Eff_LegEl   +=SystDir*HistEff_LegEl->GetBinError(HistEff_LegEl->FindBin(elpt , elfeta )); }
-      if(Syst_DZ  ){ Eff_dz      +=SystDir*( ReturnDataEff? 0.00500431:0.00239173 ); }
+      if(Syst_DZ  ){ Eff_dz      +=SystDir*( ReturnDataEff? 0.00493499:0.002383 ); }
 
       if(!TrigName.Contains("DZ")) Eff_dz=1.;
 
@@ -329,13 +253,13 @@ float MCDataCorrections::TriggerEfficiency(vector<snu::KElectron>& EleColl, vect
       float Eff_Mu2LegMu = HistEff_LegMu->GetBinContent(HistEff_LegMu->FindBin(mu2pt, mu2feta));
       float Eff_Mu3LegMu = HistEff_LegMu->GetBinContent(HistEff_LegMu->FindBin(mu3pt, mu3feta));
       float Eff_LegEl    = HistEff_LegEl->GetBinContent(HistEff_LegEl->FindBin(elpt , elfeta ));
-      float Eff_dz       = ReturnDataEff? 0.962337:0.991454;
+      float Eff_dz       = ReturnDataEff? 0.962167:0.991415;
 
       if(Syst_Leg1){ Eff_Mu1LegMu+=SystDir*HistEff_LegMu->GetBinError(HistEff_LegMu->FindBin(mu1pt, mu1feta));
                      Eff_Mu2LegMu+=SystDir*HistEff_LegMu->GetBinError(HistEff_LegMu->FindBin(mu2pt, mu2feta));
                      Eff_Mu3LegMu+=SystDir*HistEff_LegMu->GetBinError(HistEff_LegMu->FindBin(mu3pt, mu3feta)); }
       if(Syst_Leg2){ Eff_LegEl   +=SystDir*HistEff_LegEl->GetBinError(HistEff_LegEl->FindBin(elpt , elfeta )); }
-      if(Syst_DZ  ){ Eff_dz      +=SystDir*( ReturnDataEff? 0.00500431:0.00239173 ); }
+      if(Syst_DZ  ){ Eff_dz      +=SystDir*( ReturnDataEff? 0.00493499:0.002383 ); }
 
       if(!TrigName.Contains("DZ")) Eff_dz=1.;
 
@@ -364,13 +288,13 @@ float MCDataCorrections::TriggerEfficiency(vector<snu::KElectron>& EleColl, vect
       float Eff_Mu2LegMu = HistEff_LegMu->GetBinContent(HistEff_LegMu->FindBin(mu2pt, mu2feta));
       float Eff_El1LegEl = HistEff_LegEl->GetBinContent(HistEff_LegEl->FindBin(el1pt, el1feta));
       float Eff_El2LegEl = HistEff_LegEl->GetBinContent(HistEff_LegEl->FindBin(el2pt, el2feta));
-      float Eff_dz       = ReturnDataEff? 0.962337:0.991454;
+      float Eff_dz       = ReturnDataEff? 0.962167:0.991415;
 
       if(Syst_Leg1){ Eff_Mu1LegMu+=SystDir*HistEff_LegMu->GetBinError(HistEff_LegMu->FindBin(mu1pt, mu1feta));
                      Eff_Mu2LegMu+=SystDir*HistEff_LegMu->GetBinError(HistEff_LegMu->FindBin(mu2pt, mu2feta)); }
       if(Syst_Leg1){ Eff_El1LegEl+=SystDir*HistEff_LegEl->GetBinError(HistEff_LegEl->FindBin(el1pt, el1feta));
                      Eff_El2LegEl+=SystDir*HistEff_LegEl->GetBinError(HistEff_LegEl->FindBin(el2pt, el2feta)); }
-      if(Syst_DZ  ){ Eff_dz      +=SystDir*( ReturnDataEff? 0.00500431:0.00239173 ); }
+      if(Syst_DZ  ){ Eff_dz      +=SystDir*( ReturnDataEff? 0.00493499:0.002383 ); }
 
       if(!TrigName.Contains("DZ")) Eff_dz=1.;
 

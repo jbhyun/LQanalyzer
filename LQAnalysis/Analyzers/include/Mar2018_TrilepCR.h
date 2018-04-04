@@ -1,15 +1,15 @@
-#ifndef Aug2017_MuFakeDataStudy_h
-#define Aug2017_MuFakeDataStudy_h
+#ifndef Mar2018_TrilepCR_h
+#define Mar2018_TrilepCR_h
 
 #include "AnalyzerCore.h"
 
 
-class Aug2017_MuFakeDataStudy : public AnalyzerCore {
+class Mar2018_TrilepCR : public AnalyzerCore {
 
  public:
   //// constructors                                                                                                                                                             
-  Aug2017_MuFakeDataStudy();
-  ~Aug2017_MuFakeDataStudy();
+  Mar2018_TrilepCR();
+  ~Mar2018_TrilepCR();
 
   /// Functions from core
   virtual void BeginCycle() throw( LQError );
@@ -58,6 +58,6 @@ class Aug2017_MuFakeDataStudy : public AnalyzerCore {
   std::vector<snu::KElectron> out_electrons;
 
 
-  ClassDef ( Aug2017_MuFakeDataStudy, 1);
+  ClassDef ( Mar2018_TrilepCR, 1);
 };
 #endif

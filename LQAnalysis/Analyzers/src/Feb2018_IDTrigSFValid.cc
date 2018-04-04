@@ -164,7 +164,7 @@ void Feb2018_IDTrigSFValid::ExecuteEvents()throw( LQError ){
 
    std::vector<snu::KMuon> muonLooseColl, muonTightColl;
      for(int i=0; i<(int) muonPreColl.size(); i++){
-       if(PassIDCriteria(muonPreColl.at(i),"POGLIsop4IPp5p1Chi100"))      muonLooseColl.push_back(muonPreColl.at(i));
+       if(PassIDCriteria(muonPreColl.at(i),"POGTIsop6IPp2p1sig4"))        muonLooseColl.push_back(muonPreColl.at(i));
        if(PassIDCriteria(muonPreColl.at(i),"POGTIsop20IPp01p05sig4Chi4")) muonTightColl.push_back(muonPreColl.at(i));
      }
    std::vector<snu::KMuon> muonColl;  if(k_running_nonprompt){ muonColl=muonLooseColl;} else{ muonColl=muonTightColl;}
@@ -228,6 +228,7 @@ void Feb2018_IDTrigSFValid::ExecuteEvents()throw( LQError ){
          float trigger_sf2 = mcdata_correction->GetTriggerSF(electronColl, muonColl, "HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ_v");
          trigger_sf    = ((Pass_TriggerBG ? trigger_sf1:0.)*LumiBG+(Pass_TriggerH ? trigger_sf2:0.)*LumiH)/LumiBH;
        }
+       //cout<<"Trig:"<<trigger_sf<<" ID:"<<id_weight_mu<<" Trk:"<<trk_weight_mu<<endl;
      }
      else{
        //Perfect Prompt Ratio Approximation applied.(p=1), Applicable to generic number, combination of leptons under premise of high prompt rate.

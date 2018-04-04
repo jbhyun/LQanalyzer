@@ -522,7 +522,18 @@ class AnalyzerCore : public LQCycleBase {
   float GenSystNorm_PDF    (TString SampleName, int IdxPDF    );
   float GenSystNorm_Q2Scale(TString SampleName, int IdxQ2Scale);
 
-  int GetSigGenPtlIdx(vector<snu::KTruth>& TruthColl, TString PtlName);
+  int   GetSigGenPtlIdx(vector<snu::KTruth>& TruthColl, TString PtlName);
+  void  SetMuonResCorrection(vector<snu::KMuon>& MuColl, TString Option="");
+  float GetXsecUncertainty(TString SampleName, TString Option="");
+
+  float GetFakeRate_Data(snu::KElectron Ele, TString Option);
+  float GetFakeRate_Data(snu::KMuon Mu, TString Option);
+  float GetFakeRate_MC(snu::KElectron Ele, TString Option);
+  float GetFakeRate_MC(snu::KMuon Mu, TString Option);
+  float PTConeCorr(snu::KElectron Ele, float TightIsoCut);
+  float PTConeCorr(snu::KMuon Mu, float TightIsoCut);
+  float GetFakeWeight_Data(std::vector<snu::KMuon>& MuLColl, std::vector<snu::KElectron>& EleLColl, TString MuLID, TString MuTID, TString EleLID, TString EleTID, TString Option);
+  float GetFakeWeight_MC(std::vector<snu::KMuon>& MuLColl, std::vector<snu::KElectron>& EleLColl, TString MuLID, TString MuTID, TString EleLID, TString EleTID, TString Option);
 
 };
 #endif

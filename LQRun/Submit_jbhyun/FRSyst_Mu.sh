@@ -22,7 +22,8 @@ DataPeriod="ALL"
 job_logstep=1000
 LogLevel="INFO"
 QueueOption="fastq"    #"longq"
-RunningMode="Closure,SystRun" #"MuFRSyst" #"PromptVarCheck,SystRun"
+RunningMode="Closure,SystRun"
+#"Closure,SystRun" #"MuFRSyst" #"PromptVarCheck,SystRun"
 
 #MCList="TT"
 #MCList="DY"

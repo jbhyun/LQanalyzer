@@ -194,7 +194,7 @@ void Jul2017_MCFakeStudy::ExecuteEvents()throw( LQError ){
 //     eventbase->GetElectronSel()->SetApplyConvVeto(true);
    std::vector<snu::KElectron> electronFakeLColl; //eventbase->GetElectronSel()->Selection(electronFakeLColl);
      for(int i=0; i<(int) electronFakeLPreOptColl.size(); i++){
-       if(PassIDCriteria(electronFakeLPreOptColl.at(i), "POGMVAMTIsop06IPp025p05Sig4FakeLIsop4")) electronFakeLColl.push_back(electronFakeLPreOptColl.at(i));
+//       if(PassIDCriteria(electronFakeLPreOptColl.at(i), "POGMVAMTIsop06IPp025p05Sig4FakeLIsop4")) electronFakeLColl.push_back(electronFakeLPreOptColl.at(i));
      }
 
 
@@ -1002,40 +1002,21 @@ void Jul2017_MCFakeStudy::ExecuteEvents()throw( LQError ){
    }//End of IP optimisation
    if(DetailClosure){
 
-//     CheckMCClosure(muonPreColl, electronPreColl, jetColl, bjetColl, truthColl,
-//            "LMVA06Isop4IPp025p05sig4", "POGWP90Isop06IPp025p05sig4", "POGLIsop4IPp5p1Chi100", "POGTIsop20IPp01p05sig4Chi4", 
-//            "_WP90Isop06LMVA928576Isop4", "TrkIsoVVLConeSUSY");
-     
      CheckMCClosure(muonPreColl, electronPreColl, jetColl, bjetColl, truthColl,
-       "HctoWAFakeLoose", "POGWP90Isop06IPp025p1sig4", "POGLIsop4IPp5p1Chi100", "POGTIsop20IPp01p05sig4Chi4", 
-       "_WP90Isop06IPp025p1sig4_L928878Isop4Orig", "TrkIsoVVLConeSUSY");
-
-     CheckMCClosure(muonPreColl, electronPreColl, jetColl, bjetColl, truthColl,
-       "HctoWAFakeLoose", "POGWP90Isop06IPp025p1sig4", "POGLIsop4IPp5p1Chi100", "POGTIsop20IPp01p05sig4Chi4", 
-       "_WP90Isop06IPp025p1sig4_L928878Isop4GenB", "TrkIsoVVLConeSUSYGenB");
-
-     CheckMCClosure(muonPreColl, electronPreColl, jetColl, bjetColl, truthColl,
-       "HctoWAFakeLoose", "POGWP90Isop06IPp025p1sig4", "POGLIsop4IPp5p1Chi100", "POGTIsop20IPp01p05sig4Chi4", 
-       "_WP90Isop06IPp025p1sig4_L928878Isop4", "TrkIsoVVLConeSUSYParB");
-
-     CheckMCClosure(muonPreColl, electronPreColl, jetColl, bjetColl, truthColl,
-       "HctoWAFakeLoose", "POGWP90Isop06IPp025p1sig4", "POGTIsop6IPp2p1sig4NoChi", "POGTIsop20IPp01p05sig4Chi4", 
-       "_WP90Isop06IPp025p1sig4_EL928878Isop4MLIsop6IPp2p1sig4NoChi", "TrkIsoVVLConeSUSYParB");
-
+       "HctoWAFakeLoose", "POGWP90Isop06IPp025p1sig4", "POGTIsop6IPp01p05sig4Chi4", "POGTIsop20IPp01p05sig4Chi4", 
+       "_WP90Isop06IPp025p1sig4_EL928878Isop4MLIsop6", "TrkIsoVVLConeSUSY");
      CheckMCClosure(muonPreColl, electronPreColl, jetColl, bjetColl, truthColl,
        "HctoWAFakeLoose", "POGWP90Isop06IPp025p1sig4", "POGTIsop6IPp2p1sig4", "POGTIsop20IPp01p05sig4Chi4", 
-       "_WP90Isop06IPp025p1sig4_EL928878Isop4MLIsop6IPp2p1sig4", "TrkIsoVVLConeSUSYParB");
-
+       "_WP90Isop06IPp025p1sig4_EL928878Isop4MLIsop6IPp2p1sig4", "TrkIsoVVLConeSUSY");
 
      CheckMCClosure(muonPreColl, electronPreColl, jetColl, bjetColl, truthColl,
        "HctoWAFakeLoose", "POGWP90Isop06IPp025p1sig4", "POGTIsop6IPp01p05sig4Chi4", "POGTIsop20IPp01p05sig4Chi4", 
-       "_WP90Isop06IPp025p1sig4_EL928878Isop4MLIsop6", "TrkIsoVVLConeSUSYParB");
-
+       "_WP90Isop06IPp025p1sig4_EL928878Isop4MLIsop6_NoFilter", "NoFilterConeSUSY");
      CheckMCClosure(muonPreColl, electronPreColl, jetColl, bjetColl, truthColl,
-       "HctoWAFakeLoose", "POGWP90Isop06IPp025p1sig4", "POGTIsop4IPp2p1NoChi", "POGTIsop20IPp01p05sig4Chi4", 
-       "_WP90Isop06IPp025p1sig4_EL928878Isop4MLIsop4IPp2p1NoChi", "TrkIsoVVLConeSUSYParB");
+       "HctoWAFakeLoose", "POGWP90Isop06IPp025p1sig4", "POGTIsop6IPp2p1sig4", "POGTIsop20IPp01p05sig4Chi4", 
+       "_WP90Isop06IPp025p1sig4_EL928878Isop4MLIsop6IPp2p1sig4_NoFilter", "NoFilterConeSUSY");
 
-
+      //"TrkIsoVVLConeSUSYParB"
    }
  
 /////////////////////////////////////////////////////////////////////////////////// 
@@ -1197,9 +1178,10 @@ void Jul2017_MCFakeStudy::CheckMCClosure(std::vector<snu::KMuon> MuPreColl, std:
       if( PassSel && !(Mmumu>12) ) PassSel=false;
       if(PassSel){
         bool JetSelPass=JetColl.size()>=2, BJetSelPass=BJetColl.size()>=1;
+        bool OffZ=fabs(Mmumu-91.2)>10.;
         FillHist("CutFlow_exp"+Label, 0., weight*fakeweight, 0., 10., 10);
-        if(JetSelPass) FillHist("CutFlow_exp"+Label, 1., weight*fakeweight, 0., 10., 10);
-        if(JetSelPass && BJetSelPass) FillHist("CutFlow_exp"+Label, 2., weight*fakeweight, 0., 10., 10);
+        if(OffZ && JetSelPass) FillHist("CutFlow_exp"+Label, 1., weight*fakeweight, 0., 10., 10);
+        if(OffZ && JetSelPass && BJetSelPass) FillHist("CutFlow_exp"+Label, 2., weight*fakeweight, 0., 10., 10);
 
         FillHist("PTmu1_exp"+Label, MuLColl.at(0).Pt(), weight*fakeweight, 0., 200., 40);
         FillHist("PTmu2_exp"+Label, MuLColl.at(1).Pt(), weight*fakeweight, 0., 200., 40);
@@ -1220,9 +1202,10 @@ void Jul2017_MCFakeStudy::CheckMCClosure(std::vector<snu::KMuon> MuPreColl, std:
       if( PassSel && !(Mmumu>12) ) PassSel=false;
       if(PassSel){
         bool JetSelPass=JetColl.size()>=2, BJetSelPass=BJetColl.size()>=1;
+        bool OffZ=fabs(Mmumu-91.2)>10.;
         FillHist("CutFlow_obs"+Label, 0., weight, 0., 10., 10);
-        if(JetSelPass) FillHist("CutFlow_obs"+Label, 1., weight, 0., 10., 10);
-        if(JetSelPass && BJetSelPass) FillHist("CutFlow_obs"+Label, 2., weight, 0., 10., 10);
+        if(OffZ && JetSelPass) FillHist("CutFlow_obs"+Label, 1., weight, 0., 10., 10);
+        if(OffZ && JetSelPass && BJetSelPass) FillHist("CutFlow_obs"+Label, 2., weight, 0., 10., 10);
 
         FillHist("PTmu1_obs"+Label, MuTColl.at(0).Pt(), weight, 0., 200., 40);
         FillHist("PTmu2_obs"+Label, MuTColl.at(1).Pt(), weight, 0., 200., 40);
@@ -1802,6 +1785,212 @@ float Jul2017_MCFakeStudy::FakeRateMC(snu::KMuon Mu, TString Option){
       else                FR=0.167314 ;
     }
   }
+  else if(Option=="QCD_POGTIsop20IPp01p05sig4Chi4_POGTIsop6IPp2p1NoChi_TrkIsoVVLConeSUSY"){
+    if(fEta<0.9){
+      if     (PTCorr<15)  FR=0.271221 ;
+      else if(PTCorr<20)  FR=0.134619 ;
+      else if(PTCorr<25)  FR=0.110795 ;
+      else if(PTCorr<35)  FR=0.0920508;
+      else if(PTCorr<50)  FR=0.0693127;
+      else                FR=0.0571533;
+    }
+    else if(fEta<1.6){
+      if     (PTCorr<15)  FR=0.291793 ;
+      else if(PTCorr<20)  FR=0.161946 ;
+      else if(PTCorr<25)  FR=0.145827 ;
+      else if(PTCorr<35)  FR=0.117371 ;
+      else if(PTCorr<50)  FR=0.103942 ;
+      else                FR=0.0856054;
+    }
+    else{
+      if     (PTCorr<15)  FR=0.330455;
+      else if(PTCorr<20)  FR=0.204726;
+      else if(PTCorr<25)  FR=0.18639 ;
+      else if(PTCorr<35)  FR=0.172681;
+      else if(PTCorr<50)  FR=0.141964;
+      else                FR=0.126728;
+    }
+  }
+  else if(Option=="QCD_AwayB_POGTIsop20IPp01p05sig4Chi4_POGTIsop6IPp2p1NoChi_TrkIsoVVLConeSUSY"){
+    if(fEta<0.9){
+      if     (PTCorr<15)  FR=0.277055 ;
+      else if(PTCorr<20)  FR=0.149739 ;
+      else if(PTCorr<25)  FR=0.145405 ;
+      else if(PTCorr<35)  FR=0.124283 ;
+      else if(PTCorr<50)  FR=0.0978479;
+      else                FR=0.0833598;
+    }
+    else if(fEta<1.6){
+      if     (PTCorr<15)  FR=0.301852;
+      else if(PTCorr<20)  FR=0.185629;
+      else if(PTCorr<25)  FR=0.185122;
+      else if(PTCorr<35)  FR=0.156936;
+      else if(PTCorr<50)  FR=0.137329;
+      else                FR=0.119177;
+    }
+    else{
+      if     (PTCorr<15)  FR=0.345734;
+      else if(PTCorr<20)  FR=0.23771 ;
+      else if(PTCorr<25)  FR=0.227932;
+      else if(PTCorr<35)  FR=0.216493;
+      else if(PTCorr<50)  FR=0.182448;
+      else                FR=0.162061;
+    }
+  }
+  else if(Option=="QCD_HasB_POGTIsop20IPp01p05sig4Chi4_POGTIsop6IPp2p1NoChi_TrkIsoVVLConeSUSY"){
+//    if(fEta<0.9){//HasB
+//      if     (PTCorr<15)  FR=0.253064 ;
+//      else if(PTCorr<20)  FR=0.132948 ;
+//      else if(PTCorr<25)  FR=0.106011 ;
+//      else if(PTCorr<35)  FR=0.0867408;
+//      else if(PTCorr<50)  FR=0.0583407;
+//      else                FR=0.0515706;
+//    }
+//    else if(fEta<1.6){
+//      if     (PTCorr<15)  FR=0.299641 ;
+//      else if(PTCorr<20)  FR=0.164955 ;
+//      else if(PTCorr<25)  FR=0.147266 ;
+//      else if(PTCorr<35)  FR=0.116065 ;
+//      else if(PTCorr<50)  FR=0.112543 ;
+//      else                FR=0.0944257;
+//    }
+//    else{
+//      if     (PTCorr<15)  FR=0.325495;
+//      else if(PTCorr<20)  FR=0.207752;
+//      else if(PTCorr<25)  FR=0.201676;
+//      else if(PTCorr<35)  FR=0.185382;
+//      else if(PTCorr<50)  FR=0.155966;
+//      else                FR=0.134836;
+//    }
+    if(fEta<0.9){//NearB
+      if     (PTCorr<15)  FR=0.0623887;
+      else if(PTCorr<20)  FR=0.0482613;
+      else if(PTCorr<25)  FR=0.0448971;
+      else if(PTCorr<35)  FR=0.0395998;
+      else if(PTCorr<50)  FR=0.0245074;
+      else                FR=0.0247607;
+    }
+    else if(fEta<1.6){
+      if     (PTCorr<15)  FR=0.0779777;
+      else if(PTCorr<20)  FR=0.0610952;
+      else if(PTCorr<25)  FR=0.0610987;
+      else if(PTCorr<35)  FR=0.0423056;
+      else if(PTCorr<50)  FR=0.0533732;
+      else                FR=0.024341 ;
+    }
+    else{
+      if     (PTCorr<15)  FR=0.0651505;
+      else if(PTCorr<20)  FR=0.0577962;
+      else if(PTCorr<25)  FR=0.0640869;
+      else if(PTCorr<35)  FR=0.0668677;
+      else if(PTCorr<50)  FR=0.0568092;
+      else                FR=0.0828605;
+    }
+  }
+  else if(Option=="QCD_POGTIsop20IPp01p05sig4Chi4_POGTIsop4IPp01p05sig4Chi4_TrkIsoVVLConeSUSY"){
+    if(fEta<0.9){
+      if     (PTCorr<15)  FR=0.509318;
+      else if(PTCorr<20)  FR=0.359136;
+      else if(PTCorr<25)  FR=0.327135;
+      else if(PTCorr<35)  FR=0.282876;
+      else if(PTCorr<50)  FR=0.245291;
+      else                FR=0.230259;
+    }
+    else if(fEta<1.6){
+      if     (PTCorr<15)  FR=0.54671 ;
+      else if(PTCorr<20)  FR=0.413858;
+      else if(PTCorr<25)  FR=0.380258;
+      else if(PTCorr<35)  FR=0.32436 ;
+      else if(PTCorr<50)  FR=0.328264;
+      else                FR=0.313919;
+    }
+    else{
+      if     (PTCorr<15)  FR=0.613294;
+      else if(PTCorr<20)  FR=0.489137;
+      else if(PTCorr<25)  FR=0.456957;
+      else if(PTCorr<35)  FR=0.445719;
+      else if(PTCorr<50)  FR=0.387913;
+      else                FR=0.394796;
+    }
+  }
+  else if(Option=="QCD_AwayB_POGTIsop20IPp01p05sig4Chi4_POGTIsop4IPp01p05sig4Chi4_TrkIsoVVLConeSUSY"){
+    if(fEta<0.9){
+      if     (PTCorr<15)  FR=0.509747;
+      else if(PTCorr<20)  FR=0.36514 ;
+      else if(PTCorr<25)  FR=0.343122;
+      else if(PTCorr<35)  FR=0.303122;
+      else if(PTCorr<50)  FR=0.272945;
+      else                FR=0.255955;
+    }
+    else if(fEta<1.6){
+      if     (PTCorr<15)  FR=0.547486;
+      else if(PTCorr<20)  FR=0.420919;
+      else if(PTCorr<25)  FR=0.392663;
+      else if(PTCorr<35)  FR=0.344241;
+      else if(PTCorr<50)  FR=0.34337 ;
+      else                FR=0.3426  ;
+    }
+    else{
+      if     (PTCorr<15)  FR=0.614017;
+      else if(PTCorr<20)  FR=0.494134;
+      else if(PTCorr<25)  FR=0.460323;
+      else if(PTCorr<35)  FR=0.457226;
+      else if(PTCorr<50)  FR=0.407284;
+      else                FR=0.414266;
+    }
+  }
+  else if(Option=="QCD_HasB_POGTIsop20IPp01p05sig4Chi4_POGTIsop4IPp01p05sig4Chi4_TrkIsoVVLConeSUSY"){
+//    if(fEta<0.9){//HasB
+//      if     (PTCorr<15)  FR=0.498126;
+//      else if(PTCorr<20)  FR=0.358516;
+//      else if(PTCorr<25)  FR=0.316968;
+//      else if(PTCorr<35)  FR=0.277669;
+//      else if(PTCorr<50)  FR=0.229729;
+//      else                FR=0.20088 ;
+//    }
+//    else if(fEta<1.6){
+//      if     (PTCorr<15)  FR=0.566062;
+//      else if(PTCorr<20)  FR=0.418663;
+//      else if(PTCorr<25)  FR=0.379795;
+//      else if(PTCorr<35)  FR=0.334079;
+//      else if(PTCorr<50)  FR=0.336888;
+//      else                FR=0.304086;
+//    }
+//    else{
+//      if     (PTCorr<15)  FR=0.637943;
+//      else if(PTCorr<20)  FR=0.49632 ;
+//      else if(PTCorr<25)  FR=0.492386;
+//      else if(PTCorr<35)  FR=0.465106;
+//      else if(PTCorr<50)  FR=0.412026;
+//      else                FR=0.438496;
+//    }
+
+    //NearB
+    if(fEta<0.9){
+      if     (PTCorr<15)  FR=0.383756;
+      else if(PTCorr<20)  FR=0.279563;
+      else if(PTCorr<25)  FR=0.256573;
+      else if(PTCorr<35)  FR=0.210008;
+      else if(PTCorr<50)  FR=0.149417;
+      else                FR=0.169035;
+    }
+    else if(fEta<1.6){
+      if     (PTCorr<15)  FR=0.420788;
+      else if(PTCorr<20)  FR=0.349621;
+      else if(PTCorr<25)  FR=0.309854;
+      else if(PTCorr<35)  FR=0.23608 ;
+      else if(PTCorr<50)  FR=0.32618 ;
+      else                FR=0.181229;
+    }
+    else{
+      if     (PTCorr<15)  FR=0.499587;
+      else if(PTCorr<20)  FR=0.378005;
+      else if(PTCorr<25)  FR=0.406647;
+      else if(PTCorr<35)  FR=0.345562;
+      else if(PTCorr<50)  FR=0.284941;
+      else                FR=0.406716;
+    }
+  }
   else if(Option=="QCD_POGTIsop20IPp01p05sig4Chi4_POGTIsop6IPp01p05sig4Chi4_TrkIsoVVLConeSUSY"){
     if(fEta<0.9){
       if     (PTCorr<15)  FR=0.420458;
@@ -1957,6 +2146,32 @@ float Jul2017_MCFakeStudy::FakeRateMC(snu::KMuon Mu, TString Option){
       else                FR=0.251672;
     }
   }
+  else if(Option=="QCD_POGTIsop20IPp01p05sig4Chi4_POGTIsop4IPp2p1sig4NoChi_TrkIsoVVLConeSUSY"){
+    if(fEta<0.9){
+      if     (PTCorr<15)  FR=0.47658 ;
+      else if(PTCorr<20)  FR=0.344532;
+      else if(PTCorr<25)  FR=0.317605;
+      else if(PTCorr<35)  FR=0.276683;
+      else if(PTCorr<50)  FR=0.240431;
+      else                FR=0.225033;
+    }
+    else if(fEta<1.6){
+      if     (PTCorr<15)  FR=0.491739;
+      else if(PTCorr<20)  FR=0.383535;
+      else if(PTCorr<25)  FR=0.361495;
+      else if(PTCorr<35)  FR=0.309984;
+      else if(PTCorr<50)  FR=0.316713;
+      else                FR=0.300761;
+    }
+    else{
+      if     (PTCorr<15)  FR=0.488566;
+      else if(PTCorr<20)  FR=0.408808;
+      else if(PTCorr<25)  FR=0.396667;
+      else if(PTCorr<35)  FR=0.387424;
+      else if(PTCorr<50)  FR=0.343767;
+      else                FR=0.348801;
+    }
+  }
   else if(Option=="QCD_AwayB_POGTIsop20IPp01p05sig4Chi4_POGTIsop6IPp2p1sig4NoChi_TrkIsoVVLConeSUSY"){
     if(fEta<0.9){
       if     (PTCorr<15)  FR=0.395574;
@@ -2061,6 +2276,32 @@ float Jul2017_MCFakeStudy::FakeRateMC(snu::KMuon Mu, TString Option){
       else                FR=0.131124;
     }
   }
+  else if(Option=="QCD_POGTIsop20IPp01p05sig4Chi4_POGTIsop6IPp2p1sig4_TrkIsoVVLConeSUSY"){
+    if(fEta<0.9){
+      if     (PTCorr<15)  FR=0.395195 ;
+      else if(PTCorr<20)  FR=0.202967 ;
+      else if(PTCorr<25)  FR=0.169647 ;
+      else if(PTCorr<35)  FR=0.143029 ;
+      else if(PTCorr<50)  FR=0.111431 ;
+      else                FR=0.0951533;
+    }
+    else if(fEta<1.6){
+      if     (PTCorr<15)  FR=0.418279;
+      else if(PTCorr<20)  FR=0.238722;
+      else if(PTCorr<25)  FR=0.217297;
+      else if(PTCorr<35)  FR=0.177343;
+      else if(PTCorr<50)  FR=0.161958;
+      else                FR=0.136925;
+    }
+    else{
+      if     (PTCorr<15)  FR=0.435522;
+      else if(PTCorr<20)  FR=0.276537;
+      else if(PTCorr<25)  FR=0.259684;
+      else if(PTCorr<35)  FR=0.245707;
+      else if(PTCorr<50)  FR=0.207092;
+      else                FR=0.187308;
+    }
+  }
   else if(Option=="QCD_BjMatch_POGTIsop20IPp01p05sig4Chi4_POGLIsop4IPp5p1Chi100_TrkIsoVVLConeSUSY"){
     if(fEta<0.9){
       if     (PTCorr<15)  FR=0.212887;
@@ -2139,6 +2380,241 @@ float Jul2017_MCFakeStudy::FakeRateMC(snu::KMuon Mu, TString Option){
       else                FR=0.421589;
     }
   }
+  else if(Option=="QCD_AwayB_POGTIsop20IPp01p05sig4Chi4_POGTIsop6IPp2p1sig4_NoFilterConeSUSY"){
+    if(fEta<0.9){
+      if     (PTCorr<15)  FR=0.378176 ;
+      else if(PTCorr<20)  FR=0.184572 ;
+      else if(PTCorr<25)  FR=0.160799 ;
+      else if(PTCorr<35)  FR=0.135949 ;
+      else if(PTCorr<50)  FR=0.107135 ;
+      else                FR=0.0933122;
+    }
+    else if(fEta<1.6){
+      if     (PTCorr<15)  FR=0.398919;
+      else if(PTCorr<20)  FR=0.213567;
+      else if(PTCorr<25)  FR=0.196568;
+      else if(PTCorr<35)  FR=0.164957;
+      else if(PTCorr<50)  FR=0.145089;
+      else                FR=0.130676;
+    }
+    else{
+      if     (PTCorr<15)  FR=0.415817;
+      else if(PTCorr<20)  FR=0.250131;
+      else if(PTCorr<25)  FR=0.231834;
+      else if(PTCorr<35)  FR=0.221139;
+      else if(PTCorr<50)  FR=0.187845;
+      else                FR=0.173545;
+    }
+  }
+  else if(Option=="QCD_HasB_POGTIsop20IPp01p05sig4Chi4_POGTIsop6IPp2p1sig4_NoFilterConeSUSY"){
+    if(fEta<0.9){
+      if     (PTCorr<15)  FR=0.28293  ;
+      else if(PTCorr<20)  FR=0.13529  ;
+      else if(PTCorr<25)  FR=0.106368 ;
+      else if(PTCorr<35)  FR=0.0874014;
+      else if(PTCorr<50)  FR=0.0660323;
+      else                FR=0.0541946;
+    }
+    else if(fEta<1.6){
+      if     (PTCorr<15)  FR=0.276023 ;
+      else if(PTCorr<20)  FR=0.154409 ;
+      else if(PTCorr<25)  FR=0.140863 ;
+      else if(PTCorr<35)  FR=0.110194 ;
+      else if(PTCorr<50)  FR=0.105941 ;
+      else                FR=0.0796622;
+    }
+    else{
+      if     (PTCorr<15)  FR=0.255897;
+      else if(PTCorr<20)  FR=0.14699 ;
+      else if(PTCorr<25)  FR=0.163857;
+      else if(PTCorr<35)  FR=0.149301;
+      else if(PTCorr<50)  FR=0.117876;
+      else                FR=0.111363;
+    }
+  }
+  else if(Option=="QCD_POGTIsop20IPp01p05sig4Chi4_POGTIsop6IPp2p1sig4_NoFilterConeSUSY"){
+    if(fEta<0.9){
+      if     (PTCorr<15)  FR=0.376251 ;
+      else if(PTCorr<20)  FR=0.180005 ;
+      else if(PTCorr<25)  FR=0.148464 ;
+      else if(PTCorr<35)  FR=0.122854 ;
+      else if(PTCorr<50)  FR=0.0952236;
+      else                FR=0.081313 ;
+    }
+    else if(fEta<1.6){
+      if     (PTCorr<15)  FR=0.394537;
+      else if(PTCorr<20)  FR=0.206124;
+      else if(PTCorr<25)  FR=0.18436 ;
+      else if(PTCorr<35)  FR=0.151379;
+      else if(PTCorr<50)  FR=0.135037;
+      else                FR=0.117474;
+    }
+    else{
+      if     (PTCorr<15)  FR=0.409673;
+      else if(PTCorr<20)  FR=0.23768 ;
+      else if(PTCorr<25)  FR=0.21949 ;
+      else if(PTCorr<35)  FR=0.206409;
+      else if(PTCorr<50)  FR=0.172383;
+      else                FR=0.158458;
+    }
+  }
+  else if(Option=="QCD_AwayB_POGTIsop20IPp01p05sig4Chi4_POGTIsop6IPp2p1_NoFilterConeSUSY"){
+    if(fEta<0.9){
+      if     (PTCorr<15)  FR=0.264291;
+      else if(PTCorr<20)  FR=0.133615;
+      else if(PTCorr<25)  FR=0.128545;
+      else if(PTCorr<35)  FR=0.10907 ;
+      else if(PTCorr<50)  FR=0.085681;
+      else                FR=0.073323;
+    }
+    else if(fEta<1.6){
+      if     (PTCorr<15)  FR=0.287358;
+      else if(PTCorr<20)  FR=0.163346;
+      else if(PTCorr<25)  FR=0.160179;
+      else if(PTCorr<35)  FR=0.135796;
+      else if(PTCorr<50)  FR=0.117967;
+      else                FR=0.104968;
+    }
+    else{
+      if     (PTCorr<15)  FR=0.328588;
+      else if(PTCorr<20)  FR=0.206919;
+      else if(PTCorr<25)  FR=0.195996;
+      else if(PTCorr<35)  FR=0.185807;
+      else if(PTCorr<50)  FR=0.155233;
+      else                FR=0.140276;
+    }
+  }
+  else if(Option=="QCD_HasB_POGTIsop20IPp01p05sig4Chi4_POGTIsop6IPp2p1_NoFilterConeSUSY"){
+    if(fEta<0.9){
+      if     (PTCorr<15)  FR=0.0846029;
+      else if(PTCorr<20)  FR=0.0465758;
+      else if(PTCorr<25)  FR=0.041396 ;
+      else if(PTCorr<35)  FR=0.0355063;
+      else if(PTCorr<50)  FR=0.0262166;
+      else                FR=0.0210795;
+    }
+    else if(fEta<1.6){
+      if     (PTCorr<15)  FR=0.0993301;
+      else if(PTCorr<20)  FR=0.058441 ;
+      else if(PTCorr<25)  FR=0.0579149;
+      else if(PTCorr<35)  FR=0.0449768;
+      else if(PTCorr<50)  FR=0.041935 ;
+      else                FR=0.0301986;
+    }
+    else{
+      if     (PTCorr<15)  FR=0.0943277;
+      else if(PTCorr<20)  FR=0.0611011;
+      else if(PTCorr<25)  FR=0.0708035;
+      else if(PTCorr<35)  FR=0.0657832;
+      else if(PTCorr<50)  FR=0.0512415;
+      else                FR=0.0505063;
+    }
+  }
+  else if(Option=="QCD_POGTIsop20IPp01p05sig4Chi4_POGTIsop6IPp2p1_NoFilterConeSUSY"){
+    if(fEta<0.9){
+      if     (PTCorr<15)  FR=0.25635  ;
+      else if(PTCorr<20)  FR=0.118343 ;
+      else if(PTCorr<25)  FR=0.0960862;
+      else if(PTCorr<35)  FR=0.0781842;
+      else if(PTCorr<50)  FR=0.0592189;
+      else                FR=0.0490953;
+    }
+    else if(fEta<1.6){
+      if     (PTCorr<15)  FR=0.274516 ;
+      else if(PTCorr<20)  FR=0.139824 ;
+      else if(PTCorr<25)  FR=0.12374  ;
+      else if(PTCorr<35)  FR=0.0997158;
+      else if(PTCorr<50)  FR=0.0866521;
+      else                FR=0.0734869;
+    }
+    else{
+      if     (PTCorr<15)  FR=0.31102 ;
+      else if(PTCorr<20)  FR=0.175795;
+      else if(PTCorr<25)  FR=0.158154;
+      else if(PTCorr<35)  FR=0.146317;
+      else if(PTCorr<50)  FR=0.119155;
+      else                FR=0.107794;
+    }
+  }
+  else if(Option=="QCD_AwayB_POGTIsop20IPp01p05sig4Chi4_POGTIsop6IPp01p05sig4Chi4_NoFilterConeSUSY"){
+    if(fEta<0.9){
+      if     (PTCorr<15)  FR=0.402142 ;
+      else if(PTCorr<20)  FR=0.190637 ;
+      else if(PTCorr<25)  FR=0.163378 ;
+      else if(PTCorr<35)  FR=0.137635 ;
+      else if(PTCorr<50)  FR=0.108139 ;
+      else                FR=0.0951788;
+    }
+    else if(fEta<1.6){
+      if     (PTCorr<15)  FR=0.439664;
+      else if(PTCorr<20)  FR=0.225892;
+      else if(PTCorr<25)  FR=0.202145;
+      else if(PTCorr<35)  FR=0.169413;
+      else if(PTCorr<50)  FR=0.147694;
+      else                FR=0.134003;
+    }
+    else{
+      if     (PTCorr<15)  FR=0.51159 ;
+      else if(PTCorr<20)  FR=0.289179;
+      else if(PTCorr<25)  FR=0.256916;
+      else if(PTCorr<35)  FR=0.243065;
+      else if(PTCorr<50)  FR=0.204101;
+      else                FR=0.188659;
+    }
+  }
+  else if(Option=="QCD_HasB_POGTIsop20IPp01p05sig4Chi4_POGTIsop6IPp01p05sig4Chi4_NoFilterConeSUSY"){
+    if(fEta<0.9){
+      if     (PTCorr<15)  FR=0.351364 ;
+      else if(PTCorr<20)  FR=0.153304 ;
+      else if(PTCorr<25)  FR=0.114185 ;
+      else if(PTCorr<35)  FR=0.0917333;
+      else if(PTCorr<50)  FR=0.068622 ;
+      else                FR=0.0556129;
+    }
+    else if(fEta<1.6){
+      if     (PTCorr<15)  FR=0.379511;
+      else if(PTCorr<20)  FR=0.192976;
+      else if(PTCorr<25)  FR=0.163234;
+      else if(PTCorr<35)  FR=0.122893;
+      else if(PTCorr<50)  FR=0.115132;
+      else                FR=0.086039;
+    }
+    else{
+      if     (PTCorr<15)  FR=0.463989;
+      else if(PTCorr<20)  FR=0.238416;
+      else if(PTCorr<25)  FR=0.232298;
+      else if(PTCorr<35)  FR=0.203586;
+      else if(PTCorr<50)  FR=0.1504  ;
+      else                FR=0.136749;
+    }
+  }
+  else if(Option=="QCD_POGTIsop20IPp01p05sig4Chi4_POGTIsop6IPp01p05sig4Chi4_NoFilterConeSUSY"){
+    if(fEta<0.9){
+      if     (PTCorr<15)  FR=0.401259 ;
+      else if(PTCorr<20)  FR=0.187452 ;
+      else if(PTCorr<25)  FR=0.152679 ;
+      else if(PTCorr<35)  FR=0.125571 ;
+      else if(PTCorr<50)  FR=0.0968874;
+      else                FR=0.0831219;
+    }
+    else if(fEta<1.6){
+      if     (PTCorr<15)  FR=0.437923;
+      else if(PTCorr<20)  FR=0.222317;
+      else if(PTCorr<25)  FR=0.194375;
+      else if(PTCorr<35)  FR=0.158588;
+      else if(PTCorr<50)  FR=0.139727;
+      else                FR=0.122123;
+    }
+    else{
+      if     (PTCorr<15)  FR=0.510331;
+      else if(PTCorr<20)  FR=0.284652;
+      else if(PTCorr<25)  FR=0.253272;
+      else if(PTCorr<35)  FR=0.236261;
+      else if(PTCorr<50)  FR=0.193669;
+      else                FR=0.177171;
+    }
+  }
+
   else { cout<<"RateMC Error"<<endl; }
 
   return FR;

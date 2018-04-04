@@ -42,6 +42,17 @@ void GetEffectiveLuminosityPrivateSamples(){
   xsmap["DYJetsToLL_M-10to50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_TrigInfoSample"] = 18610.00000;
   xsmap["DYJetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_TrigInfoSample"    ] = 5765.40000;
   xsmap["TT_TuneCUETP8M2T4_13TeV-powheg-pythia_TrigInfoSample"                     ] = 831.76000;
+  xsmap["TTToHcToWA_AToMuMu_MHc100_MA15"] = 0.020;
+  xsmap["TTToHcToWA_AToMuMu_MHc120_MA15"] = 0.020;
+  xsmap["TTToHcToWA_AToMuMu_MHc120_MA25"] = 0.020;
+  xsmap["TTToHcToWA_AToMuMu_MHc120_MA35"] = 0.020;
+  xsmap["TTToHcToWA_AToMuMu_MHc140_MA15"] = 0.020;
+  xsmap["TTToHcToWA_AToMuMu_MHc140_MA25"] = 0.020;
+  xsmap["TTToHcToWA_AToMuMu_MHc140_MA35"] = 0.020;
+  xsmap["TTToHcToWA_AToMuMu_MHc160_MA15"] = 0.020;
+  xsmap["TTToHcToWA_AToMuMu_MHc160_MA25"] = 0.020;
+  xsmap["TTToHcToWA_AToMuMu_MHc160_MA35"] = 0.020;
+
 
   map<TString, TString> lqmap;
   //  key=  "Name of FlatCatuple dir"  = name to use in sktree -i <SAMPLENAME> 
@@ -50,11 +61,33 @@ void GetEffectiveLuminosityPrivateSamples(){
   lqmap["DYJetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_TrigInfoSample"    ] = "DYJets_MG_TrigInfoSample";
   lqmap["TT_TuneCUETP8M2T4_13TeV-powheg-pythia_TrigInfoSample"                     ] = "TT_powheg_TrigInfoSample";
 
+  lqmap["TTToHcToWA_AToMuMu_MHc100_MA15"                     ] = "TTToHcToWA_incl_MHc100_MA15";
+  lqmap["TTToHcToWA_AToMuMu_MHc120_MA15"                     ] = "TTToHcToWA_incl_MHc120_MA15";
+  lqmap["TTToHcToWA_AToMuMu_MHc120_MA25"                     ] = "TTToHcToWA_incl_MHc120_MA25";
+  lqmap["TTToHcToWA_AToMuMu_MHc120_MA35"                     ] = "TTToHcToWA_incl_MHc120_MA35";
+  lqmap["TTToHcToWA_AToMuMu_MHc140_MA15"                     ] = "TTToHcToWA_incl_MHc140_MA15";
+  lqmap["TTToHcToWA_AToMuMu_MHc140_MA25"                     ] = "TTToHcToWA_incl_MHc140_MA25";
+  lqmap["TTToHcToWA_AToMuMu_MHc140_MA35"                     ] = "TTToHcToWA_incl_MHc140_MA35";
+  lqmap["TTToHcToWA_AToMuMu_MHc160_MA15"                     ] = "TTToHcToWA_incl_MHc160_MA15";
+  lqmap["TTToHcToWA_AToMuMu_MHc160_MA25"                     ] = "TTToHcToWA_incl_MHc160_MA25";
+  lqmap["TTToHcToWA_AToMuMu_MHc160_MA35"                     ] = "TTToHcToWA_incl_MHc160_MA35";
+
   //// version must be the version in the directoy name of your flat catuples 
   map<TString, TString> catversion_map;
   catversion_map["DYJetsToLL_M-10to50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_TrigInfoSample"] = "v8-0-7"; 
   catversion_map["DYJetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_TrigInfoSample"    ] = "v8-0-7";
   catversion_map["TT_TuneCUETP8M2T4_13TeV-powheg-pythia_TrigInfoSample"                     ] = "v8-0-7";
+
+  catversion_map["TTToHcToWA_AToMuMu_MHc100_MA15"                     ] = "v8-0-7";
+  catversion_map["TTToHcToWA_AToMuMu_MHc120_MA15"                     ] = "v8-0-7";
+  catversion_map["TTToHcToWA_AToMuMu_MHc120_MA25"                     ] = "v8-0-7";
+  catversion_map["TTToHcToWA_AToMuMu_MHc120_MA35"                     ] = "v8-0-7";
+  catversion_map["TTToHcToWA_AToMuMu_MHc140_MA15"                     ] = "v8-0-7";
+  catversion_map["TTToHcToWA_AToMuMu_MHc140_MA25"                     ] = "v8-0-7";
+  catversion_map["TTToHcToWA_AToMuMu_MHc140_MA35"                     ] = "v8-0-7";
+  catversion_map["TTToHcToWA_AToMuMu_MHc160_MA15"                     ] = "v8-0-7";
+  catversion_map["TTToHcToWA_AToMuMu_MHc160_MA25"                     ] = "v8-0-7";
+  catversion_map["TTToHcToWA_AToMuMu_MHc160_MA35"                     ] = "v8-0-7";
   for(std::map<TString, Double_t>::iterator mit =xsmap.begin(); mit != xsmap.end();++mit){
     std::map<TString, TString>::iterator mitv = catversion_map.find(mit->first);
     if(mitv== catversion_map.end()) {cout << "Error in naming datasets in map" << endl; return;}

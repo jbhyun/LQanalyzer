@@ -5,7 +5,7 @@
 runMC=true
 runData=false
 runFake="False"
-runSignal="True"
+runSignal="False"
 
 ########################################################################
 ## RUN PARAMETERS
@@ -25,10 +25,10 @@ job_logstep=1000
 LogLevel="INFO"
 QueueOption="fastq"         #"longq"
 RunningMode="EffClosure,EMuTrig,ElectronDiMuon,SystRun"
+#"EffClosure,EMuTrig,ElectronDiMuon,SystRun"
 #"MuLegEffMeas" #"EleLegEffMeas" #"DzEffMeas_EMu" #"DzEffMeas_DiMu"
 #"EffClosure,DiMuTrig,DoubleMuon" #"EffClosure,DiMuTrig,TriMuon" #"EffClosure,EMuTrig,ElectronMuon" #"EffClosure,EMuTrig,ElectronDiMuon"
-
-MCList="SignalMajor_All"
+MCList="TrigTriLepClosure"
 #"TrigSample" #"TrigDiLepClosure" #"TrigTriLepClosure" #"SignalMajor_All"
 
 ########################################################################

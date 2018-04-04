@@ -198,8 +198,8 @@ void ElectronSelection::Selection(std::vector<KElectron>& leptonColl, TString Op
 
     // HLT Emulation Cuts 
     if(apply_HLTSafeCut){
-      if     ( HLTSafeLevel.Contains("CaloIdL_TrackIdL_IsoVL") && (!el->IsTrigMVAValid()) ) pass_selection=false;
-      else if( HLTSafeLevel.Contains("WPLoose")                && (!el->PassHLTID())      ) pass_selection=false;
+      if     ( HLTSafeLevel.Contains("CaloIdL_TrackIdL_IsoVL") && (!el->IsTrigMVAValid()) && el->Pt()>15. ) pass_selection=false;
+      else if( HLTSafeLevel.Contains("WPLoose")                && (!el->PassHLTID()     )                 ) pass_selection=false;
     }
 
     // SetRelIso. Default: PFRelIso03
@@ -212,10 +212,15 @@ void ElectronSelection::Selection(std::vector<KElectron>& leptonColl, TString Op
       pass_selection = false;
       if(DebugPrint) cout << "Selection: Fail Pt Cut" << endl;
     }
-    if(apply_etacut && !(fabs(el->SCEta()) < eta_cut)) {
+    if(apply_etacut && !(fabs(el->Eta()) < eta_cut)) {
       pass_selection = false;
       if(DebugPrint) cout << "Selection: Fail Eta Cut" << endl;
     }
+    if(apply_scetacut && !(fabs(el->SCEta()) < eta_cut)) {
+      pass_selection = false;
+      if(DebugPrint) cout << "Selection: Fail SCEta Cut" << endl;
+    }
+
 
     //Whether to include EE-EBtransition region(Default: not)
     if(!apply_BETrRegIncl){

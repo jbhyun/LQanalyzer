@@ -75,13 +75,15 @@ void Feb2018_TrigAccept::ExecuteEvents()throw( LQError ){
    FillCutFlow("NoCut", weight*pileup_reweight);
 
 
-   bool DoubleMuon=false, ElectronMuon=false, CheckTrigAccept=true;
+   bool DoubleMuon=false, ElectronMuon=false, CheckTrigAccept=false;
+   bool EMuMuEComp=false;
    bool SystRun=false;
    for(int i=0; i<(int) k_flags.size(); i++){
-     if     (k_flags.at(i).Contains("DoubleMuon"))   DoubleMuon   = true;
-     else if(k_flags.at(i).Contains("ElectronMuon")) ElectronMuon = true;
-     else if(k_flags.at(i).Contains("SystRun"))      SystRun      = true;
+     if     (k_flags.at(i).Contains("DoubleMuon"))      DoubleMuon      = true;
+     else if(k_flags.at(i).Contains("ElectronMuon"))    ElectronMuon    = true;
+     else if(k_flags.at(i).Contains("SystRun"))         SystRun         = true;
      else if(k_flags.at(i).Contains("CheckTrigAccept")) CheckTrigAccept = true;
+     else if(k_flags.at(i).Contains("EMuMuEComp"))      EMuMuEComp      = true;
    }
 
 
@@ -94,7 +96,7 @@ void Feb2018_TrigAccept::ExecuteEvents()throw( LQError ){
    float trigger_ps_weight=1., trigger_period_weight=1.;
    float LumiBG=27.257618, LumiH=8.605696, LumiBH=35.863314;
    
-   trigger_ps_weight=WeightByTrigger("HLT_IsoMu24_v", TargetLumi);
+   if(!isData) trigger_ps_weight=WeightByTrigger("HLT_IsoMu24_v", TargetLumi);
    weight*=trigger_ps_weight*trigger_period_weight;
 
 //   if(!Pass_Trigger) return;
@@ -127,6 +129,148 @@ void Feb2018_TrigAccept::ExecuteEvents()throw( LQError ){
    //==================================================================================//
    //----------------------------------------------------------------------------------//
 
+   if(EMuMuEComp){
+     bool Pass_TriggerMuE=false, Pass_TriggerEMu=false;
+     bool Pass_TriggerBG =false, Pass_TriggerH  =false;
+     if( PassTrigger("HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v") )    {Pass_TriggerEMu=true; Pass_TriggerBG=true;}
+     if( PassTrigger("HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ_v") ) {Pass_TriggerEMu=true; Pass_TriggerH =true;}
+     if( PassTrigger("HLT_Mu23_TrkIsoVVL_Ele8_CaloIdL_TrackIdL_IsoVL_v") )    {Pass_TriggerMuE=true; Pass_TriggerBG=true;}
+     if( PassTrigger("HLT_Mu23_TrkIsoVVL_Ele8_CaloIdL_TrackIdL_IsoVL_DZ_v") ) {Pass_TriggerMuE=true; Pass_TriggerH =true;}
+     if( !(Pass_TriggerMuE || Pass_TriggerEMu) ) return;
+
+       eventbase->GetMuonSel()->SetID(BaseSelection::MUON_POG_TIGHT);
+       eventbase->GetMuonSel()->SetPt(10.);                    eventbase->GetMuonSel()->SetEta(2.4);
+       eventbase->GetMuonSel()->SetBSdxy(0.2);                 eventbase->GetMuonSel()->SetdxySigMax(4.);
+       eventbase->GetMuonSel()->SetBSdz(0.1);
+       eventbase->GetMuonSel()->SetRelIsoType("PFRelIso04");   eventbase->GetMuonSel()->SetRelIso(0.6);
+     std::vector<snu::KMuon> muonLooseColl; eventbase->GetMuonSel()->Selection(muonLooseColl, true);
+       eventbase->GetMuonSel()->SetID(BaseSelection::MUON_POG_TIGHT);
+       eventbase->GetMuonSel()->SetPt(10.);                    eventbase->GetMuonSel()->SetEta(2.4);
+       eventbase->GetMuonSel()->SetBSdxy(0.01);                eventbase->GetMuonSel()->SetdxySigMax(4.);
+       eventbase->GetMuonSel()->SetBSdz(0.05);
+       eventbase->GetMuonSel()->SetChiNdof(4.);
+       eventbase->GetMuonSel()->SetRelIsoType("PFRelIso04");   eventbase->GetMuonSel()->SetRelIso(0.2);
+     std::vector<snu::KMuon> muonTightColl; eventbase->GetMuonSel()->Selection(muonTightColl,true);
+     std::vector<snu::KMuon> muonColl;  if(k_running_nonprompt){ muonColl=muonLooseColl;} else{ muonColl=muonTightColl;}
+  
+       eventbase->GetElectronSel()->SetID(BaseSelection::ELECTRON_HctoWA_FAKELOOSE);
+       eventbase->GetElectronSel()->SetPt(10.,15);             eventbase->GetElectronSel()->SetEta(2.5);
+       eventbase->GetElectronSel()->SetBETrRegIncl(false);
+       eventbase->GetElectronSel()->SetRelIsoType("Default");  eventbase->GetElectronSel()->SetRelIsoBEMax(0.4, 0.4);
+       eventbase->GetElectronSel()->SetdxyBEMax(0.025, 0.025); eventbase->GetElectronSel()->SetdzBEMax(0.1, 0.1);
+       eventbase->GetElectronSel()->SetdxySigMax(4.);
+       eventbase->GetElectronSel()->SetApplyConvVeto(true);
+     std::vector<snu::KElectron> electronTempLColl; eventbase->GetElectronSel()->Selection(electronTempLColl);
+       eventbase->GetElectronSel()->SetID(BaseSelection::ELECTRON_HctoWA_FAKELOOSE);
+       eventbase->GetElectronSel()->SetHLTSafeCut("CaloIdL_TrackIdL_IsoVL");
+       eventbase->GetElectronSel()->SetPt(10.);                eventbase->GetElectronSel()->SetEta(2.5);
+       eventbase->GetElectronSel()->SetBETrRegIncl(false);
+       eventbase->GetElectronSel()->SetRelIsoType("Default");  eventbase->GetElectronSel()->SetRelIsoBEMax(0.4, 0.4);
+       eventbase->GetElectronSel()->SetdxyBEMax(0.025, 0.025); eventbase->GetElectronSel()->SetdzBEMax(0.1, 0.1);
+       eventbase->GetElectronSel()->SetdxySigMax(4.);
+       eventbase->GetElectronSel()->SetApplyConvVeto(true);
+     std::vector<snu::KElectron> electronLooseColl; eventbase->GetElectronSel()->Selection(electronLooseColl);
+       for(int i=0; i<(int) electronTempLColl.size(); i++){ electronLooseColl.push_back(electronTempLColl.at(i)); }
+       
+
+       eventbase->GetElectronSel()->SetID(BaseSelection::ELECTRON_POG_MVA_WP90);
+       eventbase->GetElectronSel()->SetPt(10.,15.);            eventbase->GetElectronSel()->SetEta(2.5);
+       eventbase->GetElectronSel()->SetBETrRegIncl(false);
+       eventbase->GetElectronSel()->SetRelIsoType("Default");  eventbase->GetElectronSel()->SetRelIsoBEMax(0.06, 0.06);
+       eventbase->GetElectronSel()->SetdxyBEMax(0.025, 0.025); eventbase->GetElectronSel()->SetdzBEMax(0.1, 0.1);
+       eventbase->GetElectronSel()->SetdxySigMax(4.);
+       eventbase->GetElectronSel()->SetApplyConvVeto(true);
+     std::vector<snu::KElectron> electronTempTColl; eventbase->GetElectronSel()->Selection(electronTempTColl);
+       eventbase->GetElectronSel()->SetID(BaseSelection::ELECTRON_POG_MVA_WP90);
+       eventbase->GetElectronSel()->SetHLTSafeCut("CaloIdL_TrackIdL_IsoVL");
+       eventbase->GetElectronSel()->SetPt(10.);                eventbase->GetElectronSel()->SetEta(2.5);
+       eventbase->GetElectronSel()->SetBETrRegIncl(false);
+       eventbase->GetElectronSel()->SetRelIsoType("Default");  eventbase->GetElectronSel()->SetRelIsoBEMax(0.06, 0.06);
+       eventbase->GetElectronSel()->SetdxyBEMax(0.025, 0.025); eventbase->GetElectronSel()->SetdzBEMax(0.1, 0.1);
+       eventbase->GetElectronSel()->SetdxySigMax(4.);
+       eventbase->GetElectronSel()->SetApplyConvVeto(true);
+     std::vector<snu::KElectron> electronTightColl; eventbase->GetElectronSel()->Selection(electronTightColl);
+       for(int i=0; i<(int) electronTempTColl.size(); i++){ electronTightColl.push_back(electronTempTColl.at(i)); }
+     std::vector<snu::KElectron> electronColl;  if(!k_running_nonprompt){ electronColl=electronTightColl;} else{ electronColl=electronLooseColl;}
+
+       bool LeptonVeto=false;
+       eventbase->GetJetSel()->SetID(BaseSelection::PFJET_LOOSE);
+       eventbase->GetJetSel()->SetPt(25.);                     eventbase->GetJetSel()->SetEta(2.4);
+     std::vector<snu::KJet> jetNoVetoColl; eventbase->GetJetSel()->Selection(jetNoVetoColl, LeptonVeto, muonLooseColl, electronLooseColl);
+     std::vector<snu::KJet> bjetNoVetoColl = SelBJets(jetNoVetoColl, "Medium");
+     std::vector<snu::KJet> jetColl  = SkimJetColl(jetNoVetoColl,  electronLooseColl, muonLooseColl, "EleMuVeto");
+     std::vector<snu::KJet> bjetColl = SelBJets(jetColl, "Medium");
+
+     float met    = eventbase->GetEvent().MET(snu::KEvent::pfmet);
+     float metphi = eventbase->GetEvent().METPhi();
+
+     float id_weight_ele=1., reco_weight_ele=1., trk_weight_mu=1., id_weight_mu=1., iso_weight_mu=1., btag_sf=1.;
+     float trigger_sf=1.;
+     float fake_weight=1.; bool EventCand=false;
+  
+     /*This part is for boosting up speed.. SF part takes rather longer time than expected*/
+     if(!isData){
+       //id_weight_ele   = mcdata_correction->ElectronScaleFactor("ELECTRON_HctoWA_TIGHT", electronColl);
+       reco_weight_ele = mcdata_correction->ElectronRecoScaleFactor(electronColl);
+       //id_weight_mu    = mcdata_correction->MuonScaleFactor("MUON_HctoWA_TIGHT", muonColl);
+       trk_weight_mu   = mcdata_correction->MuonTrackingEffScaleFactor(muonColl);
+       btag_sf         = BTagScaleFactor_1a(jetColl, snu::KJet::CSVv2, snu::KJet::Medium);
+       //float trigger_sf1 = mcdata_correction->GetTriggerSF(electronColl, muonColl, "HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v");
+       //float trigger_sf2 = mcdata_correction->GetTriggerSF(electronColl, muonColl, "HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ_v");
+       //trigger_sf        = ((Pass_TriggerBG ? trigger_sf1:0.)*LumiBG+(Pass_TriggerH ? trigger_sf2:0.)*LumiH)/LumiBH;
+     }
+     weight *= id_weight_ele*reco_weight_ele*id_weight_mu*iso_weight_mu*trk_weight_mu*btag_sf*trigger_sf;
+
+     if(Pass_TriggerEMu){
+       if( !(electronLooseColl.size()==1 && muonLooseColl.size()==2) ) return;
+       if( !(electronColl.size()==1      && muonColl.size()==2     ) ) return;
+       if( !(muonColl.at(0).Charge()     != muonColl.at(1).Charge()) ) return;
+       if( !(electronColl.at(0).Pt()>25  && muonColl.at(0).Pt()>10 && muonColl.at(1).Pt()>10) ) return;
+       if( fabs(electronColl.at(0).Eta())>2.5 ) return;
+
+       float Mmumu=(muonColl.at(0)+muonColl.at(1)).M();
+        
+       if(Mmumu<12) return;
+         FillHist("CutFlow_EMu_1e2mu", 0., weight, 0., 20., 20);
+       if(fabs(Mmumu-91.2)<10) return;
+         FillHist("CutFlow_EMu_1e2mu", 1., weight, 0., 20., 20);
+       if(bjetColl.size()==0) return;
+         FillHist("CutFlow_EMu_1e2mu", 2., weight, 0., 20., 20);
+       if(jetColl.size()<2) return;
+         FillHist("CutFlow_EMu_1e2mu", 3., weight, 0., 20., 20);
+       if(Mmumu>40) return;
+         FillHist("CutFlow_EMu_1e2mu", 4., weight, 0., 20., 20);
+         if( fabs(Mmumu-15)<5 ) FillHist("Count_EMu_1e2mu_M15", 0., weight, 0., 1., 1);
+         if( fabs(Mmumu-20)<5 ) FillHist("Count_EMu_1e2mu_M20", 0., weight, 0., 1., 1);
+         if( fabs(Mmumu-25)<5 ) FillHist("Count_EMu_1e2mu_M25", 0., weight, 0., 1., 1);
+         if( fabs(Mmumu-30)<5 ) FillHist("Count_EMu_1e2mu_M30", 0., weight, 0., 1., 1);
+         if( fabs(Mmumu-35)<5 ) FillHist("Count_EMu_1e2mu_M35", 0., weight, 0., 1., 1);
+     }
+     if( (!Pass_TriggerEMu) &&  Pass_TriggerMuE ){
+       if( !(electronLooseColl.size()==1 && muonLooseColl.size()==2) ) return;
+       if( !(electronColl.size()==1      && muonColl.size()==2     ) ) return;
+       if( !(muonColl.at(0).Charge()     != muonColl.at(1).Charge()) ) return;
+       if( !(electronColl.at(0).Pt()>10  && muonColl.at(0).Pt()>25 && muonColl.at(1).Pt()>10) ) return;
+       if( fabs(electronColl.at(0).Eta())>2.5 ) return;
+
+       float Mmumu=(muonColl.at(0)+muonColl.at(1)).M();
+       if(Mmumu<12) return;
+         FillHist("CutFlow_MuE_1e2mu", 0., weight, 0., 20., 20);
+       if(fabs(Mmumu-91.2)<10) return;
+         FillHist("CutFlow_MuE_1e2mu", 1., weight, 0., 20., 20);
+       if(bjetColl.size()==0) return;
+         FillHist("CutFlow_MuE_1e2mu", 2., weight, 0., 20., 20);
+       if(jetColl.size()<2) return;
+         FillHist("CutFlow_MuE_1e2mu", 3., weight, 0., 20., 20);
+       if(Mmumu>40) return;
+         FillHist("CutFlow_MuE_1e2mu", 4., weight, 0., 20., 20);
+         if( fabs(Mmumu-15)<5 ) FillHist("Count_MuE_1e2mu_M15", 0., weight, 0., 1., 1);
+         if( fabs(Mmumu-20)<5 ) FillHist("Count_MuE_1e2mu_M20", 0., weight, 0., 1., 1);
+         if( fabs(Mmumu-25)<5 ) FillHist("Count_MuE_1e2mu_M25", 0., weight, 0., 1., 1);
+         if( fabs(Mmumu-30)<5 ) FillHist("Count_MuE_1e2mu_M30", 0., weight, 0., 1., 1);
+         if( fabs(Mmumu-35)<5 ) FillHist("Count_MuE_1e2mu_M35", 0., weight, 0., 1., 1);
+     }
+   }
    if(CheckTrigAccept){
 
     int NEle=0, NMu=0, NEle_25=0, NMu_20=0, NMu_10=0;

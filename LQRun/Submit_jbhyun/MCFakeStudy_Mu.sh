@@ -22,7 +22,8 @@ LogLevel="INFO"
 QueueOption="fastq" 
 RunningMode="Closure"
 #"Closure" #"FRMeasEmul" #"TrigBiasCheck" #"TrigBiasCheck" #"FRInspection,SiglWP" #"FRInspection,ScanFR" #"IDVarSensitivity" #"IDEffCheck" #"FakeCompCheck" 
-MCList="MajorFakeSource" #UnRun #"MajorFakeSource" #"TT" #"DY50" #"QCD_Mu" #"SignalMajor_All"
+MCList="MajorFakeSource"
+#UnRun #"MajorFakeSource" #"TT" #"DY50" #"QCD_Mu" #"SignalMajor_All"
 
 ########################################################################
 ## OUTPUT PATH CONFIG

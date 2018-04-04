@@ -149,7 +149,7 @@ void Oct2017_MuFRSyst::ExecuteEvents()throw( LQError ){
   
    /**PreSelCut***********************************************************************************************/
    //Intended for Code speed boosting up.
-     eventbase->GetMuonSel()->SetPt(10.);                    eventbase->GetMuonSel()->SetEta(2.4);
+     eventbase->GetMuonSel()->SetPt(5.);                    eventbase->GetMuonSel()->SetEta(2.4);
    std::vector<snu::KMuon> muonPreColl; eventbase->GetMuonSel()->Selection(muonPreColl, true);
      eventbase->GetElectronSel()->SetPt(10.);                eventbase->GetElectronSel()->SetEta(2.5);
      eventbase->GetElectronSel()->SetBETrRegIncl(false);
@@ -158,44 +158,44 @@ void Oct2017_MuFRSyst::ExecuteEvents()throw( LQError ){
    else if(Closure){ if(!(muonPreColl.size()>=3)) return; }
    /**********************************************************************************************************/
 
-   //For Fake Study
-   //Muon ID's to Test
-   std::vector<snu::KMuon> muonVetoColl, muonLooseColl;
-     for(int i=0; i<muonPreColl.size(); i++){
-       if(PassIDCriteria(muonPreColl.at(i),"Test_POGLIsop4IPp5p1Chi100","Roch")) muonLooseColl.push_back(muonPreColl.at(i));
-     }
+     eventbase->GetMuonSel()->SetID(BaseSelection::MUON_POG_TIGHT);
+     eventbase->GetMuonSel()->SetPt(10.);                    eventbase->GetMuonSel()->SetEta(2.4);
+     eventbase->GetMuonSel()->SetBSdxy(0.2);                 eventbase->GetMuonSel()->SetdxySigMax(4.);
+     eventbase->GetMuonSel()->SetBSdz(0.1);
+     eventbase->GetMuonSel()->SetRelIsoType("PFRelIso04");   eventbase->GetMuonSel()->SetRelIso(0.6);
+   std::vector<snu::KMuon> muonLooseColl; eventbase->GetMuonSel()->Selection(muonLooseColl, true);
 
      eventbase->GetMuonSel()->SetID(BaseSelection::MUON_POG_TIGHT);
      eventbase->GetMuonSel()->SetPt(10.);                    eventbase->GetMuonSel()->SetEta(2.4);
-     eventbase->GetMuonSel()->SetRelIsoType("PFRelIso04");   eventbase->GetMuonSel()->SetRelIso(0.20);
-     eventbase->GetMuonSel()->SetBSdxy(0.01);                eventbase->GetMuonSel()->SetBSdz(0.05);
-     eventbase->GetMuonSel()->SetdxySigMax(4.);
+     eventbase->GetMuonSel()->SetBSdxy(0.01);                eventbase->GetMuonSel()->SetdxySigMax(4.);
+     eventbase->GetMuonSel()->SetBSdz(0.05);
      eventbase->GetMuonSel()->SetChiNdof(4.);
-   std::vector<snu::KMuon> muonTightColl; eventbase->GetMuonSel()->Selection(muonTightColl, true);
-   std::vector<snu::KMuon> muonColl;
-     if(!k_running_nonprompt){ muonColl=muonTightColl; }else{ muonColl=muonLooseColl; }
+     eventbase->GetMuonSel()->SetRelIsoType("PFRelIso04");   eventbase->GetMuonSel()->SetRelIso(0.2);
+   std::vector<snu::KMuon> muonTightColl; eventbase->GetMuonSel()->Selection(muonTightColl,true);
+   std::vector<snu::KMuon> muonColl;      if(k_running_nonprompt){ muonColl=muonLooseColl;} else{ muonColl=muonTightColl;}
 
 
      eventbase->GetElectronSel()->SetID(BaseSelection::ELECTRON_HctoWA_FAKELOOSE);
      eventbase->GetElectronSel()->SetHLTSafeCut("CaloIdL_TrackIdL_IsoVL");
-     eventbase->GetElectronSel()->SetPt(10.);                eventbase->GetElectronSel()->SetEta(2.5);
+     eventbase->GetElectronSel()->SetPt(25.);                eventbase->GetElectronSel()->SetEta(2.5);
      eventbase->GetElectronSel()->SetBETrRegIncl(false);
      eventbase->GetElectronSel()->SetRelIsoType("Default");  eventbase->GetElectronSel()->SetRelIsoBEMax(0.4, 0.4);
-     eventbase->GetElectronSel()->SetdxyBEMax(0.025, 0.025);   eventbase->GetElectronSel()->SetdzBEMax(0.05, 0.05);
+     eventbase->GetElectronSel()->SetdxyBEMax(0.025, 0.025); eventbase->GetElectronSel()->SetdzBEMax(0.1, 0.1);
      eventbase->GetElectronSel()->SetdxySigMax(4.);
      eventbase->GetElectronSel()->SetApplyConvVeto(true);
    std::vector<snu::KElectron> electronLooseColl; eventbase->GetElectronSel()->Selection(electronLooseColl);
      eventbase->GetElectronSel()->SetID(BaseSelection::ELECTRON_POG_MVA_WP90);
      eventbase->GetElectronSel()->SetHLTSafeCut("CaloIdL_TrackIdL_IsoVL");
-     eventbase->GetElectronSel()->SetPt(10.);                eventbase->GetElectronSel()->SetEta(2.5);
+     eventbase->GetElectronSel()->SetPt(25.);                eventbase->GetElectronSel()->SetEta(2.5);
      eventbase->GetElectronSel()->SetBETrRegIncl(false);
      eventbase->GetElectronSel()->SetRelIsoType("Default");  eventbase->GetElectronSel()->SetRelIsoBEMax(0.06, 0.06);
-     eventbase->GetElectronSel()->SetdxyBEMax(0.025, 0.025); eventbase->GetElectronSel()->SetdzBEMax(0.05, 0.05);
+     eventbase->GetElectronSel()->SetdxyBEMax(0.025, 0.025); eventbase->GetElectronSel()->SetdzBEMax(0.1, 0.1);
      eventbase->GetElectronSel()->SetdxySigMax(4.);
      eventbase->GetElectronSel()->SetApplyConvVeto(true);
    std::vector<snu::KElectron> electronTightColl; eventbase->GetElectronSel()->Selection(electronTightColl);
    std::vector<snu::KElectron> electronColl;
      if(!k_running_nonprompt){ electronColl=electronTightColl; }else{ electronColl=electronLooseColl; }
+
 
      eventbase->GetJetSel()->SetID(BaseSelection::PFJET_LOOSE);
      eventbase->GetJetSel()->SetPt(25.);                     eventbase->GetJetSel()->SetEta(2.4);
@@ -204,7 +204,6 @@ void Oct2017_MuFRSyst::ExecuteEvents()throw( LQError ){
    std::vector<snu::KJet> bjetNoVetoColl = SelBJets(jetNoVetoColl, "Medium");
 
    std::vector<snu::KJet> jetColl  = SkimJetColl(jetNoVetoColl,  electronLooseColl, muonLooseColl, "EleMuVeto");
-   //std::vector<snu::KJet> jetColl  = SkimJetColl(jetNoVetoColl,  electronLooseColl, muonVetoColl, "EleMuVeto");
    std::vector<snu::KJet> bjetColl = SelBJets(jetColl, "Medium");
 
 
@@ -224,6 +223,7 @@ void Oct2017_MuFRSyst::ExecuteEvents()throw( LQError ){
    float id_weight_ele=1., reco_weight_ele=1., trk_weight_mu=1., id_weight_mu=1., iso_weight_mu=1., btag_sf=1.;
    float trigger_sf=1.;
    float fake_weight=1.; bool EventCand=false;
+   float normsf_MuIso17=1., normsf_MuIso8=1.;
    float nvtx_reweight=1.; 
 
    /*This part is for boosting up speed.. SF part takes rather longer time than expected*/
@@ -233,21 +233,18 @@ void Oct2017_MuFRSyst::ExecuteEvents()throw( LQError ){
      else if(Closure     ){ if(muonLooseColl.size()>=3) EventCand=true; }
 
      if(!isData){
-       if(EventCand && (NormCheck || IDValidation || Closure || MuFRSyst)){
+       if(EventCand && (NormCheck || IDValidation || Closure )){
   
-         id_weight_ele   = mcdata_correction->ElectronScaleFactor("ELECTRON_MVA_90", electronTightColl);
-         reco_weight_ele = mcdata_correction->ElectronRecoScaleFactor(electronTightColl);
+         id_weight_ele   = mcdata_correction->ElectronScaleFactor("ELECTRON_HctoWA_TIGHT", electronColl);
+         reco_weight_ele = mcdata_correction->ElectronRecoScaleFactor(electronColl);
     
-         id_weight_mu    = mcdata_correction->MuonScaleFactor("MUON_POG_TIGHT", muonTightColl);
-         iso_weight_mu   = mcdata_correction->MuonISOScaleFactor("MUON_POG_TIGHT", muonTightColl);
-         //id_weight_mu    = mcdata_correction->MuonScaleFactor("MUON_HN_TRI_TIGHT", muonColl);
-         trk_weight_mu   = mcdata_correction->MuonTrackingEffScaleFactor(muonTightColl);
+         id_weight_mu    = mcdata_correction->MuonScaleFactor("MUON_HctoWA_TIGHT", muonColl);
+         trk_weight_mu   = mcdata_correction->MuonTrackingEffScaleFactor(muonColl);
 
          //if(UnPreTrig) nvtx_reweight = mcdata_correction->UserPileupWeight(eventbase->GetEvent(), jetColl.size());
          //if(PreTrig)   nvtx_reweight = GetPreTrigPURW(Nvtx);
          if(Closure){
            btag_sf       = BTagScaleFactor_1a(jetColl, snu::KJet::CSVv2, snu::KJet::Medium);}
-
        }
      }
      else if(k_running_nonprompt && EventCand && Closure ){
@@ -279,17 +276,21 @@ void Oct2017_MuFRSyst::ExecuteEvents()throw( LQError ){
        nvtx_reweight_Iso8             = NvtxWeight(Nvtx, "HLT_Mu8_TrkIsoVVL_v"); 
        nvtx_reweight_17               = NvtxWeight(Nvtx, "HLT_Mu17_v"); 
        nvtx_reweight_8                = NvtxWeight(Nvtx, "HLT_Mu8_v"); 
-       trigger_residual_weight_Mu8    = 1.331;
-       trigger_residual_weight_MuIso8 = 1.36067;
+       //trigger_residual_weight_Mu8    = 1.331;
+       //trigger_residual_weight_MuIso8 = 1.36067;
+       normsf_MuIso17            = 0.887126*trigger_ps_weight_MuIso17;
+       normsf_MuIso8             = 0.884726*trigger_ps_weight_MuIso8;
+
+       trk_weight_mu   = mcdata_correction->MuonTrackingEffScaleFactor(muonColl);
      }
 
 
      CheckMuFRSyst(muonPreColl, electronLooseColl, jetNoVetoColl, bjetNoVetoColl, met, met*cos(metphi), met*sin(metphi),
-       weight*trigger_ps_weight_MuIso8*trigger_residual_weight_MuIso8*nvtx_reweight_Iso8,
-      "Test_POGLIsop4IPp5p1Chi100", "Test_POGTIsop20IPp01p05sig4Chi4", "", "TrigMu8TrkIsoVVL");
+       weight*normsf_MuIso8 *nvtx_reweight_Iso8*trk_weight_mu,
+      "POGTIsop6IPp2p1sig4", "POGTIsop20IPp01p05sig4Chi4", "", "TrigMu8TrkIsoVVL");
      CheckMuFRSyst(muonPreColl, electronLooseColl, jetNoVetoColl, bjetNoVetoColl, met, met*cos(metphi), met*sin(metphi),
-       weight*trigger_ps_weight_MuIso17*nvtx_reweight_Iso17,
-      "Test_POGLIsop4IPp5p1Chi100", "Test_POGTIsop20IPp01p05sig4Chi4", "", "TrigMu17TrkIsoVVL");
+       weight*normsf_MuIso17*nvtx_reweight_Iso17*trk_weight_mu,
+      "POGTIsop6IPp2p1sig4", "POGTIsop20IPp01p05sig4Chi4", "", "TrigMu17TrkIsoVVL");
    }
    if(NormCheck){
 
@@ -497,13 +498,14 @@ void Oct2017_MuFRSyst::ExecuteEvents()throw( LQError ){
    if(PromptVarCheck && SystRun){
    
      float trigger_ps_weight_MuIso17=1., trigger_ps_weight_MuIso8=1., nvtx_reweight_Iso17=1., nvtx_reweight_Iso8=1.;
-     float trigger_residual_weight_MuIso8=1.;
+ //    float normsf_MuIso17=1., normsf_MuIso8=1.;
      if(!isData){
-       trigger_ps_weight_MuIso17      = WeightByTrigger("HLT_Mu17_TrkIsoVVL_v", TargetLumi);
-       trigger_ps_weight_MuIso8       = WeightByTrigger("HLT_Mu8_TrkIsoVVL_v" , TargetLumi);
-       nvtx_reweight_Iso17            = NvtxWeight(Nvtx, "HLT_Mu17_TrkIsoVVL_v"); 
-       nvtx_reweight_Iso8             = NvtxWeight(Nvtx, "HLT_Mu8_TrkIsoVVL_v"); 
-       trigger_residual_weight_MuIso8 = 1.36067;
+       trigger_ps_weight_MuIso17 = WeightByTrigger("HLT_Mu17_TrkIsoVVL_v", TargetLumi);
+       trigger_ps_weight_MuIso8  = WeightByTrigger("HLT_Mu8_TrkIsoVVL_v" , TargetLumi);
+       nvtx_reweight_Iso17       = NvtxWeight(Nvtx, "HLT_Mu17_TrkIsoVVL_v"); 
+       nvtx_reweight_Iso8        = NvtxWeight(Nvtx, "HLT_Mu8_TrkIsoVVL_v"); 
+       normsf_MuIso17            = 0.887126*trigger_ps_weight_MuIso17;
+       normsf_MuIso8             = 0.884726*trigger_ps_weight_MuIso8;
      }
 
        eventbase->GetMuonSel()->SetID(BaseSelection::MUON_POG_TIGHT);
@@ -556,31 +558,25 @@ void Oct2017_MuFRSyst::ExecuteEvents()throw( LQError ){
      float btag_sf_JESdown=1., btag_sf_JERdown=1., btag_sf_LTagdown=1., btag_sf_BCTagdown=1.;
      float fake_weight_FRup=1., fake_weight_FRdown=1.;
      if(!isData){
-       id_weight_mu    = mcdata_correction->MuonScaleFactor("MUON_POG_TIGHT", muonColl)*mcdata_correction->MuonISOScaleFactor("MUON_POG_TIGHT", muonColl);
        trk_weight_mu   = mcdata_correction->MuonTrackingEffScaleFactor(muonColl);
-
-       id_weight_mu_MuEnup    = mcdata_correction->MuonScaleFactor("MUON_POG_TIGHT", MuTMuEnUpColl)*mcdata_correction->MuonISOScaleFactor("MUON_POG_TIGHT", MuTMuEnUpColl);
        trk_weight_mu_MuEnup   = mcdata_correction->MuonTrackingEffScaleFactor(MuTMuEnUpColl);
-
-       id_weight_mu_MuEndown    = mcdata_correction->MuonScaleFactor("MUON_POG_TIGHT", MuTMuEnDownColl)*mcdata_correction->MuonISOScaleFactor("MUON_POG_TIGHT", MuTMuEnDownColl);
        trk_weight_mu_MuEndown   = mcdata_correction->MuonTrackingEffScaleFactor(MuTMuEnDownColl);
-
      }
-     float systweightIso17_central  =weight*nvtx_reweight_Iso17*trigger_ps_weight_MuIso17*id_weight_mu         *trk_weight_mu       ;
-     float systweightIso17_Nvtxup   =weight*                    trigger_ps_weight_MuIso17*id_weight_mu         *trk_weight_mu       ;
-     float systweightIso17_MuEnup   =weight*nvtx_reweight_Iso17*trigger_ps_weight_MuIso17*id_weight_mu_MuEnup  *trk_weight_mu_MuEnup;
-     float systweightIso17_PUup     =weight*nvtx_reweight_Iso17*trigger_ps_weight_MuIso17*id_weight_mu         *trk_weight_mu         *pileup_reweight_systup;
-     float systweightIso17_Nvtxdown =weight*                    trigger_ps_weight_MuIso17*id_weight_mu         *trk_weight_mu       ;
-     float systweightIso17_MuEndown =weight*nvtx_reweight_Iso17*trigger_ps_weight_MuIso17*id_weight_mu_MuEndown*trk_weight_mu_MuEndown;
-     float systweightIso17_PUdown   =weight*nvtx_reweight_Iso17*trigger_ps_weight_MuIso17*id_weight_mu         *trk_weight_mu         *pileup_reweight_systdown;
+     float systweightIso17_central  =weight*nvtx_reweight_Iso17*normsf_MuIso17*trk_weight_mu       ;
+     float systweightIso17_Nvtxup   =weight*                    normsf_MuIso17*trk_weight_mu       ;
+     float systweightIso17_MuEnup   =weight*nvtx_reweight_Iso17*normsf_MuIso17*trk_weight_mu_MuEnup;
+     float systweightIso17_PUup     =weight*nvtx_reweight_Iso17*normsf_MuIso17*trk_weight_mu         *pileup_reweight_systup;
+     float systweightIso17_Nvtxdown =weight*                    normsf_MuIso17*trk_weight_mu       ;
+     float systweightIso17_MuEndown =weight*nvtx_reweight_Iso17*normsf_MuIso17*trk_weight_mu_MuEndown;
+     float systweightIso17_PUdown   =weight*nvtx_reweight_Iso17*normsf_MuIso17*trk_weight_mu         *pileup_reweight_systdown;
 
-     float systweightIso8_central  =weight*nvtx_reweight_Iso8*trigger_ps_weight_MuIso8*trigger_residual_weight_MuIso8*id_weight_mu         *trk_weight_mu       ;
-     float systweightIso8_Nvtxup   =weight*                   trigger_ps_weight_MuIso8*trigger_residual_weight_MuIso8*id_weight_mu         *trk_weight_mu       ;
-     float systweightIso8_MuEnup   =weight*nvtx_reweight_Iso8*trigger_ps_weight_MuIso8*trigger_residual_weight_MuIso8*id_weight_mu_MuEnup  *trk_weight_mu_MuEnup;
-     float systweightIso8_PUup     =weight*nvtx_reweight_Iso8*trigger_ps_weight_MuIso8*trigger_residual_weight_MuIso8*id_weight_mu         *trk_weight_mu       *pileup_reweight_systup;
-     float systweightIso8_Nvtxdown =weight*                   trigger_ps_weight_MuIso8*trigger_residual_weight_MuIso8*id_weight_mu         *trk_weight_mu       ;
-     float systweightIso8_MuEndown =weight*nvtx_reweight_Iso8*trigger_ps_weight_MuIso8*trigger_residual_weight_MuIso8*id_weight_mu_MuEndown*trk_weight_mu_MuEndown;
-     float systweightIso8_PUdown   =weight*nvtx_reweight_Iso8*trigger_ps_weight_MuIso8*trigger_residual_weight_MuIso8*id_weight_mu         *trk_weight_mu       *pileup_reweight_systdown;
+     float systweightIso8_central  =weight*nvtx_reweight_Iso8*normsf_MuIso8*trk_weight_mu       ;
+     float systweightIso8_Nvtxup   =weight*                   normsf_MuIso8*trk_weight_mu       ;
+     float systweightIso8_MuEnup   =weight*nvtx_reweight_Iso8*normsf_MuIso8*trk_weight_mu_MuEnup;
+     float systweightIso8_PUup     =weight*nvtx_reweight_Iso8*normsf_MuIso8*trk_weight_mu       *pileup_reweight_systup;
+     float systweightIso8_Nvtxdown =weight*                   normsf_MuIso8*trk_weight_mu       ;
+     float systweightIso8_MuEndown =weight*nvtx_reweight_Iso8*normsf_MuIso8*trk_weight_mu_MuEndown;
+     float systweightIso8_PUdown   =weight*nvtx_reweight_Iso8*normsf_MuIso8*trk_weight_mu       *pileup_reweight_systdown;
 
 
      if(TrigMuIso17){
@@ -767,7 +763,7 @@ void Oct2017_MuFRSyst::ExecuteEvents()throw( LQError ){
          eventbase->GetElectronSel()->SetPt(10.);                eventbase->GetElectronSel()->SetEta(2.5);
          eventbase->GetElectronSel()->SetBETrRegIncl(false);
          eventbase->GetElectronSel()->SetRelIsoType("Default");  eventbase->GetElectronSel()->SetRelIsoBEMax(0.06, 0.06);
-         eventbase->GetElectronSel()->SetdxyBEMax(0.025, 0.025); eventbase->GetElectronSel()->SetdzBEMax(0.05, 0.05);
+         eventbase->GetElectronSel()->SetdxyBEMax(0.025, 0.025); eventbase->GetElectronSel()->SetdzBEMax(0.1, 0.1);
          eventbase->GetElectronSel()->SetdxySigMax(4.);
          eventbase->GetElectronSel()->SetApplyConvVeto(true);
        std::vector<snu::KElectron> EleTElEnUpColl; eventbase->GetElectronSel()->Selection(EleTElEnUpColl, "SystUpElEn");
@@ -777,7 +773,7 @@ void Oct2017_MuFRSyst::ExecuteEvents()throw( LQError ){
          eventbase->GetElectronSel()->SetPt(10.);                eventbase->GetElectronSel()->SetEta(2.5);
          eventbase->GetElectronSel()->SetBETrRegIncl(false);
          eventbase->GetElectronSel()->SetRelIsoType("Default");  eventbase->GetElectronSel()->SetRelIsoBEMax(0.06, 0.06);
-         eventbase->GetElectronSel()->SetdxyBEMax(0.025, 0.025);   eventbase->GetElectronSel()->SetdzBEMax(0.05, 0.05);
+         eventbase->GetElectronSel()->SetdxyBEMax(0.025, 0.025);   eventbase->GetElectronSel()->SetdzBEMax(0.1, 0.1);
          eventbase->GetElectronSel()->SetdxySigMax(4.);
          eventbase->GetElectronSel()->SetApplyConvVeto(true);
        std::vector<snu::KElectron> EleTElEnDownColl; eventbase->GetElectronSel()->Selection(EleTElEnDownColl, "SystDownElEn");
@@ -820,20 +816,20 @@ void Oct2017_MuFRSyst::ExecuteEvents()throw( LQError ){
        float btag_sf_JESdown=1., btag_sf_JERdown=1., btag_sf_LTagdown=1., btag_sf_BCTagdown=1.;
        float fake_weight_FRup=1., fake_weight_FRdown=1.;
        if(!isData){
-         id_weight_ele   = mcdata_correction->ElectronScaleFactor("ELECTRON_MVA_90", electronColl);
+         id_weight_ele   = mcdata_correction->ElectronScaleFactor("ELECTRON_HctoWA_TIGHT", electronColl);
          reco_weight_ele = mcdata_correction->ElectronRecoScaleFactor(electronColl);
-         id_weight_mu    = mcdata_correction->MuonScaleFactor("MUON_POG_TIGHT", muonColl)*mcdata_correction->MuonISOScaleFactor("MUON_POG_TIGHT", muonColl);
+         id_weight_mu    = mcdata_correction->MuonScaleFactor("MUON_HctoWA_TIGHT", muonColl);
          trk_weight_mu   = mcdata_correction->MuonTrackingEffScaleFactor(muonColl);
          btag_sf         = BTagScaleFactor_1a(jetColl, snu::KJet::CSVv2, snu::KJet::Medium);
 
-         id_weight_ele_ElEnup   = mcdata_correction->ElectronScaleFactor("ELECTRON_MVA_90", EleTElEnUpColl);
+         id_weight_ele_ElEnup   = mcdata_correction->ElectronScaleFactor("ELECTRON_HctoWA_TIGHT", EleTElEnUpColl);
          reco_weight_ele_ElEnup = mcdata_correction->ElectronRecoScaleFactor(EleTElEnUpColl);
-         id_weight_mu_MuEnup    = mcdata_correction->MuonScaleFactor("MUON_POG_TIGHT", MuTMuEnUpColl)*mcdata_correction->MuonISOScaleFactor("MUON_POG_TIGHT", MuTMuEnUpColl);
+         id_weight_mu_MuEnup    = mcdata_correction->MuonScaleFactor("MUON_HctoWA_TIGHT", MuTMuEnUpColl);
          trk_weight_mu_MuEnup   = mcdata_correction->MuonTrackingEffScaleFactor(MuTMuEnUpColl);
 
-         id_weight_ele_ElEndown   = mcdata_correction->ElectronScaleFactor("ELECTRON_MVA_90", EleTElEnDownColl);
+         id_weight_ele_ElEndown   = mcdata_correction->ElectronScaleFactor("ELECTRON_HctoWA_TIGHT", EleTElEnDownColl);
          reco_weight_ele_ElEndown = mcdata_correction->ElectronRecoScaleFactor(EleTElEnDownColl);
-         id_weight_mu_MuEndown    = mcdata_correction->MuonScaleFactor("MUON_POG_TIGHT", MuTMuEnDownColl)*mcdata_correction->MuonISOScaleFactor("MUON_POG_TIGHT", MuTMuEnDownColl);
+         id_weight_mu_MuEndown    = mcdata_correction->MuonScaleFactor("MUON_HctoWA_TIGHT", MuTMuEnDownColl);
          trk_weight_mu_MuEndown   = mcdata_correction->MuonTrackingEffScaleFactor(MuTMuEnDownColl);
 
          btag_sf_LTagup = BTagScaleFactor_1a(jetColl, snu::KJet::CSVv2, snu::KJet::Medium, -1, "SystUpLTag");
@@ -847,9 +843,12 @@ void Oct2017_MuFRSyst::ExecuteEvents()throw( LQError ){
          btag_sf_JERdown  = BTagScaleFactor_1a(jetJERDownColl, snu::KJet::CSVv2, snu::KJet::Medium);
        }
        else if(k_running_nonprompt){
-         fake_weight        = GetFakeWeight(muonLooseColl, "Test_POGLIsop4IPp5p1Chi100", "Test_POGTIsop20IPp01p05sig4Chi4", "TrkIsoVVLConeSUSY");
-         fake_weight_FRup   = GetFakeWeight(muonLooseColl, "Test_POGLIsop4IPp5p1Chi100", "Test_POGTIsop20IPp01p05sig4Chi4", "TrkIsoVVLConeSUSYSystUpFR");
-         fake_weight_FRdown = GetFakeWeight(muonLooseColl, "Test_POGLIsop4IPp5p1Chi100", "Test_POGTIsop20IPp01p05sig4Chi4", "TrkIsoVVLConeSUSYSystDownFR");
+         fake_weight        = GetFakeWeight_Data(muonLooseColl, electronLooseColl,
+                              "POGTIsop6IPp2p1sig4", "POGTIsop20IPp01p05sig4Chi4", "HctoWAFakeLoose", "POGWP90Isop06IPp025p1sig4", "TrkIsoVVLConeSUSY");
+         fake_weight_FRup   = GetFakeWeight_Data(muonLooseColl, electronLooseColl,
+                              "POGTIsop6IPp2p1sig4", "POGTIsop20IPp01p05sig4Chi4", "HctoWAFakeLoose", "POGWP90Isop06IPp025p1sig4", "TrkIsoVVLConeSUSYSystUpFR");
+         fake_weight_FRdown = GetFakeWeight_Data(muonLooseColl, electronLooseColl,
+                              "POGTIsop6IPp2p1sig4", "POGTIsop20IPp01p05sig4Chi4", "HctoWAFakeLoose", "POGWP90Isop06IPp025p1sig4", "TrkIsoVVLConeSUSYSystDownFR");
        }
        float systweight_central=weight*k_factor_weight*id_weight_ele       *reco_weight_ele       *id_weight_mu       *trk_weight_mu       *btag_sf        *fake_weight;
        float systweight_ElEnup =weight*k_factor_weight*id_weight_ele_ElEnup*reco_weight_ele_ElEnup*id_weight_mu       *trk_weight_mu       *btag_sf        *fake_weight;
@@ -1283,9 +1282,7 @@ void Oct2017_MuFRSyst::CheckPromptVariation(std::vector<snu::KMuon> MuTColl, std
   
   if     (fEta<0.9) FillHist("MuBIDSumW_PT_FR1D" +Label, PTCorr, weight, PtEdges, NPtEdges-1);  
   else if(fEta<1.6) FillHist("MuBEIDSumW_PT_FR1D"+Label, PTCorr, weight, PtEdges, NPtEdges-1);  
-  else if(fEta<2.1) FillHist("MuE1IDSumW_PT_FR1D"+Label, PTCorr, weight, PtEdges, NPtEdges-1);  
-  else              FillHist("MuE2IDSumW_PT_FR1D"+Label, PTCorr, weight, PtEdges, NPtEdges-1);  
-
+  else              FillHist("MuEIDSumW_PT_FR1D" +Label, PTCorr, weight, PtEdges, NPtEdges-1);  
 }
 
 
@@ -1359,13 +1356,9 @@ void Oct2017_MuFRSyst::CheckMuFRSyst(std::vector<snu::KMuon> MuPreColl, std::vec
       FillHist("MuBESumW_PT_FR1D_Cent"+Label, PTCorr, weight, PtEdges, NPtEdges-1);
       if(PassIDCriteria(MuLColl.at(0), TightID)) FillHist("MuBEIDSumW_PT_FR1D_Cent"+Label, PTCorr, weight, PtEdges, NPtEdges-1);
     }
-    else if(fEta<2.1){
-      FillHist("MuE1SumW_PT_FR1D_Cent"+Label, PTCorr, weight, PtEdges, NPtEdges-1);
-      if(PassIDCriteria(MuLColl.at(0), TightID)) FillHist("MuE1IDSumW_PT_FR1D_Cent"+Label, PTCorr, weight, PtEdges, NPtEdges-1);
-    }
     else{
-      FillHist("MuE2SumW_PT_FR1D_Cent"+Label, PTCorr, weight, PtEdges, NPtEdges-1);
-      if(PassIDCriteria(MuLColl.at(0), TightID)) FillHist("MuE2IDSumW_PT_FR1D_Cent"+Label, PTCorr, weight, PtEdges, NPtEdges-1);
+      FillHist("MuESumW_PT_FR1D_Cent"+Label, PTCorr, weight, PtEdges, NPtEdges-1);
+      if(PassIDCriteria(MuLColl.at(0), TightID)) FillHist("MuEIDSumW_PT_FR1D_Cent"+Label, PTCorr, weight, PtEdges, NPtEdges-1);
     }
   }
 
@@ -1382,13 +1375,9 @@ void Oct2017_MuFRSyst::CheckMuFRSyst(std::vector<snu::KMuon> MuPreColl, std::vec
       FillHist("MuBESumW_PT_FR1D_HasB"+Label, PTCorr, weight, PtEdges, NPtEdges-1);
       if(PassIDCriteria(MuLColl.at(0), TightID)) FillHist("MuBEIDSumW_PT_FR1D_HasB"+Label, PTCorr, weight, PtEdges, NPtEdges-1);
     }
-    else if(fEta<2.1){
-      FillHist("MuE1SumW_PT_FR1D_HasB"+Label, PTCorr, weight, PtEdges, NPtEdges-1);
-      if(PassIDCriteria(MuLColl.at(0), TightID)) FillHist("MuE1IDSumW_PT_FR1D_HasB"+Label, PTCorr, weight, PtEdges, NPtEdges-1);
-    }
     else{
-      FillHist("MuE2SumW_PT_FR1D_HasB"+Label, PTCorr, weight, PtEdges, NPtEdges-1);
-      if(PassIDCriteria(MuLColl.at(0), TightID)) FillHist("MuE2IDSumW_PT_FR1D_HasB"+Label, PTCorr, weight, PtEdges, NPtEdges-1);
+      FillHist("MuESumW_PT_FR1D_HasB"+Label, PTCorr, weight, PtEdges, NPtEdges-1);
+      if(PassIDCriteria(MuLColl.at(0), TightID)) FillHist("MuEIDSumW_PT_FR1D_HasB"+Label, PTCorr, weight, PtEdges, NPtEdges-1);
     }
   }
 
@@ -1405,13 +1394,9 @@ void Oct2017_MuFRSyst::CheckMuFRSyst(std::vector<snu::KMuon> MuPreColl, std::vec
       FillHist("MuBESumW_PT_FR1D_JetPt20"+Label, PTCorr, weight, PtEdges, NPtEdges-1);
       if(PassIDCriteria(MuLColl.at(0), TightID)) FillHist("MuBEIDSumW_PT_FR1D_JetPt20"+Label, PTCorr, weight, PtEdges, NPtEdges-1);
     }
-    else if(fEta<2.1){
-      FillHist("MuE1SumW_PT_FR1D_JetPt20"+Label, PTCorr, weight, PtEdges, NPtEdges-1);
-      if(PassIDCriteria(MuLColl.at(0), TightID)) FillHist("MuE1IDSumW_PT_FR1D_JetPt20"+Label, PTCorr, weight, PtEdges, NPtEdges-1);
-    }
     else{
-      FillHist("MuE2SumW_PT_FR1D_JetPt20"+Label, PTCorr, weight, PtEdges, NPtEdges-1);
-      if(PassIDCriteria(MuLColl.at(0), TightID)) FillHist("MuE2IDSumW_PT_FR1D_JetPt20"+Label, PTCorr, weight, PtEdges, NPtEdges-1);
+      FillHist("MuESumW_PT_FR1D_JetPt20"+Label, PTCorr, weight, PtEdges, NPtEdges-1);
+      if(PassIDCriteria(MuLColl.at(0), TightID)) FillHist("MuEIDSumW_PT_FR1D_JetPt20"+Label, PTCorr, weight, PtEdges, NPtEdges-1);
     }
   }
   if(PassJetReq_60 && MET<25 && MTW<25){
@@ -1426,20 +1411,16 @@ void Oct2017_MuFRSyst::CheckMuFRSyst(std::vector<snu::KMuon> MuPreColl, std::vec
       FillHist("MuBESumW_PT_FR1D_JetPt60"+Label, PTCorr, weight, PtEdges, NPtEdges-1);
       if(PassIDCriteria(MuLColl.at(0), TightID)) FillHist("MuBEIDSumW_PT_FR1D_JetPt60"+Label, PTCorr, weight, PtEdges, NPtEdges-1);
     }
-    else if(fEta<2.1){
-      FillHist("MuE1SumW_PT_FR1D_JetPt60"+Label, PTCorr, weight, PtEdges, NPtEdges-1);
-      if(PassIDCriteria(MuLColl.at(0), TightID)) FillHist("MuE1IDSumW_PT_FR1D_JetPt60"+Label, PTCorr, weight, PtEdges, NPtEdges-1);
-    }
     else{
-      FillHist("MuE2SumW_PT_FR1D_JetPt60"+Label, PTCorr, weight, PtEdges, NPtEdges-1);
-      if(PassIDCriteria(MuLColl.at(0), TightID)) FillHist("MuE2IDSumW_PT_FR1D_JetPt60"+Label, PTCorr, weight, PtEdges, NPtEdges-1);
+      FillHist("MuESumW_PT_FR1D_JetPt60"+Label, PTCorr, weight, PtEdges, NPtEdges-1);
+      if(PassIDCriteria(MuLColl.at(0), TightID)) FillHist("MuEIDSumW_PT_FR1D_JetPt60"+Label, PTCorr, weight, PtEdges, NPtEdges-1);
     }
   }
 
-  //Prompt Variation: Prompt Variation ~<15%(Xsec+JES+JER+Uncl+Nvtx+ElEn)
+  //Prompt Variation: Prompt Variation ~<15%(Xsec+JES+JER+Uncl+Nvtx+ElEn)(Envelope was 12%)
   if(PassJetReq_40 && MET<25 && MTW<25){
-    float weight_PrUp   = isData? weight:weight*1.3;
-    float weight_PrDown = isData? weight:weight*0.7;
+    float weight_PrUp   = isData? weight:weight*1.15;
+    float weight_PrDown = isData? weight:weight*0.85;
 
     FillHist("MuAllSumW_PT_FR1D_PrUp"+Label, PTCorr, weight_PrUp, PtEdges, NPtEdges-1);
     if(PassIDCriteria(MuLColl.at(0), TightID)) FillHist("MuAllIDSumW_PT_FR1D_PrUp"+Label, PTCorr, weight_PrUp, PtEdges, NPtEdges-1);
@@ -1458,17 +1439,11 @@ void Oct2017_MuFRSyst::CheckMuFRSyst(std::vector<snu::KMuon> MuPreColl, std::vec
       FillHist("MuBESumW_PT_FR1D_PrDown"+Label, PTCorr, weight_PrDown, PtEdges, NPtEdges-1);
       if(PassIDCriteria(MuLColl.at(0), TightID)) FillHist("MuBEIDSumW_PT_FR1D_PrDown"+Label, PTCorr, weight_PrDown, PtEdges, NPtEdges-1);
     }
-    else if(fEta<2.1){
-      FillHist("MuE1SumW_PT_FR1D_PrUp"+Label, PTCorr, weight_PrUp, PtEdges, NPtEdges-1);
-      if(PassIDCriteria(MuLColl.at(0), TightID)) FillHist("MuE1IDSumW_PT_FR1D_PrUp"+Label, PTCorr, weight_PrUp, PtEdges, NPtEdges-1);
-      FillHist("MuE1SumW_PT_FR1D_PrDown"+Label, PTCorr, weight_PrDown, PtEdges, NPtEdges-1);
-      if(PassIDCriteria(MuLColl.at(0), TightID)) FillHist("MuE1IDSumW_PT_FR1D_PrDown"+Label, PTCorr, weight_PrDown, PtEdges, NPtEdges-1);
-    }
     else{
-      FillHist("MuE2SumW_PT_FR1D_PrUp"+Label, PTCorr, weight_PrUp, PtEdges, NPtEdges-1);
-      if(PassIDCriteria(MuLColl.at(0), TightID)) FillHist("MuE2IDSumW_PT_FR1D_PrUp"+Label, PTCorr, weight_PrUp, PtEdges, NPtEdges-1);
-      FillHist("MuE2SumW_PT_FR1D_PrDown"+Label, PTCorr, weight_PrDown, PtEdges, NPtEdges-1);
-      if(PassIDCriteria(MuLColl.at(0), TightID)) FillHist("MuE2IDSumW_PT_FR1D_PrDown"+Label, PTCorr, weight_PrDown, PtEdges, NPtEdges-1);
+      FillHist("MuESumW_PT_FR1D_PrUp"+Label, PTCorr, weight_PrUp, PtEdges, NPtEdges-1);
+      if(PassIDCriteria(MuLColl.at(0), TightID)) FillHist("MuEIDSumW_PT_FR1D_PrUp"+Label, PTCorr, weight_PrUp, PtEdges, NPtEdges-1);
+      FillHist("MuESumW_PT_FR1D_PrDown"+Label, PTCorr, weight_PrDown, PtEdges, NPtEdges-1);
+      if(PassIDCriteria(MuLColl.at(0), TightID)) FillHist("MuEIDSumW_PT_FR1D_PrDown"+Label, PTCorr, weight_PrDown, PtEdges, NPtEdges-1);
     }
   }
 
@@ -1485,13 +1460,9 @@ void Oct2017_MuFRSyst::CheckMuFRSyst(std::vector<snu::KMuon> MuPreColl, std::vec
       FillHist("MuBESumW_PT_FR1D_away1j"+Label, PTCorr, weight, PtEdges, NPtEdges-1);
       if(PassIDCriteria(MuLColl.at(0), TightID)) FillHist("MuBEIDSumW_PT_FR1D_away1j"+Label, PTCorr, weight, PtEdges, NPtEdges-1);
     }
-    else if(fEta<2.1){
-      FillHist("MuE1SumW_PT_FR1D_away1j"+Label, PTCorr, weight, PtEdges, NPtEdges-1);
-      if(PassIDCriteria(MuLColl.at(0), TightID)) FillHist("MuE1IDSumW_PT_FR1D_away1j"+Label, PTCorr, weight, PtEdges, NPtEdges-1);
-    }
     else{
-      FillHist("MuE2SumW_PT_FR1D_away1j"+Label, PTCorr, weight, PtEdges, NPtEdges-1);
-      if(PassIDCriteria(MuLColl.at(0), TightID)) FillHist("MuE2IDSumW_PT_FR1D_away1j"+Label, PTCorr, weight, PtEdges, NPtEdges-1);
+      FillHist("MuESumW_PT_FR1D_away1j"+Label, PTCorr, weight, PtEdges, NPtEdges-1);
+      if(PassIDCriteria(MuLColl.at(0), TightID)) FillHist("MuEIDSumW_PT_FR1D_away1j"+Label, PTCorr, weight, PtEdges, NPtEdges-1);
     }
   }
 
@@ -2074,213 +2045,108 @@ float Oct2017_MuFRSyst::NvtxWeight(int Nvtx, TString Option){
   float weight=1.;
 
   if(Option.Contains("HLT_Mu17_TrkIsoVVL_v")){
-    /*
-    if(Nvtx<2) weight=2.72613;
-    else if(Nvtx<3) weight=4.58141;
-    else if(Nvtx<4) weight=5.29;
-    else if(Nvtx<5) weight=5.40781;
-    else if(Nvtx<6) weight=4.67558;
-    else if(Nvtx<7) weight=3.98194;
-    else if(Nvtx<8) weight=3.57339;
-    else if(Nvtx<9) weight=3.01615;
-    else if(Nvtx<10) weight=2.64517;
-    else if(Nvtx<11) weight=2.42223;
-    else if(Nvtx<12) weight=2.10094;
-    else if(Nvtx<13) weight=1.82589;
-    else if(Nvtx<14) weight=1.57466;
-    else if(Nvtx<15) weight=1.44026;
-    else if(Nvtx<16) weight=1.28772;
-    else if(Nvtx<17) weight=1.11579;
-    else if(Nvtx<18) weight=0.990076;
-    else if(Nvtx<19) weight=0.876777;
-    else if(Nvtx<20) weight=0.779755;
-    else if(Nvtx<21) weight=0.696316;
-    else if(Nvtx<22) weight=0.598357;
-    else if(Nvtx<23) weight=0.53979;
-    else if(Nvtx<24) weight=0.480227;
-    else if(Nvtx<25) weight=0.440293;
-    else if(Nvtx<26) weight=0.399551;
-    else if(Nvtx<27) weight=0.352597;
-    else if(Nvtx<28) weight=0.325759;
-    else if(Nvtx<29) weight=0.318584;
-    else if(Nvtx<30) weight=0.313161;
-    else if(Nvtx<31) weight=0.290297;
-    else if(Nvtx<32) weight=0.29231;
-    else if(Nvtx<33) weight=0.273619;
-    else if(Nvtx<34) weight=0.288655;
-    else if(Nvtx<35) weight=0.280013;
-    else if(Nvtx<36) weight=0.282744;
-    else if(Nvtx<37) weight=0.288902;
-    else if(Nvtx<38) weight=0.304827;
-    else if(Nvtx<39) weight=0.311141;
-    else if(Nvtx<40) weight=0.395799;
-    else if(Nvtx<41) weight=0.393723;
-    else if(Nvtx<42) weight=0.482522;
-    else if(Nvtx<43) weight=0.462885;
-    else if(Nvtx<44) weight=0.53422;
-    else if(Nvtx<45) weight=0.519723;
-    else if(Nvtx<46) weight=0.529709;
-    else if(Nvtx<47) weight=0.433043;
-    else if(Nvtx<48) weight=0.900594;
-    else if(Nvtx<49) weight=0.770424;
-    else if(Nvtx<50) weight=0.603551;
-    else weight=1.50864;*/
-     if(Nvtx<2) weight=2.93516;
-     else if(Nvtx<3) weight=4.96255;
-     else if(Nvtx<4) weight=5.41994;
-     else if(Nvtx<5) weight=5.59655;
-     else if(Nvtx<6) weight=4.73701;
-     else if(Nvtx<7) weight=4.02073;
-     else if(Nvtx<8) weight=3.59471;
-     else if(Nvtx<9) weight=3.0218;
-     else if(Nvtx<10) weight=2.63867;
-     else if(Nvtx<11) weight=2.42781;
-     else if(Nvtx<12) weight=2.09522;
-     else if(Nvtx<13) weight=1.82631;
-     else if(Nvtx<14) weight=1.57426;
-     else if(Nvtx<15) weight=1.43481;
-     else if(Nvtx<16) weight=1.28538;
-     else if(Nvtx<17) weight=1.1112;
-     else if(Nvtx<18) weight=0.987558;
-     else if(Nvtx<19) weight=0.876795;
-     else if(Nvtx<20) weight=0.778463;
-     else if(Nvtx<21) weight=0.691427;
-     else if(Nvtx<22) weight=0.59618;
-     else if(Nvtx<23) weight=0.54028;
-     else if(Nvtx<24) weight=0.479053;
-     else if(Nvtx<25) weight=0.440375;
-     else if(Nvtx<26) weight=0.400443;
-     else if(Nvtx<27) weight=0.353426;
-     else if(Nvtx<28) weight=0.324317;
-     else if(Nvtx<29) weight=0.317569;
-     else if(Nvtx<30) weight=0.31304;
-     else if(Nvtx<31) weight=0.290598;
-     else if(Nvtx<32) weight=0.292311;
-     else if(Nvtx<33) weight=0.271567;
-     else if(Nvtx<34) weight=0.290105;
-     else if(Nvtx<35) weight=0.281492;
-     else if(Nvtx<36) weight=0.285172;
-     else if(Nvtx<37) weight=0.281365;
-     else if(Nvtx<38) weight=0.309644;
-     else if(Nvtx<39) weight=0.310859;
-     else if(Nvtx<40) weight=0.409775;
-     else if(Nvtx<41) weight=0.416493;
-     else if(Nvtx<42) weight=0.471912;
-     else if(Nvtx<43) weight=0.467901;
-     else if(Nvtx<44) weight=0.542619;
-     else if(Nvtx<45) weight=0.52519;
-     else if(Nvtx<46) weight=0.531458;
-     else if(Nvtx<47) weight=0.428469;
-     else if(Nvtx<48) weight=0.89076;
-     else if(Nvtx<49) weight=0.767212;
-     else if(Nvtx<50) weight=0.651066;
-     else weight=1.53895;
-    
+    if     (Nvtx<2)  weight=4.01869;
+    else if(Nvtx<3)  weight=5.8951;
+    else if(Nvtx<4)  weight=5.57468;
+    else if(Nvtx<5)  weight=5.44934;
+    else if(Nvtx<6)  weight=4.63174;
+    else if(Nvtx<7)  weight=4.22565;
+    else if(Nvtx<8)  weight=3.63892;
+    else if(Nvtx<9)  weight=3.0894;
+    else if(Nvtx<10) weight=2.70132;
+    else if(Nvtx<11) weight=2.37994;
+    else if(Nvtx<12) weight=2.08104;
+    else if(Nvtx<13) weight=1.84174;
+    else if(Nvtx<14) weight=1.62352;
+    else if(Nvtx<15) weight=1.44319;
+    else if(Nvtx<16) weight=1.26092;
+    else if(Nvtx<17) weight=1.12051;
+    else if(Nvtx<18) weight=0.983225;
+    else if(Nvtx<19) weight=0.8638;
+    else if(Nvtx<20) weight=0.776799;
+    else if(Nvtx<21) weight=0.68109;
+    else if(Nvtx<22) weight=0.597061;
+    else if(Nvtx<23) weight=0.536559;
+    else if(Nvtx<24) weight=0.482552;
+    else if(Nvtx<25) weight=0.433793;
+    else if(Nvtx<26) weight=0.398808;
+    else if(Nvtx<27) weight=0.365049;
+    else if(Nvtx<28) weight=0.332766;
+    else if(Nvtx<29) weight=0.32254;
+    else if(Nvtx<30) weight=0.318423;
+    else if(Nvtx<31) weight=0.291816;
+    else if(Nvtx<32) weight=0.286975;
+    else if(Nvtx<33) weight=0.271214;
+    else if(Nvtx<34) weight=0.28137;
+    else if(Nvtx<35) weight=0.293271;
+    else if(Nvtx<36) weight=0.284085;
+    else if(Nvtx<37) weight=0.283364;
+    else if(Nvtx<38) weight=0.285382;
+    else if(Nvtx<39) weight=0.310926;
+    else if(Nvtx<40) weight=0.367502;
+    else if(Nvtx<41) weight=0.389082;
+    else if(Nvtx<42) weight=0.421021;
+    else if(Nvtx<43) weight=0.488235;
+    else if(Nvtx<44) weight=0.48878;
+    else if(Nvtx<45) weight=0.506944;
+    else if(Nvtx<46) weight=0.603992;
+    else if(Nvtx<47) weight=0.429591;
+    else if(Nvtx<48) weight=0.645653;
+    else if(Nvtx<49) weight=0.774392;
+    else if(Nvtx<50) weight=0.831004;
+    else             weight=1.38403;    
   }
   else if(Option.Contains("HLT_Mu8_TrkIsoVVL_v")){
-    
-    /*if(Nvtx<2) weight=1.50969;
-    else if(Nvtx<3) weight=2.49987;
-    else if(Nvtx<4) weight=4.19233;
-    else if(Nvtx<5) weight=4.34853;
-    else if(Nvtx<6) weight=4.19755;
-    else if(Nvtx<7) weight=3.39238;
-    else if(Nvtx<8) weight=3.39183;
-    else if(Nvtx<9) weight=2.95772;
-    else if(Nvtx<10) weight=2.66924;
-    else if(Nvtx<11) weight=2.40899;
-    else if(Nvtx<12) weight=2.08969;
-    else if(Nvtx<13) weight=1.89569;
-    else if(Nvtx<14) weight=1.66458;
-    else if(Nvtx<15) weight=1.48787;
-    else if(Nvtx<16) weight=1.30865;
-    else if(Nvtx<17) weight=1.13189;
-    else if(Nvtx<18) weight=1.02313;
-    else if(Nvtx<19) weight=0.893759;
-    else if(Nvtx<20) weight=0.782485;
-    else if(Nvtx<21) weight=0.686522;
-    else if(Nvtx<22) weight=0.582265;
-    else if(Nvtx<23) weight=0.512405;
-    else if(Nvtx<24) weight=0.470955;
-    else if(Nvtx<25) weight=0.412547;
-    else if(Nvtx<26) weight=0.353575;
-    else if(Nvtx<27) weight=0.342279;
-    else if(Nvtx<28) weight=0.31586;
-    else if(Nvtx<29) weight=0.276263;
-    else if(Nvtx<30) weight=0.272275;
-    else if(Nvtx<31) weight=0.271115;
-    else if(Nvtx<32) weight=0.250044;
-    else if(Nvtx<33) weight=0.266399;
-    else if(Nvtx<34) weight=0.231639;
-    else if(Nvtx<35) weight=0.264336;
-    else if(Nvtx<36) weight=0.233982;
-    else if(Nvtx<37) weight=0.298608;
-    else if(Nvtx<38) weight=0.32898;
-    else if(Nvtx<39) weight=0.249851;
-    else if(Nvtx<40) weight=0.360918;
-    else if(Nvtx<41) weight=0.391239;
-    else if(Nvtx<42) weight=0.649196;
-    else if(Nvtx<43) weight=0.550819;
-    else if(Nvtx<44) weight=0.847566;
-    else if(Nvtx<45) weight=0.51677;
-    else if(Nvtx<46) weight=0.422175;
-    else if(Nvtx<47) weight=0.612883;
-    else if(Nvtx<48) weight=0.712506;
-    else if(Nvtx<49) weight=0.977648;
-    else if(Nvtx<50) weight=0.196138;
-    else weight=1.74879;*/
-
-     if(Nvtx<2) weight=1.35722;
-     else if(Nvtx<3) weight=2.59183;
-     else if(Nvtx<4) weight=4.34291;
-     else if(Nvtx<5) weight=4.52411;
-     else if(Nvtx<6) weight=4.30661;
-     else if(Nvtx<7) weight=3.37598;
-     else if(Nvtx<8) weight=3.38913;
-     else if(Nvtx<9) weight=2.95993;
-     else if(Nvtx<10) weight=2.66961;
-     else if(Nvtx<11) weight=2.43;
-     else if(Nvtx<12) weight=2.08714;
-     else if(Nvtx<13) weight=1.90092;
-     else if(Nvtx<14) weight=1.66818;
-     else if(Nvtx<15) weight=1.48083;
-     else if(Nvtx<16) weight=1.31396;
-     else if(Nvtx<17) weight=1.12011;
-     else if(Nvtx<18) weight=1.01416;
-     else if(Nvtx<19) weight=0.891984;
-     else if(Nvtx<20) weight=0.783393;
-     else if(Nvtx<21) weight=0.690256;
-     else if(Nvtx<22) weight=0.5743;
-     else if(Nvtx<23) weight=0.507428;
-     else if(Nvtx<24) weight=0.463932;
-     else if(Nvtx<25) weight=0.413432;
-     else if(Nvtx<26) weight=0.348175;
-     else if(Nvtx<27) weight=0.343142;
-     else if(Nvtx<28) weight=0.308735;
-     else if(Nvtx<29) weight=0.278519;
-     else if(Nvtx<30) weight=0.271926;
-     else if(Nvtx<31) weight=0.274149;
-     else if(Nvtx<32) weight=0.250251;
-     else if(Nvtx<33) weight=0.270099;
-     else if(Nvtx<34) weight=0.245012;
-     else if(Nvtx<35) weight=0.264866;
-     else if(Nvtx<36) weight=0.243973;
-     else if(Nvtx<37) weight=0.318566;
-     else if(Nvtx<38) weight=0.305989;
-     else if(Nvtx<39) weight=0.250374;
-     else if(Nvtx<40) weight=0.382962;
-     else if(Nvtx<41) weight=0.374963;
-     else if(Nvtx<42) weight=0.699259;
-     else if(Nvtx<43) weight=0.562641;
-     else if(Nvtx<44) weight=0.881452;
-     else if(Nvtx<45) weight=0.503618;
-     else if(Nvtx<46) weight=0.387301;
-     else if(Nvtx<47) weight=0.685802;
-     else if(Nvtx<48) weight=0.621217;
-     else if(Nvtx<49) weight=1.04161;
-     else if(Nvtx<50) weight=0.208812;
-     else weight=1.70408;
-
+    if     (Nvtx<2)  weight=1.76887;
+    else if(Nvtx<3)  weight=3.25332;
+    else if(Nvtx<4)  weight=4.25007;
+    else if(Nvtx<5)  weight=4.57121;
+    else if(Nvtx<6)  weight=4.2404;
+    else if(Nvtx<7)  weight=3.59236;
+    else if(Nvtx<8)  weight=3.44674;
+    else if(Nvtx<9)  weight=2.98316;
+    else if(Nvtx<10) weight=2.68859;
+    else if(Nvtx<11) weight=2.39977;
+    else if(Nvtx<12) weight=2.06791;
+    else if(Nvtx<13) weight=1.90538;
+    else if(Nvtx<14) weight=1.70796;
+    else if(Nvtx<15) weight=1.49451;
+    else if(Nvtx<16) weight=1.30118;
+    else if(Nvtx<17) weight=1.13331;
+    else if(Nvtx<18) weight=1.01193;
+    else if(Nvtx<19) weight=0.893801;
+    else if(Nvtx<20) weight=0.779264;
+    else if(Nvtx<21) weight=0.673095;
+    else if(Nvtx<22) weight=0.573211;
+    else if(Nvtx<23) weight=0.507485;
+    else if(Nvtx<24) weight=0.464434;
+    else if(Nvtx<25) weight=0.409781;
+    else if(Nvtx<26) weight=0.346145;
+    else if(Nvtx<27) weight=0.351931;
+    else if(Nvtx<28) weight=0.314329;
+    else if(Nvtx<29) weight=0.282073;
+    else if(Nvtx<30) weight=0.27587;
+    else if(Nvtx<31) weight=0.271491;
+    else if(Nvtx<32) weight=0.243343;
+    else if(Nvtx<33) weight=0.27028;
+    else if(Nvtx<34) weight=0.240851;
+    else if(Nvtx<35) weight=0.279104;
+    else if(Nvtx<36) weight=0.235309;
+    else if(Nvtx<37) weight=0.316236;
+    else if(Nvtx<38) weight=0.291917;
+    else if(Nvtx<39) weight=0.245509;
+    else if(Nvtx<40) weight=0.369302;
+    else if(Nvtx<41) weight=0.351038;
+    else if(Nvtx<42) weight=0.628974;
+    else if(Nvtx<43) weight=0.605933;
+    else if(Nvtx<44) weight=0.795525;
+    else if(Nvtx<45) weight=0.464135;
+    else if(Nvtx<46) weight=0.432921;
+    else if(Nvtx<47) weight=0.66136;
+    else if(Nvtx<48) weight=0.47839;
+    else if(Nvtx<49) weight=1.07925;
+    else if(Nvtx<50) weight=0.2382;
+    else             weight=1.52761;
   }
   else if(Option.Contains("HLT_Mu17_v")){
     if(Nvtx<2) weight=2.24611;

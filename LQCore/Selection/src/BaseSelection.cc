@@ -7,6 +7,8 @@ BaseSelection::BaseSelection() {
   pt_cut_min = 0.;
   eta_cut_min = -100.;
   eta_cut = 100.;
+  sceta_cut_min = -100.;
+  sceta_cut = 100.;
   jpt_cut_max = 1000000.;
   jpt_cut_min = 0.;
   jeta_cut_min = -100.;
@@ -21,6 +23,7 @@ BaseSelection::BaseSelection() {
   
   apply_ptcut=false;
   apply_etacut=false;
+  apply_scetacut=false;
   apply_jptcut=false;
   applypileuptool= false;
   apply_jetacut=false;
@@ -218,6 +221,8 @@ BaseSelection& BaseSelection::operator= (const BaseSelection& bs)
     pt_cut_min = bs.pt_cut_min; 
     eta_cut_min = bs.eta_cut_min; 
     eta_cut = bs.eta_cut; 
+    sceta_cut_min = bs.sceta_cut_min; 
+    sceta_cut = bs.sceta_cut; 
     jpt_cut_max = bs.jpt_cut_max;
     jpt_cut_min = bs.jpt_cut_min;
     jeta_cut_min = bs.jeta_cut_min; 
@@ -232,6 +237,7 @@ BaseSelection& BaseSelection::operator= (const BaseSelection& bs)
     applypileuptool=bs.applypileuptool;
     apply_ptcut= bs.apply_ptcut;
     apply_etacut= bs.apply_etacut;
+    apply_scetacut= bs.apply_scetacut;
     apply_jptcut= bs.apply_jptcut;
     apply_jetacut= bs.apply_jetacut;
     apply_relisocut= bs.apply_relisocut;
@@ -271,6 +277,8 @@ BaseSelection::BaseSelection(const BaseSelection& bs) {
   pt_cut_min = bs.pt_cut_min; 
   eta_cut_min = bs.eta_cut_min; 
   eta_cut = bs.eta_cut; 
+  sceta_cut_min = bs.sceta_cut_min; 
+  sceta_cut = bs.sceta_cut; 
   jpt_cut_max = bs.jpt_cut_max;
   jpt_cut_min = bs.jpt_cut_min;
   jeta_cut_min = bs.jeta_cut_min; 
@@ -285,6 +293,7 @@ BaseSelection::BaseSelection(const BaseSelection& bs) {
   applypileuptool=bs.applypileuptool;
   apply_ptcut= bs.apply_ptcut;
   apply_etacut= bs.apply_etacut;
+  apply_scetacut= bs.apply_scetacut;
   apply_jptcut= bs.apply_jptcut;
   apply_jetacut= bs.apply_jetacut;
   apply_relisocut= bs.apply_relisocut;
@@ -324,6 +333,8 @@ void BaseSelection::reset(){
   jpt_cut_min = 0.;
   eta_cut_min = -100.;
   eta_cut = 100.;
+  sceta_cut_min = -100.;
+  sceta_cut = 100.;
   jeta_cut_min = -100.;
   jeta_cut = 100.;
   relIso_cut  = 10000000.;
@@ -336,6 +347,7 @@ void BaseSelection::reset(){
   applypileuptool=false;
   apply_ptcut=false;
   apply_etacut=false;
+  apply_scetacut=false;
   apply_jptcut=false;
   apply_jetacut=false;
   apply_relisocut=false;
@@ -413,8 +425,14 @@ void BaseSelection::SetEta(Double_t Eta) {
   apply_etacut=true;
   Eta ? eta_cut=Eta : eta_cut=3.0;
   eta_cut_min=0.0;
-  
 }
+
+void BaseSelection::SetSCEta(Double_t SCEta) {
+  apply_scetacut=true;
+  SCEta ? sceta_cut=SCEta : sceta_cut=3.0;
+  sceta_cut_min=0.0;
+}
+
 
 
 void BaseSelection::SetJetEta(Double_t Eta) {
@@ -428,6 +446,13 @@ void BaseSelection::SetEta(Double_t minEta, Double_t Eta) {
   minEta ? eta_cut_min=minEta : eta_cut_min=0.0;
   Eta ? eta_cut=Eta : eta_cut=3.0;
 }
+
+void BaseSelection::SetSCEta(Double_t minSCEta, Double_t SCEta) {
+  apply_scetacut=true;
+  minSCEta ? sceta_cut_min=minSCEta : sceta_cut_min=0.0;
+  SCEta ? sceta_cut=SCEta : sceta_cut=3.0;
+}
+
 
 void BaseSelection::SetRelIso(Double_t RelIso) {
   apply_relisocut=true;

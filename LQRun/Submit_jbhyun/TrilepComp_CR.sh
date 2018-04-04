@@ -3,30 +3,33 @@
 ########################################################################
 ## MC / DATA
 runMC=true
-runData=true
+runData=false
 runFake="False"
 runSignal="False"
 
 ########################################################################
 ## RUN PARAMETERS
 
-AnalysisCode="Feb2018_IDTrigSFValid" 
+AnalysisCode="Mar2018_TrilepCR"
 #Stream="SingleElectron"
 #Stream="MuonEG"
-#Stream="SingleMuon"
 Stream="DoubleMuon"
 #Stream="DoubleEG"
 #Skim="SKTree_LeptonSkim"  ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
-Skim="SKTree_DiLepSkim"   ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
-#Skim="SKTree_TriLepSkim"   ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
-DataPeriod="ALL"
+#Skim="SKTree_DiLepSkim"   ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
+Skim="SKTree_TriLepSkim"   ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
+DataPeriod="ALL" #"ALL"
 job_logstep=1000
 LogLevel="INFO"
 QueueOption="fastq"    #"longq"
-RunningMode="DoubleMuon"
-#"ElectronMuon" #"DoubleMuon"
-MCList="CR_DiLep"
-#"TT" #"CR_DiLep" #"CR_MuMu50_fast"
+RunningMode="SSDilepCR,TriMu,SystRun"
+#"EMuMu,TrilepCR,SystRun" #"TriMu,TrilepCR,SystRun"
+ 
+MCList="UnRun"
+#MCList="SignalMajor_All"
+#MCList="Analysis_bkg"
+#MCList="CR_CFCV_Dilep"
+#MCList="CR_SSDilep"
 
 ########################################################################
 ## OUTPUT PATH CONFIG
@@ -36,7 +39,6 @@ outputdir_cat="/data2/Users/jbhyun/cmssw/CATanalyzer/CATOut/${CATVERSION}"
 
 if [[ -z ${CATVERSION} ]]; then echo "source setup.sh needed. exit"; exit 1; fi
 if [[ ! -d $CATOUT ]]; then echo "Made $CATOUT"; mkdir $CATOut; fi
-if [[ ! -d ${outputdir_cat} ]]; then echo "Made ${outputdir_cat}"; mkdir ${outputdir_cat}; fi
 if [[ ! -d ${outputdir_cat} ]]; then echo "Made ${outputdir_cat}"; mkdir ${outputdir_cat}; fi
 if [[ ! -d ${outputdir_cat}/${AnalysisCode} ]]; then echo "Made ${outputdir_cat}/${AnalysisCode}"; mkdir ${outputdir_cat}/${AnalysisCode}; fi;
 

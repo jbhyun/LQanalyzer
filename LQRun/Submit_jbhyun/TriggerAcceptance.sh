@@ -12,18 +12,20 @@ runSignal="True"
 
 AnalysisCode="Feb2018_TrigAccept"
 Stream="DoubleMuon"
-Skim="FLATCAT"  ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
-#Skim="SKTree_TriLepSkim"  ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
+#Skim="FLATCAT"  ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
+Skim="SKTree_TriLepSkim"  ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
 DataPeriod="ALL"
 job_logstep=1000
 LogLevel="INFO"
 QueueOption="fastq"    #"longq"
-RunningMode="CheckTrigAccept"
-#"PDFQ2Syst,MultiLep" #"TopPtCheck" #"MultiLep,LOvsNLOBias"
+RunningMode="EMuMuEComp"
+#"EMuMuEComp" #"CheckTrigAccept"
+
 
 #MCList="TopPtMeasSample_Sig"
 #MCList="TopPtMeasSample_SM"
 MCList="SignalMajor_All"
+#MCList="MajorFakeSource"
 #MCList="SignalMajor_Old"
 #MCList="Analysis_bkg"
 #MCList="GenSystAnaTargetBkg"

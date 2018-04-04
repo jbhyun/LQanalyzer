@@ -22,7 +22,9 @@ DataPeriod="ALL"
 job_logstep=1000
 LogLevel="INFO"
 QueueOption="fastq"    #"longq"
-RunningMode="Closure,SystRun" #"EleFRSyst,SiglPreTrig"
+RunningMode="Closure,SystRun"
+#"FRMeasure,SiglWP,SiglPreTrig,SystRun" 
+#"Closure,SystRun" #"FRMeasure,SiglWP,SiglPreTrig,SystRun" #"EleFRSyst,SiglPreTrig"
 
 #MCList="TT"
 #MCList="DY"

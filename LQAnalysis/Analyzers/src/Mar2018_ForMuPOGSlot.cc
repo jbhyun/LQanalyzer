@@ -1,5 +1,5 @@
 /***************************************************************************
- * @Project: Aug2017_MuFakeMCStudy 
+ * @Project: Mar2018_ForMuPOGSlot 
  * @Package: LQanalyzer, ROOT-based analysis framework for Korea SNU / Main package author: John Almond
  *
  * @Code Author: Jihwan Bhyun 
@@ -7,7 +7,7 @@
  ***************************************************************************/
 
 /// Local includes
- #include "Aug2017_MuFakeMCStudy.h"
+ #include "Mar2018_ForMuPOGSlot.h"
 
  //Core includes
  #include "Reweight.h"
@@ -15,17 +15,17 @@
  #include "BaseSelection.h"
  #include "AnalyzerCore.h"
  //// Needed to allow inheritance for use in LQCore/core classes
- ClassImp (Aug2017_MuFakeMCStudy);
+ ClassImp (Mar2018_ForMuPOGSlot);
 
- Aug2017_MuFakeMCStudy::Aug2017_MuFakeMCStudy() : AnalyzerCore(), out_muons(0) {
+ Mar2018_ForMuPOGSlot::Mar2018_ForMuPOGSlot() : AnalyzerCore(), out_muons(0) {
 
-   SetLogName("Aug2017_MuFakeMCStudy");
-   Message("In Aug2017_MuFakeMCStudy constructor", INFO);
+   SetLogName("Mar2018_ForMuPOGSlot");
+   Message("In Mar2018_ForMuPOGSlot constructor", INFO);
    InitialiseAnalysis();
  }
 
 
- void Aug2017_MuFakeMCStudy::InitialiseAnalysis() throw( LQError ) {
+ void Mar2018_ForMuPOGSlot::InitialiseAnalysis() throw( LQError ) {
    
    /// Initialise histograms
    MakeHistograms();  
@@ -39,7 +39,7 @@
 //Loop///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-void Aug2017_MuFakeMCStudy::ExecuteEvents()throw( LQError ){
+void Mar2018_ForMuPOGSlot::ExecuteEvents()throw( LQError ){
 
 ////Basic Infos///////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -71,7 +71,7 @@ void Aug2017_MuFakeMCStudy::ExecuteEvents()throw( LQError ){
 
   
    bool FakeCompCheck=false, IDEffCheck=false, IDVarSensitivity=false, FRInspection=false, SiglWP=false, ScanFR=false;
-   bool TrigBiasCheck=false, FRMeasEmul=false, Closure=false;
+   bool TrigBiasCheck=false, FRMeasEmul=false, Closure=false, ForMuPOGPlot=false;
    for(int i=0; i<(int) k_flags.size(); i++){
      if     (k_flags.at(i).Contains("FakeCompCheck"))    FakeCompCheck    = true;
      else if(k_flags.at(i).Contains("IDEffCheck"))       IDEffCheck       = true;
@@ -82,6 +82,7 @@ void Aug2017_MuFakeMCStudy::ExecuteEvents()throw( LQError ){
      else if(k_flags.at(i).Contains("TrigBiasCheck"))    TrigBiasCheck    = true;
      else if(k_flags.at(i).Contains("FRMeasEmul"))       FRMeasEmul       = true;
      else if(k_flags.at(i).Contains("Closure"))          Closure          = true;
+     else if(k_flags.at(i).Contains("ForMuPOGPlot"))     ForMuPOGPlot     = true;
    }
 
     
@@ -121,7 +122,6 @@ void Aug2017_MuFakeMCStudy::ExecuteEvents()throw( LQError ){
    //Intended for Code speed boosting up.
      eventbase->GetMuonSel()->SetPt(10.);                    eventbase->GetMuonSel()->SetEta(2.4);
    std::vector<snu::KMuon> muonPreColl; eventbase->GetMuonSel()->Selection(muonPreColl, true);
-   //std::vector<snu::KMuon> muonPreColl; eventbase->GetMuonSel()->Selection(muonPreColl, false);
      eventbase->GetElectronSel()->SetPt(10.);                eventbase->GetElectronSel()->SetEta(2.5);
      eventbase->GetElectronSel()->SetBETrRegIncl(false);
    std::vector<snu::KElectron> electronPreColl; eventbase->GetElectronSel()->Selection(electronPreColl);
@@ -234,6 +234,12 @@ void Aug2017_MuFakeMCStudy::ExecuteEvents()throw( LQError ){
    // Main Analysis Code     -----------------------------------------------------//
    //=============================================================================//
 
+   if(ForMuPOGPlot){
+
+     DrawPlotsForPOGSlot(muonPreColl, muonPreColl, electronLooseColl, jetNoVetoColl, bjetNoVetoColl, met, met*cos(metphi), met*sin(metphi), truthColl, weight, "_NoID", "");
+     DrawPlotsForPOGSlot(muonPreColl, muonPreColl, electronLooseColl, jetNoVetoColl, bjetNoVetoColl, met, met*cos(metphi), met*sin(metphi), truthColl, weight, "_ID", "ID");
+
+   }
    if(FakeCompCheck){
      //Purpose : Fake source and types of 1) signal region(3l+b+3j) & trilep(nob)
      //          2) TT and DY in general, 3) QCD measurement region
@@ -298,10 +304,29 @@ void Aug2017_MuFakeMCStudy::ExecuteEvents()throw( LQError ){
 
      if(SiglWP){
        InspectFakeRate(muonPreColl, jetNoVetoColl, truthColl,
-         "POGTIsop6IPp2p1sig4", "POGTIsop20IPp01p05sig4Chi4", weight, "_POGTIsop20IPp01p05sig4Chi4POGTIsop6IPp2p1sig4", "");
+         "POGLIsop4IPp5p1Chi100", "POGTIsop20IPp01p05sig4Chi4", weight, "_POGTIsop20IPp01p05sig4Chi4POGLIsop4IPp5p1Chi100", "");
+       InspectFakeRate(muonPreColl, jetNoVetoColl, truthColl,
+         "POGTIsop4IPp2p1NoChi", "POGTIsop20IPp01p05sig4Chi4", weight, "_POGTIsop20IPp01p05sig4Chi4POGTIsop4IPp2p1NoChi", "");
+       InspectFakeRate(muonPreColl, jetNoVetoColl, truthColl,
+         "POGTIsop6IPp2p1NoChi", "POGTIsop20IPp01p05sig4Chi4", weight, "_POGTIsop20IPp01p05sig4Chi4POGTIsop6IPp2p1NoChi", "");
+       InspectFakeRate(muonPreColl, jetNoVetoColl, truthColl,
+         "POGTIsop4IPp2p1sig4NoChi", "POGTIsop20IPp01p05sig4Chi4", weight, "_POGTIsop20IPp01p05sig4Chi4POGTIsop4IPp2p1sig4NoChi", "");
+       InspectFakeRate(muonPreColl, jetNoVetoColl, truthColl,
+         "POGTIsop6IPp2p1sig4NoChi", "POGTIsop20IPp01p05sig4Chi4", weight, "_POGTIsop20IPp01p05sig4Chi4POGTIsop6IPp2p1sig4NoChi", "");
+
 
        InspectFakeRate(muonTrigPreColl, jetNoVetoColl, truthColl,
-         "POGTIsop6IPp2p1sig4", "POGTIsop20IPp01p05sig4Chi4", weight, "_POGTIsop20IPp01p05sig4Chi4POGTIsop6IPp2p1sig4Trig", "");
+         "POGLIsop4IPp5p1Chi100", "POGTIsop20IPp01p05sig4Chi4", weight, "_POGTIsop20IPp01p05sig4Chi4POGLIsop4IPp5p1Chi100Trig", "");
+       InspectFakeRate(muonTrigPreColl, jetNoVetoColl, truthColl,
+         "POGTIsop4IPp2p1NoChi", "POGTIsop20IPp01p05sig4Chi4", weight, "_POGTIsop20IPp01p05sig4Chi4POGTIsop4IPp2p1NoChiTrig", "");
+       InspectFakeRate(muonTrigPreColl, jetNoVetoColl, truthColl,
+         "POGTIsop6IPp2p1NoChi", "POGTIsop20IPp01p05sig4Chi4", weight, "_POGTIsop20IPp01p05sig4Chi4POGTIsop6IPp2p1NoChiTrig", "");
+       InspectFakeRate(muonTrigPreColl, jetNoVetoColl, truthColl,
+         "POGTIsop4IPp2p1sig4NoChi", "POGTIsop20IPp01p05sig4Chi4", weight, "_POGTIsop20IPp01p05sig4Chi4POGTIsop4IPp2p1sig4NoChiTrig", "");
+       InspectFakeRate(muonTrigPreColl, jetNoVetoColl, truthColl,
+         "POGTIsop6IPp2p1sig4NoChi", "POGTIsop20IPp01p05sig4Chi4", weight, "_POGTIsop20IPp01p05sig4Chi4POGTIsop6IPp2p1sig4NoChiTrig", "");
+
+
      }
      if(ScanFR){
        //const int Nd0Cuts  =12; float d0Cuts[Nd0Cuts]    ={0.01, 0.02, 0.03, 0.04, 0.05, 0.08, 0.1, 0.2, 0.5, 1., 10., 100.};
@@ -357,16 +382,41 @@ void Aug2017_MuFakeMCStudy::ExecuteEvents()throw( LQError ){
    }
    if(Closure){
      //Purpose : Description of yields in different sample expected from QCD measured FR
+
+//     CheckMCClosure(muonPreColl, electronLooseColl, jetNoVetoColl, truthColl,
+//       "POGLIsop4IPp5p1Chi100", "POGTIsop20IPp01p05sig4Chi4", weight, "_TIsop20IPp01p05sig4Chi4LIsop4IPp5p1Chi100", "TrkIsoVVLConeSUSYParB");   
+//     CheckMCClosure(muonPreColl, electronLooseColl, jetNoVetoColl, truthColl,
+//       "POGTIsop4IPp2p1NoChi", "POGTIsop20IPp01p05sig4Chi4", weight, "_TIsop20IPp01p05sig4Chi4LIsop4IPp2p1NoChi", "TrkIsoVVLConeSUSYParB");   
+//     CheckMCClosure(muonPreColl, electronLooseColl, jetNoVetoColl, truthColl,
+//       "POGTIsop4IPp2p1sig4NoChi", "POGTIsop20IPp01p05sig4Chi4", weight, "_TIsop20IPp01p05sig4Chi4LIsop4IPp2p1sig4NoChi", "TrkIsoVVLConeSUSYParB");   
+//     CheckMCClosure(muonPreColl, electronLooseColl, jetNoVetoColl, truthColl,
+//       "POGTIsop4IPp2p1sig4NoChi", "POGTIsop20IPp01p05sig4Chi4", weight, "_TIsop20IPp01p05sig4Chi4LIsop4IPp2p1sig4NoChi_Orig", "TrkIsoVVLConeSUSY");
+//     CheckMCClosure(muonPreColl, electronLooseColl, jetNoVetoColl, truthColl,
+//       "POGTIsop6IPp2p1sig4", "POGTIsop20IPp01p05sig4Chi4", weight, "_TIsop20IPp01p05sig4Chi4LIsop6IPp2p1sig4", "TrkIsoVVLConeSUSYParB");   
+//     CheckMCClosure(muonPreColl, electronLooseColl, jetNoVetoColl, truthColl,
+//       "POGTIsop6IPp2p1sig4", "POGTIsop20IPp01p05sig4Chi4", weight, "_TIsop20IPp01p05sig4Chi4LIsop6IPp2p1sig4_Orig", "TrkIsoVVLConeSUSY");   
+//
+//     CheckMCClosure(muonPreColl, electronLooseColl, jetNoVetoColl, truthColl,
+//       "POGTIsop6IPp01p05sig4Chi4", "POGTIsop20IPp01p05sig4Chi4", weight, "_POGTIsop20IPp01p05sig4Chi4LIsop6", "TrkIsoVVLConeSUSYParB");   
+//     CheckMCClosure(muonPreColl, electronLooseColl, jetNoVetoColl, truthColl,
+//       "POGTIsop6IPp01p05sig4Chi4", "POGTIsop20IPp01p05sig4Chi4", weight, "_POGTIsop20IPp01p05sig4Chi4LIsop6_Orig", "TrkIsoVVLConeSUSY");   
+
+     //NoFilterTest
      CheckMCClosure(muonPreColl, electronLooseColl, jetNoVetoColl, truthColl,
-       "POGTIsop6IPp2p1sig4", "POGTIsop20IPp01p05sig4Chi4", weight, "_TIsop20IPp01p05sig4Chi4LIsop6IPp2p1sig4", "TrkIsoVVLConeSUSY"); 
+       "POGTIsop6IPp01p05sig4Chi4", "POGTIsop20IPp01p05sig4Chi4", weight, "_POGTIsop20IPp01p05sig4Chi4LIsop6ParB", "NoFilterConeSUSYParB");   
      CheckMCClosure(muonPreColl, electronLooseColl, jetNoVetoColl, truthColl,
-       "POGTIsop6IPp01p05sig4Chi4", "POGTIsop20IPp01p05sig4Chi4", weight, "_POGTIsop20IPp01p05sig4Chi4LIsop6", "TrkIsoVVLConeSUSY");   
+       "POGTIsop6IPp2p1sig4", "POGTIsop20IPp01p05sig4Chi4", weight, "_POGTIsop20IPp01p05sig4Chi4LIsop6IPp2p1sig4ParB", "NoFilterConeSUSYParB");   
+     CheckMCClosure(muonPreColl, electronLooseColl, jetNoVetoColl, truthColl,
+       "POGTIsop6IPp2p1", "POGTIsop20IPp01p05sig4Chi4", weight, "_POGTIsop20IPp01p05sig4Chi4LIsop6IPp2p1ParB", "NoFilterConeSUSYParB");   
 
      CheckMCClosure(muonPreColl, electronLooseColl, jetNoVetoColl, truthColl,
-       "POGTIsop6IPp2p1sig4", "POGTIsop20IPp01p05sig4Chi4", weight, "_TIsop20IPp01p05sig4Chi4LIsop6IPp2p1sig4_NoFilter", "NoFilterConeSUSY"); 
+       "POGTIsop6IPp01p05sig4Chi4", "POGTIsop20IPp01p05sig4Chi4", weight, "_POGTIsop20IPp01p05sig4Chi4LIsop6", "NoFilterConeSUSY");   
      CheckMCClosure(muonPreColl, electronLooseColl, jetNoVetoColl, truthColl,
-       "POGTIsop6IPp01p05sig4Chi4", "POGTIsop20IPp01p05sig4Chi4", weight, "_POGTIsop20IPp01p05sig4Chi4LIsop6_NoFilter", "NoFilterConeSUSY");   
+       "POGTIsop6IPp2p1sig4", "POGTIsop20IPp01p05sig4Chi4", weight, "_POGTIsop20IPp01p05sig4Chi4LIsop6IPp2p1sig4", "NoFilterConeSUSY");   
+     CheckMCClosure(muonPreColl, electronLooseColl, jetNoVetoColl, truthColl,
+       "POGTIsop6IPp2p1", "POGTIsop20IPp01p05sig4Chi4", weight, "_POGTIsop20IPp01p05sig4Chi4LIsop6IPp2p1", "NoFilterConeSUSY");   
 
+     
      //#"TrkIsoVVLFOPt" #"TrkIsoVVLConeSUSY" #"TrkIsoVVLConeE" #"NoFilterFOPt" #"NoFilterConeSUSY" #"NoFilterConeE"
    }
 
@@ -374,7 +424,114 @@ return;
 }// End of execute event loop
   
 
-void Aug2017_MuFakeMCStudy::CheckFakeSources(std::vector<snu::KMuon> muonColl, std::vector<snu::KMuon> muonLooseColl, std::vector<snu::KElectron> electronLooseColl, std::vector<snu::KJet> JetColl, std::vector<snu::KJet> BJetColl, float MET, float METx, float METy, std::vector<snu::KTruth> truthColl, float weight, TString Label, TString Option){
+
+void Mar2018_ForMuPOGSlot::DrawPlotsForPOGSlot(std::vector<snu::KMuon> muonColl, std::vector<snu::KMuon> muonLooseColl, std::vector<snu::KElectron> electronLooseColl, std::vector<snu::KJet> JetColl, std::vector<snu::KJet> BJetColl, float MET, float METx, float METy, std::vector<snu::KTruth> truthColl, float weight, TString Label, TString Option){
+
+  //What needed
+  //1. ID Variable Optimisation Plot & Cut efficiency(Inclusive & In SR)
+  //2. Composition of fake
+  bool ApplyID=Option.Contains("ID");
+  for(int i=0; i<(int) muonColl.size(); i++){
+    int LeptonType = GetLeptonType(muonColl.at(i),truthColl);
+    int SrcJetType = GetFakeLepJetSrcType(muonColl.at(i), JetColl);
+    int SrcIdx     = GetFakeLepSrcIdx(muonColl.at(i), truthColl);
+    int SrcfPID    = SrcIdx==-1 ? 0 : fabs(truthColl.at(SrcIdx).PdgId());
+    bool IsHFake=false, IsPrompt=false;
+
+    if     (LeptonType<0 && LeptonType>-5) IsHFake=true;
+    else if(LeptonType>0 && LeptonType<4 ) IsPrompt=true;
+    else continue;
+
+    if( ApplyID && !(muonColl.at(i).IsTight() && RochIso(muonColl.at(i),"0.4")<0.6) ) continue;
+
+    if(LeptonType>0) FillHist("LeptonType_Pr"+Label, LeptonType, weight, -10., 10., 20);
+    else             FillHist("LeptonType_Fk"+Label, LeptonType, weight, -10., 10., 20);
+
+    if(LeptonType>=-4 && LeptonType<0){
+      FillHist("SrcJetType" +Label, SrcJetType, weight, -1., 4., 5);
+    }
+
+    if(LeptonType==1 || LeptonType==2){
+      FillHist("NormGlbChi2_Type12"+Label, fabs(muonColl.at(i).GlobalChi2()), weight, 0., 20., 40);
+      FillHist("2DSIP_Type12"      +Label, fabs(muonColl.at(i).dXYSig())    , weight, 0., 50,  50);
+      FillHist("D0_Type12"         +Label, fabs(muonColl.at(i).dXY())       , weight, 0., 0.1, 100);
+      FillHist("DZ_Type12"         +Label, fabs(muonColl.at(i).dZ())        , weight, 0., 0.2, 200); 
+      FillHist("RelIso04_Type12"   +Label, muonColl.at(i).RelIso04()        , weight, 0., 0.6, 60); 
+    }
+    if(LeptonType==-1){
+      FillHist("NormGlbChi2_Typem1"+Label, fabs(muonColl.at(i).GlobalChi2()), weight, 0., 20., 40);
+      FillHist("2DSIP_Typem1"      +Label, fabs(muonColl.at(i).dXYSig())    , weight, 0., 50,  50);
+      FillHist("D0_Typem1"         +Label, fabs(muonColl.at(i).dXY())       , weight, 0., 0.1, 100);
+      FillHist("DZ_Typem1"         +Label, fabs(muonColl.at(i).dZ())        , weight, 0., 0.2, 200); 
+      FillHist("RelIso04_Typem1"   +Label, muonColl.at(i).RelIso04()        , weight, 0., 0.6, 60); 
+    }
+    if(LeptonType>=-4 && LeptonType<=-2){
+      FillHist("NormGlbChi2_Typem234"+Label, fabs(muonColl.at(i).GlobalChi2()), weight, 0., 20., 40);
+      FillHist("2DSIP_Typem234"      +Label, fabs(muonColl.at(i).dXYSig())    , weight, 0., 50,  50);
+      FillHist("D0_Typem234"         +Label, fabs(muonColl.at(i).dXY())       , weight, 0., 0.1, 100);
+      FillHist("DZ_Typem234"         +Label, fabs(muonColl.at(i).dZ())        , weight, 0., 0.2, 200); 
+      FillHist("RelIso04_Typem234"   +Label, muonColl.at(i).RelIso04()        , weight, 0., 0.6, 60); 
+    }
+    if(LeptonType>=-4 && LeptonType<0){
+      FillHist("NormGlbChi2_HFake"+Label, fabs(muonColl.at(i).GlobalChi2()), weight, 0., 20., 40);
+      FillHist("2DSIP_HFake"      +Label, fabs(muonColl.at(i).dXYSig())    , weight, 0., 50,  50);
+      FillHist("D0_HFake"         +Label, fabs(muonColl.at(i).dXY())       , weight, 0., 0.1, 100);
+      FillHist("DZ_HFake"         +Label, fabs(muonColl.at(i).dZ())        , weight, 0., 0.2, 200); 
+      FillHist("RelIso04_HFake"   +Label, muonColl.at(i).RelIso04()        , weight, 0., 0.6, 60); 
+    }
+
+    bool PassChi=fabs(muonColl.at(i).GlobalChi2())<4., PassIso=RochIso(muonColl.at(i),"0.4")<0.2;
+    bool PassIP =fabs(muonColl.at(i).dXYSig())<4. && fabs(muonColl.at(i).dXY())<0.01 && fabs(muonColl.at(i).dZ())<0.05;
+    if( muonColl.at(i).IsTight() ){
+      if( LeptonType==1 || LeptonType==2 ){
+          FillHist("BeforeCuts_Pr"+Label, 0., weight, 0., 5., 5);
+        if(PassChi){
+          FillHist("AfterCuts_Pr" +Label, 0., weight, 0., 5., 5);
+          FillHist("BeforeCuts_Pr"+Label, 1., weight, 0., 5., 5);
+        }
+        if(PassChi && PassIso){
+          FillHist("AfterCuts_Pr" +Label, 1., weight, 0., 5., 5);
+          FillHist("BeforeCuts_Pr"+Label, 2., weight, 0., 5., 5);
+        }
+        if(PassChi && PassIso && PassIP){
+          FillHist("AfterCuts_Pr" +Label, 2., weight, 0., 5., 5);
+          FillHist("BeforeCuts_Pr"+Label, 3., weight, 0., 5., 5);
+        }
+
+                    FillHist("BeforeCuts_Iso_Pr"+Label, 0., weight, 0., 1., 1);
+        if(PassIso) FillHist("AfterCuts_Iso_Pr" +Label, 0., weight, 0., 1., 1);
+                    FillHist("BeforeCuts_Chi_Pr"+Label, 0., weight, 0., 1., 1);
+        if(PassChi) FillHist("AfterCuts_Chi_Pr" +Label, 0., weight, 0., 1., 1);
+                    FillHist("BeforeCuts_IP_Pr" +Label, 0., weight, 0., 1., 1);
+        if(PassIP)  FillHist("AfterCuts_IP_Pr"  +Label, 0., weight, 0., 1., 1);
+      }
+      if( LeptonType>=-4 && LeptonType<0 ){
+          FillHist("BeforeCuts_Fk"+Label, 0., weight, 0., 5., 5);
+        if(PassChi){
+          FillHist("AfterCuts_Fk" +Label, 0., weight, 0., 5., 5);
+          FillHist("BeforeCuts_Fk"+Label, 1., weight, 0., 5., 5);
+        }
+        if(PassChi && PassIso){
+          FillHist("AfterCuts_Fk" +Label, 1., weight, 0., 5., 5);
+          FillHist("BeforeCuts_Fk"+Label, 2., weight, 0., 5., 5);
+        }
+        if(PassChi && PassIso && PassIP){
+          FillHist("AfterCuts_Fk" +Label, 2., weight, 0., 5., 5);
+          FillHist("BeforeCuts_Fk"+Label, 3., weight, 0., 5., 5);
+        }
+
+                    FillHist("BeforeCuts_Iso_Fk"+Label, 0., weight, 0., 1., 1);
+        if(PassIso) FillHist("AfterCuts_Iso_Fk" +Label, 0., weight, 0., 1., 1);
+                    FillHist("BeforeCuts_Chi_Fk"+Label, 0., weight, 0., 1., 1);
+        if(PassChi) FillHist("AfterCuts_Chi_Fk" +Label, 0., weight, 0., 1., 1);
+                    FillHist("BeforeCuts_IP_Fk" +Label, 0., weight, 0., 1., 1);
+        if(PassIP)  FillHist("AfterCuts_IP_Fk"  +Label, 0., weight, 0., 1., 1);
+      }
+    }
+  }
+}
+
+void Mar2018_ForMuPOGSlot::CheckFakeSources(std::vector<snu::KMuon> muonColl, std::vector<snu::KMuon> muonLooseColl, std::vector<snu::KElectron> electronLooseColl, std::vector<snu::KJet> JetColl, std::vector<snu::KJet> BJetColl, float MET, float METx, float METy, std::vector<snu::KTruth> truthColl, float weight, TString Label, TString Option){
   //Input JetColl, BJetColl as novetocoll since I may use nearby jet.
   //Purpose : Fake source and types of 1) signal region(3l+b+3j) & trilep(nob)
   //          2) TT and DY in general, 3) QCD measurement region
@@ -447,7 +604,7 @@ void Aug2017_MuFakeMCStudy::CheckFakeSources(std::vector<snu::KMuon> muonColl, s
 
 
 
-void Aug2017_MuFakeMCStudy::CheckIDEfficiency(std::vector<snu::KMuon> muonColl, std::vector<snu::KTruth> truthColl, float weight, TString Label, TString Option){
+void Mar2018_ForMuPOGSlot::CheckIDEfficiency(std::vector<snu::KMuon> muonColl, std::vector<snu::KTruth> truthColl, float weight, TString Label, TString Option){
 
   std::vector<snu::KMuon> PromptColl   = SkimLepColl(muonColl, truthColl, "Prompt");
   std::vector<snu::KMuon> FakeColl     = SkimLepColl(muonColl, truthColl, "HFake");
@@ -676,7 +833,7 @@ void Aug2017_MuFakeMCStudy::CheckIDEfficiency(std::vector<snu::KMuon> muonColl, 
 }
 
 
-void Aug2017_MuFakeMCStudy::CheckIDVarSensitivity(std::vector<snu::KMuon> muonColl, std::vector<snu::KJet> JetColl, std::vector<snu::KTruth> truthColl, float weight, TString Label, TString Option){
+void Mar2018_ForMuPOGSlot::CheckIDVarSensitivity(std::vector<snu::KMuon> muonColl, std::vector<snu::KJet> JetColl, std::vector<snu::KTruth> truthColl, float weight, TString Label, TString Option){
 
   for(int i=0; i<(int) muonColl.size(); i++){
     int LepType    = GetLeptonType(muonColl.at(i),truthColl);
@@ -790,7 +947,7 @@ void Aug2017_MuFakeMCStudy::CheckIDVarSensitivity(std::vector<snu::KMuon> muonCo
 }
 
 
-void Aug2017_MuFakeMCStudy::InspectFakeRate(std::vector<snu::KMuon> muonLooseColl, std::vector<snu::KJet> JetColl, std::vector<snu::KTruth> truthColl, TString LooseID, TString TightID, float weight, TString Label, TString Option){
+void Mar2018_ForMuPOGSlot::InspectFakeRate(std::vector<snu::KMuon> muonLooseColl, std::vector<snu::KJet> JetColl, std::vector<snu::KTruth> truthColl, TString LooseID, TString TightID, float weight, TString Label, TString Option){
   //Input : Very Loose MuColl; Looser than Loose ID, jetNoVetoColl.
 
   const int NPtEdges=9;
@@ -889,7 +1046,7 @@ void Aug2017_MuFakeMCStudy::InspectFakeRate(std::vector<snu::KMuon> muonLooseCol
 
 
 
-void Aug2017_MuFakeMCStudy::ScanFakeRate(std::vector<snu::KMuon> muonLooseColl, std::vector<snu::KElectron> EleLColl, std::vector<snu::KJet> JetColl, std::vector<snu::KTruth> truthColl, TString LooseID, TString TightID, int Nd0SigCuts, float d0SigCuts[], int NChi2Cuts, float Chi2Cuts[], float weight, TString Label, TString Option){
+void Mar2018_ForMuPOGSlot::ScanFakeRate(std::vector<snu::KMuon> muonLooseColl, std::vector<snu::KElectron> EleLColl, std::vector<snu::KJet> JetColl, std::vector<snu::KTruth> truthColl, TString LooseID, TString TightID, int Nd0SigCuts, float d0SigCuts[], int NChi2Cuts, float Chi2Cuts[], float weight, TString Label, TString Option){
   //Input : Loose ID: ID criteria for loose except d0Sig, chi2 cut.
 
   const int NPtEdges=9;
@@ -1110,7 +1267,7 @@ void Aug2017_MuFakeMCStudy::ScanFakeRate(std::vector<snu::KMuon> muonLooseColl, 
 }
 
 
-void Aug2017_MuFakeMCStudy::CheckTriggerBias(std::vector<snu::KMuon> muonLooseColl, std::vector<snu::KJet> JetColl, std::vector<snu::KTruth> truthColl, TString LooseID, TString TightID, float weight, TString Label, TString Option){
+void Mar2018_ForMuPOGSlot::CheckTriggerBias(std::vector<snu::KMuon> muonLooseColl, std::vector<snu::KJet> JetColl, std::vector<snu::KTruth> truthColl, TString LooseID, TString TightID, float weight, TString Label, TString Option){
 //Purpose : Check trigger bias. 1) Maximum unbiased extrapolation region : how much can I loosen ID variable?
 //                              2) Does trigger requirement change FR even in trigger safe range?
 
@@ -1379,7 +1536,7 @@ void Aug2017_MuFakeMCStudy::CheckTriggerBias(std::vector<snu::KMuon> muonLooseCo
 
 }
 
-void Aug2017_MuFakeMCStudy::EmulateFRMeasurement(std::vector<snu::KMuon> MuPreColl, std::vector<snu::KElectron> EleLColl, std::vector<snu::KJet> JetNoVetoColl, float MET, float METx, float METy, std::vector<snu::KTruth> truthColl, TString LooseID, TString TightID, float weight, TString Label, TString Option){
+void Mar2018_ForMuPOGSlot::EmulateFRMeasurement(std::vector<snu::KMuon> MuPreColl, std::vector<snu::KElectron> EleLColl, std::vector<snu::KJet> JetNoVetoColl, float MET, float METx, float METy, std::vector<snu::KTruth> truthColl, TString LooseID, TString TightID, float weight, TString Label, TString Option){
   //Input : Very Loose MuColl; Looser than Loose ID, jetNoVetoColl.
 
 
@@ -1677,7 +1834,7 @@ void Aug2017_MuFakeMCStudy::EmulateFRMeasurement(std::vector<snu::KMuon> MuPreCo
 
 
 
-void Aug2017_MuFakeMCStudy::CheckMCClosure(std::vector<snu::KMuon> MuPreColl, std::vector<snu::KElectron> EleLColl, std::vector<snu::KJet> JetNoVetoColl, std::vector<snu::KTruth> TruthColl, TString LooseID, TString TightID, float weight, TString Label, TString Option){
+void Mar2018_ForMuPOGSlot::CheckMCClosure(std::vector<snu::KMuon> MuPreColl, std::vector<snu::KElectron> EleLColl, std::vector<snu::KJet> JetNoVetoColl, std::vector<snu::KTruth> TruthColl, TString LooseID, TString TightID, float weight, TString Label, TString Option){
 
   TString FilterInfo="", ConeMethod="";
   if     (Option.Contains("NoFilter"))  FilterInfo="NoFilter";
@@ -1752,10 +1909,9 @@ void Aug2017_MuFakeMCStudy::CheckMCClosure(std::vector<snu::KMuon> MuPreColl, st
       if( PassSel && !(MOSSS1>12 && MOSSS2>12) ) PassSel=false;
       if(PassSel){
         bool JetSelPass=JetColl.size()>=3, BJetSelPass=BJetColl.size()>=1;
-        bool OffZ=fabs(MOSSS1-91.2)>10. && fabs(MOSSS2-91.2)>10.;
         FillHist("CutFlow_exp"+Label, 0., weight*fakeweight, 0., 10., 10);
-        if(OffZ && JetSelPass) FillHist("CutFlow_exp"+Label, 1., weight*fakeweight, 0., 10., 10);
-        if(OffZ && JetSelPass && BJetSelPass) FillHist("CutFlow_exp"+Label, 2., weight*fakeweight, 0., 10., 10);
+        if(JetSelPass) FillHist("CutFlow_exp"+Label, 1., weight*fakeweight, 0., 10., 10);
+        if(JetSelPass && BJetSelPass) FillHist("CutFlow_exp"+Label, 2., weight*fakeweight, 0., 10., 10);
 
         FillHist("PTmu1_exp"+Label, MuLColl.at(0).Pt(), weight*fakeweight, 0., 200., 40);
         FillHist("PTmu2_exp"+Label, MuLColl.at(1).Pt(), weight*fakeweight, 0., 200., 40);
@@ -1792,10 +1948,9 @@ void Aug2017_MuFakeMCStudy::CheckMCClosure(std::vector<snu::KMuon> MuPreColl, st
       if( PassSel && !(MOSSS1>12 && MOSSS2>12) ) PassSel=false;
       if( PassSel ){
         bool JetSelPass=JetColl.size()>=3, BJetSelPass=BJetColl.size()>=1;
-        bool OffZ=fabs(MOSSS1-91.2)>10. && fabs(MOSSS2-91.2)>10.;
         FillHist("CutFlow_obs"+Label, 0., weight, 0., 10., 10);
-        if(OffZ && JetSelPass) FillHist("CutFlow_obs"+Label, 1., weight, 0., 10., 10);
-        if(OffZ && JetSelPass && BJetSelPass) FillHist("CutFlow_obs"+Label, 2., weight, 0., 10., 10);
+        if(JetSelPass) FillHist("CutFlow_obs"+Label, 1., weight, 0., 10., 10);
+        if(JetSelPass && BJetSelPass) FillHist("CutFlow_obs"+Label, 2., weight, 0., 10., 10);
 
         FillHist("PTmu1_obs"+Label, MuLColl.at(0).Pt(), weight, 0., 200., 40);
         FillHist("PTmu2_obs"+Label, MuLColl.at(1).Pt(), weight, 0., 200., 40);
@@ -1826,14 +1981,14 @@ void Aug2017_MuFakeMCStudy::CheckMCClosure(std::vector<snu::KMuon> MuPreColl, st
 }
 
 
-void Aug2017_MuFakeMCStudy::EndCycle()throw( LQError ){
+void Mar2018_ForMuPOGSlot::EndCycle()throw( LQError ){
   
   Message("In EndCycle" , INFO);
 
 }
 
 
-void Aug2017_MuFakeMCStudy::BeginCycle() throw( LQError ){
+void Mar2018_ForMuPOGSlot::BeginCycle() throw( LQError ){
 
   Message("In begin Cycle", INFO);
 
@@ -1841,9 +1996,9 @@ void Aug2017_MuFakeMCStudy::BeginCycle() throw( LQError ){
 
 }
 
-Aug2017_MuFakeMCStudy::~Aug2017_MuFakeMCStudy() {
+Mar2018_ForMuPOGSlot::~Mar2018_ForMuPOGSlot() {
   
-  Message("In Aug2017_MuFakeMCStudy Destructor" , INFO);
+  Message("In Mar2018_ForMuPOGSlot Destructor" , INFO);
 //  if(!k_isdata)delete reweightPU;
   
 }
@@ -1851,7 +2006,7 @@ Aug2017_MuFakeMCStudy::~Aug2017_MuFakeMCStudy() {
 
 
 
-float Aug2017_MuFakeMCStudy::FakeRateMC(snu::KElectron Ele, TString Option){
+float Mar2018_ForMuPOGSlot::FakeRateMC(snu::KElectron Ele, TString Option){
 
   float FR=0.;
 
@@ -1885,7 +2040,7 @@ float Aug2017_MuFakeMCStudy::FakeRateMC(snu::KElectron Ele, TString Option){
 }
 
 
-float Aug2017_MuFakeMCStudy::FakeRateMC(snu::KMuon Mu, TString Option){
+float Mar2018_ForMuPOGSlot::FakeRateMC(snu::KMuon Mu, TString Option){
 
   float FR=0., TightIsoCut=0.;
   if(Option.Contains("ConeSUSY")){
@@ -2939,7 +3094,7 @@ float Aug2017_MuFakeMCStudy::FakeRateMC(snu::KMuon Mu, TString Option){
 
 
 
-int Aug2017_MuFakeMCStudy::GetFakeLepSrcIdx(snu::KMuon Mu, std::vector<snu::KTruth> TruthColl){
+int Mar2018_ForMuPOGSlot::GetFakeLepSrcIdx(snu::KMuon Mu, std::vector<snu::KTruth> TruthColl){
 
   int MatchedIdx=-1;
   int LepType=GetLeptonType(Mu,TruthColl);
@@ -2970,7 +3125,7 @@ int Aug2017_MuFakeMCStudy::GetFakeLepSrcIdx(snu::KMuon Mu, std::vector<snu::KTru
 
 
 
-int Aug2017_MuFakeMCStudy::GetFakeLepJetSrcType(snu::KMuon Mu, std::vector<snu::KJet> JetColl){
+int Mar2018_ForMuPOGSlot::GetFakeLepJetSrcType(snu::KMuon Mu, std::vector<snu::KJet> JetColl){
   //Type: -1: Unmatched, 1:L, 2:C, 3:B
   int SrcType=-1;
   bool NearB=false, NearC=false, NearL=false;
@@ -2991,7 +3146,7 @@ int Aug2017_MuFakeMCStudy::GetFakeLepJetSrcType(snu::KMuon Mu, std::vector<snu::
 }
 
 
-float Aug2017_MuFakeMCStudy::ConeCorrectedPT(snu::KElectron Ele, float TightIsoCut){
+float Mar2018_ForMuPOGSlot::ConeCorrectedPT(snu::KElectron Ele, float TightIsoCut){
 
   float PTCorr=Ele.Pt()*(1+Ele.PFRelIso(0.3));
   //float PTCorr=Ele.Pt()*(1+min(0,Ele.PFRelIso(0.3)-TightIsoCut));
@@ -3000,7 +3155,7 @@ float Aug2017_MuFakeMCStudy::ConeCorrectedPT(snu::KElectron Ele, float TightIsoC
 }
 
 
-float Aug2017_MuFakeMCStudy::ConeCorrectedPT(snu::KMuon Mu, double TightIsoCut){
+float Mar2018_ForMuPOGSlot::ConeCorrectedPT(snu::KMuon Mu, double TightIsoCut){
 
   //float PTCorr=Mu.Pt();
   //float PTCorr=Mu.Pt()*(1+RochIso(Mu,"0.4"));
@@ -3010,7 +3165,7 @@ float Aug2017_MuFakeMCStudy::ConeCorrectedPT(snu::KMuon Mu, double TightIsoCut){
 }
 
 
-int Aug2017_MuFakeMCStudy::StepPassed(std::vector<snu::KMuon> MuColl, std::vector<snu::KElectron> EleColl, std::vector<snu::KJet> JetColl, std::vector<snu::KJet> BJetColl, float MET, TString Option){
+int Mar2018_ForMuPOGSlot::StepPassed(std::vector<snu::KMuon> MuColl, std::vector<snu::KElectron> EleColl, std::vector<snu::KJet> JetColl, std::vector<snu::KJet> BJetColl, float MET, TString Option){
 
    int PassedSteps=0;
    bool EMuMu=false, TriMu=false;
@@ -3062,7 +3217,7 @@ int Aug2017_MuFakeMCStudy::StepPassed(std::vector<snu::KMuon> MuColl, std::vecto
 }
 
 
-int Aug2017_MuFakeMCStudy::NPromptFake_Mu(std::vector<snu::KMuon> MuColl, std::vector<snu::KTruth> truthColl, TString Option){
+int Mar2018_ForMuPOGSlot::NPromptFake_Mu(std::vector<snu::KMuon> MuColl, std::vector<snu::KTruth> truthColl, TString Option){
 
    int Nprompt=0, Nfake=0;
 
@@ -3085,7 +3240,7 @@ int Aug2017_MuFakeMCStudy::NPromptFake_Mu(std::vector<snu::KMuon> MuColl, std::v
   
 }
 
-int Aug2017_MuFakeMCStudy::NPromptFake_Ele(std::vector<snu::KElectron> EleColl, std::vector<snu::KTruth> truthColl, TString Option){
+int Mar2018_ForMuPOGSlot::NPromptFake_Ele(std::vector<snu::KElectron> EleColl, std::vector<snu::KTruth> truthColl, TString Option){
 
    int Nprompt=0, Nfake=0;
 
@@ -3111,7 +3266,7 @@ int Aug2017_MuFakeMCStudy::NPromptFake_Ele(std::vector<snu::KElectron> EleColl, 
 
 
 
-bool Aug2017_MuFakeMCStudy::IsConvCand(snu::KElectron Ele, std::vector<snu::KTruth> TruthColl, TString Option){
+bool Mar2018_ForMuPOGSlot::IsConvCand(snu::KElectron Ele, std::vector<snu::KTruth> TruthColl, TString Option){
 
   bool IsConversionCandidate=false;
   int EleType=GetLeptonType(Ele, TruthColl);
@@ -3137,7 +3292,7 @@ bool Aug2017_MuFakeMCStudy::IsConvCand(snu::KElectron Ele, std::vector<snu::KTru
 
 
 
-void Aug2017_MuFakeMCStudy::FillCutFlow(TString cut, float weight){
+void Mar2018_ForMuPOGSlot::FillCutFlow(TString cut, float weight){
   
   if(GetHist("cutflow_W") && GetHist("cutflow_N")){
     GetHist("cutflow_W")->Fill(cut,weight);
@@ -3177,7 +3332,7 @@ void Aug2017_MuFakeMCStudy::FillCutFlow(TString cut, float weight){
 
 
 
-void Aug2017_MuFakeMCStudy::BeginEvent( )throw( LQError ){
+void Mar2018_ForMuPOGSlot::BeginEvent( )throw( LQError ){
 
   Message("In BeginEvent() " , DEBUG);
 
@@ -3185,7 +3340,7 @@ void Aug2017_MuFakeMCStudy::BeginEvent( )throw( LQError ){
 }
 
 
-void Aug2017_MuFakeMCStudy::MakeHistograms(){
+void Mar2018_ForMuPOGSlot::MakeHistograms(){
   //// Additional plots to make
     
   maphist.clear();
@@ -3198,14 +3353,14 @@ void Aug2017_MuFakeMCStudy::MakeHistograms(){
 
   Message("Made histograms", INFO);
   // **
-  // *  Remove//Overide this Aug2017_MuFakeMCStudyCore::MakeHistograms() to make new hists for your analysis
+  // *  Remove//Overide this Mar2018_ForMuPOGSlotCore::MakeHistograms() to make new hists for your analysis
   // **
   
 }
 
 
 
-void Aug2017_MuFakeMCStudy::ClearOutputVectors() throw(LQError) {
+void Mar2018_ForMuPOGSlot::ClearOutputVectors() throw(LQError) {
 
   // This function is called before every execute event (NO need to call this yourself.
   
