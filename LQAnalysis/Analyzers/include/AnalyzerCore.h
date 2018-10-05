@@ -453,6 +453,7 @@ class AnalyzerCore : public LQCycleBase {
   int  LastSelfMotherIdx(int TruthIdx, std::vector<snu::KTruth>& TruthColl);
   bool HasHadronicAncestor(int TruthIdx, std::vector<snu::KTruth>& TruthColl);
   bool IsFinalPhotonSt23(std::vector<snu::KTruth> TruthColl);
+  int  GetPartonType(int TruthIdx, std::vector<snu::KTruth>& TruthColl, TString Option="");
   int  GetLeptonType(int TruthIdx, std::vector<snu::KTruth>& TruthColl, TString Option="");
   int  GetLeptonType(snu::KElectron El, std::vector<snu::KTruth>& TruthColl, TString Option="");
   int  GetLeptonType(snu::KMuon Mu, std::vector<snu::KTruth>& TruthColl, TString Option="");
@@ -468,6 +469,7 @@ class AnalyzerCore : public LQCycleBase {
   std::vector<snu::KElectron> SelEndcapElectrons(std::vector<snu::KElectron>& electronColl);
   int    SumCharge       (std::vector<snu::KMuon>& MuonColl);
   int    TriMuChargeIndex(std::vector<snu::KMuon>& MuonColl, TString charge);
+  int    TriMuChargeIndex(std::vector<snu::KMuon>& MuonColl, float MET, float METx, float METy, TString charge);
   double GetvPz  (snu::KParticle v, snu::KElectron e, int pm);
   double GetvPz  (snu::KParticle v, snu::KMuon mu, int pm);
   double GetAngle(snu::KElectron e, snu::KMuon mu);

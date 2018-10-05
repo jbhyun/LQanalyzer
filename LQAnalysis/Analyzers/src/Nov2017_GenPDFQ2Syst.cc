@@ -73,13 +73,14 @@ void Nov2017_GenPDFQ2Syst::ExecuteEvents()throw( LQError ){
 
    bool EMuMu=false, TriMu=false, MultiLep=false;
    bool CutOpt=false, ObsExpComp=false, SRYield=false, MAWinOpt=false;
-   bool SRDist=false;
+   bool BkdRun=false;
    bool SystRun=false, PDFQ2Syst=false, TopPtCheck=false, LOvsNLOBias=false, GenFilterBias=false;
    for(int i=0; i<(int) k_flags.size(); i++){
      if     (k_flags.at(i).Contains("EMuMu"))         EMuMu         = true;
      else if(k_flags.at(i).Contains("TriMu"))         TriMu         = true;
      else if(k_flags.at(i).Contains("MultiLep"))      MultiLep      = true;
      else if(k_flags.at(i).Contains("SystRun"))       SystRun       = true;
+     else if(k_flags.at(i).Contains("BkdRun"))        BkdRun        = true;
      else if(k_flags.at(i).Contains("PDFQ2Syst"))     PDFQ2Syst     = true;
      else if(k_flags.at(i).Contains("TopPtCheck"))    TopPtCheck    = true;
      else if(k_flags.at(i).Contains("LOvsNLOBias"))   LOvsNLOBias   = true;
@@ -91,27 +92,17 @@ void Nov2017_GenPDFQ2Syst::ExecuteEvents()throw( LQError ){
    std::vector<float> NNPDF30LOAS0130WVec;
 
    //Norm Count
-   if(PDFQ2Syst){
+   if(PDFQ2Syst && !BkdRun){
      std::vector<float> PDFWVec  = eventbase->GetEvent().PdfWeights();
      std::vector<float> ScaleWVec= eventbase->GetEvent().ScaleWeights();
 
-//     LOPDFIdxVec.push_back(0   );//Default PDF
-//     LOPDFIdxVec.push_back(332 );//CT14LO
-//     LOPDFIdxVec.push_back(435 );//MMHT2014LO68CL
-//     LOPDFIdxVec.push_back(1067);//NNPDF31_LO_AS_0118
-//     LOPDFIdxVec.push_back(1068);//NNPDF31_LO_AS_0130
-//     LOPDFIdxVec.push_back(1069);//NNPDF30_LO_AS_0118
-//     LOPDFIdxVec.push_back(1070);//NNPDF30_LO_AS_0130
-//     LOPDFIdxVec.push_back(1172);
-//     LOPDFIdxVec.push_back(1173);
-
-     LOPDFWVec.push_back(PDFWVec.at(0));
-     LOPDFWVec.push_back(PDFWVec.at(332));
-     LOPDFWVec.push_back(PDFWVec.at(435));
-     LOPDFWVec.push_back(PDFWVec.at(1067));
-     LOPDFWVec.push_back(PDFWVec.at(1068));
-     LOPDFWVec.push_back(PDFWVec.at(1069));
-     LOPDFWVec.push_back(PDFWVec.at(1070));
+     LOPDFWVec.push_back(PDFWVec.at(0));   //Default PDF
+     LOPDFWVec.push_back(PDFWVec.at(332)); //CT14LO
+     LOPDFWVec.push_back(PDFWVec.at(435)); //MMHT2014LO68CL
+     LOPDFWVec.push_back(PDFWVec.at(1067));//NNPDF31_LO_AS_0118
+     LOPDFWVec.push_back(PDFWVec.at(1068));//NNPDF31_LO_AS_0130
+     LOPDFWVec.push_back(PDFWVec.at(1069));//NNPDF30_LO_AS_0118
+     LOPDFWVec.push_back(PDFWVec.at(1070));//NNPDF30_LO_AS_0130
      LOPDFWVec.push_back(PDFWVec.at(1172)/PDFWVec.at(0)*PDFWVec.at(1070));
      LOPDFWVec.push_back(PDFWVec.at(1173)/PDFWVec.at(0)*PDFWVec.at(1070));
 
@@ -122,49 +113,108 @@ void Nov2017_GenPDFQ2Syst::ExecuteEvents()throw( LQError ){
 
      for(int it_Q2=0; it_Q2<(int) ScaleWVec.size()+1; it_Q2++){
        if(it_Q2==0){
-         FillHist("Norm_Q2_M12to40", it_Q2+0.0001, weight*PDFWVec.at(it_Q2), 0., 7., 7);
+         FillHist("Norm_Q2_M12to80", it_Q2+0.0001, weight*PDFWVec.at(it_Q2), 0., 7., 7);
          FillHist("Norm_Q2_M15"    , it_Q2+0.0001, weight*PDFWVec.at(it_Q2), 0., 7., 7);
-         FillHist("Norm_Q2_M20"    , it_Q2+0.0001, weight*PDFWVec.at(it_Q2), 0., 7., 7);
          FillHist("Norm_Q2_M25"    , it_Q2+0.0001, weight*PDFWVec.at(it_Q2), 0., 7., 7);
-         FillHist("Norm_Q2_M30"    , it_Q2+0.0001, weight*PDFWVec.at(it_Q2), 0., 7., 7);
          FillHist("Norm_Q2_M35"    , it_Q2+0.0001, weight*PDFWVec.at(it_Q2), 0., 7., 7);
+         FillHist("Norm_Q2_M45"    , it_Q2+0.0001, weight*PDFWVec.at(it_Q2), 0., 7., 7);
+         FillHist("Norm_Q2_M55"    , it_Q2+0.0001, weight*PDFWVec.at(it_Q2), 0., 7., 7);
+         FillHist("Norm_Q2_M65"    , it_Q2+0.0001, weight*PDFWVec.at(it_Q2), 0., 7., 7);
+         FillHist("Norm_Q2_M75"    , it_Q2+0.0001, weight*PDFWVec.at(it_Q2), 0., 7., 7);
        }
        else{
-         FillHist("Norm_Q2_M12to40", it_Q2+0.0001, weight*ScaleWVec.at(it_Q2-1), 0., 7., 7);
+         FillHist("Norm_Q2_M12to80", it_Q2+0.0001, weight*ScaleWVec.at(it_Q2-1), 0., 7., 7);
          FillHist("Norm_Q2_M15"    , it_Q2+0.0001, weight*ScaleWVec.at(it_Q2-1), 0., 7., 7);
-         FillHist("Norm_Q2_M20"    , it_Q2+0.0001, weight*ScaleWVec.at(it_Q2-1), 0., 7., 7);
          FillHist("Norm_Q2_M25"    , it_Q2+0.0001, weight*ScaleWVec.at(it_Q2-1), 0., 7., 7);
-         FillHist("Norm_Q2_M30"    , it_Q2+0.0001, weight*ScaleWVec.at(it_Q2-1), 0., 7., 7);
          FillHist("Norm_Q2_M35"    , it_Q2+0.0001, weight*ScaleWVec.at(it_Q2-1), 0., 7., 7);
+         FillHist("Norm_Q2_M45"    , it_Q2+0.0001, weight*ScaleWVec.at(it_Q2-1), 0., 7., 7);
+         FillHist("Norm_Q2_M55"    , it_Q2+0.0001, weight*ScaleWVec.at(it_Q2-1), 0., 7., 7);
+         FillHist("Norm_Q2_M65"    , it_Q2+0.0001, weight*ScaleWVec.at(it_Q2-1), 0., 7., 7);
+         FillHist("Norm_Q2_M75"    , it_Q2+0.0001, weight*ScaleWVec.at(it_Q2-1), 0., 7., 7);
        }
      }
 
      for(int it_pdf=0; it_pdf<101; it_pdf++){
      //for(int it_pdf=0; it_pdf<102; it_pdf++){
-       FillHist("Norm_PDF_M12to40", it_pdf+0.0001, weight*PDFWVec.at(it_pdf), 0., 102., 102);
+       FillHist("Norm_PDF_M12to80", it_pdf+0.0001, weight*PDFWVec.at(it_pdf), 0., 102., 102);
        FillHist("Norm_PDF_M15"    , it_pdf+0.0001, weight*PDFWVec.at(it_pdf), 0., 102., 102);
-       FillHist("Norm_PDF_M20"    , it_pdf+0.0001, weight*PDFWVec.at(it_pdf), 0., 102., 102);
        FillHist("Norm_PDF_M25"    , it_pdf+0.0001, weight*PDFWVec.at(it_pdf), 0., 102., 102);
-       FillHist("Norm_PDF_M30"    , it_pdf+0.0001, weight*PDFWVec.at(it_pdf), 0., 102., 102);
        FillHist("Norm_PDF_M35"    , it_pdf+0.0001, weight*PDFWVec.at(it_pdf), 0., 102., 102);
+       FillHist("Norm_PDF_M45"    , it_pdf+0.0001, weight*PDFWVec.at(it_pdf), 0., 102., 102);
+       FillHist("Norm_PDF_M55"    , it_pdf+0.0001, weight*PDFWVec.at(it_pdf), 0., 102., 102);
+       FillHist("Norm_PDF_M65"    , it_pdf+0.0001, weight*PDFWVec.at(it_pdf), 0., 102., 102);
+       FillHist("Norm_PDF_M75"    , it_pdf+0.0001, weight*PDFWVec.at(it_pdf), 0., 102., 102);
      }
      for(int it_pdf=0; it_pdf<(int) NNPDF30LOAS0130WVec.size(); it_pdf++){
-       FillHist("Norm_NNPDFLO_M12to40", it_pdf+0.0001, weight*NNPDF30LOAS0130WVec.at(it_pdf), 0., 102., 102);
+       FillHist("Norm_NNPDFLO_M12to80", it_pdf+0.0001, weight*NNPDF30LOAS0130WVec.at(it_pdf), 0., 102., 102);
        FillHist("Norm_NNPDFLO_M15"    , it_pdf+0.0001, weight*NNPDF30LOAS0130WVec.at(it_pdf), 0., 102., 102);
-       FillHist("Norm_NNPDFLO_M20"    , it_pdf+0.0001, weight*NNPDF30LOAS0130WVec.at(it_pdf), 0., 102., 102);
        FillHist("Norm_NNPDFLO_M25"    , it_pdf+0.0001, weight*NNPDF30LOAS0130WVec.at(it_pdf), 0., 102., 102);
-       FillHist("Norm_NNPDFLO_M30"    , it_pdf+0.0001, weight*NNPDF30LOAS0130WVec.at(it_pdf), 0., 102., 102);
        FillHist("Norm_NNPDFLO_M35"    , it_pdf+0.0001, weight*NNPDF30LOAS0130WVec.at(it_pdf), 0., 102., 102);
+       FillHist("Norm_NNPDFLO_M45"    , it_pdf+0.0001, weight*NNPDF30LOAS0130WVec.at(it_pdf), 0., 102., 102);
+       FillHist("Norm_NNPDFLO_M55"    , it_pdf+0.0001, weight*NNPDF30LOAS0130WVec.at(it_pdf), 0., 102., 102);
+       FillHist("Norm_NNPDFLO_M65"    , it_pdf+0.0001, weight*NNPDF30LOAS0130WVec.at(it_pdf), 0., 102., 102);
+       FillHist("Norm_NNPDFLO_M75"    , it_pdf+0.0001, weight*NNPDF30LOAS0130WVec.at(it_pdf), 0., 102., 102);
      }
      for(int it_pdf=0; it_pdf<(int) LOPDFWVec.size(); it_pdf++){
-       FillHist("Norm_LOPDF_M12to40", it_pdf+0.0001, weight*LOPDFWVec.at(it_pdf), 0., 10., 10);
+       FillHist("Norm_LOPDF_M12to80", it_pdf+0.0001, weight*LOPDFWVec.at(it_pdf), 0., 10., 10);
        FillHist("Norm_LOPDF_M15"    , it_pdf+0.0001, weight*LOPDFWVec.at(it_pdf), 0., 10., 10);
-       FillHist("Norm_LOPDF_M20"    , it_pdf+0.0001, weight*LOPDFWVec.at(it_pdf), 0., 10., 10);
        FillHist("Norm_LOPDF_M25"    , it_pdf+0.0001, weight*LOPDFWVec.at(it_pdf), 0., 10., 10);
-       FillHist("Norm_LOPDF_M30"    , it_pdf+0.0001, weight*LOPDFWVec.at(it_pdf), 0., 10., 10);
        FillHist("Norm_LOPDF_M35"    , it_pdf+0.0001, weight*LOPDFWVec.at(it_pdf), 0., 10., 10);
+       FillHist("Norm_LOPDF_M45"    , it_pdf+0.0001, weight*LOPDFWVec.at(it_pdf), 0., 10., 10);
+       FillHist("Norm_LOPDF_M55"    , it_pdf+0.0001, weight*LOPDFWVec.at(it_pdf), 0., 10., 10);
+       FillHist("Norm_LOPDF_M65"    , it_pdf+0.0001, weight*LOPDFWVec.at(it_pdf), 0., 10., 10);
+       FillHist("Norm_LOPDF_M75"    , it_pdf+0.0001, weight*LOPDFWVec.at(it_pdf), 0., 10., 10);
      }
    }
+
+   if(PDFQ2Syst && BkdRun){
+     std::vector<float> PDFWVec  = eventbase->GetEvent().PdfWeights();
+     std::vector<float> ScaleWVec= eventbase->GetEvent().ScaleWeights();
+
+
+     for(int it_Q2=0; it_Q2<(int) ScaleWVec.size()+1; it_Q2++){
+       float FillW = it_Q2==0? PDFWVec.at(it_Q2):ScaleWVec.at(it_Q2-1);
+       FillHist("Norm_Q2_M12to80", it_Q2+0.0001, weight*FillW, 0., 7., 7);
+       FillHist("Norm_Q2_M15"    , it_Q2+0.0001, weight*FillW, 0., 7., 7);
+       FillHist("Norm_Q2_M25"    , it_Q2+0.0001, weight*FillW, 0., 7., 7);
+       FillHist("Norm_Q2_M35"    , it_Q2+0.0001, weight*FillW, 0., 7., 7);
+       FillHist("Norm_Q2_M45"    , it_Q2+0.0001, weight*FillW, 0., 7., 7);
+       FillHist("Norm_Q2_M55"    , it_Q2+0.0001, weight*FillW, 0., 7., 7);
+       FillHist("Norm_Q2_M65"    , it_Q2+0.0001, weight*FillW, 0., 7., 7);
+       FillHist("Norm_Q2_M75"    , it_Q2+0.0001, weight*FillW, 0., 7., 7);
+     }
+
+     for(int it_pdf=0; it_pdf<101; it_pdf++){
+       float FillW = PDFWVec.at(it_pdf);
+       FillHist("Norm_PDF_M12to80", it_pdf+0.0001, weight*FillW, 0., 102., 102);
+       FillHist("Norm_PDF_M15"    , it_pdf+0.0001, weight*FillW, 0., 102., 102);
+       FillHist("Norm_PDF_M25"    , it_pdf+0.0001, weight*FillW, 0., 102., 102);
+       FillHist("Norm_PDF_M35"    , it_pdf+0.0001, weight*FillW, 0., 102., 102);
+       FillHist("Norm_PDF_M45"    , it_pdf+0.0001, weight*FillW, 0., 102., 102);
+       FillHist("Norm_PDF_M55"    , it_pdf+0.0001, weight*FillW, 0., 102., 102);
+       FillHist("Norm_PDF_M65"    , it_pdf+0.0001, weight*FillW, 0., 102., 102);
+       FillHist("Norm_PDF_M75"    , it_pdf+0.0001, weight*FillW, 0., 102., 102);
+     }
+
+     if( k_sample_name.Contains("WZTo3LNu_powheg")
+       ||k_sample_name.Contains("ZZTo4L_powheg")
+       ||k_sample_name.Contains("ttH_nonbb") ){
+
+       for(int it_as=0; it_as<3; it_as++){
+         int IdxPDFVecAS = it_as==0? 0: it_as==1? 101: 102;
+         float FillW = PDFWVec.at(IdxPDFVecAS);
+         FillHist("Norm_alphas_M12to80", it_as+0.0001, weight*FillW, 0., 3., 3);
+         FillHist("Norm_alphas_M15"    , it_as+0.0001, weight*FillW, 0., 3., 3);
+         FillHist("Norm_alphas_M25"    , it_as+0.0001, weight*FillW, 0., 3., 3);
+         FillHist("Norm_alphas_M35"    , it_as+0.0001, weight*FillW, 0., 3., 3);
+         FillHist("Norm_alphas_M45"    , it_as+0.0001, weight*FillW, 0., 3., 3);
+         FillHist("Norm_alphas_M55"    , it_as+0.0001, weight*FillW, 0., 3., 3);
+         FillHist("Norm_alphas_M65"    , it_as+0.0001, weight*FillW, 0., 3., 3);
+         FillHist("Norm_alphas_M75"    , it_as+0.0001, weight*FillW, 0., 3., 3);
+       }
+     }
+   }
+
 
 
     
@@ -286,7 +336,7 @@ void Nov2017_GenPDFQ2Syst::ExecuteEvents()throw( LQError ){
 
      eventbase->GetElectronSel()->SetID(BaseSelection::ELECTRON_HctoWA_FAKELOOSE);
      eventbase->GetElectronSel()->SetHLTSafeCut("CaloIdL_TrackIdL_IsoVL");
-     eventbase->GetElectronSel()->SetPt(25.);                eventbase->GetElectronSel()->SetEta(2.5);
+     eventbase->GetElectronSel()->SetPt(10.);                eventbase->GetElectronSel()->SetEta(2.5);
      eventbase->GetElectronSel()->SetBETrRegIncl(false);     eventbase->GetElectronSel()->SetSCEta(2.5);
      eventbase->GetElectronSel()->SetRelIsoType("Default");  eventbase->GetElectronSel()->SetRelIsoBEMax(0.4, 0.4);
      eventbase->GetElectronSel()->SetdxyBEMax(0.025, 0.025); eventbase->GetElectronSel()->SetdzBEMax(0.1, 0.1);
@@ -376,14 +426,15 @@ void Nov2017_GenPDFQ2Syst::ExecuteEvents()throw( LQError ){
    //----------------------------------------------------------------------------------//
 
    if(PDFQ2Syst){
+     TString SigBkdRun = BkdRun? "BkdRun":"";
      if(EMuMu){
-       CheckGenPDFQ2Syst(muonColl, muonLooseColl, electronColl, electronLooseColl, jetColl, bjetColl, met, met*cos(metphi), met*sin(metphi), weight, "", "EMuMu");
+       CheckGenPDFQ2Syst(muonColl, muonLooseColl, electronColl, electronLooseColl, jetColl, bjetColl, met, met*cos(metphi), met*sin(metphi), weight, "", "EMuMu"+SigBkdRun);
      }
      if(TriMu){
-       CheckGenPDFQ2Syst(muonColl, muonLooseColl, electronColl, electronLooseColl, jetColl, bjetColl, met, met*cos(metphi), met*sin(metphi), weight, "", "TriMu");
+       CheckGenPDFQ2Syst(muonColl, muonLooseColl, electronColl, electronLooseColl, jetColl, bjetColl, met, met*cos(metphi), met*sin(metphi), weight, "", "TriMu"+SigBkdRun);
      }
      if(MultiLep){
-       CheckGenPDFQ2Syst(muonColl, muonLooseColl, electronColl, electronLooseColl, jetColl, bjetColl, met, met*cos(metphi), met*sin(metphi), weight, "", "MultiLep");
+       CheckGenPDFQ2Syst(muonColl, muonLooseColl, electronColl, electronLooseColl, jetColl, bjetColl, met, met*cos(metphi), met*sin(metphi), weight, "", "MultiLep"+SigBkdRun);
      }
    }
    if(TopPtCheck){
@@ -446,31 +497,27 @@ void Nov2017_GenPDFQ2Syst::CheckGenPDFQ2Syst(std::vector<snu::KMuon>& MuTColl, s
 
 
   bool EMuMu=Option.Contains("EMuMu"), TriMu=Option.Contains("TriMu"), MultiLep=Option.Contains("MultiLep");
+  bool BkdRun = Option.Contains("BkdRun");
   std::vector<float> PDFWVec  = eventbase->GetEvent().PdfWeights();
   std::vector<float> ScaleWVec= eventbase->GetEvent().ScaleWeights();
   std::vector<int> LOPDFIdxVec;
-//    LOPDFIdxVec.push_back(0   );//Default PDF
-//    LOPDFIdxVec.push_back(332 );//CT14LO
-//    LOPDFIdxVec.push_back(435 );//MMHT2014LO68CL
-//    LOPDFIdxVec.push_back(1067);//NNPDF31_LO_AS_0118
-//    LOPDFIdxVec.push_back(1068);//NNPDF31_LO_AS_0130
-//    LOPDFIdxVec.push_back(1069);//NNPDF30_LO_AS_0118
-//    LOPDFIdxVec.push_back(1070);//NNPDF30_LO_AS_0130
 
   std::vector<float> LOPDFWVec;
   std::vector<float> NNPDF30LOAS0130WVec;
-    LOPDFWVec.push_back(PDFWVec.at(0));
-    LOPDFWVec.push_back(PDFWVec.at(332));
-    LOPDFWVec.push_back(PDFWVec.at(435));
-    LOPDFWVec.push_back(PDFWVec.at(1067));
-    LOPDFWVec.push_back(PDFWVec.at(1068));
-    LOPDFWVec.push_back(PDFWVec.at(1069));
-    LOPDFWVec.push_back(PDFWVec.at(1070));
+  if(!BkdRun){
+    LOPDFWVec.push_back(PDFWVec.at(0));    //Default PDF
+    LOPDFWVec.push_back(PDFWVec.at(332));  //CT14LO
+    LOPDFWVec.push_back(PDFWVec.at(435));  //MMHT2014LO68CL
+    LOPDFWVec.push_back(PDFWVec.at(1067)); //NNPDF31_LO_AS_0118
+    LOPDFWVec.push_back(PDFWVec.at(1068)); //NNPDF31_LO_AS_0130
+    LOPDFWVec.push_back(PDFWVec.at(1069)); //NNPDF30_LO_AS_0118
+    LOPDFWVec.push_back(PDFWVec.at(1070)); //NNPDF30_LO_AS_0130
     LOPDFWVec.push_back(PDFWVec.at(1172)/PDFWVec.at(0)*PDFWVec.at(1070));
     LOPDFWVec.push_back(PDFWVec.at(1173)/PDFWVec.at(0)*PDFWVec.at(1070));
     for(int i=1071; i<=1171; i++){
       NNPDF30LOAS0130WVec.push_back(PDFWVec.at(i)/PDFWVec.at(0)*PDFWVec.at(1070));
     }
+  }
 
 
   if(MultiLep){
@@ -538,7 +585,7 @@ void Nov2017_GenPDFQ2Syst::CheckGenPDFQ2Syst(std::vector<snu::KMuon>& MuTColl, s
     //Q2 Systematic
     for(int it_Q2=0; it_Q2<(int) ScaleWVec.size()+1; it_Q2++){
       if(it_Q2==0){
-        if( Mmumu>12 && Mmumu<40 ) FillHist("Count_Q2_M12to40", it_Q2+0.0001, weight*PDFWVec.at(it_Q2), 0., 7., 7);
+        if( Mmumu>12 && Mmumu<80 ) FillHist("Count_Q2_M12to80", it_Q2+0.0001, weight*PDFWVec.at(it_Q2), 0., 7., 7);
         if( fabs(Mmumu-15)<5     ) FillHist("Count_Q2_M15"    , it_Q2+0.0001, weight*PDFWVec.at(it_Q2), 0., 7., 7);
         if( fabs(Mmumu-20)<5     ) FillHist("Count_Q2_M20"    , it_Q2+0.0001, weight*PDFWVec.at(it_Q2), 0., 7., 7);
         if( fabs(Mmumu-25)<5     ) FillHist("Count_Q2_M25"    , it_Q2+0.0001, weight*PDFWVec.at(it_Q2), 0., 7., 7);
@@ -546,7 +593,7 @@ void Nov2017_GenPDFQ2Syst::CheckGenPDFQ2Syst(std::vector<snu::KMuon>& MuTColl, s
         if( fabs(Mmumu-35)<5     ) FillHist("Count_Q2_M35"    , it_Q2+0.0001, weight*PDFWVec.at(it_Q2), 0., 7., 7);
       }
       else{
-        if( Mmumu>12 && Mmumu<40 ) FillHist("Count_Q2_M12to40", it_Q2+0.0001, weight*ScaleWVec.at(it_Q2-1), 0., 7., 7);
+        if( Mmumu>12 && Mmumu<80 ) FillHist("Count_Q2_M12to80", it_Q2+0.0001, weight*ScaleWVec.at(it_Q2-1), 0., 7., 7);
         if( fabs(Mmumu-15)<5     ) FillHist("Count_Q2_M15"    , it_Q2+0.0001, weight*ScaleWVec.at(it_Q2-1), 0., 7., 7);
         if( fabs(Mmumu-20)<5     ) FillHist("Count_Q2_M20"    , it_Q2+0.0001, weight*ScaleWVec.at(it_Q2-1), 0., 7., 7);
         if( fabs(Mmumu-25)<5     ) FillHist("Count_Q2_M25"    , it_Q2+0.0001, weight*ScaleWVec.at(it_Q2-1), 0., 7., 7);
@@ -557,7 +604,7 @@ void Nov2017_GenPDFQ2Syst::CheckGenPDFQ2Syst(std::vector<snu::KMuon>& MuTColl, s
 
     //PDF Systematic
     for(int it_pdf=0; it_pdf<102; it_pdf++){
-      if( Mmumu>12 && Mmumu<40 ) FillHist("Count_PDF_M12to40", it_pdf+0.0001, weight*PDFWVec.at(it_pdf), 0., 102., 102);
+      if( Mmumu>12 && Mmumu<80 ) FillHist("Count_PDF_M12to80", it_pdf+0.0001, weight*PDFWVec.at(it_pdf), 0., 102., 102);
       if( fabs(Mmumu-15)<5     ) FillHist("Count_PDF_M15"    , it_pdf+0.0001, weight*PDFWVec.at(it_pdf), 0., 102., 102);
       if( fabs(Mmumu-20)<5     ) FillHist("Count_PDF_M20"    , it_pdf+0.0001, weight*PDFWVec.at(it_pdf), 0., 102., 102);
       if( fabs(Mmumu-25)<5     ) FillHist("Count_PDF_M25"    , it_pdf+0.0001, weight*PDFWVec.at(it_pdf), 0., 102., 102);
@@ -583,49 +630,80 @@ void Nov2017_GenPDFQ2Syst::CheckGenPDFQ2Syst(std::vector<snu::KMuon>& MuTColl, s
     //Q2Scale Systematic
     for(int it_Q2=0; it_Q2<(int) ScaleWVec.size()+1; it_Q2++){
       if(it_Q2==0){
-        if( Mmumu>12 && Mmumu<40 ) FillHist("Count_Q2_M12to40", it_Q2+0.0001, weight*PDFWVec.at(it_Q2), 0., 7., 7);
-        if( fabs(Mmumu-15)<2.5   ) FillHist("Count_Q2_M15"    , it_Q2+0.0001, weight*PDFWVec.at(it_Q2), 0., 7., 7);
-        if( fabs(Mmumu-20)<2.5   ) FillHist("Count_Q2_M20"    , it_Q2+0.0001, weight*PDFWVec.at(it_Q2), 0., 7., 7);
-        if( fabs(Mmumu-25)<2.5   ) FillHist("Count_Q2_M25"    , it_Q2+0.0001, weight*PDFWVec.at(it_Q2), 0., 7., 7);
-        if( fabs(Mmumu-30)<2.5   ) FillHist("Count_Q2_M30"    , it_Q2+0.0001, weight*PDFWVec.at(it_Q2), 0., 7., 7);
-        if( fabs(Mmumu-35)<2.5   ) FillHist("Count_Q2_M35"    , it_Q2+0.0001, weight*PDFWVec.at(it_Q2), 0., 7., 7);
+        if( Mmumu>12 && Mmumu<80 ) FillHist("Count_Q2_M12to80", it_Q2+0.0001, weight*PDFWVec.at(it_Q2), 0., 7., 7);
+        if( fabs(Mmumu-15)<1.0   ) FillHist("Count_Q2_M15"    , it_Q2+0.0001, weight*PDFWVec.at(it_Q2), 0., 7., 7);
+        if( fabs(Mmumu-25)<1.0   ) FillHist("Count_Q2_M25"    , it_Q2+0.0001, weight*PDFWVec.at(it_Q2), 0., 7., 7);
+        if( fabs(Mmumu-35)<1.3   ) FillHist("Count_Q2_M35"    , it_Q2+0.0001, weight*PDFWVec.at(it_Q2), 0., 7., 7);
+        if( fabs(Mmumu-45)<1.5   ) FillHist("Count_Q2_M45"    , it_Q2+0.0001, weight*PDFWVec.at(it_Q2), 0., 7., 7);
+        if( fabs(Mmumu-55)<1.5   ) FillHist("Count_Q2_M55"    , it_Q2+0.0001, weight*PDFWVec.at(it_Q2), 0., 7., 7);
+        if( fabs(Mmumu-65)<2.0   ) FillHist("Count_Q2_M65"    , it_Q2+0.0001, weight*PDFWVec.at(it_Q2), 0., 7., 7);
+        if( fabs(Mmumu-75)<2.5   ) FillHist("Count_Q2_M75"    , it_Q2+0.0001, weight*PDFWVec.at(it_Q2), 0., 7., 7);
       }
       else{
-        if( Mmumu>12 && Mmumu<40 ) FillHist("Count_Q2_M12to40", it_Q2+0.0001, weight*ScaleWVec.at(it_Q2-1), 0., 7., 7);
-        if( fabs(Mmumu-15)<2.5   ) FillHist("Count_Q2_M15"    , it_Q2+0.0001, weight*ScaleWVec.at(it_Q2-1), 0., 7., 7);
-        if( fabs(Mmumu-20)<2.5   ) FillHist("Count_Q2_M20"    , it_Q2+0.0001, weight*ScaleWVec.at(it_Q2-1), 0., 7., 7);
-        if( fabs(Mmumu-25)<2.5   ) FillHist("Count_Q2_M25"    , it_Q2+0.0001, weight*ScaleWVec.at(it_Q2-1), 0., 7., 7);
-        if( fabs(Mmumu-30)<2.5   ) FillHist("Count_Q2_M30"    , it_Q2+0.0001, weight*ScaleWVec.at(it_Q2-1), 0., 7., 7);
-        if( fabs(Mmumu-35)<2.5   ) FillHist("Count_Q2_M35"    , it_Q2+0.0001, weight*ScaleWVec.at(it_Q2-1), 0., 7., 7);
+        if( Mmumu>12 && Mmumu<80 ) FillHist("Count_Q2_M12to80", it_Q2+0.0001, weight*ScaleWVec.at(it_Q2-1), 0., 7., 7);
+        if( fabs(Mmumu-15)<1.0   ) FillHist("Count_Q2_M15"    , it_Q2+0.0001, weight*ScaleWVec.at(it_Q2-1), 0., 7., 7);
+        if( fabs(Mmumu-25)<1.0   ) FillHist("Count_Q2_M25"    , it_Q2+0.0001, weight*ScaleWVec.at(it_Q2-1), 0., 7., 7);
+        if( fabs(Mmumu-35)<1.3   ) FillHist("Count_Q2_M35"    , it_Q2+0.0001, weight*ScaleWVec.at(it_Q2-1), 0., 7., 7);
+        if( fabs(Mmumu-45)<1.5   ) FillHist("Count_Q2_M45"    , it_Q2+0.0001, weight*ScaleWVec.at(it_Q2-1), 0., 7., 7);
+        if( fabs(Mmumu-55)<1.5   ) FillHist("Count_Q2_M55"    , it_Q2+0.0001, weight*ScaleWVec.at(it_Q2-1), 0., 7., 7);
+        if( fabs(Mmumu-65)<2.0   ) FillHist("Count_Q2_M65"    , it_Q2+0.0001, weight*ScaleWVec.at(it_Q2-1), 0., 7., 7);
+        if( fabs(Mmumu-75)<2.5   ) FillHist("Count_Q2_M75"    , it_Q2+0.0001, weight*ScaleWVec.at(it_Q2-1), 0., 7., 7);
       }
     }
 
     //PDF Systematic
-    for(int it_pdf=0; it_pdf<102; it_pdf++){
-      if( Mmumu>12 && Mmumu<40 ) FillHist("Count_PDF_M12to40", it_pdf+0.0001, weight*PDFWVec.at(it_pdf), 0., 102., 102);
-      if( fabs(Mmumu-15)<2.5   ) FillHist("Count_PDF_M15"    , it_pdf+0.0001, weight*PDFWVec.at(it_pdf), 0., 102., 102);
-      if( fabs(Mmumu-20)<2.5   ) FillHist("Count_PDF_M20"    , it_pdf+0.0001, weight*PDFWVec.at(it_pdf), 0., 102., 102);
-      if( fabs(Mmumu-25)<2.5   ) FillHist("Count_PDF_M25"    , it_pdf+0.0001, weight*PDFWVec.at(it_pdf), 0., 102., 102);
-      if( fabs(Mmumu-30)<2.5   ) FillHist("Count_PDF_M30"    , it_pdf+0.0001, weight*PDFWVec.at(it_pdf), 0., 102., 102);
-      if( fabs(Mmumu-35)<2.5   ) FillHist("Count_PDF_M35"    , it_pdf+0.0001, weight*PDFWVec.at(it_pdf), 0., 102., 102);
+    for(int it_pdf=0; it_pdf<101; it_pdf++){
+      if( Mmumu>12 && Mmumu<80 ) FillHist("Count_PDF_M12to80", it_pdf+0.0001, weight*PDFWVec.at(it_pdf), 0., 102., 102);
+      if( fabs(Mmumu-15)<1.0   ) FillHist("Count_PDF_M15"    , it_pdf+0.0001, weight*PDFWVec.at(it_pdf), 0., 102., 102);
+      if( fabs(Mmumu-25)<1.0   ) FillHist("Count_PDF_M25"    , it_pdf+0.0001, weight*PDFWVec.at(it_pdf), 0., 102., 102);
+      if( fabs(Mmumu-35)<1.3   ) FillHist("Count_PDF_M35"    , it_pdf+0.0001, weight*PDFWVec.at(it_pdf), 0., 102., 102);
+      if( fabs(Mmumu-45)<1.5   ) FillHist("Count_PDF_M45"    , it_pdf+0.0001, weight*PDFWVec.at(it_pdf), 0., 102., 102);
+      if( fabs(Mmumu-55)<1.5   ) FillHist("Count_PDF_M55"    , it_pdf+0.0001, weight*PDFWVec.at(it_pdf), 0., 102., 102);
+      if( fabs(Mmumu-65)<2.0   ) FillHist("Count_PDF_M65"    , it_pdf+0.0001, weight*PDFWVec.at(it_pdf), 0., 102., 102);
+      if( fabs(Mmumu-75)<2.5   ) FillHist("Count_PDF_M75"    , it_pdf+0.0001, weight*PDFWVec.at(it_pdf), 0., 102., 102);
     }
 
-    //Different PDF Systematic
-    for(int it_pdf=0; it_pdf<(int) NNPDF30LOAS0130WVec.size(); it_pdf++){
-      if( Mmumu>12 && Mmumu<40 ) FillHist("Count_NNPDFLO_M12to40", it_pdf+0.0001, weight*NNPDF30LOAS0130WVec.at(it_pdf), 0., 102., 102);
-      if( fabs(Mmumu-15)<2.5   ) FillHist("Count_NNPDFLO_M15"    , it_pdf+0.0001, weight*NNPDF30LOAS0130WVec.at(it_pdf), 0., 102., 102);
-      if( fabs(Mmumu-20)<2.5   ) FillHist("Count_NNPDFLO_M20"    , it_pdf+0.0001, weight*NNPDF30LOAS0130WVec.at(it_pdf), 0., 102., 102);
-      if( fabs(Mmumu-25)<2.5   ) FillHist("Count_NNPDFLO_M25"    , it_pdf+0.0001, weight*NNPDF30LOAS0130WVec.at(it_pdf), 0., 102., 102);
-      if( fabs(Mmumu-30)<2.5   ) FillHist("Count_NNPDFLO_M30"    , it_pdf+0.0001, weight*NNPDF30LOAS0130WVec.at(it_pdf), 0., 102., 102);
-      if( fabs(Mmumu-35)<2.5   ) FillHist("Count_NNPDFLO_M35"    , it_pdf+0.0001, weight*NNPDF30LOAS0130WVec.at(it_pdf), 0., 102., 102);
+
+    if(!BkdRun){
+      //Different PDF Systematic
+      for(int it_pdf=0; it_pdf<(int) NNPDF30LOAS0130WVec.size(); it_pdf++){
+        if( Mmumu>12 && Mmumu<80 ) FillHist("Count_NNPDFLO_M12to80", it_pdf+0.0001, weight*NNPDF30LOAS0130WVec.at(it_pdf), 0., 102., 102);
+        if( fabs(Mmumu-15)<1.0   ) FillHist("Count_NNPDFLO_M15"    , it_pdf+0.0001, weight*NNPDF30LOAS0130WVec.at(it_pdf), 0., 102., 102);
+        if( fabs(Mmumu-25)<1.0   ) FillHist("Count_NNPDFLO_M25"    , it_pdf+0.0001, weight*NNPDF30LOAS0130WVec.at(it_pdf), 0., 102., 102);
+        if( fabs(Mmumu-35)<1.3   ) FillHist("Count_NNPDFLO_M35"    , it_pdf+0.0001, weight*NNPDF30LOAS0130WVec.at(it_pdf), 0., 102., 102);
+        if( fabs(Mmumu-45)<1.5   ) FillHist("Count_NNPDFLO_M45"    , it_pdf+0.0001, weight*NNPDF30LOAS0130WVec.at(it_pdf), 0., 102., 102);
+        if( fabs(Mmumu-55)<1.5   ) FillHist("Count_NNPDFLO_M55"    , it_pdf+0.0001, weight*NNPDF30LOAS0130WVec.at(it_pdf), 0., 102., 102);
+        if( fabs(Mmumu-65)<2.0   ) FillHist("Count_NNPDFLO_M65"    , it_pdf+0.0001, weight*NNPDF30LOAS0130WVec.at(it_pdf), 0., 102., 102);
+        if( fabs(Mmumu-75)<2.5   ) FillHist("Count_NNPDFLO_M75"    , it_pdf+0.0001, weight*NNPDF30LOAS0130WVec.at(it_pdf), 0., 102., 102);
+      }
+      for(int it_pdf=0; it_pdf<(int) LOPDFWVec.size(); it_pdf++){
+        if( Mmumu>12 && Mmumu<80 ) FillHist("Count_LOPDF_M12to80", it_pdf+0.0001, weight*LOPDFWVec.at(it_pdf), 0., 10., 10);
+        if( fabs(Mmumu-15)<1.0   ) FillHist("Count_LOPDF_M15"    , it_pdf+0.0001, weight*LOPDFWVec.at(it_pdf), 0., 10., 10);
+        if( fabs(Mmumu-25)<1.0   ) FillHist("Count_LOPDF_M25"    , it_pdf+0.0001, weight*LOPDFWVec.at(it_pdf), 0., 10., 10);
+        if( fabs(Mmumu-35)<1.3   ) FillHist("Count_LOPDF_M35"    , it_pdf+0.0001, weight*LOPDFWVec.at(it_pdf), 0., 10., 10);
+        if( fabs(Mmumu-45)<1.5   ) FillHist("Count_LOPDF_M45"    , it_pdf+0.0001, weight*LOPDFWVec.at(it_pdf), 0., 10., 10);
+        if( fabs(Mmumu-55)<1.5   ) FillHist("Count_LOPDF_M55"    , it_pdf+0.0001, weight*LOPDFWVec.at(it_pdf), 0., 10., 10);
+        if( fabs(Mmumu-65)<2.0   ) FillHist("Count_LOPDF_M65"    , it_pdf+0.0001, weight*LOPDFWVec.at(it_pdf), 0., 10., 10);
+        if( fabs(Mmumu-75)<2.5   ) FillHist("Count_LOPDF_M75"    , it_pdf+0.0001, weight*LOPDFWVec.at(it_pdf), 0., 10., 10);
+      }
     }
-    for(int it_pdf=0; it_pdf<(int) LOPDFWVec.size(); it_pdf++){
-      if( Mmumu>12 && Mmumu<40 ) FillHist("Count_LOPDF_M12to40", it_pdf+0.0001, weight*LOPDFWVec.at(it_pdf), 0., 10., 10);
-      if( fabs(Mmumu-15)<2.5   ) FillHist("Count_LOPDF_M15"    , it_pdf+0.0001, weight*LOPDFWVec.at(it_pdf), 0., 10., 10);
-      if( fabs(Mmumu-20)<2.5   ) FillHist("Count_LOPDF_M20"    , it_pdf+0.0001, weight*LOPDFWVec.at(it_pdf), 0., 10., 10);
-      if( fabs(Mmumu-25)<2.5   ) FillHist("Count_LOPDF_M25"    , it_pdf+0.0001, weight*LOPDFWVec.at(it_pdf), 0., 10., 10);
-      if( fabs(Mmumu-30)<2.5   ) FillHist("Count_LOPDF_M30"    , it_pdf+0.0001, weight*LOPDFWVec.at(it_pdf), 0., 10., 10);
-      if( fabs(Mmumu-35)<2.5   ) FillHist("Count_LOPDF_M35"    , it_pdf+0.0001, weight*LOPDFWVec.at(it_pdf), 0., 10., 10);
+    else{
+      if( k_sample_name.Contains("WZTo3LNu_powheg")
+        ||k_sample_name.Contains("ZZTo4L_powheg")
+        ||k_sample_name.Contains("ttH_nonbb") ){
+  
+        for(int it_as=0; it_as<3; it_as++){
+          int IdxPDFVecAS = it_as==0? 0: it_as==1? 101: 102;
+          if( Mmumu>12 && Mmumu<80 )  FillHist("Count_alphas_M12to80", it_as+0.0001, weight*PDFWVec.at(IdxPDFVecAS), 0., 3., 3);
+          if( fabs(Mmumu-15)<1.0   )  FillHist("Count_alphas_M15"    , it_as+0.0001, weight*PDFWVec.at(IdxPDFVecAS), 0., 3., 3);
+          if( fabs(Mmumu-25)<1.0   )  FillHist("Count_alphas_M25"    , it_as+0.0001, weight*PDFWVec.at(IdxPDFVecAS), 0., 3., 3);
+          if( fabs(Mmumu-35)<1.3   )  FillHist("Count_alphas_M35"    , it_as+0.0001, weight*PDFWVec.at(IdxPDFVecAS), 0., 3., 3);
+          if( fabs(Mmumu-45)<1.5   )  FillHist("Count_alphas_M45"    , it_as+0.0001, weight*PDFWVec.at(IdxPDFVecAS), 0., 3., 3);
+          if( fabs(Mmumu-55)<1.5   )  FillHist("Count_alphas_M55"    , it_as+0.0001, weight*PDFWVec.at(IdxPDFVecAS), 0., 3., 3);
+          if( fabs(Mmumu-65)<2.0   )  FillHist("Count_alphas_M65"    , it_as+0.0001, weight*PDFWVec.at(IdxPDFVecAS), 0., 3., 3);
+          if( fabs(Mmumu-75)<2.5   )  FillHist("Count_alphas_M75"    , it_as+0.0001, weight*PDFWVec.at(IdxPDFVecAS), 0., 3., 3);
+        }
+      }
     }
   }
   if(TriMu){
@@ -637,8 +715,11 @@ void Nov2017_GenPDFQ2Syst::CheckGenPDFQ2Syst(std::vector<snu::KMuon>& MuTColl, s
     int   IdxOS  = TriMuChargeIndex(MuTColl, "OS");
     int   IdxSS1 = TriMuChargeIndex(MuTColl, "SS1");
     int   IdxSS2 = TriMuChargeIndex(MuTColl, "SS2");
+    int   IdxSSA = TriMuChargeIndex(MuTColl, MET, METx, METy, "SSA");
     float MOSSS1 = (MuTColl.at(IdxOS)+MuTColl.at(IdxSS1)).M();
     float MOSSS2 = (MuTColl.at(IdxOS)+MuTColl.at(IdxSS2)).M();
+    float Mmumu  = (MuTColl.at(IdxOS)+MuTColl.at(IdxSSA)).M();
+
     if( !(MOSSS1>12 && MOSSS2>12) ) return;
     if( fabs(MOSSS1-91.2)<10 || fabs(MOSSS2-91.2)<10 ) return;
     if( BJetColl.size()==0 ) return;
@@ -647,50 +728,80 @@ void Nov2017_GenPDFQ2Syst::CheckGenPDFQ2Syst(std::vector<snu::KMuon>& MuTColl, s
     //Q2Scale Systematic
     for(int it_Q2=0; it_Q2<(int) ScaleWVec.size()+1; it_Q2++){
       if(it_Q2==0){
-        if( MOSSS2>12 && MOSSS2<40 ) FillHist("Count_Q2_M12to40", it_Q2+0.0001, weight*PDFWVec.at(it_Q2), 0., 7., 7);
-        if( fabs(MOSSS2-15)<2.5    ) FillHist("Count_Q2_M15"    , it_Q2+0.0001, weight*PDFWVec.at(it_Q2), 0., 7., 7);
-        if( fabs(MOSSS2-20)<2.5    ) FillHist("Count_Q2_M20"    , it_Q2+0.0001, weight*PDFWVec.at(it_Q2), 0., 7., 7);
-        if( fabs(MOSSS2-25)<2.5    ) FillHist("Count_Q2_M25"    , it_Q2+0.0001, weight*PDFWVec.at(it_Q2), 0., 7., 7);
-        if( fabs(MOSSS2-30)<2.5    ) FillHist("Count_Q2_M30"    , it_Q2+0.0001, weight*PDFWVec.at(it_Q2), 0., 7., 7);
-        if( fabs(MOSSS2-35)<2.5    ) FillHist("Count_Q2_M35"    , it_Q2+0.0001, weight*PDFWVec.at(it_Q2), 0., 7., 7);
+        if( Mmumu>12 && Mmumu<80 ) FillHist("Count_Q2_M12to80", it_Q2+0.0001, weight*PDFWVec.at(it_Q2), 0., 7., 7);
+        if( fabs(Mmumu-15)<1.0    ) FillHist("Count_Q2_M15"    , it_Q2+0.0001, weight*PDFWVec.at(it_Q2), 0., 7., 7);
+        if( fabs(Mmumu-25)<1.0    ) FillHist("Count_Q2_M25"    , it_Q2+0.0001, weight*PDFWVec.at(it_Q2), 0., 7., 7);
+        if( fabs(Mmumu-35)<1.3    ) FillHist("Count_Q2_M35"    , it_Q2+0.0001, weight*PDFWVec.at(it_Q2), 0., 7., 7);
+        if( fabs(Mmumu-45)<1.5    ) FillHist("Count_Q2_M45"    , it_Q2+0.0001, weight*PDFWVec.at(it_Q2), 0., 7., 7);
+        if( fabs(Mmumu-55)<1.5    ) FillHist("Count_Q2_M55"    , it_Q2+0.0001, weight*PDFWVec.at(it_Q2), 0., 7., 7);
+        if( fabs(Mmumu-65)<2.0    ) FillHist("Count_Q2_M65"    , it_Q2+0.0001, weight*PDFWVec.at(it_Q2), 0., 7., 7);
+        if( fabs(Mmumu-75)<2.5    ) FillHist("Count_Q2_M75"    , it_Q2+0.0001, weight*PDFWVec.at(it_Q2), 0., 7., 7);
       }
       else{
-        if( MOSSS2>12 && MOSSS2<40 ) FillHist("Count_Q2_M12to40", it_Q2+0.0001, weight*ScaleWVec.at(it_Q2-1), 0., 7., 7);
-        if( fabs(MOSSS2-15)<2.5    ) FillHist("Count_Q2_M15"    , it_Q2+0.0001, weight*ScaleWVec.at(it_Q2-1), 0., 7., 7);
-        if( fabs(MOSSS2-20)<2.5    ) FillHist("Count_Q2_M20"    , it_Q2+0.0001, weight*ScaleWVec.at(it_Q2-1), 0., 7., 7);
-        if( fabs(MOSSS2-25)<2.5    ) FillHist("Count_Q2_M25"    , it_Q2+0.0001, weight*ScaleWVec.at(it_Q2-1), 0., 7., 7);
-        if( fabs(MOSSS2-30)<2.5    ) FillHist("Count_Q2_M30"    , it_Q2+0.0001, weight*ScaleWVec.at(it_Q2-1), 0., 7., 7);
-        if( fabs(MOSSS2-35)<2.5    ) FillHist("Count_Q2_M35"    , it_Q2+0.0001, weight*ScaleWVec.at(it_Q2-1), 0., 7., 7);
+        if( Mmumu>12 && Mmumu<80 ) FillHist("Count_Q2_M12to80", it_Q2+0.0001, weight*ScaleWVec.at(it_Q2-1), 0., 7., 7);
+        if( fabs(Mmumu-15)<1.0    ) FillHist("Count_Q2_M15"    , it_Q2+0.0001, weight*ScaleWVec.at(it_Q2-1), 0., 7., 7);
+        if( fabs(Mmumu-25)<1.0    ) FillHist("Count_Q2_M25"    , it_Q2+0.0001, weight*ScaleWVec.at(it_Q2-1), 0., 7., 7);
+        if( fabs(Mmumu-35)<1.3    ) FillHist("Count_Q2_M35"    , it_Q2+0.0001, weight*ScaleWVec.at(it_Q2-1), 0., 7., 7);
+        if( fabs(Mmumu-45)<1.5    ) FillHist("Count_Q2_M45"    , it_Q2+0.0001, weight*ScaleWVec.at(it_Q2-1), 0., 7., 7);
+        if( fabs(Mmumu-55)<1.5    ) FillHist("Count_Q2_M55"    , it_Q2+0.0001, weight*ScaleWVec.at(it_Q2-1), 0., 7., 7);
+        if( fabs(Mmumu-65)<2.0    ) FillHist("Count_Q2_M65"    , it_Q2+0.0001, weight*ScaleWVec.at(it_Q2-1), 0., 7., 7);
+        if( fabs(Mmumu-75)<2.5    ) FillHist("Count_Q2_M75"    , it_Q2+0.0001, weight*ScaleWVec.at(it_Q2-1), 0., 7., 7);
       }
     }
 
     //PDF Systematic
-    //for(int it_pdf=0; it_pdf<102; it_pdf++){
     for(int it_pdf=0; it_pdf<101; it_pdf++){
-      if( MOSSS2>12 && MOSSS2<40 ) FillHist("Count_PDF_M12to40", it_pdf+0.0001, weight*PDFWVec.at(it_pdf), 0., 102., 102);
-      if( fabs(MOSSS2-15)<2.5    ) FillHist("Count_PDF_M15"    , it_pdf+0.0001, weight*PDFWVec.at(it_pdf), 0., 102., 102);
-      if( fabs(MOSSS2-20)<2.5    ) FillHist("Count_PDF_M20"    , it_pdf+0.0001, weight*PDFWVec.at(it_pdf), 0., 102., 102);
-      if( fabs(MOSSS2-25)<2.5    ) FillHist("Count_PDF_M25"    , it_pdf+0.0001, weight*PDFWVec.at(it_pdf), 0., 102., 102);
-      if( fabs(MOSSS2-30)<2.5    ) FillHist("Count_PDF_M30"    , it_pdf+0.0001, weight*PDFWVec.at(it_pdf), 0., 102., 102);
-      if( fabs(MOSSS2-35)<2.5    ) FillHist("Count_PDF_M35"    , it_pdf+0.0001, weight*PDFWVec.at(it_pdf), 0., 102., 102);
+      if( Mmumu>12 && Mmumu<80 ) FillHist("Count_PDF_M12to80", it_pdf+0.0001, weight*PDFWVec.at(it_pdf), 0., 102., 102);
+      if( fabs(Mmumu-15)<1.0    ) FillHist("Count_PDF_M15"    , it_pdf+0.0001, weight*PDFWVec.at(it_pdf), 0., 102., 102);
+      if( fabs(Mmumu-25)<1.0    ) FillHist("Count_PDF_M25"    , it_pdf+0.0001, weight*PDFWVec.at(it_pdf), 0., 102., 102);
+      if( fabs(Mmumu-35)<1.3    ) FillHist("Count_PDF_M35"    , it_pdf+0.0001, weight*PDFWVec.at(it_pdf), 0., 102., 102);
+      if( fabs(Mmumu-45)<1.5    ) FillHist("Count_PDF_M45"    , it_pdf+0.0001, weight*PDFWVec.at(it_pdf), 0., 102., 102);
+      if( fabs(Mmumu-55)<1.5    ) FillHist("Count_PDF_M55"    , it_pdf+0.0001, weight*PDFWVec.at(it_pdf), 0., 102., 102);
+      if( fabs(Mmumu-65)<2.0    ) FillHist("Count_PDF_M65"    , it_pdf+0.0001, weight*PDFWVec.at(it_pdf), 0., 102., 102);
+      if( fabs(Mmumu-75)<2.5    ) FillHist("Count_PDF_M75"    , it_pdf+0.0001, weight*PDFWVec.at(it_pdf), 0., 102., 102);
     }
 
-    //Different PDF Systematic
-    for(int it_pdf=0; it_pdf<(int) NNPDF30LOAS0130WVec.size(); it_pdf++){
-      if( MOSSS2>12 && MOSSS2<40 ) FillHist("Count_NNPDFLO_M12to40", it_pdf+0.0001, weight*NNPDF30LOAS0130WVec.at(it_pdf), 0., 102., 102);
-      if( fabs(MOSSS2-15)<2.5    ) FillHist("Count_NNPDFLO_M15"    , it_pdf+0.0001, weight*NNPDF30LOAS0130WVec.at(it_pdf), 0., 102., 102);
-      if( fabs(MOSSS2-20)<2.5    ) FillHist("Count_NNPDFLO_M20"    , it_pdf+0.0001, weight*NNPDF30LOAS0130WVec.at(it_pdf), 0., 102., 102);
-      if( fabs(MOSSS2-25)<2.5    ) FillHist("Count_NNPDFLO_M25"    , it_pdf+0.0001, weight*NNPDF30LOAS0130WVec.at(it_pdf), 0., 102., 102);
-      if( fabs(MOSSS2-30)<2.5    ) FillHist("Count_NNPDFLO_M30"    , it_pdf+0.0001, weight*NNPDF30LOAS0130WVec.at(it_pdf), 0., 102., 102);
-      if( fabs(MOSSS2-35)<2.5    ) FillHist("Count_NNPDFLO_M35"    , it_pdf+0.0001, weight*NNPDF30LOAS0130WVec.at(it_pdf), 0., 102., 102);
+
+    if(!BkdRun){
+      //Different PDF Systematic
+      for(int it_pdf=0; it_pdf<(int) NNPDF30LOAS0130WVec.size(); it_pdf++){
+        if( Mmumu>12 && Mmumu<80 ) FillHist("Count_NNPDFLO_M12to80", it_pdf+0.0001, weight*NNPDF30LOAS0130WVec.at(it_pdf), 0., 102., 102);
+        if( fabs(Mmumu-15)<1.0    ) FillHist("Count_NNPDFLO_M15"    , it_pdf+0.0001, weight*NNPDF30LOAS0130WVec.at(it_pdf), 0., 102., 102);
+        if( fabs(Mmumu-25)<1.0    ) FillHist("Count_NNPDFLO_M25"    , it_pdf+0.0001, weight*NNPDF30LOAS0130WVec.at(it_pdf), 0., 102., 102);
+        if( fabs(Mmumu-35)<1.3    ) FillHist("Count_NNPDFLO_M35"    , it_pdf+0.0001, weight*NNPDF30LOAS0130WVec.at(it_pdf), 0., 102., 102);
+        if( fabs(Mmumu-45)<1.5    ) FillHist("Count_NNPDFLO_M45"    , it_pdf+0.0001, weight*NNPDF30LOAS0130WVec.at(it_pdf), 0., 102., 102);
+        if( fabs(Mmumu-55)<1.5    ) FillHist("Count_NNPDFLO_M55"    , it_pdf+0.0001, weight*NNPDF30LOAS0130WVec.at(it_pdf), 0., 102., 102);
+        if( fabs(Mmumu-65)<2.0    ) FillHist("Count_NNPDFLO_M65"    , it_pdf+0.0001, weight*NNPDF30LOAS0130WVec.at(it_pdf), 0., 102., 102);
+        if( fabs(Mmumu-75)<2.5    ) FillHist("Count_NNPDFLO_M75"    , it_pdf+0.0001, weight*NNPDF30LOAS0130WVec.at(it_pdf), 0., 102., 102);
+      }
+      for(int it_pdf=0; it_pdf<(int) LOPDFWVec.size(); it_pdf++){
+        if( Mmumu>12 && Mmumu<80 ) FillHist("Count_LOPDF_M12to80", it_pdf+0.0001, weight*LOPDFWVec.at(it_pdf), 0., 10., 10);
+        if( fabs(Mmumu-15)<1.0    ) FillHist("Count_LOPDF_M15"    , it_pdf+0.0001, weight*LOPDFWVec.at(it_pdf), 0., 10., 10);
+        if( fabs(Mmumu-25)<1.0    ) FillHist("Count_LOPDF_M25"    , it_pdf+0.0001, weight*LOPDFWVec.at(it_pdf), 0., 10., 10);
+        if( fabs(Mmumu-35)<1.3    ) FillHist("Count_LOPDF_M35"    , it_pdf+0.0001, weight*LOPDFWVec.at(it_pdf), 0., 10., 10);
+        if( fabs(Mmumu-45)<1.5    ) FillHist("Count_LOPDF_M45"    , it_pdf+0.0001, weight*LOPDFWVec.at(it_pdf), 0., 10., 10);
+        if( fabs(Mmumu-55)<1.5    ) FillHist("Count_LOPDF_M55"    , it_pdf+0.0001, weight*LOPDFWVec.at(it_pdf), 0., 10., 10);
+        if( fabs(Mmumu-65)<2.0    ) FillHist("Count_LOPDF_M65"    , it_pdf+0.0001, weight*LOPDFWVec.at(it_pdf), 0., 10., 10);
+        if( fabs(Mmumu-75)<2.5    ) FillHist("Count_LOPDF_M75"    , it_pdf+0.0001, weight*LOPDFWVec.at(it_pdf), 0., 10., 10);
+      }
     }
-    for(int it_pdf=0; it_pdf<(int) LOPDFWVec.size(); it_pdf++){
-      if( MOSSS2>12 && MOSSS2<40 ) FillHist("Count_LOPDF_M12to40", it_pdf+0.0001, weight*LOPDFWVec.at(it_pdf), 0., 10., 10);
-      if( fabs(MOSSS2-15)<2.5    ) FillHist("Count_LOPDF_M15"    , it_pdf+0.0001, weight*LOPDFWVec.at(it_pdf), 0., 10., 10);
-      if( fabs(MOSSS2-20)<2.5    ) FillHist("Count_LOPDF_M20"    , it_pdf+0.0001, weight*LOPDFWVec.at(it_pdf), 0., 10., 10);
-      if( fabs(MOSSS2-25)<2.5    ) FillHist("Count_LOPDF_M25"    , it_pdf+0.0001, weight*LOPDFWVec.at(it_pdf), 0., 10., 10);
-      if( fabs(MOSSS2-30)<2.5    ) FillHist("Count_LOPDF_M30"    , it_pdf+0.0001, weight*LOPDFWVec.at(it_pdf), 0., 10., 10);
-      if( fabs(MOSSS2-35)<2.5    ) FillHist("Count_LOPDF_M35"    , it_pdf+0.0001, weight*LOPDFWVec.at(it_pdf), 0., 10., 10);
+    else{
+      if( k_sample_name.Contains("WZTo3LNu_powheg")
+        ||k_sample_name.Contains("ZZTo4L_powheg")
+        ||k_sample_name.Contains("ttH_nonbb") ){
+  
+        for(int it_as=0; it_as<3; it_as++){
+          int IdxPDFVecAS = it_as==0? 0: it_as==1? 101: 102;
+          if( Mmumu>12 && Mmumu<80 )  FillHist("Count_alphas_M12to80", it_as+0.0001, weight*PDFWVec.at(IdxPDFVecAS), 0., 3., 3);
+          if( fabs(Mmumu-15)<1.0   )  FillHist("Count_alphas_M15"    , it_as+0.0001, weight*PDFWVec.at(IdxPDFVecAS), 0., 3., 3);
+          if( fabs(Mmumu-25)<1.0   )  FillHist("Count_alphas_M25"    , it_as+0.0001, weight*PDFWVec.at(IdxPDFVecAS), 0., 3., 3);
+          if( fabs(Mmumu-35)<1.3   )  FillHist("Count_alphas_M35"    , it_as+0.0001, weight*PDFWVec.at(IdxPDFVecAS), 0., 3., 3);
+          if( fabs(Mmumu-45)<1.5   )  FillHist("Count_alphas_M45"    , it_as+0.0001, weight*PDFWVec.at(IdxPDFVecAS), 0., 3., 3);
+          if( fabs(Mmumu-55)<1.5   )  FillHist("Count_alphas_M55"    , it_as+0.0001, weight*PDFWVec.at(IdxPDFVecAS), 0., 3., 3);
+          if( fabs(Mmumu-65)<2.0   )  FillHist("Count_alphas_M65"    , it_as+0.0001, weight*PDFWVec.at(IdxPDFVecAS), 0., 3., 3);
+          if( fabs(Mmumu-75)<2.5   )  FillHist("Count_alphas_M75"    , it_as+0.0001, weight*PDFWVec.at(IdxPDFVecAS), 0., 3., 3);
+        }
+      }
     }
   }
 }

@@ -3476,10 +3476,10 @@ void AnalyzerCore::PrintTruth(){
   cout << "=========================================================" << endl;
   cout << "truth size = " << truthColl.size() << endl;
   //cout << "index" << '\t' << "pdgid" << '\t' << "mother" << '\t' << "mother pid" << endl;
-  cout<<"Idx"<<'\t'<<"PID"<<'\t'<<"MIdx"<<'\t'<<"MPID"<<'\t'<<"GenSt"<<'\t'<<"pt"<<'\t'<<"eta"<<'\t'<<"phi"<<endl;
+  cout<<"Idx"<<'\t'<<"PID"<<'\t'<<"MIdx"<<'\t'<<"MPID"<<'\t'<<"GenSt"<<'\t'<<"Type"<<'\t'<<"pt"<<'\t'<<"eta"<<'\t'<<"phi"<<endl;
   for(int i=2; i<truthColl.size(); i++){
     //cout << i << '\t' << truthColl.at(i).PdgId() << '\t' << truthColl.at(i).IndexMother() << '\t' << truthColl.at( truthColl.at(i).IndexMother() ).PdgId() << endl;
-    cout<<i<<'\t'<<truthColl.at(i).PdgId()<<'\t'<<truthColl.at(i).IndexMother()<<'\t'<<truthColl.at(truthColl.at(i).IndexMother()).PdgId()<<'\t'<<truthColl.at(i).GenStatus()<<'\t'<<truthColl.at(i).Pt()<<'\t'<<truthColl.at(i).Eta()<<'\t'<<truthColl.at(i).Phi()<<endl;
+    cout<<i<<'\t'<<truthColl.at(i).PdgId()<<'\t'<<truthColl.at(i).IndexMother()<<'\t'<<truthColl.at(truthColl.at(i).IndexMother()).PdgId()<<'\t'<<truthColl.at(i).GenStatus()<<'\t'<<GetLeptonType(i, truthColl)<<'\t'<<truthColl.at(i).Pt()<<'\t'<<truthColl.at(i).Eta()<<'\t'<<truthColl.at(i).Phi()<<'\t'<<endl;
   }
 
 }
@@ -5014,6 +5014,31 @@ bool AnalyzerCore::IsFinalPhotonSt23(std::vector<snu::KTruth> TruthColl){
 //b) Some particle is daughter of status 23 photon.
 }
 
+int AnalyzerCore::GetPartonType(int TruthIdx, std::vector<snu::KTruth>& TruthColl, TString Option){
+//Type : 1:W decay product (LO sample)
+//       Currently have interest only in parton from W decay
+//       0:Error/Non classified 
+
+  //Only consider Status 1 lepton
+  if(TruthIdx<2) return 0;
+  if( !(fabs(TruthColl.at(TruthIdx).PdgId())>0 && fabs(TruthColl.at(TruthIdx).PdgId())<10) ) return 0;
+
+  int PartonType=0;
+  int MotherIdx       = TruthColl.at(TruthIdx).IndexMother();
+
+  int MPID=0;
+  int Status_now=0;
+    if(    TruthIdx!=-1   ){ Status_now    = TruthColl.at(TruthIdx).GenStatus();
+                           }                           
+    if(   MotherIdx!=-1   ){ MPID         = TruthColl.at(MotherIdx).PdgId();
+                           }
+ 
+  if     ( TruthIdx==-1 )                                       PartonType= 0;
+  else if( fabs(MPID)==23 || fabs(MPID)==24 || fabs(MPID)==25 ) PartonType= 1;
+  else PartonType=0;
+
+  return PartonType;
+}
 
 int AnalyzerCore::GetLeptonType(int TruthIdx, std::vector<snu::KTruth>& TruthColl, TString Option){
 //Type : 1:EWPrompt  /  2:Signal Daughter /  3:EWtau daughter / 4:Internal Conversion daughter from t/EWV/EWlep(Implicit,Explicit) / 5:Internal Conversion daughter from HardScatterPhoton
@@ -5411,43 +5436,59 @@ int AnalyzerCore::TriMuChargeIndex(std::vector<snu::KMuon>& MuonColl, TString ch
     // charge="OS" will return the index of muon that having different charge from other 2,
     // charge="SS1" will return the index of first muon that having same sign
     // charge="SS2" will return the index of second muon that having same sign
-    int totQ=0, n=0, ns=0;
-    for(unsigned int i=0; i<MuonColl.size(); i++){totQ+=MuonColl.at(i).Charge();}
 
-    if(charge.Contains("OS")){
-      if(totQ==1) {
-         for(unsigned int j=0; j<MuonColl.size(); j++) {if(MuonColl.at(j).Charge()==-1) n=j;}
-      }
-      if(totQ==-1){
-         for(unsigned int j=0; j<MuonColl.size(); j++) {if(MuonColl.at(j).Charge()==1) n=j;}
-      }
-    }
-    if(charge.Contains("SS1")){
-      if(totQ==1){
-         for(unsigned int j=0; j<MuonColl.size(); j++){
-             if(MuonColl.at(j).Charge()==1) {ns+=1; if(ns==1) n=j;}
-         }
-      }
-      if(totQ==-1){
-         for(unsigned int j=0; j<MuonColl.size(); j++){
-             if(MuonColl.at(j).Charge()==-1) {ns+=1; if(ns==1) n=j;}
-         }
-      }
-    }
-    if(charge.Contains("SS2")){
-       if(totQ==1){
-          for(unsigned int j=0; j<MuonColl.size(); j++){
-             if(MuonColl.at(j).Charge()==1) {ns+=1; if(ns==2) n=j;}
-          }
-       }
-       if(totQ==-1){
-          for(unsigned int j=0; j<MuonColl.size(); j++){
-             if(MuonColl.at(j).Charge()==-1) {ns+=1; if(ns==2) n=j;}
-          }
-       }
-    }
-    return n;
+    if(MuonColl.size()!=3) return -1;
+    if(fabs(SumCharge(MuonColl))>1) return -1;
+    
+    int IdxOS=-1, IdxSS1=-1, IdxSS2=-1;
+    if     (MuonColl.at(0).Charge()==MuonColl.at(1).Charge()){ IdxSS1=0, IdxSS2=1, IdxOS=2; }
+    else if(MuonColl.at(0).Charge()==MuonColl.at(2).Charge()){ IdxSS1=0, IdxSS2=2, IdxOS=1; }
+    else if(MuonColl.at(1).Charge()==MuonColl.at(2).Charge()){ IdxSS1=1, IdxSS2=2, IdxOS=0; }
+
+    int ReturnIdx=-1;
+    if     (charge.Contains("OS") ) ReturnIdx=IdxOS;
+    else if(charge.Contains("SS1")) ReturnIdx=IdxSS1;
+    else if(charge.Contains("SS2")) ReturnIdx=IdxSS2;
+
+    return ReturnIdx;
 }
+
+int AnalyzerCore::TriMuChargeIndex(std::vector<snu::KMuon>& MuonColl, float MET, float METx, float METy, TString charge){
+    //First Choose 2SS, 1OS muons(++- or --+) SS means 2 of them having same sign, OS means 1 of them having different sign from others.
+    // charge="OS" will return the index of muon that having different charge from other 2,
+    // charge="SS1" will return the index of first muon that having same sign
+    // charge="SS2" will return the index of second muon that having same sign
+
+    if(MuonColl.size()!=3) return -1;
+    if(fabs(SumCharge(MuonColl))>1) return -1;
+    
+    int IdxOS=-1, IdxSS1=-1, IdxSS2=-1;
+    if     (MuonColl.at(0).Charge()==MuonColl.at(1).Charge()){ IdxSS1=0, IdxSS2=1, IdxOS=2; }
+    else if(MuonColl.at(0).Charge()==MuonColl.at(2).Charge()){ IdxSS1=0, IdxSS2=2, IdxOS=1; }
+    else if(MuonColl.at(1).Charge()==MuonColl.at(2).Charge()){ IdxSS1=1, IdxSS2=2, IdxOS=0; }
+
+    int ReturnIdx=-1;
+    if     (charge.Contains("OS") ) ReturnIdx=IdxOS;
+    else if(charge.Contains("SS1")) ReturnIdx=IdxSS1;
+    else if(charge.Contains("SS2")) ReturnIdx=IdxSS2;
+
+    int IdxSSW=-1, IdxSSA=-1;
+    if(charge.Contains("SSW") || charge.Contains("SSA")){
+      if(IdxSS1<0 || IdxSS2<0) return ReturnIdx;
+      float dPt   = fabs(MuonColl.at(IdxSS1).Pt()-MuonColl.at(IdxSS2).Pt());
+      float MTW1  = sqrt(2)*sqrt(MET*MuonColl.at(IdxSS1).Pt()-METx*MuonColl.at(IdxSS1).Px()-METy*MuonColl.at(IdxSS1).Py());
+      float MTW2  = sqrt(2)*sqrt(MET*MuonColl.at(IdxSS2).Pt()-METx*MuonColl.at(IdxSS2).Px()-METy*MuonColl.at(IdxSS2).Py());
+      bool  SS1_W = MTW1>50. && MTW1<120.;
+      bool  SS2_W = MTW2>50. && MTW2<120.;
+      if( dPt<25. && SS2_W && (!SS1_W) ){ IdxSSW=IdxSS2; IdxSSA=IdxSS1; }
+      else{ IdxSSW=IdxSS1; IdxSSA=IdxSS2; }
+    }
+    if     (charge.Contains("SSW")) ReturnIdx=IdxSSW;
+    else if(charge.Contains("SSA")) ReturnIdx=IdxSSA;
+    
+    return ReturnIdx;
+}
+
 
 double AnalyzerCore::GetvPz(snu::KParticle v, snu::KElectron e, int pm){
      double RecoPz=0;
@@ -6423,10 +6464,12 @@ float AnalyzerCore::GetHiggsMass(TString SampleName, TString Option){
   float HiggsMass=0.;
   if(AMass){
     if     (SampleName.Contains("MA15")) HiggsMass= 15.;
-    else if(SampleName.Contains("MA20")) HiggsMass= 20.;
     else if(SampleName.Contains("MA25")) HiggsMass= 25.;
-    else if(SampleName.Contains("MA30")) HiggsMass= 30.;
     else if(SampleName.Contains("MA35")) HiggsMass= 35.;
+    else if(SampleName.Contains("MA45")) HiggsMass= 45.;
+    else if(SampleName.Contains("MA55")) HiggsMass= 55.;
+    else if(SampleName.Contains("MA65")) HiggsMass= 65.;
+    else if(SampleName.Contains("MA75")) HiggsMass= 75.;
   }
   else if(HcMass){
     if     (SampleName.Contains("MHc100")) HiggsMass= 100.;

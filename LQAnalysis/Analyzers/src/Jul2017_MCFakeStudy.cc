@@ -436,19 +436,22 @@ void Jul2017_MCFakeStudy::ExecuteEvents()throw( LQError ){
      std::vector<snu::KElectron> FakeEColl    = SkimLepColl(FakeColl, "E");
      std::vector<snu::KJet>      JetCleanColl = SkimJetColl(jetColl, truthColl, "NoPrNoTau");
 
+     std::vector<snu::KElectron> FakeTrigDiPreColl, FakeTrigSiglPreColl;
+     for(int i=0; i<(int) FakeColl.size(); i++){
+       if( FakeColl.at(i).TriggerMatched("HLT_Ele12_CaloIdL_TrackIdL_IsoVL_v") ) FakeTrigDiPreColl.push_back(FakeColl.at(i));
+       if( FakeColl.at(i).TriggerMatched("HLT_Ele27_WPTight_Gsf_v") )            FakeTrigSiglPreColl.push_back(FakeColl.at(i));
+     }
+
      const int NPtEdges=6;
      float PtEdges[NPtEdges]={0., 25., 35., 50., 70., 100.};
 
-     Draw1DFakePlot(FakeB1Coll, JetCleanColl, -0.92, -0.88, -0.78, 0.4, NPtEdges, PtEdges, "All");
+     Draw1DFakePlot(FakeColl  , JetCleanColl, -0.92, -0.88, -0.78, 0.4, NPtEdges, PtEdges, "All");
      Draw1DFakePlot(FakeB1Coll, JetCleanColl, -0.92, -0.88, -0.78, 0.4, NPtEdges, PtEdges, "B1");
      Draw1DFakePlot(FakeB2Coll, JetCleanColl, -0.92, -0.88, -0.78, 0.4, NPtEdges, PtEdges, "B2");
-     Draw1DFakePlot(FakeEColl,  JetCleanColl, -0.92, -0.88, -0.78, 0.4, NPtEdges, PtEdges, "E");
-     if(PassTrigger("HLT_Ele23_CaloIdL_TrackIdL_IsoVL_PFJet30_v")){
-       Draw1DFakePlot(FakeB1Coll, JetCleanColl, -0.92, -0.88, -0.78, 0.4, NPtEdges, PtEdges, "AllTrig");
-       Draw1DFakePlot(FakeB1Coll, JetCleanColl, -0.92, -0.88, -0.78, 0.4, NPtEdges, PtEdges, "B1Trig");
-       Draw1DFakePlot(FakeB2Coll, JetCleanColl, -0.92, -0.88, -0.78, 0.4, NPtEdges, PtEdges, "B2Trig");
-       Draw1DFakePlot(FakeEColl,  JetCleanColl, -0.92, -0.88, -0.78, 0.4, NPtEdges, PtEdges, "ETrig");
-     }
+     Draw1DFakePlot(FakeEColl , JetCleanColl, -0.92, -0.88, -0.78, 0.4, NPtEdges, PtEdges, "E");
+
+     Draw1DFakePlot(FakeTrigDiPreColl  , JetCleanColl, -0.92, -0.88, -0.78, 0.4, NPtEdges, PtEdges, "AllTrigDi");
+     Draw1DFakePlot(FakeTrigSiglPreColl, JetCleanColl, -0.92, -0.88, -0.78, 0.4, NPtEdges, PtEdges, "AllTrigSigl");
    }
    if(SelBiasTest){
      std::vector<snu::KElectron> electronFakeL1Coll;
@@ -1073,8 +1076,8 @@ void Jul2017_MCFakeStudy::CheckMCClosure(std::vector<snu::KMuon> MuPreColl, std:
 
   std::vector<snu::KMuon> MuLColl, MuTColl;
     for(int i=0; i<(int) MuPreColl.size(); i++){
-      if(PassIDCriteria(MuPreColl.at(i), MuLID)) MuLColl.push_back(MuPreColl.at(i));
-      if(PassIDCriteria(MuPreColl.at(i), MuTID)) MuTColl.push_back(MuPreColl.at(i));
+      if(PassIDCriteria(MuPreColl.at(i), MuLID, "Roch")) MuLColl.push_back(MuPreColl.at(i));
+      if(PassIDCriteria(MuPreColl.at(i), MuTID, "Roch")) MuTColl.push_back(MuPreColl.at(i));
     }
   std::vector<snu::KElectron> EleLColl, EleTColl;
     for(int i=0; i<(int) ElePreColl.size(); i++){
@@ -1206,6 +1209,14 @@ void Jul2017_MCFakeStudy::CheckMCClosure(std::vector<snu::KMuon> MuPreColl, std:
         FillHist("CutFlow_obs"+Label, 0., weight, 0., 10., 10);
         if(OffZ && JetSelPass) FillHist("CutFlow_obs"+Label, 1., weight, 0., 10., 10);
         if(OffZ && JetSelPass && BJetSelPass) FillHist("CutFlow_obs"+Label, 2., weight, 0., 10., 10);
+
+        int LepTypeOS  = GetLeptonType(MuLColl.at(0),TruthColl);
+        int LepTypeSSA = GetLeptonType(MuLColl.at(1),TruthColl);
+        if(OffZ){
+          if     ( LepTypeOS>0 && LepTypeSSA>0 ) FillHist("MuMuType"+Label, 0., weight, 0., 10., 10);
+          else if( LepTypeOS>0 && LepTypeSSA<0 ) FillHist("MuMuType"+Label, 1., weight, 0., 10., 10);
+          else                                   FillHist("MuMuType"+Label, 2., weight, 0., 10., 10);
+        }
 
         FillHist("PTmu1_obs"+Label, MuTColl.at(0).Pt(), weight, 0., 200., 40);
         FillHist("PTmu2_obs"+Label, MuTColl.at(1).Pt(), weight, 0., 200., 40);

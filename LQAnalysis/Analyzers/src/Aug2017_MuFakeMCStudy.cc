@@ -72,6 +72,8 @@ void Aug2017_MuFakeMCStudy::ExecuteEvents()throw( LQError ){
   
    bool FakeCompCheck=false, IDEffCheck=false, IDVarSensitivity=false, FRInspection=false, SiglWP=false, ScanFR=false;
    bool TrigBiasCheck=false, FRMeasEmul=false, Closure=false;
+   bool AltCRTest=false;
+   bool ConvenerAsk  =false;
    for(int i=0; i<(int) k_flags.size(); i++){
      if     (k_flags.at(i).Contains("FakeCompCheck"))    FakeCompCheck    = true;
      else if(k_flags.at(i).Contains("IDEffCheck"))       IDEffCheck       = true;
@@ -82,6 +84,8 @@ void Aug2017_MuFakeMCStudy::ExecuteEvents()throw( LQError ){
      else if(k_flags.at(i).Contains("TrigBiasCheck"))    TrigBiasCheck    = true;
      else if(k_flags.at(i).Contains("FRMeasEmul"))       FRMeasEmul       = true;
      else if(k_flags.at(i).Contains("Closure"))          Closure          = true;
+     else if(k_flags.at(i).Contains("ConvenerAsk"))      ConvenerAsk      = true;
+     else if(k_flags.at(i).Contains("AltCRTest"))        AltCRTest        = true;
    }
 
     
@@ -157,7 +161,7 @@ void Aug2017_MuFakeMCStudy::ExecuteEvents()throw( LQError ){
    std::vector<snu::KElectron> electronLooseColl; eventbase->GetElectronSel()->Selection(electronLooseColl);
      eventbase->GetElectronSel()->SetID(BaseSelection::ELECTRON_POG_MVA_WP90);
      eventbase->GetElectronSel()->SetHLTSafeCut("CaloIdL_TrackIdL_IsoVL");
-     eventbase->GetElectronSel()->SetPt(25.);                eventbase->GetElectronSel()->SetEta(2.5);
+     eventbase->GetElectronSel()->SetPt(10.);                eventbase->GetElectronSel()->SetEta(2.5);
      eventbase->GetElectronSel()->SetBETrRegIncl(false);
      eventbase->GetElectronSel()->SetRelIsoType("Default");  eventbase->GetElectronSel()->SetRelIsoBEMax(0.06, 0.06);
      eventbase->GetElectronSel()->SetdxyBEMax(0.025, 0.025); eventbase->GetElectronSel()->SetdzBEMax(0.1, 0.1);
@@ -320,8 +324,24 @@ void Aug2017_MuFakeMCStudy::ExecuteEvents()throw( LQError ){
      //Purpose : Check trigger bias. 1) Maximum unbiased extrapolation region : how much can I loosen ID variable?
      //                              2) Does trigger requirement change FR even in trigger safe range?
 
+     std::vector<snu::KMuon> muonTrigDiPreColl, muonTrigSiglPreColl;
+     for(int i=0; i<(int) muonPreColl.size(); i++){
+       if( muonPreColl.at(i).TriggerMatched("HLT_Mu8_TrkIsoVVL_v") ) muonTrigDiPreColl.push_back(muonPreColl.at(i));
+       if(    muonPreColl.at(i).TriggerMatched("HLT_IsoMu24_v")
+           or muonPreColl.at(i).TriggerMatched("HLT_IsoTkMu24_v")  ) muonTrigSiglPreColl.push_back(muonPreColl.at(i));
+     }
+
+     InspectFakeRate(muonPreColl, jetNoVetoColl, truthColl,
+       "POGTIsop6IPp2p1sig4", "POGTIsop20IPp01p05sig4Chi4", weight, "_POGTIsop20IPp01p05sig4Chi4POGTIsop6IPp2p1sig4", "");
+
+     InspectFakeRate(muonTrigDiPreColl, jetNoVetoColl, truthColl,
+       "POGTIsop6IPp2p1sig4", "POGTIsop20IPp01p05sig4Chi4", weight, "_POGTIsop20IPp01p05sig4Chi4POGTIsop6IPp2p1sig4TrigDi", "");
+     InspectFakeRate(muonTrigSiglPreColl, jetNoVetoColl, truthColl,
+       "POGTIsop6IPp2p1sig4", "POGTIsop20IPp01p05sig4Chi4", weight, "_POGTIsop20IPp01p05sig4Chi4POGTIsop6IPp2p1sig4TrigSigl", "");
+
+
      //CheckTriggerBias(muonPreColl, jetNoVetoColl, truthColl, "Test_POGLIsop5IPp5p1Chi", "Test_POGTIsop20IPp01p1Chi3", weight, "", "");
-     CheckTriggerBias(muonPreColl, jetNoVetoColl, truthColl, "POGLIsop4IPp5p1Chi100", "POGTIsop20IPp01p05sig4Chi4", weight, "", "");
+     //CheckTriggerBias(muonPreColl, jetNoVetoColl, truthColl, "POGLIsop4IPp5p1Chi100", "POGTIsop20IPp01p05sig4Chi4", weight, "", "");
    }
    if(FRMeasEmul){
      //Purpose : Fully emulate FR measurement for QCD. Result will be used for closure to DY, TT
@@ -369,6 +389,27 @@ void Aug2017_MuFakeMCStudy::ExecuteEvents()throw( LQError ){
 
      //#"TrkIsoVVLFOPt" #"TrkIsoVVLConeSUSY" #"TrkIsoVVLConeE" #"NoFilterFOPt" #"NoFilterConeSUSY" #"NoFilterConeE"
    }
+   if(ConvenerAsk){
+       eventbase->GetJetSel()->SetID(BaseSelection::PFJET_LOOSE);
+       eventbase->GetJetSel()->SetPt(10.);                     eventbase->GetJetSel()->SetEta(2.4);
+       bool LeptonVeto=false;
+     std::vector<snu::KJet> jetNoVeto10Coll; eventbase->GetJetSel()->Selection(jetNoVeto10Coll, LeptonVeto, muonPOGLIsoVLColl, electronLooseColl);
+     std::vector<snu::KJet> bjetNoVeto10Coll = SelBJets(jetNoVeto10Coll, "Medium");
+
+     std::vector<snu::KGenJet> genjetColl;  eventbase->GetGenJetSel()->Selection(genjetColl);//PT>8 at ntuple level skim
+
+     std::vector<snu::KMuon> muonTightNoIPIsoColl;
+     for(int i=0; i<muonPreColl.size(); i++){ if(muonPreColl.at(i).IsTight() && muonPreColl.at(i).GlobalChi2()<4.) muonTightNoIPIsoColl.push_back(muonPreColl.at(i)); }
+
+     CheckMotherDaugherRelationship(muonTightNoIPIsoColl, muonPreColl, electronLooseColl, jetNoVeto10Coll, bjetNoVeto10Coll, met, met*cos(metphi), met*sin(metphi), truthColl, genjetColl,
+       weight, "", "");
+   } 
+   if(AltCRTest){
+
+     CheckAltCRAvailability(muonPreColl, electronLooseColl, jetNoVetoColl, met, met*cos(metphi), met*sin(metphi), truthColl,
+       "POGTIsop6IPp2p1sig4", "POGTIsop20IPp01p05sig4Chi4", weight, "", ""); 
+   } 
+
 
 return;
 }// End of execute event loop
@@ -1688,12 +1729,15 @@ void Aug2017_MuFakeMCStudy::CheckMCClosure(std::vector<snu::KMuon> MuPreColl, st
 
   std::vector<snu::KMuon> MuLColl, MuTColl;
     for(int i=0; i<(int) MuPreColl.size(); i++){
-      if(PassIDCriteria(MuPreColl.at(i), LooseID)) MuLColl.push_back(MuPreColl.at(i));
-      if(PassIDCriteria(MuPreColl.at(i), TightID)) MuTColl.push_back(MuPreColl.at(i));
+      if(PassIDCriteria(MuPreColl.at(i), LooseID, "Roch")) MuLColl.push_back(MuPreColl.at(i));
+      if(PassIDCriteria(MuPreColl.at(i), TightID, "Roch")) MuTColl.push_back(MuPreColl.at(i));
     }
   std::vector<snu::KJet> JetColl  = SkimJetColl(JetNoVetoColl,  EleLColl, MuLColl, "EleMuVeto");
   std::vector<snu::KJet> BJetColl = SelBJets(JetColl, "Medium");
   std::vector<snu::KJet> BJetNoVetoColl = SelBJets(JetNoVetoColl, "Medium");
+  float MET    = eventbase->GetEvent().MET(snu::KEvent::pfmet);
+  float metphi = eventbase->GetEvent().METPhi();
+  float METx=MET*cos(metphi), METy=MET*sin(metphi);
   TString FlavOpt="";
    
   //Checking 2PromptMu+1Fk Ele
@@ -1736,22 +1780,41 @@ void Aug2017_MuFakeMCStudy::CheckMCClosure(std::vector<snu::KMuon> MuPreColl, st
   }
   if( MuLColl.size()==3 && MuTColl.size()==3 ) fakeweight=0;
 
-  bool Pass_Trigger=false;
-  if( PassTrigger("HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_v")
-     || PassTrigger("HLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_DZ_v") ) Pass_Trigger=true;
+  bool Pass_Trigger=false, Pass_TriggerBG=false, Pass_TriggerH=false;
+  float trigger_ps_weight=1., trigger_period_weight=1.;
+  float LumiBG=27.257618, LumiH=8.605696, LumiBH=35.863314;
+  if(  PassTrigger("HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_v")
+     ||PassTrigger("HLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_v") )    Pass_TriggerBG=true;
+  if(  PassTrigger("HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_v")
+     ||PassTrigger("HLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_DZ_v") ) Pass_TriggerH =true;
+
+  if( Pass_TriggerBG || Pass_TriggerH ) Pass_Trigger=true;
+  trigger_period_weight=( (Pass_TriggerBG? 27.257618:0.)+(Pass_TriggerH? 8.605696:0.) )/35.863314;
+  weight*=trigger_period_weight;
+
   
 
   if(Pass_Trigger){
     if(MuLColl.size()==3 && EleLColl.size()==0){
       bool PassSel=true;
-      int IdxOS=-1, IdxSS1=-1, IdxSS2=-1; float MOSSS1=-1, MOSSS2=-1;
+      int IdxOS=-1, IdxSS1=-1, IdxSS2=-1, IdxSSW=-1, IdxSSA=-1;
+      float MOSSS1=-1, MOSSS2=-1, Mmumu=-1, MTW=-1.;
       if( !(MuLColl.at(0).Pt()>20 && MuLColl.at(1).Pt()>10 && MuLColl.at(2).Pt()>10) ) PassSel=false;
       if( PassSel && fabs(SumCharge(MuLColl))!=1) PassSel=false;
-      if( PassSel ){ IdxOS=TriMuChargeIndex(MuLColl,"OS"); IdxSS1=TriMuChargeIndex(MuLColl,"SS1"); IdxSS2=TriMuChargeIndex(MuLColl,"SS2"); 
-                     MOSSS1=(MuLColl.at(IdxOS)+MuLColl.at(IdxSS1)).M(), MOSSS2=(MuLColl.at(IdxOS)+MuLColl.at(IdxSS2)).M();}
+      if( PassSel ){
+        IdxOS  = TriMuChargeIndex(MuLColl,"OS");
+        IdxSS1 = TriMuChargeIndex(MuLColl,"SS1");
+        IdxSS2 = TriMuChargeIndex(MuLColl,"SS2"); 
+        IdxSSW = TriMuChargeIndex(MuLColl, MET, METx, METy, "SSW");
+        IdxSSA = TriMuChargeIndex(MuLColl, MET, METx, METy, "SSA");
+        MOSSS1 = (MuLColl.at(IdxOS)+MuLColl.at(IdxSS1)).M();
+        MOSSS2 = (MuLColl.at(IdxOS)+MuLColl.at(IdxSS2)).M();
+        Mmumu  = (MuLColl.at(IdxOS)+MuLColl.at(IdxSSA)).M();
+        MTW    = sqrt(2)*sqrt(MET*MuLColl.at(IdxSSW).Pt()-METx*MuLColl.at(IdxSSW).Px()-METy*MuLColl.at(IdxSSW).Py());
+      }
       if( PassSel && !(MOSSS1>12 && MOSSS2>12) ) PassSel=false;
       if(PassSel){
-        bool JetSelPass=JetColl.size()>=3, BJetSelPass=BJetColl.size()>=1;
+        bool JetSelPass=JetColl.size()>=2, BJetSelPass=BJetColl.size()>=1;
         bool OffZ=fabs(MOSSS1-91.2)>10. && fabs(MOSSS2-91.2)>10.;
         FillHist("CutFlow_exp"+Label, 0., weight*fakeweight, 0., 10., 10);
         if(OffZ && JetSelPass) FillHist("CutFlow_exp"+Label, 1., weight*fakeweight, 0., 10., 10);
@@ -1762,68 +1825,302 @@ void Aug2017_MuFakeMCStudy::CheckMCClosure(std::vector<snu::KMuon> MuPreColl, st
         FillHist("PTmu3_exp"+Label, MuLColl.at(2).Pt(), weight*fakeweight, 0., 200., 40);
         FillHist("MOSSS1_exp"+Label, MOSSS1, weight*fakeweight, 0., 300., 60);
         FillHist("MOSSS2_exp"+Label, MOSSS2, weight*fakeweight, 0., 200., 40);
+        FillHist("Mmumu_exp" +Label, Mmumu , weight*fakeweight, 0., 200., 40);
         FillHist("Etamu1_exp"+Label, MuLColl.at(0).Eta(), weight*fakeweight, -5., 5., 20);
         FillHist("Etamu2_exp"+Label, MuLColl.at(1).Eta(), weight*fakeweight, -5., 5., 20);
         FillHist("Etamu3_exp"+Label, MuLColl.at(2).Eta(), weight*fakeweight, -5., 5., 20);
         FillHist("Nj_exp"+Label, JetColl.size(), weight*fakeweight, 0., 10., 10);
         FillHist("Nb_exp"+Label, BJetColl.size(), weight*fakeweight, 0., 10., 10);
-        if(JetSelPass & BJetSelPass){
+        FillHist("MET_exp"+Label, MET, weight, 0., 300., 30);
+        FillHist("MTW_exp"+Label, MTW, weight, 0., 200., 20);
+        if(JetSelPass && BJetSelPass && OffZ){
           FillHist("PTmu1_1b2j_exp"+Label, MuLColl.at(0).Pt(), weight*fakeweight, 0., 200., 40);
           FillHist("PTmu2_1b2j_exp"+Label, MuLColl.at(1).Pt(), weight*fakeweight, 0., 200., 40);
           FillHist("PTmu3_1b2j_exp"+Label, MuLColl.at(2).Pt(), weight*fakeweight, 0., 200., 40);
           FillHist("MOSSS1_1b2j_exp"+Label, MOSSS1, weight*fakeweight, 0., 300., 60);
           FillHist("MOSSS2_1b2j_exp"+Label, MOSSS2, weight*fakeweight, 0., 200., 40);
+          FillHist("Mmumu_1b2j_exp" +Label, Mmumu , weight*fakeweight, 0., 200., 40);
           FillHist("Etamu1_1b2j_exp"+Label, MuLColl.at(0).Eta(), weight*fakeweight, -5., 5., 20);
           FillHist("Etamu2_1b2j_exp"+Label, MuLColl.at(1).Eta(), weight*fakeweight, -5., 5., 20);
           FillHist("Etamu3_1b2j_exp"+Label, MuLColl.at(2).Eta(), weight*fakeweight, -5., 5., 20);
           FillHist("Nj_1b2j_exp"+Label, JetColl.size(), weight*fakeweight, 0., 10., 10);
           FillHist("Nb_1b2j_exp"+Label, BJetColl.size(), weight*fakeweight, 0., 10., 10);
+          FillHist("MET_1b2j_exp"+Label, MET, weight, 0., 300., 30);
+          FillHist("MTW_1b2j_exp"+Label, MTW, weight, 0., 200., 20);
         }
-
       }
     }
     if(MuLColl.size()==3 && MuTColl.size()==3 && EleLColl.size()==0){
       bool PassSel=true;
-      int IdxOS=-1, IdxSS1=-1, IdxSS2=-1; float MOSSS1=-1, MOSSS2=-1;
+      int IdxOS=-1, IdxSS1=-1, IdxSS2=-1, IdxSSA=-1, IdxSSW=-1; float MOSSS1=-1, MOSSS2=-1, Mmumu=-1, MTW=-1;
       if( !(MuLColl.at(0).Pt()>20 && MuLColl.at(1).Pt()>10 && MuLColl.at(2).Pt()>10) ) PassSel=false;
       if( PassSel && fabs(SumCharge(MuLColl))!=1 ) PassSel=false;
-      if( PassSel ){ IdxOS =TriMuChargeIndex(MuLColl,"OS"); IdxSS1=TriMuChargeIndex(MuLColl,"SS1"); IdxSS2=TriMuChargeIndex(MuLColl,"SS2"); 
-                     MOSSS1=(MuLColl.at(IdxOS)+MuLColl.at(IdxSS1)).M(), MOSSS2=(MuLColl.at(IdxOS)+MuLColl.at(IdxSS2)).M();}
+      if( PassSel ){
+        IdxOS  = TriMuChargeIndex(MuLColl,"OS");
+        IdxSS1 = TriMuChargeIndex(MuLColl,"SS1");
+        IdxSS2 = TriMuChargeIndex(MuLColl,"SS2"); 
+        IdxSSW = TriMuChargeIndex(MuLColl, MET, METx, METy, "SSW");
+        IdxSSA = TriMuChargeIndex(MuLColl, MET, METx, METy, "SSA");
+        MOSSS1 = (MuLColl.at(IdxOS)+MuLColl.at(IdxSS1)).M();
+        MOSSS2 = (MuLColl.at(IdxOS)+MuLColl.at(IdxSS2)).M();
+        Mmumu  = (MuLColl.at(IdxOS)+MuLColl.at(IdxSSA)).M();
+        MTW    = sqrt(2)*sqrt(MET*MuLColl.at(IdxSSW).Pt()-METx*MuLColl.at(IdxSSW).Px()-METy*MuLColl.at(IdxSSW).Py());
+      }
       if( PassSel && !(MOSSS1>12 && MOSSS2>12) ) PassSel=false;
       if( PassSel ){
-        bool JetSelPass=JetColl.size()>=3, BJetSelPass=BJetColl.size()>=1;
+        bool JetSelPass=JetColl.size()>=2, BJetSelPass=BJetColl.size()>=1;
         bool OffZ=fabs(MOSSS1-91.2)>10. && fabs(MOSSS2-91.2)>10.;
         FillHist("CutFlow_obs"+Label, 0., weight, 0., 10., 10);
         if(OffZ && JetSelPass) FillHist("CutFlow_obs"+Label, 1., weight, 0., 10., 10);
         if(OffZ && JetSelPass && BJetSelPass) FillHist("CutFlow_obs"+Label, 2., weight, 0., 10., 10);
+
+        int LepTypeOS  = GetLeptonType(MuLColl.at(IdxOS),TruthColl);
+        int LepTypeSSW = GetLeptonType(MuLColl.at(IdxSSW),TruthColl);
+        int LepTypeSSA = GetLeptonType(MuLColl.at(IdxSSA),TruthColl);
+
+        if(OffZ){
+          if     ( LepTypeOS>0 && LepTypeSSA>0 ) FillHist("MuMuType"+Label, 0., weight, 0., 10., 10);
+          else if( LepTypeOS>0 && LepTypeSSA<0 ) FillHist("MuMuType"+Label, 1., weight, 0., 10., 10);
+          else                                   FillHist("MuMuType"+Label, 2., weight, 0., 10., 10);
+        }
 
         FillHist("PTmu1_obs"+Label, MuLColl.at(0).Pt(), weight, 0., 200., 40);
         FillHist("PTmu2_obs"+Label, MuLColl.at(1).Pt(), weight, 0., 200., 40);
         FillHist("PTmu3_obs"+Label, MuLColl.at(2).Pt(), weight, 0., 200., 40);
         FillHist("MOSSS1_obs"+Label, MOSSS1, weight, 0., 300., 60);
         FillHist("MOSSS2_obs"+Label, MOSSS2, weight, 0., 200., 40);
+        FillHist("Mmumu_obs" +Label, Mmumu , weight, 0., 200., 40);
         FillHist("Etamu1_obs"+Label, MuLColl.at(0).Eta(), weight, -5., 5., 20);
         FillHist("Etamu2_obs"+Label, MuLColl.at(1).Eta(), weight, -5., 5., 20);
         FillHist("Etamu3_obs"+Label, MuLColl.at(2).Eta(), weight, -5., 5., 20);
         FillHist("Nj_obs"+Label, JetColl.size(), weight, 0., 10., 10);
         FillHist("Nb_obs"+Label, BJetColl.size(), weight, 0., 10., 10);
-        if(JetSelPass & BJetSelPass){
+        FillHist("MET_obs"+Label, MET, weight, 0., 300., 30);
+        FillHist("MTW_obs"+Label, MTW, weight, 0., 200., 20);
+        if(JetSelPass && BJetSelPass && OffZ){
           FillHist("PTmu1_1b2j_obs"+Label, MuLColl.at(0).Pt(), weight, 0., 200., 40);
           FillHist("PTmu2_1b2j_obs"+Label, MuLColl.at(1).Pt(), weight, 0., 200., 40);
           FillHist("PTmu3_1b2j_obs"+Label, MuLColl.at(2).Pt(), weight, 0., 200., 40);
           FillHist("MOSSS1_1b2j_obs"+Label, MOSSS1, weight, 0., 300., 60);
           FillHist("MOSSS2_1b2j_obs"+Label, MOSSS2, weight, 0., 200., 40);
+          FillHist("Mmumu_1b2j_obs" +Label, MOSSS2, weight, 0., 200., 40);
           FillHist("Etamu1_1b2j_obs"+Label, MuLColl.at(0).Eta(), weight, -5., 5., 20);
           FillHist("Etamu2_1b2j_obs"+Label, MuLColl.at(1).Eta(), weight, -5., 5., 20);
           FillHist("Etamu3_1b2j_obs"+Label, MuLColl.at(2).Eta(), weight, -5., 5., 20);
           FillHist("Nj_1b2j_obs"+Label, JetColl.size(), weight, 0., 10., 10);
           FillHist("Nb_1b2j_obs"+Label, BJetColl.size(), weight, 0., 10., 10);
+          FillHist("MET_1b2j_obs"+Label, MET, weight, 0., 300., 30);
+          FillHist("MTW_1b2j_obs"+Label, MTW, weight, 0., 200., 20);
         }
       }
     }
   } 
+}
+
+
+
+void Aug2017_MuFakeMCStudy::CheckMotherDaugherRelationship(std::vector<snu::KMuon> muonColl, std::vector<snu::KMuon> muonLooseColl, std::vector<snu::KElectron> electronLooseColl, std::vector<snu::KJet> JetColl, std::vector<snu::KJet> BJetColl, float MET, float METx, float METy, std::vector<snu::KTruth> truthColl, std::vector<snu::KGenJet> GenJetColl, float weight, TString Label, TString Option){
+
+  for(int i=0; i<(int) muonLooseColl.size(); i++){
+    float PTCorr     = muonLooseColl.at(i).Pt()*(1+RochIso(muonLooseColl.at(i), "0.4"));
+    float PT         = muonLooseColl.at(i).Pt();
+    float fEta       = fabs(muonLooseColl.at(i).Eta());
+    int   LepType    = GetLeptonType(muonLooseColl.at(i),truthColl);
+    int   SrcJetType = GetFakeLepJetSrcType(muonLooseColl.at(i), JetColl);
+    int   SrcJetIdx04   = GetFakeLepJetSrcIdx(muonLooseColl.at(i), JetColl, "DR04");
+    int   SrcJetIdxNear = GetFakeLepJetSrcIdx(muonLooseColl.at(i), JetColl, "Near");
+    int   SrcGenJetIdx04   = GetFakeLepGenJetSrcIdx(muonLooseColl.at(i), GenJetColl, "DR04");
+    int   SrcGenJetIdxNear = GetFakeLepGenJetSrcIdx(muonLooseColl.at(i), GenJetColl, "Near");
+
+
+    if(LepType<-4 || LepType>0) continue;
+    
+    FillHist("NMatchedJet", -1., weight, -1., 2., 3);
+    FillHist("Fk_RelIso", muonLooseColl.at(i).RelIso04(), weight, 0., 10., 500);
+    if(SrcJetIdxNear!=-1){
+      FillHist("dRlj_MatchNear"       , muonLooseColl.at(i).DeltaR(JetColl.at(SrcJetIdxNear)), weight, 0., 5., 100);
+    }
+    if(SrcJetIdx04!=-1){
+      FillHist("NMatchedJet", 1., weight, -1., 2., 3);
+      FillHist("Fk_RelIso_Match04"  , muonLooseColl.at(i).RelIso04(), weight, 0., 10., 500);
+      FillHist("Fk_RelPtJet_Match04", muonLooseColl.at(i).Pt()/JetColl.at(SrcJetIdx04).Pt(), weight, 0., 2., 40);
+      FillHist("dRlj_Match04"       , muonLooseColl.at(i).DeltaR(JetColl.at(SrcJetIdx04)), weight, 0., 5., 100);
+      FillHist("PTMu_Match04"       , muonLooseColl.at(i).Pt(), weight, 0., 200., 40);
+      FillHist("PTJet_Match04"      , JetColl.at(SrcJetIdx04).Pt(), weight, 0., 500., 100);
+      FillHist("EtaMu_Match04"      , muonLooseColl.at(i).Eta()    , weight, -5., 5., 20);
+      FillHist("EtaJet_Match04"     , JetColl.at(SrcJetIdx04).Eta(), weight, -5., 5., 20);
+    }
+    else{
+      FillHist("NMatchedJet", 0., weight, -1., 2., 3);
+    }
+
+    if(SrcGenJetIdxNear!=-1){
+      FillHist("dRlj_GenMatchNear"       , muonLooseColl.at(i).DeltaR(GenJetColl.at(SrcGenJetIdxNear)), weight, 0., 5., 100);
+    }
+    if(SrcGenJetIdx04!=-1){
+      FillHist("NMatchedGenJet", 1., weight, -1., 2., 3);
+      FillHist("Fk_RelIso_GenMatch04"  , muonLooseColl.at(i).RelIso04(), weight, 0., 10., 500);
+      FillHist("Fk_RelPtGenJet_GenMatch04", muonLooseColl.at(i).Pt()/GenJetColl.at(SrcGenJetIdx04).Pt(), weight, 0., 2., 40);
+      FillHist("dRlj_GenMatch04"       , muonLooseColl.at(i).DeltaR(GenJetColl.at(SrcGenJetIdx04)), weight, 0., 5., 100);
+    }
+    else{
+      FillHist("NMatchedGenJet", 0., weight, -1., 2., 3);
+    }
+
+
+    if(PassIDCriteria(muonLooseColl.at(i), "POGTIsop20IPp01p05sig4Chi4")){
+      FillHist("NMatchedJet_ID", -1., weight, -1., 2., 3);
+      FillHist("Fk_RelIso_ID", muonLooseColl.at(i).RelIso04(), weight, 0., 10., 500);
+      if(SrcJetIdxNear!=-1){
+        FillHist("dRlj_MatchNear_ID"       , muonLooseColl.at(i).DeltaR(JetColl.at(SrcJetIdxNear)), weight, 0., 5., 100);
+      }
+      if(SrcJetIdx04!=-1){
+        FillHist("NMatchedJet_ID", 1., weight, -1., 2., 3);
+        FillHist("Fk_RelIso_Match04_ID"  , muonLooseColl.at(i).RelIso04(), weight, 0., 10., 500);
+        FillHist("Fk_RelPtJet_Match04_ID", muonLooseColl.at(i).Pt()/JetColl.at(SrcJetIdx04).Pt(), weight, 0., 2., 40);
+        FillHist("dRlj_Match04_ID"       , muonLooseColl.at(i).DeltaR(JetColl.at(SrcJetIdx04)), weight, 0., 5., 100);
+        FillHist("PTMu_Match04_ID"       , muonLooseColl.at(i).Pt(), weight, 0., 200., 40);
+        FillHist("PTJet_Match04_ID"      , JetColl.at(SrcJetIdx04).Pt(), weight, 0., 500., 100);
+        FillHist("EtaMu_Match04_ID"      , muonLooseColl.at(i).Eta()    , weight, -5., 5., 20);
+        FillHist("EtaJet_Match04_ID"     , JetColl.at(SrcJetIdx04).Eta(), weight, -5., 5., 20);
+      }
+      else{
+        FillHist("NMatchedJet_ID", 0., weight, -1., 2., 3);
+      }
+
+
+      if(SrcGenJetIdxNear!=-1){
+        FillHist("dRlj_GenMatchNear_ID"       , muonLooseColl.at(i).DeltaR(GenJetColl.at(SrcGenJetIdxNear)), weight, 0., 5., 100);
+      }
+      if(SrcGenJetIdx04!=-1){
+        FillHist("NMatchedGenJet_ID", 1., weight, -1., 2., 3);
+        FillHist("Fk_RelIso_GenMatch04_ID"  , muonLooseColl.at(i).RelIso04(), weight, 0., 10., 500);
+        FillHist("Fk_RelPtGenJet_GenMatch04_ID", muonLooseColl.at(i).Pt()/GenJetColl.at(SrcGenJetIdx04).Pt(), weight, 0., 2., 40);
+        FillHist("dRlj_GenMatch04_ID"       , muonLooseColl.at(i).DeltaR(GenJetColl.at(SrcGenJetIdx04)), weight, 0., 5., 100);
+      }
+      else{
+        FillHist("NMatchedGenJet_ID", 0., weight, -1., 2., 3);
+      }
+
+    }
+  }//End of ID Variable
 
 }
+
+void Aug2017_MuFakeMCStudy::CheckAltCRAvailability(std::vector<snu::KMuon> MuPreColl, std::vector<snu::KElectron> EleLColl, std::vector<snu::KJet> JetNoVetoColl, float MET, float METx, float METy, std::vector<snu::KTruth> TruthColl, TString LooseID, TString TightID, float weight, TString Label, TString Option){
+
+
+  std::vector<snu::KMuon> MuLColl, MuTColl;
+    for(int i=0; i<(int) MuPreColl.size(); i++){
+      if(PassIDCriteria(MuPreColl.at(i), LooseID, "Roch")) MuLColl.push_back(MuPreColl.at(i));
+      if(PassIDCriteria(MuPreColl.at(i), TightID, "Roch")) MuTColl.push_back(MuPreColl.at(i));
+    }
+  std::vector<snu::KJet> JetColl  = SkimJetColl(JetNoVetoColl,  EleLColl, MuLColl, "EleMuVeto");
+  std::vector<snu::KJet> BJetColl = SelBJets(JetColl, "Medium");
+//  std::vector<snu::KJet> BJetNoVetoColl = SelBJets(JetNoVetoColl, "Medium");
+   
+  //Checking 2PromptMu+1Fk Ele
+  float fakeweight = -1.;
+  int   NHFakeMu   = NPromptFake_Mu(MuLColl, TruthColl, "HFake");
+  int   NHFakeEle  = NPromptFake_Ele(EleLColl, TruthColl, "HFake");
+  int   NHFakeLep  = NHFakeMu+NHFakeEle;
+  int   NLooseLep  = MuLColl.size()+EleLColl.size();
+
+  //Use only 3 valid leptons 
+  bool DiLCand = NLooseLep==2;
+  bool TriLCand = NLooseLep==3;
+  if( !(DiLCand || TriLCand) ) return;//Include at least 1 fake in the sample
+
+  if(TriLCand && MuTColl.size()==3){
+    if( !(MuTColl.at(0).Pt()>20 && MuTColl.at(1).Pt()>10 && MuTColl.at(2).Pt()>10) ) return;
+    if( fabs(SumCharge(MuTColl))!=1 ) return;
+    int   IdxOS  = TriMuChargeIndex(MuTColl, "OS");
+    int   IdxSS1 = TriMuChargeIndex(MuTColl, "SS1");
+    int   IdxSS2 = TriMuChargeIndex(MuTColl, "SS2");
+    int   IdxSSW = TriMuChargeIndex(MuTColl, MET, METx, METy, "SSW");
+    int   IdxSSA = TriMuChargeIndex(MuTColl, MET, METx, METy, "SSA");
+    float MOSSS1 = (MuTColl.at(IdxOS)+MuTColl.at(IdxSS1)).M();
+    float MOSSS2 = (MuTColl.at(IdxOS)+MuTColl.at(IdxSS2)).M();
+    float Mmumu  = (MuTColl.at(IdxOS)+MuTColl.at(IdxSSA)).M();
+
+    if( !(MOSSS1>12 && MOSSS2>12) ) return;
+  
+      FillHist("Mmumu_3lOS" +Label, Mmumu , weight, 0., 200., 200);
+      FillHist("MOSSS1_3lOS"+Label, MOSSS1, weight, 0., 200., 200);
+      FillHist("MOSSS2_3lOS"+Label, MOSSS2, weight, 0., 200., 200);
+      if( fabs(MOSSS1-91.2)>10. ) FillHist("MOSSS2_OSSS1OffZ_3lOS"+Label, MOSSS2, weight, 0., 200., 200);
+    if( fabs(MOSSS1-91.2)<10 || fabs(MOSSS2-91.2)<10 ) return;
+      FillHist("Mmumu_3lOSOffZ" +Label, Mmumu , weight, 0., 200., 200);
+      FillHist("MOSSS1_3lOSOffZ"+Label, MOSSS1, weight, 0., 200., 200);
+      FillHist("MOSSS2_3lOSOffZ"+Label, MOSSS2, weight, 0., 200., 200);
+  }
+  if(DiLCand && MuTColl.size()==2){
+    float Mmumu = (MuTColl.at(0)+MuTColl.at(1)).M();
+    float PTMu1 = MuTColl.at(0).Pt(), PTMu2 = MuTColl.at(1).Pt();
+    int njets= JetColl.size(), nbjets= BJetColl.size();
+    if(Mmumu<12.) return;
+    if(NHFakeLep==0){
+      if(PTMu1>20. && PTMu2>10.) FillHist("Mmumu_DiL_PP2010_Incl"+Label, Mmumu, weight, 0., 200., 200);
+      if(PTMu1>10. && PTMu2>10.) FillHist("Mmumu_DiL_PP1010_Incl"+Label, Mmumu, weight, 0., 200., 200);
+    }
+    if(NHFakeLep==1){
+      if(PTMu1>20. && PTMu2>10.) FillHist("Mmumu_DiL_PF2010_Incl"+Label, Mmumu, weight, 0., 200., 200);
+      if(PTMu1>10. && PTMu2>10.) FillHist("Mmumu_DiL_PF1010_Incl"+Label, Mmumu, weight, 0., 200., 200);
+    }
+    if(njets==0){
+      if(NHFakeLep==0){
+        if(PTMu1>20. && PTMu2>10.) FillHist("Mmumu_DiL_PP2010_0j"+Label, Mmumu, weight, 0., 200., 200);
+        if(PTMu1>10. && PTMu2>10.) FillHist("Mmumu_DiL_PP1010_0j"+Label, Mmumu, weight, 0., 200., 200);
+      }
+      if(NHFakeLep==1){
+        if(PTMu1>20. && PTMu2>10.) FillHist("Mmumu_DiL_PF2010_0j"+Label, Mmumu, weight, 0., 200., 200);
+        if(PTMu1>10. && PTMu2>10.) FillHist("Mmumu_DiL_PF1010_0j"+Label, Mmumu, weight, 0., 200., 200);
+      }
+    }
+    if(njets==1){
+      if(NHFakeLep==0){
+        if(PTMu1>20. && PTMu2>10.) FillHist("Mmumu_DiL_PP2010_1j"+Label, Mmumu, weight, 0., 200., 200);
+        if(PTMu1>10. && PTMu2>10.) FillHist("Mmumu_DiL_PP1010_1j"+Label, Mmumu, weight, 0., 200., 200);
+      }
+      if(NHFakeLep==1){
+        if(PTMu1>20. && PTMu2>10.) FillHist("Mmumu_DiL_PF2010_1j"+Label, Mmumu, weight, 0., 200., 200);
+        if(PTMu1>10. && PTMu2>10.) FillHist("Mmumu_DiL_PF1010_1j"+Label, Mmumu, weight, 0., 200., 200);
+      }
+    }
+    if(njets==2){
+      if(NHFakeLep==0){
+        if(PTMu1>20. && PTMu2>10.) FillHist("Mmumu_DiL_PP2010_2j"+Label, Mmumu, weight, 0., 200., 200);
+        if(PTMu1>10. && PTMu2>10.) FillHist("Mmumu_DiL_PP1010_2j"+Label, Mmumu, weight, 0., 200., 200);
+      }
+      if(NHFakeLep==1){
+        if(PTMu1>20. && PTMu2>10.) FillHist("Mmumu_DiL_PF2010_2j"+Label, Mmumu, weight, 0., 200., 200);
+        if(PTMu1>10. && PTMu2>10.) FillHist("Mmumu_DiL_PF1010_2j"+Label, Mmumu, weight, 0., 200., 200);
+      }
+    }
+    if(njets==3){
+      if(NHFakeLep==0){
+        if(PTMu1>20. && PTMu2>10.) FillHist("Mmumu_DiL_PP2010_3j"+Label, Mmumu, weight, 0., 200., 200);
+        if(PTMu1>10. && PTMu2>10.) FillHist("Mmumu_DiL_PP1010_3j"+Label, Mmumu, weight, 0., 200., 200);
+      }
+      if(NHFakeLep==1){
+        if(PTMu1>20. && PTMu2>10.) FillHist("Mmumu_DiL_PF2010_3j"+Label, Mmumu, weight, 0., 200., 200);
+        if(PTMu1>10. && PTMu2>10.) FillHist("Mmumu_DiL_PF1010_3j"+Label, Mmumu, weight, 0., 200., 200);
+      }
+    }
+    if(nbjets==1){
+      if(NHFakeLep==0){
+        if(PTMu1>20. && PTMu2>10.) FillHist("Mmumu_DiL_PP2010_1b"+Label, Mmumu, weight, 0., 200., 200);
+        if(PTMu1>10. && PTMu2>10.) FillHist("Mmumu_DiL_PP1010_1b"+Label, Mmumu, weight, 0., 200., 200);
+      }
+      if(NHFakeLep==1){
+        if(PTMu1>20. && PTMu2>10.) FillHist("Mmumu_DiL_PF2010_1b"+Label, Mmumu, weight, 0., 200., 200);
+        if(PTMu1>10. && PTMu2>10.) FillHist("Mmumu_DiL_PF1010_1b"+Label, Mmumu, weight, 0., 200., 200);
+      }
+    }
+  }
+}
+
+
 
 
 void Aug2017_MuFakeMCStudy::EndCycle()throw( LQError ){
@@ -2968,6 +3265,32 @@ int Aug2017_MuFakeMCStudy::GetFakeLepSrcIdx(snu::KMuon Mu, std::vector<snu::KTru
   return MatchedIdx;
 }
 
+int Aug2017_MuFakeMCStudy::GetFakeLepGenJetSrcIdx(snu::KMuon Mu, std::vector<snu::KGenJet> GenJetColl, TString Option){
+
+  int SrcIdx=-1;
+  float dRmin=999.;
+  bool DR04=Option.Contains("DR04"), Nearest=Option.Contains("Near");
+  for(int i=0; i<(int) GenJetColl.size(); i++){
+    if     ( DR04  ){ if(Mu.DeltaR(GenJetColl.at(i))<0.4){ SrcIdx=i; break; } }
+    else if(Nearest){ if(Mu.DeltaR(GenJetColl.at(i))<dRmin){ dRmin=Mu.DeltaR(GenJetColl.at(i)); SrcIdx=i; } }
+  }
+
+  return SrcIdx;
+}
+
+
+int Aug2017_MuFakeMCStudy::GetFakeLepJetSrcIdx(snu::KMuon Mu, std::vector<snu::KJet> JetColl, TString Option){
+
+  int SrcIdx=-1;
+  float dRmin=999.;
+  bool DR04=Option.Contains("DR04"), Nearest=Option.Contains("Near");
+  for(int i=0; i<(int) JetColl.size(); i++){
+    if     ( DR04  ){ if(Mu.DeltaR(JetColl.at(i))<0.4){ SrcIdx=i; break; } }
+    else if(Nearest){ if(Mu.DeltaR(JetColl.at(i))<dRmin){ dRmin=Mu.DeltaR(JetColl.at(i)); SrcIdx=i; } }
+  }
+
+  return SrcIdx;
+}
 
 
 int Aug2017_MuFakeMCStudy::GetFakeLepJetSrcType(snu::KMuon Mu, std::vector<snu::KJet> JetColl){

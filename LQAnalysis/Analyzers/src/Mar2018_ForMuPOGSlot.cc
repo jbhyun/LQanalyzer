@@ -71,9 +71,11 @@ void Mar2018_ForMuPOGSlot::ExecuteEvents()throw( LQError ){
 
   
    bool FakeCompCheck=false, IDEffCheck=false, IDVarSensitivity=false, FRInspection=false, SiglWP=false, ScanFR=false;
-   bool TrigBiasCheck=false, FRMeasEmul=false, Closure=false, ForMuPOGPlot=false;
+   bool TrigBiasCheck=false, FRMeasEmul=false, Closure=false, ForMuPOGPlot=false, PerfXCheck=false;
+   bool TriMu=false, EMuMu=false;
    for(int i=0; i<(int) k_flags.size(); i++){
      if     (k_flags.at(i).Contains("FakeCompCheck"))    FakeCompCheck    = true;
+     else if(k_flags.at(i).Contains("PerfXCheck"))       PerfXCheck       = true;
      else if(k_flags.at(i).Contains("IDEffCheck"))       IDEffCheck       = true;
      else if(k_flags.at(i).Contains("IDVarSensitivity")) IDVarSensitivity = true;
      else if(k_flags.at(i).Contains("FRInspection"))     FRInspection     = true;
@@ -83,6 +85,8 @@ void Mar2018_ForMuPOGSlot::ExecuteEvents()throw( LQError ){
      else if(k_flags.at(i).Contains("FRMeasEmul"))       FRMeasEmul       = true;
      else if(k_flags.at(i).Contains("Closure"))          Closure          = true;
      else if(k_flags.at(i).Contains("ForMuPOGPlot"))     ForMuPOGPlot     = true;
+     else if(k_flags.at(i).Contains("TriMu"))            TriMu            = true;
+     else if(k_flags.at(i).Contains("EMuMu"))            EMuMu            = true;
    }
 
     
@@ -92,14 +96,47 @@ void Mar2018_ForMuPOGSlot::ExecuteEvents()throw( LQError ){
    //ListTriggersAvailable();
 
    //Normalisation Lumi Setting
-   float trigger_ps_weight=1.;
-   if(!isData) trigger_ps_weight=WeightByTrigger("HLT_IsoMu24_v", TargetLumi);
-   weight*=trigger_ps_weight;
-   FillHist("TriggerPSWeight", trigger_ps_weight, 1., 0., 1., 100);
+   bool Pass_Trigger=false, Pass_TriggerBG=false, Pass_TriggerH=false;
+   float trigger_ps_weight=1., trigger_period_weight=1.;
+   float LumiBG=27.257618, LumiH=8.605696, LumiBH=35.863314;
+
+   if(EMuMu){
+     if( PassTrigger("HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v") )    Pass_TriggerBG=true;
+     if( PassTrigger("HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ_v") ) Pass_TriggerH =true;
+
+     if(isData){
+       int DataPeriod=GetDataPeriod();
+       if( DataPeriod>0 && DataPeriod<7 && Pass_TriggerBG ) Pass_Trigger=true;
+       else if( DataPeriod==7 && Pass_TriggerH ) Pass_Trigger=true;
+     }
+     else{
+       if( Pass_TriggerBG || Pass_TriggerH ) Pass_Trigger=true;
+       trigger_period_weight=( (Pass_TriggerBG? 27.257618:0.)+(Pass_TriggerH? 8.605696:0.) )/35.863314;
+       trigger_ps_weight=WeightByTrigger("HLT_IsoMu24_v", TargetLumi);
+     }
+   }
+   if(TriMu){
+     if(  PassTrigger("HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_v")
+        ||PassTrigger("HLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_v") )    Pass_TriggerBG=true;
+     if(  PassTrigger("HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_v")
+        ||PassTrigger("HLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_DZ_v") ) Pass_TriggerH =true;
+
+     if(isData){
+       int DataPeriod=GetDataPeriod();
+       if( DataPeriod>0 && DataPeriod<7 && Pass_TriggerBG ) Pass_Trigger=true;
+       else if( DataPeriod==7 && Pass_TriggerH ) Pass_Trigger=true;
+     }
+     else{
+       if( Pass_TriggerBG || Pass_TriggerH ) Pass_Trigger=true;
+       trigger_period_weight=( (Pass_TriggerBG? 27.257618:0.)+(Pass_TriggerH? 8.605696:0.) )/35.863314;
+       trigger_ps_weight=WeightByTrigger("HLT_IsoMu24_v", TargetLumi);
+     }
+   }
+   weight*=trigger_ps_weight*trigger_period_weight;
 
 
    //Trigger Cut
-   //if(!Pass_Trigger) return;
+   if(!Pass_Trigger) return;
    FillCutFlow("TriggerCut", weight*pileup_reweight);
    /**********************************************************************************/
 
@@ -125,7 +162,8 @@ void Mar2018_ForMuPOGSlot::ExecuteEvents()throw( LQError ){
      eventbase->GetElectronSel()->SetPt(10.);                eventbase->GetElectronSel()->SetEta(2.5);
      eventbase->GetElectronSel()->SetBETrRegIncl(false);
    std::vector<snu::KElectron> electronPreColl; eventbase->GetElectronSel()->Selection(electronPreColl);
-   if(Closure){ if( !(muonPreColl.size()>=3) ) return; }
+   if     (TriMu && PerfXCheck){ if( !(muonPreColl.size()>=3) ) return; }
+   else if(EMuMu && PerfXCheck){ if( !(muonPreColl.size()>=2 && electronPreColl.size()>=1) ) return; }
    /**********************************************************************************************************/
 
    //For Fake Study
@@ -134,6 +172,11 @@ void Mar2018_ForMuPOGSlot::ExecuteEvents()throw( LQError ){
      eventbase->GetMuonSel()->SetPt(10.);                    eventbase->GetMuonSel()->SetEta(2.4);
      eventbase->GetMuonSel()->SetRelIsoType("PFRelIso04");   eventbase->GetMuonSel()->SetRelIso(0.4);
    std::vector<snu::KMuon> muonPOGLIsoVLColl; eventbase->GetMuonSel()->Selection(muonPOGLIsoVLColl, true);
+     eventbase->GetMuonSel()->SetID(BaseSelection::MUON_POG_TIGHT);
+     eventbase->GetMuonSel()->SetPt(10.);                    eventbase->GetMuonSel()->SetEta(2.4);
+     eventbase->GetMuonSel()->SetRelIsoType("PFRelIso04");   eventbase->GetMuonSel()->SetRelIso(0.4);
+   std::vector<snu::KMuon> muonPOGTIsoVLColl; eventbase->GetMuonSel()->Selection(muonPOGTIsoVLColl, true);
+
      eventbase->GetMuonSel()->SetID(BaseSelection::MUON_POG_MEDIUM);
      eventbase->GetMuonSel()->SetPt(10.);                    eventbase->GetMuonSel()->SetEta(2.4);
    std::vector<snu::KMuon> muonPOGMColl; eventbase->GetMuonSel()->Selection(muonPOGMColl, true);
@@ -144,6 +187,30 @@ void Mar2018_ForMuPOGSlot::ExecuteEvents()throw( LQError ){
      eventbase->GetMuonSel()->SetPt(10.);                    eventbase->GetMuonSel()->SetEta(2.4);
      eventbase->GetMuonSel()->SetRelIsoType("PFRelIso04");   eventbase->GetMuonSel()->SetRelIso(0.15);
    std::vector<snu::KMuon> muonPOGTIsoColl; eventbase->GetMuonSel()->Selection(muonPOGTIsoColl, true);
+
+
+     eventbase->GetMuonSel()->SetID(BaseSelection::MUON_POG_TIGHT);
+     eventbase->GetMuonSel()->SetPt(10.);                    eventbase->GetMuonSel()->SetEta(2.4);
+     eventbase->GetMuonSel()->SetBSdxy(0.01);                eventbase->GetMuonSel()->SetdxySigMax(4.);
+     eventbase->GetMuonSel()->SetBSdz(0.05);
+     eventbase->GetMuonSel()->SetChiNdof(4.);
+     eventbase->GetMuonSel()->SetRelIsoType("PFRelIso04");   eventbase->GetMuonSel()->SetRelIso(0.2);
+   std::vector<snu::KMuon> muonHctoWAColl; eventbase->GetMuonSel()->Selection(muonHctoWAColl, true);
+
+     eventbase->GetMuonSel()->SetID(BaseSelection::MUON_POG_TIGHT);
+     eventbase->GetMuonSel()->SetPt(10.);                    eventbase->GetMuonSel()->SetEta(2.4);
+     eventbase->GetMuonSel()->SetBSdxy(0.01);
+     eventbase->GetMuonSel()->SetBSdz(0.1);
+     eventbase->GetMuonSel()->SetRelIsoType("PFRelIso04");   eventbase->GetMuonSel()->SetRelIso(0.15);
+   std::vector<snu::KMuon> muonHWW10Coll; eventbase->GetMuonSel()->Selection(muonHWW10Coll, true);
+     eventbase->GetMuonSel()->SetID(BaseSelection::MUON_POG_TIGHT);
+     eventbase->GetMuonSel()->SetPt(20.);                    eventbase->GetMuonSel()->SetEta(2.4);
+     eventbase->GetMuonSel()->SetBSdxy(0.02);
+     eventbase->GetMuonSel()->SetBSdz(0.1);
+     eventbase->GetMuonSel()->SetRelIsoType("PFRelIso04");   eventbase->GetMuonSel()->SetRelIso(0.15);
+   std::vector<snu::KMuon> muonHWWColl; eventbase->GetMuonSel()->Selection(muonHWWColl, true);
+     for(int i=0; i<muonHWW10Coll.size(); i++){ if(muonHWW10Coll.at(i).Pt()<20.) muonHWWColl.push_back(muonHWW10Coll.at(i)); };
+ 
 
 
      eventbase->GetElectronSel()->SetID(BaseSelection::ELECTRON_HctoWA_FAKELOOSE);
@@ -172,7 +239,7 @@ void Mar2018_ForMuPOGSlot::ExecuteEvents()throw( LQError ){
    std::vector<snu::KJet> jetNoVetoColl; eventbase->GetJetSel()->Selection(jetNoVetoColl, LeptonVeto, muonPOGLIsoVLColl, electronLooseColl);
    std::vector<snu::KJet> bjetNoVetoColl = SelBJets(jetNoVetoColl, "Medium");
 
-   std::vector<snu::KJet> jetColl  = SkimJetColl(jetNoVetoColl,  electronLooseColl, muonPOGLIsoVLColl, "EleMuVeto");
+   std::vector<snu::KJet> jetColl  = SkimJetColl(jetNoVetoColl,  electronLooseColl, muonPOGTIsoVLColl, "EleMuVeto");
    std::vector<snu::KJet> bjetColl = SelBJets(jetColl, "Medium");
 
 
@@ -238,6 +305,13 @@ void Mar2018_ForMuPOGSlot::ExecuteEvents()throw( LQError ){
 
      DrawPlotsForPOGSlot(muonPreColl, muonPreColl, electronLooseColl, jetNoVetoColl, bjetNoVetoColl, met, met*cos(metphi), met*sin(metphi), truthColl, weight, "_NoID", "");
      DrawPlotsForPOGSlot(muonPreColl, muonPreColl, electronLooseColl, jetNoVetoColl, bjetNoVetoColl, met, met*cos(metphi), met*sin(metphi), truthColl, weight, "_ID", "ID");
+
+   }
+   if(PerfXCheck){
+     
+     PerformanceComp(muonHctoWAColl, muonPOGTIsoVLColl, electronTightColl, electronLooseColl, jetColl, bjetColl, met, met*cos(metphi), met*sin(metphi), truthColl, weight, "_HctoWA", "TriMu");
+     PerformanceComp(muonHWWColl, muonPOGTIsoVLColl, electronTightColl, electronLooseColl, jetColl, bjetColl, met, met*cos(metphi), met*sin(metphi), truthColl, weight, "_HWW", "TriMu");
+     PerformanceComp(muonPOGTIsoColl, muonPOGTIsoVLColl, electronTightColl, electronLooseColl, jetColl, bjetColl, met, met*cos(metphi), met*sin(metphi), truthColl, weight, "_POG", "TriMu");
 
    }
    if(FakeCompCheck){
@@ -423,6 +497,84 @@ void Mar2018_ForMuPOGSlot::ExecuteEvents()throw( LQError ){
 return;
 }// End of execute event loop
   
+
+
+void Mar2018_ForMuPOGSlot::PerformanceComp(std::vector<snu::KMuon> MuTColl, std::vector<snu::KMuon> MuLColl, std::vector<snu::KElectron> EleTColl, std::vector<snu::KElectron> EleLColl, std::vector<snu::KJet> JetColl, std::vector<snu::KJet> BJetColl, float MET, float METx, float METy, std::vector<snu::KTruth> truthColl, float weight, TString Label, TString Option){
+
+
+  bool EMuMu=Option.Contains("EMuMu"), TriMu=Option.Contains("TriMu");
+
+  if(EMuMu){
+    if( !(EleLColl.size()==1 && EleTColl.size()==1)) return;
+    if( !( MuLColl.size()>=2 &&  MuTColl.size()>=2)) return;
+    if( !(EleTColl.at(0).Pt()>25 && MuTColl.at(0).Pt()>10) ) return;
+    if( fabs(EleTColl.at(0).Eta())>2.5 ) return;
+      if(k_sample_name.Contains("DY") || k_sample_name.Contains("TT_powheg")){
+        std::vector<snu::KTruth> truthColl; eventbase->GetTruthSel()->Selection(truthColl);
+        int LeptonType=0;
+        LeptonType=GetLeptonType(MuTColl.at(1),truthColl);
+        if(LeptonType>=-4 && LeptonType<0) goto flowstart_1e2mu;
+        LeptonType=GetLeptonType(EleTColl.at(0),truthColl);
+        if(LeptonType>=-4 && LeptonType<0) goto flowstart_1e2mu;
+        LeptonType=GetLeptonType(MuTColl.at(0),truthColl);
+        if(LeptonType>=-4 && LeptonType<0) goto flowstart_1e2mu;
+        return;
+      }
+      flowstart_1e2mu:
+
+    float CurrentIdx=0.;
+
+    //Original scenario
+    if( !(MuLColl.size()==2 && MuTColl.size()==2) ) return;
+    if( !(MuTColl.at(0).Charge()!=MuTColl.at(1).Charge()) ) return;
+      float Mmumu=(MuTColl.at(0)+MuTColl.at(1)).M();
+    if(Mmumu<12) return;
+    if( !(EleTColl.at(0).Pt()>25 && MuTColl.at(0).Pt()>10 && MuTColl.at(1).Pt()>10) ) return;
+      FillHist("CutFlow_1e2mu"+Label, CurrentIdx, weight, 0., 10., 10); CurrentIdx++;//Analysis PT Cut
+    if(fabs(Mmumu-91.2)<10) return;
+      FillHist("CutFlow_1e2mu"+Label, CurrentIdx, weight, 0., 10., 10); CurrentIdx++;//OffZ
+    if(BJetColl.size()==0) return;
+      FillHist("CutFlow_1e2mu"+Label, CurrentIdx, weight, 0., 10., 10); CurrentIdx++;//HasB
+    if(JetColl.size()<2) return;
+      FillHist("CutFlow_1e2mu"+Label, CurrentIdx, weight, 0., 10., 10); CurrentIdx++;//geq2j
+  }
+  if(TriMu){
+    if( !(EleLColl.size()==0) ) return;
+    if( !(MuTColl.size()>=3 ) ) return;
+    if( !(MuTColl.at(0).Pt()>20 && MuTColl.at(1).Pt()>10) ) return;
+      if(k_sample_name.Contains("DY") || k_sample_name.Contains("TT_powheg")){
+        std::vector<snu::KTruth> truthColl; eventbase->GetTruthSel()->Selection(truthColl);
+        bool HasFake=false;
+        for(int i=0; i<MuTColl.size(); i++){
+          int LeptonType=GetLeptonType(MuTColl.at(i),truthColl);
+          if(LeptonType>=-4 && LeptonType<0){ HasFake=true; break; }
+        }
+        if(!HasFake) return;
+      }
+
+    float CurrentIdx=0.;
+
+    if( !(MuLColl.size()==3 && MuTColl.size()==3) ) return;
+    if( !(MuTColl.at(0).Pt()>20 && MuTColl.at(1).Pt()>10 && MuTColl.at(2).Pt()>10) ) return;
+    if( fabs(SumCharge(MuTColl))!=1 ) return;
+      int   IdxOS  = TriMuChargeIndex(MuTColl, "OS");
+      int   IdxSS1 = TriMuChargeIndex(MuTColl, "SS1");
+      int   IdxSS2 = TriMuChargeIndex(MuTColl, "SS2");
+      float MOSSS1 = (MuTColl.at(IdxOS)+MuTColl.at(IdxSS1)).M();
+      float MOSSS2 = (MuTColl.at(IdxOS)+MuTColl.at(IdxSS2)).M();
+    if( !(MOSSS1>12 && MOSSS2>12) ) return;
+      FillHist("CutFlow_3mu"+Label, CurrentIdx, weight, 0., 10., 10); CurrentIdx++;//3lep within simulation reg. & Triggered.
+    if( fabs(MOSSS1-91.2)<10 || fabs(MOSSS2-91.2)<10 ) return;
+      FillHist("CutFlow_3mu"+Label, CurrentIdx, weight, 0., 10., 10); CurrentIdx++;//3lep within simulation reg. & Triggered.
+    if(BJetColl.size()==0) return;
+      FillHist("CutFlow_3mu"+Label, CurrentIdx, weight, 0., 10., 10); CurrentIdx++;//HasB
+    if(JetColl.size()<2) return;
+      FillHist("CutFlow_3mu"+Label, CurrentIdx, weight, 0., 10., 10); CurrentIdx++;//geq2j
+  }
+
+
+
+}
 
 
 void Mar2018_ForMuPOGSlot::DrawPlotsForPOGSlot(std::vector<snu::KMuon> muonColl, std::vector<snu::KMuon> muonLooseColl, std::vector<snu::KElectron> electronLooseColl, std::vector<snu::KJet> JetColl, std::vector<snu::KJet> BJetColl, float MET, float METx, float METy, std::vector<snu::KTruth> truthColl, float weight, TString Label, TString Option){

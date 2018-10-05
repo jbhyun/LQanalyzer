@@ -1601,8 +1601,10 @@ void Oct2017_MuFRSyst::CheckTrilepCRs(std::vector<snu::KMuon> MuTColl, std::vect
     int   IdxOS  = TriMuChargeIndex(MuTColl, "OS");
     int   IdxSS1 = TriMuChargeIndex(MuTColl, "SS1");
     int   IdxSS2 = TriMuChargeIndex(MuTColl, "SS2");
+    int   IdxSSA = TriMuChargeIndex(MuTColl, MET, METx, METy, "SSA");
     float MOSSS1 = (MuTColl.at(IdxOS)+MuTColl.at(IdxSS1)).M();
     float MOSSS2 = (MuTColl.at(IdxOS)+MuTColl.at(IdxSS2)).M();
+    float Mmumu  = (MuTColl.at(IdxOS)+MuTColl.at(IdxSSA)).M();
     if( !(MOSSS1>12 && MOSSS2>12) ) return;
     FillHist("CutFlow", 1., weight, 0., 10., 10);
   
@@ -1612,7 +1614,7 @@ void Oct2017_MuFRSyst::CheckTrilepCRs(std::vector<snu::KMuon> MuTColl, std::vect
     float M3l    = (MuTColl.at(0)+MuTColl.at(1)+MuTColl.at(2)).M();
     float MTW    = sqrt(2)*sqrt(MET*MuTColl.at(IdxSSNonZ).Pt()-METx*MuTColl.at(IdxSSNonZ).Px()-METy*MuTColl.at(IdxSSNonZ).Py());
   
-    bool HasBJet=false, OnZ=false, OffZ=false, OnZG=false, WZSel=false, ZGSel=false, ttZSel=false, ZbbSel=false, AN_Sideband=false;
+    bool HasBJet=false, OnZ=false, OffZ=false, OnZG=false, WZSel=false, ZGSel=false, ttZSel=false, ZbbSel=false;
     if( BJetColl.size()!=0                 ) HasBJet     = true;
     if( fabs(MOSSSZ-91.2)<10               ) OnZ         = true;
     if( fabs(MOSSS1-91.2)>10 && fabs(MOSSS2-91.2)>10)OffZ= true;
@@ -1620,8 +1622,6 @@ void Oct2017_MuFRSyst::CheckTrilepCRs(std::vector<snu::KMuon> MuTColl, std::vect
     if( OnZ && M3l>101.2 && MET>50         ) WZSel       = true;
     if( OnZG && OffZ && MET<50      ) ZGSel       = true;
     if( OnZ && HasBJet && JetColl.size()>2 ) ttZSel      = true;
-    if( MOSSS1>40 && MOSSS2>40 
-       && HasBJet && JetColl.size()>2      ) AN_Sideband = true;
   
     //General 3l Selection
     if(!HasBJet){
@@ -1757,6 +1757,7 @@ void Oct2017_MuFRSyst::CheckTrilepCRs(std::vector<snu::KMuon> MuTColl, std::vect
     
       FillHist("MOSSS1_SR2j"+Label, MOSSS1, weight, 0., 300., 60);
       FillHist("MOSSS2_SR2j"+Label, MOSSS2, weight, 0., 200., 40);
+      FillHist("Mmumu_SR2j" +Label, Mmumu , weight, 0., 200., 40);
       FillHist("M3l_SR2j"+Label, M3l, weight, 0., 500., 50);
       FillHist("Nj_SR2j"+Label, JetColl.size(), weight, 0., 10., 10);
       FillHist("Nb_SR2j"+Label, BJetColl.size(), weight, 0., 10., 10);
@@ -1775,30 +1776,12 @@ void Oct2017_MuFRSyst::CheckTrilepCRs(std::vector<snu::KMuon> MuTColl, std::vect
     
       FillHist("MOSSS1_SR3j"+Label, MOSSS1, weight, 0., 300., 60);
       FillHist("MOSSS2_SR3j"+Label, MOSSS2, weight, 0., 200., 40);
+      FillHist("Mmumu_SR3j" +Label, Mmumu , weight, 0., 200., 40);
       FillHist("M3l_SR3j"+Label, M3l, weight, 0., 500., 50);
       FillHist("Nj_SR3j"+Label, JetColl.size(), weight, 0., 10., 10);
       FillHist("Nb_SR3j"+Label, BJetColl.size(), weight, 0., 10., 10);
       FillHist("MET_SR3j"+Label, MET, weight, 0., 300., 30);
       FillHist("MTW_SR3j"+Label, MTW, weight, 0., 200., 20);
-    }
-
-    if(AN_Sideband){
-      FillHist("CutFlow", 7., weight, 0., 10., 10);
-
-      FillHist("PTmu1_ANSideband"+Label, MuTColl.at(0).Pt(), weight, 0., 300., 60);
-      FillHist("PTmu2_ANSideband"+Label, MuTColl.at(1).Pt(), weight, 0., 200., 40);
-      FillHist("PTmu3_ANSideband"+Label, MuTColl.at(2).Pt(), weight, 0., 200., 40);
-      FillHist("Etamu1_ANSideband"+Label, MuTColl.at(0).Eta(), weight, -5., 5., 20);
-      FillHist("Etamu2_ANSideband"+Label, MuTColl.at(1).Eta(), weight, -5., 5., 20);
-      FillHist("Etamu3_ANSideband"+Label, MuTColl.at(2).Eta(), weight, -5., 5., 20);
-    
-      FillHist("MOSSS1_ANSideband"+Label, MOSSS1, weight, 0., 200., 40);
-      FillHist("MOSSS2_ANSideband"+Label, MOSSS2, weight, 0., 200., 40);
-      FillHist("M3l_ANSideband"+Label, M3l, weight, 0., 500., 50);
-      FillHist("Nj_ANSideband"+Label, JetColl.size(), weight, 0., 10., 10);
-      FillHist("Nb_ANSideband"+Label, BJetColl.size(), weight, 0., 10., 10);
-      FillHist("MET_ANSideband"+Label, MET, weight, 0., 300., 30);
-      FillHist("MTW_ANSideband"+Label, MTW, weight, 0., 200., 20);
     }
   }
   else if(EMuMu){
@@ -1813,7 +1796,7 @@ void Oct2017_MuFRSyst::CheckTrilepCRs(std::vector<snu::KMuon> MuTColl, std::vect
     if(Mmumu<12) return;
     
     
-    bool HasBJet=false, OnZ=false, OnZG=false, WZSel=false, ZGSel=false, ttZSel=false, ZbbSel=false, AN_Sideband=false;
+    bool HasBJet=false, OnZ=false, OnZG=false, WZSel=false, ZGSel=false, ttZSel=false, ZbbSel=false;
     if( BJetColl.size()!=0 )                      HasBJet = true;
     if( fabs(Mmumu-91.2)<10     )                 OnZ     = true;
     if( fabs(M3l-91.2)<10       )                 OnZG    = true;
@@ -1821,7 +1804,6 @@ void Oct2017_MuFRSyst::CheckTrilepCRs(std::vector<snu::KMuon> MuTColl, std::vect
     if( OnZG && Mmumu<81.2 && MET<50 )            ZGSel   = true;
     if( OnZ && HasBJet && JetColl.size()>2)       ttZSel  = true;
     if( OnZ && HasBJet && JetColl.size()<3)       ZbbSel  = true;
-    if( Mmumu>40 && HasBJet && JetColl.size()>2 ) AN_Sideband=true;
      
     
     //General 3l Selection
@@ -1946,21 +1928,6 @@ void Oct2017_MuFRSyst::CheckTrilepCRs(std::vector<snu::KMuon> MuTColl, std::vect
       FillHist("Nb_ZbbSel"+Label, BJetColl.size(), weight, 0., 10., 10);
       FillHist("MET_ZbbSel"+Label, MET, weight, 0., 200., 200);
       FillHist("MTW_ZbbSel"+Label, MTW, weight, 0., 200., 200);
-    }
-    if(AN_Sideband){
-      FillHist("PTe_ANSideband"+Label, EleTColl.at(0).Pt(), weight, 0., 200., 200);
-      FillHist("Etae_ANSideband"+Label, EleTColl.at(0).Eta(), weight, -5., 5., 100);
-      FillHist("PTmu1_ANSideband"+Label, MuTColl.at(0).Pt(), weight, 0., 200., 200);
-      FillHist("PTmu2_ANSideband"+Label, MuTColl.at(1).Pt(), weight, 0., 200., 200);
-      FillHist("Etamu1_ANSideband"+Label, MuTColl.at(0).Eta(), weight, -5., 5., 100);
-      FillHist("Etamu2_ANSideband"+Label, MuTColl.at(1).Eta(), weight, -5., 5., 100);
-    
-      FillHist("Mmumu_ANSideband"+Label, Mmumu, weight, 0., 200., 200);
-      FillHist("M3l_ANSideband"+Label, (EleTColl.at(0)+MuTColl.at(0)+MuTColl.at(1)).M(), weight, 0., 500., 500);
-      FillHist("Nj_ANSideband"+Label, JetColl.size(), weight, 0., 10., 10);
-      FillHist("Nb_ANSideband"+Label, BJetColl.size(), weight, 0., 10., 10);
-      FillHist("MET_ANSideband"+Label, MET, weight, 0., 200., 200);
-      FillHist("MTW_ANSideband"+Label, MTW, weight, 0., 200., 200);
     }
   
   }

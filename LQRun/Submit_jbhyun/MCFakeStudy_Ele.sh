@@ -14,16 +14,16 @@ Stream="SingleElectron"
 #Stream="DoubleMuon"     
 #Stream="DoubleEG"
 #Stream="MuonEG"
-#Skim="SKTree_LeptonSkim"  ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
+Skim="SKTree_LeptonSkim"  ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
 #Skim="SKTree_DiLepSkim"  ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
-Skim="SKTree_TriLepSkim"  ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
+#Skim="SKTree_TriLepSkim"  ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
 DataPeriod="ALL"
 job_logstep=1000
 LogLevel="INFO"
 QueueOption="fastq" 
-RunningMode="DetailClosure" 
+RunningMode="TrigBiasTest" 
 #"DetailClosure" #"FREmul" #"HighdXYApproachStudy" #"VJetReductionStudy" #"VetoImpactStudy" #"METMTWCutStudy" #"VetoImpactStudy" #"Scan_AvgFR_MVAIso_2D" #"SelBiasTest" #"TrigBiasTest" #"CompositionCheck" #"FineTune" #"EleFakeIDOpt" #"EleFakeParam"
-MCList="MajorFakeSource"
+MCList="TT"
 #"MajorFakeSource" #"VJets" #"FR_Prompt" #"TTLL" #"MajorFakeSource" #"FakeMeasRegSample" #"QCD_BCToE" #"QCD_EM" #"TT"
 
 ########################################################################

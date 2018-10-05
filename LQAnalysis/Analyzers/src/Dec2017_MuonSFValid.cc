@@ -69,11 +69,12 @@ void Dec2017_MuonSFValid::ExecuteEvents()throw( LQError ){
    FillCutFlow("NoCut", weight*pileup_reweight);
 
 
-   bool MuIDValid=false, MuTrigValid=false;
+   bool MuIDValid=false, MuTrigValid=false, MuIDNm1=false;
    bool SystRun=false;
    for(int i=0; i<k_flags.size(); i++){
      if     (k_flags.at(i).Contains("MuIDValid"))   MuIDValid   = true;
      else if(k_flags.at(i).Contains("MuTrigValid")) MuTrigValid = true;
+     else if(k_flags.at(i).Contains("MuIDNm1"))     MuIDNm1     = true;
      else if(k_flags.at(i).Contains("SystRun"))     SystRun     = true;
    }
 
@@ -86,28 +87,15 @@ void Dec2017_MuonSFValid::ExecuteEvents()throw( LQError ){
    bool Pass_Trigger=false;
    bool Pass_DiMuTrig=false, Pass_SiglMuTrig=false;
    float trigger_ps_weight=1., trigger_period_weight=1.;
-//   if(false){
-//     int Pass_Trigger1=0, Pass_Trigger2=0;
-//     if( PassTrigger("HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v") ) Pass_Trigger1++;
-//     if( PassTrigger("HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ_v") ) Pass_Trigger2++;
-//
-//     if(isData){
-//       int DataPeriod=GetDataPeriod();
-//       if( DataPeriod>0 && DataPeriod<7 && Pass_Trigger1==1 ) Pass_Trigger=true;
-//       else if( DataPeriod==7 && Pass_Trigger2==1 ) Pass_Trigger=true;
-//     }
-//     else{
-//       if( Pass_Trigger1>0 || Pass_Trigger2>0 ) Pass_Trigger=true;
-//       trigger_period_weight=(Pass_Trigger1*27.257618+Pass_Trigger2*8.605696)/35.863314;
-//       trigger_ps_weight=WeightByTrigger("HLT_IsoMu24_v", TargetLumi);
-//     }
-//   }
    if(MuIDValid){
      if     ( PassTrigger("HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_v")           ) Pass_DiMuTrig=true;
      else if( PassTrigger("HLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_DZ_v")         ) Pass_DiMuTrig=true;
      else if( PassTrigger("HLT_IsoMu24_v") || PassTrigger("HLT_IsoTkMu24_v") ) Pass_SiglMuTrig=true;
 
      Pass_Trigger=(Pass_DiMuTrig||Pass_SiglMuTrig);
+   }
+   if(MuIDNm1){
+     if( PassTrigger("HLT_IsoMu24_v") ) Pass_Trigger=true;
    }
    trigger_ps_weight=WeightByTrigger("HLT_IsoMu24_v", TargetLumi);
    FillHist("Basic_TrigPSWeight", trigger_ps_weight, 1., 0., 1., 100);
@@ -135,11 +123,11 @@ void Dec2017_MuonSFValid::ExecuteEvents()throw( LQError ){
    //Intended for Code speed boosting up.
      eventbase->GetMuonSel()->SetID(BaseSelection::MUON_POG_LOOSE);
      eventbase->GetMuonSel()->SetPt(10.);                    eventbase->GetMuonSel()->SetEta(2.4);
-   std::vector<snu::KMuon> muonPreColl; eventbase->GetMuonSel()->Selection(muonPreColl, true);
+   std::vector<snu::KMuon> muonPreColl; eventbase->GetMuonSel()->Selection(muonPreColl, false);
      eventbase->GetElectronSel()->SetPt(10.);                eventbase->GetElectronSel()->SetEta(2.5);
      eventbase->GetElectronSel()->SetBETrRegIncl(false);
    std::vector<snu::KElectron> electronPreColl; eventbase->GetElectronSel()->Selection(electronPreColl);
-     if(MuIDValid || MuTrigValid) { if( !(muonPreColl.size()>=2) ) return; }
+     if(MuIDValid || MuTrigValid || MuIDNm1) { if( !(muonPreColl.size()>=2) ) return; }
      FillCutFlow("PreSel", weight);
    //******************************************************************************************************//
 
@@ -148,18 +136,21 @@ void Dec2017_MuonSFValid::ExecuteEvents()throw( LQError ){
 
    std::vector<snu::KMuon> muonLooseColl, muonTightColl;
      for(int i=0; i<muonPreColl.size(); i++){
-       if(PassIDCriteria(muonPreColl.at(i),"Test_POGLIsop4IPp5p1Chi100"))      muonLooseColl.push_back(muonPreColl.at(i));
-       if(PassIDCriteria(muonPreColl.at(i),"Test_POGTIsop20IPp01p05sig4Chi4")) muonTightColl.push_back(muonPreColl.at(i));
+       if(PassIDCriteria(muonPreColl.at(i),"POGTIsop6IPp2p1sig4"))        muonLooseColl.push_back(muonPreColl.at(i));
+       if(PassIDCriteria(muonPreColl.at(i),"POGTIsop20IPp01p05sig4Chi4")) muonTightColl.push_back(muonPreColl.at(i));
      }
    std::vector<snu::KMuon> muonColl;  if(k_running_nonprompt){ muonColl=muonLooseColl;} else{ muonColl=muonTightColl;}
 
+     eventbase->GetMuonSel()->SetID(BaseSelection::MUON_POG_TIGHT);
+     eventbase->GetMuonSel()->SetPt(10.);                    eventbase->GetMuonSel()->SetEta(2.4);
+     eventbase->GetMuonSel()->SetRelIsoType("PFRelIso04");   eventbase->GetMuonSel()->SetRelIso(0.25);
+   std::vector<snu::KMuon> muonPOGTIsop25Coll; eventbase->GetMuonSel()->Selection(muonPOGTIsop25Coll,false);
 
 
      std::vector<snu::KElectron> electronLooseColl, electronTightColl;
        for(int i=0; i<electronPreColl.size(); i++){
-        //if(PassIDCriteria(electronPreColl.at(i), "LMVA06v1Isop4IPp5p1")) electronLooseColl.push_back(electronPreColl.at(i));
-        if(PassIDCriteria(electronPreColl.at(i), "LMVA06Isop4IPp025p05sig4")) electronLooseColl.push_back(electronPreColl.at(i));
-        if(PassIDCriteria(electronPreColl.at(i), "POGWP90Isop06IPp025p05sig4")) electronTightColl.push_back(electronPreColl.at(i));
+         if(PassIDCriteria(electronPreColl.at(i), "HctoWAFakeLoose"))           electronLooseColl.push_back(electronPreColl.at(i));
+         if(PassIDCriteria(electronPreColl.at(i), "POGWP90Isop06IPp025p1sig4")) electronTightColl.push_back(electronPreColl.at(i));
        }
    std::vector<snu::KElectron> electronColl;  if(!k_running_nonprompt){ electronColl=electronTightColl;} else{ electronColl=electronLooseColl;}
 
@@ -240,6 +231,11 @@ void Dec2017_MuonSFValid::ExecuteEvents()throw( LQError ){
 
      CheckMuIDSFValidity(muonColl, muonLooseColl, electronColl, electronLooseColl, jetColl, bjetColl, met, met*cos(metphi), met*sin(metphi), weight, "", "");
    }
+   if(MuIDNm1){
+     CheckEffFlow(muonPOGTIsop25Coll, muonPOGTIsop25Coll, electronColl, electronLooseColl, jetColl, bjetColl, met, met*cos(metphi), met*sin(metphi), weight, "", "");
+   }
+
+
 /////////////////////////////////////////////////////////////////////////////////// 
 
 return;
@@ -282,6 +278,48 @@ Dec2017_MuonSFValid::~Dec2017_MuonSFValid() {
   
 }
 
+
+void Dec2017_MuonSFValid::CheckEffFlow(std::vector<snu::KMuon> MuTColl, std::vector<snu::KMuon> MuLColl, std::vector<snu::KElectron> EleTColl, std::vector<snu::KElectron> EleLColl, std::vector<snu::KJet> JetColl, std::vector<snu::KJet> BJetColl, float MET, float METx, float METy, float weight, TString Label, TString Option){
+
+
+  if( !(MuTColl.size()==2) ) return;
+  if( MuTColl.at(0).Charge()==MuTColl.at(1).Charge() ) return;
+  float Mmumu = (MuTColl.at(0)+MuTColl.at(1)).M();
+  if( fabs(Mmumu-91.2)>10 )  return;
+  if( !(MuTColl.at(0).Pt()>27 && MuTColl.at(0).TriggerMatched("HLT_IsoMu24_v")) ) return;
+
+  const int NPtBinEdges=7, NEtaBinEdges=5;
+  float PtBinEdges[NPtBinEdges]  ={20., 25., 30., 40., 50., 60., 120.};
+  float EtaBinEdges[NEtaBinEdges]={0. , 0.9, 1.2, 2.1, 2.4};
+
+    FillHist("N_POGTIso25", fabs(MuTColl.at(1).Eta()), MuTColl.at(1).Pt(), weight, EtaBinEdges, NEtaBinEdges-1, PtBinEdges, NPtBinEdges-1); 
+  if(MuTColl.at(1).RelIso04()<0.15){
+    FillHist("N_POGTIso15", fabs(MuTColl.at(1).Eta()), MuTColl.at(1).Pt(), weight, EtaBinEdges, NEtaBinEdges-1, PtBinEdges, NPtBinEdges-1);
+  }
+  if(MuTColl.at(1).RelIso04()<0.2){
+    FillHist("N_POGTIso2", fabs(MuTColl.at(1).Eta()), MuTColl.at(1).Pt(), weight, EtaBinEdges, NEtaBinEdges-1, PtBinEdges, NPtBinEdges-1);
+  }
+  if(MuTColl.at(1).RelIso04()<0.2 && fabs(MuTColl.at(1).GlobalChi2())<4.){
+    FillHist("N_POGTIso2Chi4", fabs(MuTColl.at(1).Eta()), MuTColl.at(1).Pt(), weight, EtaBinEdges, NEtaBinEdges-1, PtBinEdges, NPtBinEdges-1);
+  }
+  if( MuTColl.at(1).RelIso04()<0.2 && fabs(MuTColl.at(1).GlobalChi2())<4. && fabs(MuTColl.at(1).dZ())<0.05 ){
+    FillHist("N_POGTIso2Chi4IPp05", fabs(MuTColl.at(1).Eta()), MuTColl.at(1).Pt(), weight, EtaBinEdges, NEtaBinEdges-1, PtBinEdges, NPtBinEdges-1);
+  }
+  if( MuTColl.at(1).RelIso04()<0.2 && fabs(MuTColl.at(1).GlobalChi2())<4. && fabs(MuTColl.at(1).dZ())<0.05
+      && fabs(MuTColl.at(1).dXY())<0.01 && fabs(MuTColl.at(1).dXYSig())<4. ){
+    FillHist("N_POGTIso2Chi4IPp01p05sig4", fabs(MuTColl.at(1).Eta()), MuTColl.at(1).Pt(), weight, EtaBinEdges, NEtaBinEdges-1, PtBinEdges, NPtBinEdges-1);
+  }
+
+  //Other N-1..
+  if( MuTColl.at(1).RelIso04()<0.2 && fabs(MuTColl.at(1).dZ())<0.05 && fabs(MuTColl.at(1).dXY())<0.01 && fabs(MuTColl.at(1).dXYSig())<4. ){
+    FillHist("N_POGTIso2IPp01p05sig4", fabs(MuTColl.at(1).Eta()), MuTColl.at(1).Pt(), weight, EtaBinEdges, NEtaBinEdges-1, PtBinEdges, NPtBinEdges-1);
+  }
+  if( MuTColl.at(1).RelIso04()<0.2 && fabs(MuTColl.at(1).GlobalChi2())<4. && fabs(MuTColl.at(1).dXY())<0.01 && fabs(MuTColl.at(1).dXYSig())<4. ){
+    FillHist("N_POGTIso2Chi4IPp01sig4", fabs(MuTColl.at(1).Eta()), MuTColl.at(1).Pt(), weight, EtaBinEdges, NEtaBinEdges-1, PtBinEdges, NPtBinEdges-1);
+  }
+
+
+}
 
 
 void Dec2017_MuonSFValid::CheckMuIDSFValidity(std::vector<snu::KMuon> MuTColl, std::vector<snu::KMuon> MuLColl, std::vector<snu::KElectron> EleTColl, std::vector<snu::KElectron> EleLColl, std::vector<snu::KJet> JetColl, std::vector<snu::KJet> BJetColl, float MET, float METx, float METy, float weight, TString Label, TString Option){

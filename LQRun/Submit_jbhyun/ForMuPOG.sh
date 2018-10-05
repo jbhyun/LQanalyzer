@@ -13,19 +13,21 @@ runSignal="False"
 AnalysisCode="Mar2018_ForMuPOGSlot"
 Stream="SingleMuon"
 #Skim="FLATCAT"  ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
-Skim="SKTree_LeptonSkim"  ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
+Skim="SKTree_TriLepSkim"  ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
+#Skim="SKTree_LeptonSkim"  ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
 DataPeriod="ALL"
 job_logstep=1000
 LogLevel="INFO"
 QueueOption="fastq"    #"longq"
-RunningMode="ForMuPOGPlot"
+RunningMode="PerfXCheck,TriMu"
+#"ForMuPOGPlot"
  #"PDFQ2Syst,MultiLep" #"TopPtCheck" #"MultiLep,LOvsNLOBias"
 
-MCList="TT"
+#MCList="DY" #"TT"
 #MCList="SignalMajor_All"
 #MCList="Signal_1e2mu"
 #MCList="Signal_All"
-#MCList="Analysis_bkg"
+MCList="Analysis_bkg"
 #MCList="GenSystAnaTargetBkg"
 
 

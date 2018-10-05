@@ -2,8 +2,8 @@
 
 ########################################################################
 ## MC / DATA
-runMC=true
-runData=false
+runMC=false
+runData=true
 runFake="False"
 runSignal="False"
 
@@ -23,9 +23,12 @@ job_logstep=1000
 LogLevel="INFO"
 QueueOption="fastq"    #"longq"
 RunningMode="SSDilepCR,TriMu,SystRun"
+#"SSDilepCR,TriMu,SystRun" "SSDilepCR,EMuMu,SystRun"
 #"EMuMu,TrilepCR,SystRun" #"TriMu,TrilepCR,SystRun"
+#"EMuMu,TTZAnomaly,SystRun"
  
 MCList="UnRun"
+#MCList="TT_All" #TT should be run with single lepton skim for emu!!
 #MCList="SignalMajor_All"
 #MCList="Analysis_bkg"
 #MCList="CR_CFCV_Dilep"

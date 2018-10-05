@@ -774,7 +774,7 @@ void Jul2017_DataFakeStudy::ExecuteEvents()throw( LQError ){
        std::vector<snu::KJet> bjetVeto2Coll = SelBJets(jetVeto2Coll, "Medium");
        if(!isData)  weight *= BTagScaleFactor_1a(jetVeto2Coll, snu::KJet::CSVv2, snu::KJet::Medium);
   
-       bool HasBJet=false, OnZ=false, OnZG=false, WZSel=false, ZGSel=false, ttZSel=false, ZbbSel=false, AN_Sideband=false;
+       bool HasBJet=false, OnZ=false, OnZG=false, WZSel=false, ZGSel=false, ttZSel=false, ZbbSel=false;
        if( bjetVeto2Coll.size()!=0 )                      HasBJet = true;
        if( fabs(Mmumu-91.2)<10     )                      OnZ     =true;
        if( fabs(M3l-91.2)<10       )                      OnZG    =true;
@@ -782,7 +782,6 @@ void Jul2017_DataFakeStudy::ExecuteEvents()throw( LQError ){
        if( OnZG && Mmumu<81.2 && met<50 )                 ZGSel   =true;
        if( OnZ && HasBJet && jetVeto2Coll.size()>2)       ttZSel  =true;
        if( OnZ && HasBJet && jetVeto2Coll.size()<3)       ZbbSel  =true;
-       if( Mmumu>40 && HasBJet && jetVeto2Coll.size()>2 ) AN_Sideband=true;
         
        if(isData){
          bool HasWeirdEle=HasStrangeEleCand(electronColl);
@@ -930,21 +929,6 @@ void Jul2017_DataFakeStudy::ExecuteEvents()throw( LQError ){
          FillHist("Nb_ZbbSel", bjetVeto2Coll.size(), weight, 0., 10., 10);
          FillHist("MET_ZbbSel", met, weight, 0., 200., 200);
          FillHist("MTW_ZbbSel", MTW, weight, 0., 200., 200);
-       }
-       if(AN_Sideband){
-         FillHist("PTe_ANSideband", electronColl.at(0).Pt(), weight, 0., 200., 200);
-         FillHist("Etae_ANSideband", electronColl.at(0).Eta(), weight, -5., 5., 100);
-         FillHist("PTmu1_ANSideband", muonColl.at(0).Pt(), weight, 0., 200., 200);
-         FillHist("PTmu2_ANSideband", muonColl.at(1).Pt(), weight, 0., 200., 200);
-         FillHist("Etamu1_ANSideband", muonColl.at(0).Eta(), weight, -5., 5., 100);
-         FillHist("Etamu2_ANSideband", muonColl.at(1).Eta(), weight, -5., 5., 100);
-  
-         FillHist("Mmumu_ANSideband", Mmumu, weight, 0., 200., 200);
-         FillHist("M3l_ANSideband", (electronColl.at(0)+muonColl.at(0)+muonColl.at(1)).M(), weight, 0., 500., 500);
-         FillHist("Nj_ANSideband", jetVeto2Coll.size(), weight, 0., 10., 10);
-         FillHist("Nb_ANSideband", bjetVeto2Coll.size(), weight, 0., 10., 10);
-         FillHist("MET_ANSideband", met, weight, 0., 200., 200);
-         FillHist("MTW_ANSideband", MTW, weight, 0., 200., 200);
        }
      }//End of Not SystRun
      if(SystRun){

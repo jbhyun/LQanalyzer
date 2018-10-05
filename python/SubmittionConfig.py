@@ -1622,7 +1622,8 @@ if getpass.getuser()  == "jalmond":
         print "No connection to " + lxmachine
         sys.exit()                                                                                                                                                                 
 
-queuepath=path_jobpre+"/LQAnalyzer_rootfiles_for_analysis/CattupleConfig/QUEUE/ForceQueue.txt"
+queuepath="/data2/Users/jbhyun/Public/TempSubmit/ForceQueue.txt"
+#queuepath=path_jobpre+"/LQAnalyzer_rootfiles_for_analysis/CattupleConfig/QUEUE/ForceQueue.txt"
 file_queuepath = open(queuepath,"r")
 QueueForced=False
 for line in file_queuepath:
@@ -2089,9 +2090,9 @@ for nsample in range(0, len(sample)):
         queue=newqueue
     
         ### If job is known to last longer than 90000 (if n=1 in submittion) seconds then send job to longq
-        if sample_islongjob:
-            printedqueue="longq"
-            queue="longq"
+#        if sample_islongjob:
+#            printedqueue="longq"
+#            queue="longq"
 
 
     

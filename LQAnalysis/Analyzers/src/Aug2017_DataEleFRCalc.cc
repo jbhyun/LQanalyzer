@@ -1624,7 +1624,7 @@ void Aug2017_DataEleFRCalc::CheckTrilepCRs(std::vector<snu::KElectron> EleTColl,
   if(Mmumu<12) return;
  
 
-  bool HasBJet=false, OnZ=false, OnZG=false, WZSel=false, ZGSel=false, ttZSel=false, AN_Sideband=false;
+  bool HasBJet=false, OnZ=false, OnZG=false, WZSel=false, ZGSel=false, ttZSel=false;
   if( BJetColl.size()!=0 )                      HasBJet = true;
   if( fabs(Mmumu-91.2)<10     )                 OnZ     = true;
   if( fabs(M3l-91.2)<10       )                 OnZG    = true;

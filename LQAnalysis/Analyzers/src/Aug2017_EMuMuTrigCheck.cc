@@ -268,7 +268,7 @@ void Aug2017_EMuMuTrigCheck::ExecuteEvents()throw( LQError ){
        if(Mmumu<12) return;
  
  
-       bool HasBJet=false, OnZ=false, OnZG=false, WZSel=false, ZGSel=false, ttZSel=false, ZbbSel=false, AN_Sideband=false;
+       bool HasBJet=false, OnZ=false, OnZG=false, WZSel=false, ZGSel=false, ttZSel=false, ZbbSel=false;
        bool SRincl=false, SRoffZ=false;
        if( bjetColl.size()!=0                )       HasBJet =true;
        if( fabs(Mmumu-91.2)<10               )       OnZ     =true;
@@ -277,7 +277,6 @@ void Aug2017_EMuMuTrigCheck::ExecuteEvents()throw( LQError ){
        if( OnZG && Mmumu<81.2 && met<50      )       ZGSel   =true;
        if( OnZ && HasBJet && jetColl.size()>2)       ttZSel  =true;
        if( OnZ && HasBJet && jetColl.size()<3)       ZbbSel  =true;
-       if( Mmumu>40 && HasBJet && jetColl.size()>2 ) AN_Sideband=true;
        if( HasBJet && jetColl.size()>2         )     SRincl  =true;
        if( HasBJet && jetColl.size()>2 && !OnZ )     SRoffZ  =true;
  
@@ -383,22 +382,6 @@ void Aug2017_EMuMuTrigCheck::ExecuteEvents()throw( LQError ){
          FillHist("Nb_ttZSel", bjetColl.size(), weight, 0., 10., 10);
          FillHist("MET_ttZSel", met, weight, 0., 200., 200);
          FillHist("MTW_ttZSel", MTW, weight, 0., 200., 200);
-       }
-       if(AN_Sideband){
-         FillHist("YieldComp_CR", 7., weight, 0., 10., 10);
-         FillHist("PTe_ANSideband", electronColl.at(0).Pt(), weight, 0., 200., 200);
-         FillHist("Etae_ANSideband", electronColl.at(0).Eta(), weight, -5., 5., 100);
-         FillHist("PTmu1_ANSideband", muonColl.at(0).Pt(), weight, 0., 200., 200);
-         FillHist("PTmu2_ANSideband", muonColl.at(1).Pt(), weight, 0., 200., 200);
-         FillHist("Etamu1_ANSideband", muonColl.at(0).Eta(), weight, -5., 5., 100);
-         FillHist("Etamu2_ANSideband", muonColl.at(1).Eta(), weight, -5., 5., 100);
-  
-         FillHist("Mmumu_ANSideband", Mmumu, weight, 0., 200., 200);
-         FillHist("M3l_ANSideband", (electronColl.at(0)+muonColl.at(0)+muonColl.at(1)).M(), weight, 0., 500., 500);
-         FillHist("Nj_ANSideband", jetColl.size(), weight, 0., 10., 10);
-         FillHist("Nb_ANSideband", bjetColl.size(), weight, 0., 10., 10);
-         FillHist("MET_ANSideband", met, weight, 0., 200., 200);
-         FillHist("MTW_ANSideband", MTW, weight, 0., 200., 200);
        }
      }//End of Not SystRun
    }//End of Closure

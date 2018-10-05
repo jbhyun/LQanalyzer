@@ -76,7 +76,7 @@ float MCDataCorrections::TriggerEfficiency(vector<snu::KElectron>& EleColl, vect
                      Eff_Mu2Leg1+=SystDir*HistEff_Leg1->GetBinError(HistEff_Leg1->FindBin(mu2feta, mu2pt)); }
       if(Syst_Leg2){ Eff_Mu1Leg2+=SystDir*HistEff_Leg2->GetBinError(HistEff_Leg2->FindBin(mu1feta, mu1pt));
                      Eff_Mu2Leg2+=SystDir*HistEff_Leg2->GetBinError(HistEff_Leg2->FindBin(mu2feta, mu2pt)); }
-      if(Syst_DZ  ){ Eff_dz     +=SystDir*( ReturnDataEff? 0.00063707:0.000458166); }
+      if(Syst_DZ  ){ Eff_dz     +=SystDir*( ReturnDataEff? 0.000636541:0.000457881); }
 
       if(!TrigName.Contains("DZ")) Eff_dz=1.;
 
@@ -116,7 +116,7 @@ float MCDataCorrections::TriggerEfficiency(vector<snu::KElectron>& EleColl, vect
       if(Syst_Leg2){ Eff_Mu1Leg2+=SystDir*HistEff_Leg2->GetBinError(HistEff_Leg2->FindBin(mu1feta, mu1pt));
                      Eff_Mu2Leg2+=SystDir*HistEff_Leg2->GetBinError(HistEff_Leg2->FindBin(mu2feta, mu2pt)); 
                      Eff_Mu3Leg2+=SystDir*HistEff_Leg2->GetBinError(HistEff_Leg2->FindBin(mu3feta, mu3pt)); }
-      if(Syst_DZ  ){ Eff_dz     +=SystDir*( ReturnDataEff? 0.00063707:0.000458166); }
+      if(Syst_DZ  ){ Eff_dz     +=SystDir*( ReturnDataEff? 0.000636541:0.000457881); }
 
       if(!TrigName.Contains("DZ")) Eff_dz=1.;
 
@@ -162,7 +162,7 @@ float MCDataCorrections::TriggerEfficiency(vector<snu::KElectron>& EleColl, vect
       if(Syst_Leg2){ Eff_Mu2Leg2+=SystDir*HistEff_Leg2->GetBinError(HistEff_Leg2->FindBin(mu2feta, mu2pt));
                      Eff_Mu3Leg2+=SystDir*HistEff_Leg2->GetBinError(HistEff_Leg2->FindBin(mu3feta, mu3pt));
                      Eff_Mu4Leg2+=SystDir*HistEff_Leg2->GetBinError(HistEff_Leg2->FindBin(mu4feta, mu4pt)); }
-      if(Syst_DZ  ){ Eff_dz     +=SystDir*( ReturnDataEff? 0.00063707:0.000458166); }
+      if(Syst_DZ  ){ Eff_dz     +=SystDir*( ReturnDataEff? 0.000636541:0.000457881); }
 
       if(!TrigName.Contains("DZ")) Eff_dz=1.;
 
@@ -194,7 +194,7 @@ float MCDataCorrections::TriggerEfficiency(vector<snu::KElectron>& EleColl, vect
 
       if(Syst_Leg1){ Eff_LegMu+=SystDir*HistEff_LegMu->GetBinError(HistEff_LegMu->FindBin(mupt, mufeta));  }
       if(Syst_Leg2){ Eff_LegEl+=SystDir*HistEff_LegEl->GetBinError(HistEff_LegEl->FindBin(elpt , elfeta)); }
-      if(Syst_DZ  ){ Eff_dz   +=SystDir*( ReturnDataEff? 0.00493499:0.002383 ); }
+      if(Syst_DZ  ){ Eff_dz   +=SystDir*( ReturnDataEff? 0.0048592:0.00237888 ); }
 
       if(!TrigName.Contains("DZ")) Eff_dz=1.;
 
@@ -224,7 +224,7 @@ float MCDataCorrections::TriggerEfficiency(vector<snu::KElectron>& EleColl, vect
       if(Syst_Leg1){ Eff_Mu1LegMu+=SystDir*HistEff_LegMu->GetBinError(HistEff_LegMu->FindBin(mu1pt, mu1feta));
                      Eff_Mu2LegMu+=SystDir*HistEff_LegMu->GetBinError(HistEff_LegMu->FindBin(mu2pt, mu2feta)); }
       if(Syst_Leg2){ Eff_LegEl   +=SystDir*HistEff_LegEl->GetBinError(HistEff_LegEl->FindBin(elpt , elfeta )); }
-      if(Syst_DZ  ){ Eff_dz      +=SystDir*( ReturnDataEff? 0.00493499:0.002383 ); }
+      if(Syst_DZ  ){ Eff_dz      +=SystDir*( ReturnDataEff? 0.0048592:0.00237888 ); }
 
       if(!TrigName.Contains("DZ")) Eff_dz=1.;
 
@@ -259,7 +259,7 @@ float MCDataCorrections::TriggerEfficiency(vector<snu::KElectron>& EleColl, vect
                      Eff_Mu2LegMu+=SystDir*HistEff_LegMu->GetBinError(HistEff_LegMu->FindBin(mu2pt, mu2feta));
                      Eff_Mu3LegMu+=SystDir*HistEff_LegMu->GetBinError(HistEff_LegMu->FindBin(mu3pt, mu3feta)); }
       if(Syst_Leg2){ Eff_LegEl   +=SystDir*HistEff_LegEl->GetBinError(HistEff_LegEl->FindBin(elpt , elfeta )); }
-      if(Syst_DZ  ){ Eff_dz      +=SystDir*( ReturnDataEff? 0.00493499:0.002383 ); }
+      if(Syst_DZ  ){ Eff_dz      +=SystDir*( ReturnDataEff? 0.0048592:0.00237888 ); }
 
       if(!TrigName.Contains("DZ")) Eff_dz=1.;
 
@@ -294,7 +294,7 @@ float MCDataCorrections::TriggerEfficiency(vector<snu::KElectron>& EleColl, vect
                      Eff_Mu2LegMu+=SystDir*HistEff_LegMu->GetBinError(HistEff_LegMu->FindBin(mu2pt, mu2feta)); }
       if(Syst_Leg1){ Eff_El1LegEl+=SystDir*HistEff_LegEl->GetBinError(HistEff_LegEl->FindBin(el1pt, el1feta));
                      Eff_El2LegEl+=SystDir*HistEff_LegEl->GetBinError(HistEff_LegEl->FindBin(el2pt, el2feta)); }
-      if(Syst_DZ  ){ Eff_dz      +=SystDir*( ReturnDataEff? 0.00493499:0.002383 ); }
+      if(Syst_DZ  ){ Eff_dz      +=SystDir*( ReturnDataEff? 0.0048592:0.00237888 ); }
 
       if(!TrigName.Contains("DZ")) Eff_dz=1.;
 

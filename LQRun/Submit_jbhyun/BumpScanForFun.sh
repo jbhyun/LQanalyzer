@@ -10,28 +10,31 @@ runSignal="False"
 ########################################################################
 ## RUN PARAMETERS
 
-AnalysisCode="Nov2017_GenPDFQ2Syst" #"Oct2017_GenSystRWSumCalc"
+AnalysisCode="Jun2018_BumpScanForFun"
+Stream="SingleMuon"
+#Stream="SingleElectron"
 #Stream="MuonEG"
-Stream="DoubleMuon"
-Skim="FLATCAT"  ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
-#Skim="SKTree_TriLepSkim"  ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
-DataPeriod="ALL"
+#Stream="DoubleMuon"
+#Stream="DoubleEG"
+#Skim="SKTree_LeptonSkim"  ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
+Skim="SKTree_DiLepSkim"   ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
+#Skim="SKTree_TriLepSkim"   ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
+DataPeriod="ALL" #"ALL"
 job_logstep=1000
 LogLevel="INFO"
 QueueOption="fastq"    #"longq"
-RunningMode="TriMu,PDFQ2Syst,BkdRun"
-#"PDFQ2Syst,TriMu"
-#"MultiLep,GenFilterBias" #"PDFQ2Syst,MultiLep" #"TopPtCheck" #"MultiLep,LOvsNLOBias"
-
-#MCList="TopPtMeasSample_Sig"
-#MCList="TopPtMeasSample_SM"
-#MCList="Signal_All"
-#MCList="SignalMajor_All"
-#MCList="SignalMajor_Old"
-#MCList="Analysis_bkg"
-#MCList="GenSystAnaTargetBkg"
-MCList="UnRun"
-
+RunningMode="ZValid"
+#"ZXScan,DoubleElectron"
+#"TTXScan,SiglMu" "TTXScan,SiglEl" "TTXScan,DoubleElectron" 
+#"SSDilepCR,TriMu,SystRun" "SSDilepCR,EMuMu,SystRun"
+#"EMuMu,TrilepCR,SystRun" #"TriMu,TrilepCR,SystRun"
+#"EMuMu,TTZAnomaly,SystRun"
+ 
+#MCList="UnRun"
+MCList="CR_DiLep"
+#MCList="ttH_bb"
+#MCList="TTLL"
+#MCList="Bkg_EMuBump"
 
 ########################################################################
 ## OUTPUT PATH CONFIG
@@ -41,7 +44,6 @@ outputdir_cat="/data2/Users/jbhyun/cmssw/CATanalyzer/CATOut/${CATVERSION}"
 
 if [[ -z ${CATVERSION} ]]; then echo "source setup.sh needed. exit"; exit 1; fi
 if [[ ! -d $CATOUT ]]; then echo "Made $CATOUT"; mkdir $CATOut; fi
-if [[ ! -d ${outputdir_cat} ]]; then echo "Made ${outputdir_cat}"; mkdir ${outputdir_cat}; fi
 if [[ ! -d ${outputdir_cat} ]]; then echo "Made ${outputdir_cat}"; mkdir ${outputdir_cat}; fi
 if [[ ! -d ${outputdir_cat}/${AnalysisCode} ]]; then echo "Made ${outputdir_cat}/${AnalysisCode}"; mkdir ${outputdir_cat}/${AnalysisCode}; fi;
 

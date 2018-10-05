@@ -2,18 +2,18 @@
 
 ########################################################################
 ## MC / DATA
-runMC=true
-runData=false
+runMC=false
+runData=true
 runFake="False"
-runSignal="True"
+runSignal="False"
 
 ########################################################################
 ## RUN PARAMETERS
 
 AnalysisCode="Aug2017_TriLepSR" 
 #Stream="SingleElectron"
-Stream="MuonEG"
-#Stream="DoubleMuon"
+#Stream="MuonEG"
+Stream="DoubleMuon"
 #Stream="DoubleEG"
 #Skim="FLATCAT"
 #Skim="SKTree_LeptonSkim"  ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
@@ -23,16 +23,18 @@ DataPeriod="ALL"
 job_logstep=1000
 LogLevel="INFO"
 QueueOption="fastq"    #"longq"
-RunningMode="CutFlowCheck,EMuMu" #"CutFlowCheck,TriMu"
+#QueueOption="longq"    #"longq"
+RunningMode="TriMu,SRYield,SystRun"
+#"CutFlowCheck,EMuMu" #"CutFlowCheck,TriMu"
 #"EMuMu,SRYield,SystRun" #"TriMu,SRYield,SystRun" #"GenNormCheck"
-#"TriMu,SRDist,SystRun" #"EMuMu,SRDist,SystRun" #"SigBkgKin"
+#"TriMu,SRDist,SystRun" #"EMuMu,SRDist,SystRun" #"SigBkgKin"#"CutOpt,EMuMu,MAWinOpt" #"CutOpt,TriMu,MAWinOpt" #"MmumuShape"
 #"CutOpt,EMuMu,MAWinOpt" #"CutOpt,TriMu,MAWinOpt" 
 
-#MCList="TT"
-MCList="SignalMajor_All"
+#MCList="Signal_All"        #"SignalMajor_All" "Signal_All"
 #MCList="Analysis_bkg"
-#MCList="UnRun"
-#MCList="MajorFakeSource"
+#MCList="TTLL" #"MajorFakeSource"  #"TT" #"TTLL" #"DY" #"TTLL" #"TT_All"
+MCList="UnRun"
+
 
 ########################################################################
 ## OUTPUT PATH CONFIG

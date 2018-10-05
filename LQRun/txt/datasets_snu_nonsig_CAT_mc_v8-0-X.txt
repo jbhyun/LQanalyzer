@@ -1,0 +1,30 @@
+#######################
+### CATTUPLES ########## 
+#######################
+#######################################################################################################################################
+# sample     Nevents  Sum(GenWeights)  xsec*Eff   Effective lumi    LocalPath #####################################################################################
+#######################################################################################################################################
+#### CATTuples
+
+#### Single_lepton_skims:_SKTrees
+
+#### Dilepton_skims:_SKTrees
+
+#### Trilepton_skims:_SKTrees
+
+#### HNFake skims: SKTrres
+
+#### HNDiLep skims: SKTrees
+
+#### NoCut skims: SKTrees
+##################################################################
+#### Missing/Not produced samples in this version are listed below 
+#### Missing : means miniAOD not available 
+#### Available: means miniAOD/catuples available but no flatcatuples/sktree made. 
+##################################################################
+##################################################################
+#### FULL Name of MINIAODS 
+##################################################################
+################################################################ 
+#### Private produced samples : Not made in batch at kisti
+##################################################################

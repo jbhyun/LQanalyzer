@@ -2,35 +2,27 @@
 
 ########################################################################
 ## MC / DATA
-runMC=true
-runData=false
+runMC=false
+runData=true
 runFake="False"
 runSignal="False"
 
 ########################################################################
 ## RUN PARAMETERS
 
-AnalysisCode="Nov2017_GenPDFQ2Syst" #"Oct2017_GenSystRWSumCalc"
-#Stream="MuonEG"
-Stream="DoubleMuon"
-Skim="FLATCAT"  ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
-#Skim="SKTree_TriLepSkim"  ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
+AnalysisCode="Dec2017_MuonSFValid"
+Stream="SingleMuon"
+#Skim="SKTree_LeptonSkim"  ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
+#Skim="SKTree_DiLepSkim"   ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
+Skim="SKTree_HNDiLepSkim"   ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
+#Skim="SKTree_TriLepSkim"   ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
 DataPeriod="ALL"
 job_logstep=1000
 LogLevel="INFO"
 QueueOption="fastq"    #"longq"
-RunningMode="TriMu,PDFQ2Syst,BkdRun"
-#"PDFQ2Syst,TriMu"
-#"MultiLep,GenFilterBias" #"PDFQ2Syst,MultiLep" #"TopPtCheck" #"MultiLep,LOvsNLOBias"
-
-#MCList="TopPtMeasSample_Sig"
-#MCList="TopPtMeasSample_SM"
-#MCList="Signal_All"
-#MCList="SignalMajor_All"
-#MCList="SignalMajor_Old"
-#MCList="Analysis_bkg"
-#MCList="GenSystAnaTargetBkg"
-MCList="UnRun"
+RunningMode="MuIDNm1"
+MCList="DY50"
+#"TT" #"CR_DiLep" #"CR_MuMu50_fast"
 
 
 ########################################################################

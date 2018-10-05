@@ -164,21 +164,21 @@ void Mar2017_Validation::ExecuteEvents()throw( LQError ){
   
    
    //POG IDs
-     //eventbase->GetMuonSel()->SetID(BaseSelection::MUON_POG_LOOSE);
-     //eventbase->GetMuonSel()->SetPt(10.);                    eventbase->GetMuonSel()->SetEta(2.4);
-     //eventbase->GetMuonSel()->SetRelIsoType("PFRelIso04");   eventbase->GetMuonSel()->SetRelIso(0.25);//POG WP L
-     eventbase->GetMuonSel()->SetID(BaseSelection::MUON_POG_TIGHT);
+     eventbase->GetMuonSel()->SetID(BaseSelection::MUON_POG_LOOSE);
      eventbase->GetMuonSel()->SetPt(10.);                    eventbase->GetMuonSel()->SetEta(2.4);
-     eventbase->GetMuonSel()->SetBSdxy(0.05);                eventbase->GetMuonSel()->SetdxySigMax(3.);
-     eventbase->GetMuonSel()->SetRelIsoType("PFRelIso04");   eventbase->GetMuonSel()->SetRelIso(0.4);
-   std::vector<snu::KMuon> muonLooseColl; eventbase->GetMuonSel()->Selection(muonLooseColl, true);//(muonColl, bool RochCorr, bool debug)
+     eventbase->GetMuonSel()->SetRelIsoType("PFRelIso04");   eventbase->GetMuonSel()->SetRelIso(0.25);//POG WP L
      //eventbase->GetMuonSel()->SetID(BaseSelection::MUON_POG_TIGHT);
      //eventbase->GetMuonSel()->SetPt(10.);                    eventbase->GetMuonSel()->SetEta(2.4);
-     //eventbase->GetMuonSel()->SetRelIsoType("PFRelIso04");   eventbase->GetMuonSel()->SetRelIso(0.15);//POG WP L
+     //eventbase->GetMuonSel()->SetBSdxy(0.05);                eventbase->GetMuonSel()->SetdxySigMax(3.);
+     //eventbase->GetMuonSel()->SetRelIsoType("PFRelIso04");   eventbase->GetMuonSel()->SetRelIso(0.4);
+   std::vector<snu::KMuon> muonLooseColl; eventbase->GetMuonSel()->Selection(muonLooseColl, true);//(muonColl, bool RochCorr, bool debug)
      eventbase->GetMuonSel()->SetID(BaseSelection::MUON_POG_TIGHT);
-     eventbase->GetMuonSel()->SetPt(5.);                    eventbase->GetMuonSel()->SetEta(2.4);
-     eventbase->GetMuonSel()->SetBSdxy(0.05);               eventbase->GetMuonSel()->SetdxySigMax(3.);
-     eventbase->GetMuonSel()->SetRelIsoType("PFRelIso04");  eventbase->GetMuonSel()->SetRelIso(0.1);
+     eventbase->GetMuonSel()->SetPt(10.);                    eventbase->GetMuonSel()->SetEta(2.4);
+     eventbase->GetMuonSel()->SetRelIsoType("PFRelIso04");   eventbase->GetMuonSel()->SetRelIso(0.15);//POG WP L
+     //eventbase->GetMuonSel()->SetID(BaseSelection::MUON_POG_TIGHT);
+     //eventbase->GetMuonSel()->SetPt(5.);                    eventbase->GetMuonSel()->SetEta(2.4);
+     //eventbase->GetMuonSel()->SetBSdxy(0.05);               eventbase->GetMuonSel()->SetdxySigMax(3.);
+     //eventbase->GetMuonSel()->SetRelIsoType("PFRelIso04");  eventbase->GetMuonSel()->SetRelIso(0.1);
    std::vector<snu::KMuon> muonTightColl; eventbase->GetMuonSel()->Selection(muonTightColl,false);
 
    std::vector<snu::KMuon> muonColl; eventbase->GetMuonSel()->Selection(muonColl, true);//(muonColl, bool RochCorr, bool debug)
@@ -287,7 +287,7 @@ void Mar2017_Validation::ExecuteEvents()throw( LQError ){
        btag_sf         = BTagScaleFactor_1a(jetColl, snu::KJet::CSVv2, snu::KJet::Medium);
 
        if(k_sample_name.Contains("TT_powheg")){
-         top_pt_reweight = TopPTReweight(truthColl);
+//         top_pt_reweight = TopPTReweight(truthColl);
        }
      }
      else{

@@ -45,7 +45,14 @@ class Aug2017_MuFakeMCStudy : public AnalyzerCore {
   void EmulateFRMeasurement(std::vector<snu::KMuon> MuLColl, std::vector<snu::KElectron> EleLColl, std::vector<snu::KJet> JetColl, float MET, float METx, float METy, std::vector<snu::KTruth> truthColl, TString LooseID, TString TightID, float weight, TString Label, TString Option);
   void CheckMCClosure(std::vector<snu::KMuon> MuPreColl, std::vector<snu::KElectron> EleLColl, std::vector<snu::KJet> JetNoVetoColl, std::vector<snu::KTruth> TruthColl, TString LooseID, TString TightID, float weight, TString Label, TString Option);
 
+
+  void CheckMotherDaugherRelationship(std::vector<snu::KMuon> muonColl, std::vector<snu::KMuon> muonLooseColl, std::vector<snu::KElectron> electronLooseColl, std::vector<snu::KJet> JetColl, std::vector<snu::KJet> BJetColl, float MET, float METx, float METy, std::vector<snu::KTruth> truthColl, std::vector<snu::KGenJet> GenJetColl, float weight, TString Label, TString Option);
+  void CheckAltCRAvailability(std::vector<snu::KMuon> MuPreColl, std::vector<snu::KElectron> EleLColl, std::vector<snu::KJet> JetNoVetoColl, float MET, float METx, float METy, std::vector<snu::KTruth> TruthColl, TString LooseID, TString TightID, float weight, TString Label, TString Option);
+
   int GetFakeLepSrcIdx(snu::KMuon Mu, std::vector<snu::KTruth> TruthColl);
+  int GetFakeLepJetSrcIdx(snu::KMuon Mu, std::vector<snu::KJet> JetColl, TString Option="DR04");
+  int GetFakeLepGenJetSrcIdx(snu::KMuon Mu, std::vector<snu::KGenJet> GenJetColl, TString Option="DR04");
+
  private:
   
   //

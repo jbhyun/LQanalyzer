@@ -20,9 +20,10 @@ DataPeriod="ALL"
 job_logstep=1000
 LogLevel="INFO"
 QueueOption="fastq" 
-RunningMode="Closure"
-#"Closure" #"FRMeasEmul" #"TrigBiasCheck" #"TrigBiasCheck" #"FRInspection,SiglWP" #"FRInspection,ScanFR" #"IDVarSensitivity" #"IDEffCheck" #"FakeCompCheck" 
-MCList="MajorFakeSource"
+RunningMode="AltCRTest"
+#"Closure" #"FRMeasEmul" #"TrigBiasCheck" #"FRInspection,SiglWP" #"FRInspection,ScanFR" #"IDVarSensitivity" #"IDEffCheck" #"FakeCompCheck" 
+MCList="TTLL"
+#MCList="TT_All"
 #UnRun #"MajorFakeSource" #"TT" #"DY50" #"QCD_Mu" #"SignalMajor_All"
 
 ########################################################################

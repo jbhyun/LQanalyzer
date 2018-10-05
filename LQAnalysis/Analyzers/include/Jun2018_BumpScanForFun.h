@@ -1,15 +1,15 @@
-#ifndef Mar2018_TrilepCR_h
-#define Mar2018_TrilepCR_h
+#ifndef Jun2018_BumpScanForFun_h
+#define Jun2018_BumpScanForFun_h
 
 #include "AnalyzerCore.h"
 
 
-class Mar2018_TrilepCR : public AnalyzerCore {
+class Jun2018_BumpScanForFun : public AnalyzerCore {
 
  public:
   //// constructors                                                                                                                                                             
-  Mar2018_TrilepCR();
-  ~Mar2018_TrilepCR();
+  Jun2018_BumpScanForFun();
+  ~Jun2018_BumpScanForFun();
 
   /// Functions from core
   virtual void BeginCycle() throw( LQError );
@@ -44,7 +44,11 @@ class Mar2018_TrilepCR : public AnalyzerCore {
   void CheckNormCR(std::vector<snu::KMuon> MuTColl, std::vector<snu::KMuon> MuLColl, std::vector<snu::KElectron> EleLColl, std::vector<snu::KJet> JetColl, float MET, float MET_x, float MET_y, float weight, TString Label, TString Option);
   void MeasureFakeRate(std::vector<snu::KMuon> MuLColl, std::vector<snu::KElectron> EleLColl, std::vector<snu::KJet> JetColl, std::vector<snu::KJet> BJetColl, float MET, float METx, float METy, float weight, TString TightID, TString Label, TString Option);
   void ValidateID(std::vector<snu::KMuon> MuTColl, float weight, TString Label);
-  void CheckTrilepCRs(std::vector<snu::KMuon> MuTColl, std::vector<snu::KMuon> MuLColl, std::vector<snu::KElectron> EleTColl, std::vector<snu::KElectron> EleLColl, std::vector<snu::KJet> JetNoVetoColl, std::vector<snu::KJet> BJetNoVetoColl, float MET, float METx, float METy, float weight, TString Label, TString Option);
+
+  void CheckTTXScans(std::vector<snu::KMuon> MuTColl, std::vector<snu::KMuon> MuLColl, std::vector<snu::KElectron> EleTColl, std::vector<snu::KElectron> EleLColl, std::vector<snu::KJet> JetNoVetoColl, std::vector<snu::KJet> BJetNoVetoColl, float MET, float METx, float METy, float weight, TString Label, TString Option);
+  void CheckZXScans(std::vector<snu::KMuon> MuTColl, std::vector<snu::KMuon> MuLColl, std::vector<snu::KElectron> EleTColl, std::vector<snu::KElectron> EleLColl, std::vector<snu::KJet> JetNoVetoColl, std::vector<snu::KJet> BJetNoVetoColl, float MET, float METx, float METy, float weight, TString Label, TString Option);
+  void CheckZValidity(std::vector<snu::KMuon> MuTColl, std::vector<snu::KMuon> MuLColl, std::vector<snu::KElectron> EleTColl, std::vector<snu::KElectron> EleLColl, std::vector<snu::KJet> JetNoVetoColl, std::vector<snu::KJet> BJetNoVetoColl, float MET, float METx, float METy, float weight, TString Label, TString Option);
+
   void CheckSSDilepCRs(std::vector<snu::KMuon> MuTColl, std::vector<snu::KMuon> MuLColl, std::vector<snu::KElectron> EleTColl, std::vector<snu::KElectron> EleLColl, std::vector<snu::KJet> JetNoVetoColl, std::vector<snu::KJet> BJetNoVetoColl, float MET, float METx, float METy, float weight, TString Label, TString Option);
 
   void CheckTTZAnomaly(std::vector<snu::KMuon> MuTColl, std::vector<snu::KMuon> MuLColl, std::vector<snu::KElectron> EleTColl, std::vector<snu::KElectron> EleLColl, std::vector<snu::KJet> JetNoVetoColl, std::vector<snu::KJet> BJetNoVetoColl, float MET, float METx, float METy, float weight, TString Label, TString Option);
@@ -60,6 +64,6 @@ class Mar2018_TrilepCR : public AnalyzerCore {
   std::vector<snu::KElectron> out_electrons;
 
 
-  ClassDef ( Mar2018_TrilepCR, 1);
+  ClassDef ( Jun2018_BumpScanForFun, 1);
 };
 #endif

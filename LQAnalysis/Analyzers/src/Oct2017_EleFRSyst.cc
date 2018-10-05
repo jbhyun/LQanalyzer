@@ -1609,7 +1609,7 @@ void Oct2017_EleFRSyst::CheckTrilepCRs(std::vector<snu::KElectron> EleTColl, std
   if(Mmumu<12) return;
  
   
-  bool HasBJet=false, OnZ=false, OnZG=false, WZSel=false, ZGSel=false, ttZSel=false, ZbbSel=false, AN_Sideband=false;
+  bool HasBJet=false, OnZ=false, OnZG=false, WZSel=false, ZGSel=false, ttZSel=false, ZbbSel=false;
   if( BJetColl.size()!=0 )                      HasBJet = true;
   if( fabs(Mmumu-91.2)<10     )                 OnZ     = true;
   if( fabs(M3l-91.2)<10       )                 OnZG    = true;
@@ -1617,7 +1617,6 @@ void Oct2017_EleFRSyst::CheckTrilepCRs(std::vector<snu::KElectron> EleTColl, std
   if( OnZG && Mmumu<81.2 && MET<50 )            ZGSel   = true;
   if( OnZ && HasBJet && JetColl.size()>2)       ttZSel  = true;
   if( OnZ && HasBJet && JetColl.size()<3)       ZbbSel  = true;
-  if( Mmumu>45. && HasBJet && JetColl.size()>2 ) AN_Sideband=true;
    
 
 
@@ -1721,21 +1720,6 @@ void Oct2017_EleFRSyst::CheckTrilepCRs(std::vector<snu::KElectron> EleTColl, std
     FillHist("Nb_ttZSel"+Label, BJetColl.size(), weight, 0., 10., 10);
     FillHist("MET_ttZSel"+Label, MET, weight, 0., 300., 30);
     FillHist("MTW_ttZSel"+Label, MTW, weight, 0., 200., 20);
-  }
-  if(AN_Sideband){
-    FillHist("PTe_ANSideband"+Label, EleTColl.at(0).Pt(), weight, 0., 200., 40);
-    FillHist("Etae_ANSideband"+Label, EleTColl.at(0).Eta(), weight, -5., 5., 20);
-    FillHist("PTmu1_ANSideband"+Label, MuTColl.at(0).Pt(), weight, 0., 300., 60);
-    FillHist("PTmu2_ANSideband"+Label, MuTColl.at(1).Pt(), weight, 0., 200., 40);
-    FillHist("Etamu1_ANSideband"+Label, MuTColl.at(0).Eta(), weight, -5., 5., 20);
-    FillHist("Etamu2_ANSideband"+Label, MuTColl.at(1).Eta(), weight, -5., 5., 20);
-  
-    FillHist("Mmumu_ANSideband"+Label, Mmumu, weight, 0., 200., 40);
-    FillHist("M3l_ANSideband"+Label, (EleTColl.at(0)+MuTColl.at(0)+MuTColl.at(1)).M(), weight, 0., 500., 50);
-    FillHist("Nj_ANSideband"+Label, JetColl.size(), weight, 0., 10., 10);
-    FillHist("Nb_ANSideband"+Label, BJetColl.size(), weight, 0., 10., 10);
-    FillHist("MET_ANSideband"+Label, MET, weight, 0., 300., 30);
-    FillHist("MTW_ANSideband"+Label, MTW, weight, 0., 200., 20);
   }
   if(!OnZ){
     FillHist("PTe_OffZ"+Label, EleTColl.at(0).Pt(), weight, 0., 200., 40);
