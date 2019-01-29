@@ -3,7 +3,7 @@
 ########################################################################
 ## MC / DATA
 runMC=true
-runData=true
+runData=false
 runFake="False"
 runSignal="False"
 
@@ -12,21 +12,21 @@ runSignal="False"
 
 AnalysisCode="Feb2018_IDTrigSFValid" 
 #Stream="SingleElectron"
-#Stream="MuonEG"
+Stream="MuonEG"
 #Stream="SingleMuon"
-Stream="DoubleMuon"
+#Stream="DoubleMuon"
 #Stream="DoubleEG"
-#Skim="SKTree_LeptonSkim"  ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
-Skim="SKTree_DiLepSkim"   ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
+Skim="SKTree_LeptonSkim"  ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
+#Skim="SKTree_DiLepSkim"   ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
 #Skim="SKTree_TriLepSkim"   ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
 DataPeriod="ALL"
 job_logstep=1000
 LogLevel="INFO"
 QueueOption="fastq"    #"longq"
-RunningMode="DoubleMuon"
+RunningMode="ElectronMuon"
 #"ElectronMuon" #"DoubleMuon"
-MCList="CR_DiLep"
-#"TT" #"CR_DiLep" #"CR_MuMu50_fast"
+MCList="TT"
+#"TT" #"CR_DiLep" #"CR_MuMu50_fast" "CR_DiLepNoTT"
 
 ########################################################################
 ## OUTPUT PATH CONFIG

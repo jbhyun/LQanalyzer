@@ -11,7 +11,7 @@ declare -a ListToProd=('TTToHcToWA_incl_MHc130_MA35_v2')
 #declare -a ListToProd=('DYJets_MG_10to50_TrigInfoSample' 'DYJets_MG_TrigInfoSample' 'TT_powheg_TrigInfoSample')
 
 declare -a AllSample=('WJets' 'DYJets_10to50' 'DYJets' 'SingleTop_s' 'SingleTbar_t' 'SingleTop_t' 'SingleTbar_tW' 'SingleTop_tW' 'TT_powheg' 'ZZ' 'WZ' 'WW' 'WGtoLNuG' 'WGtoLNuEE' 'WGtoLNuMM' 'ZGto2LG' 'ttH_nonbb' 'ttH_bb' 'ttW' 'ttZ') 
-declare -a UnRun=('TT_powheg' 'DYJets_10to50' 'DYJets')
+declare -a UnRun=("ttH_nonbb")
 
 
 #####################################################################################
@@ -28,7 +28,8 @@ declare -a DYMG=("DYJets_MG")
 declare -a VJets=('DYJets_10to50' 'LowStat_DYJets' 'WJets')
 declare -a ZZ4l=("ZZTo4L_powheg") 
 declare -a ZG2l=("ZGto2LG") 
-declare -a TT_All=('TT_powheg' 'TTLL_powheg' 'TTLJ_powheg')
+declare -a TT_All=('TT_powheg' 'TTLJ_powheg')
+#declare -a TT_All=('TT_powheg' 'TTLL_powheg' 'TTLJ_powheg')
 declare -a TTLJ=('TTLJ_powheg') 
 declare -a TTLL=('TTLL_powheg') 
 declare -a TT=('TT_powheg') #"TTJets_aMC") 
@@ -41,6 +42,7 @@ declare -a Analysis_bkg=('WZTo3LNu_powheg' 'ZZTo4L_powheg' "ZGto2LG" 'TTG' 'ttW'
 
 #Dilepton Validation
 declare -a CR_DiLep=('DYJets_10to50' 'DYJets' 'SingleTbar_tW_noHadron' 'SingleTop_tW_noHadron' 'TT_powheg' 'WZ' 'ZZ' 'WW')
+declare -a CR_DiLepNoTT=('DYJets_10to50' 'DYJets' 'SingleTbar_tW_noHadron' 'SingleTop_tW_noHadron' 'WZ' 'ZZ' 'WW')
 declare -a CR_EMu=('DYJets_10to50' 'LowStat_DYJets' 'SingleTbar_tW_noHadron' 'SingleTop_tW_noHadron' 'TT_powheg' 'WZ' 'ZZ' 'WW')
 declare -a CR_MuMu_fast=('DYJets_10to50' 'DYJets' 'TT_powheg')
 declare -a CR_MuMu50_fast=('LowStat_DYJets' 'TT_powheg')

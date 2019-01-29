@@ -1178,7 +1178,7 @@ void Jul2017_MCFakeStudy::CheckMCClosure(std::vector<snu::KMuon> MuPreColl, std:
       float Mmumu=(MuLColl.at(0)+MuLColl.at(1)).M();
       if( !(EleLColl.at(0).Pt()>25 && MuLColl.at(0).Pt()>10 && MuLColl.at(1).Pt()>10) ) PassSel=false;
       if( PassSel && fabs(SumCharge(MuLColl))!=0) PassSel=false;
-      if( PassSel && !(Mmumu>12) ) PassSel=false;
+//      if( PassSel && !(Mmumu>12) ) PassSel=false;
       if(PassSel){
         bool JetSelPass=JetColl.size()>=2, BJetSelPass=BJetColl.size()>=1;
         bool OffZ=fabs(Mmumu-91.2)>10.;
@@ -1190,6 +1190,7 @@ void Jul2017_MCFakeStudy::CheckMCClosure(std::vector<snu::KMuon> MuPreColl, std:
         FillHist("PTmu2_exp"+Label, MuLColl.at(1).Pt(), weight*fakeweight, 0., 200., 40);
         FillHist("PTe_exp"+Label, EleLColl.at(0).Pt(), weight*fakeweight, 0., 200., 40);
         FillHist("Mmumu_exp"+Label, (MuLColl.at(0)+MuLColl.at(1)).M(), weight*fakeweight, 0., 200., 40);
+        FillHist("Mmumult12_exp"+Label, (MuLColl.at(0)+MuLColl.at(1)).M(), weight*fakeweight, 0., 12., 12);
         FillHist("Etamu1_exp"+Label, MuLColl.at(0).Eta(), weight*fakeweight, -5., 5., 20);
         FillHist("Etamu2_exp"+Label, MuLColl.at(1).Eta(), weight*fakeweight, -5., 5., 20);
         FillHist("Etae_exp"+Label, EleLColl.at(0).Eta(), weight*fakeweight, -5., 5., 20);
@@ -1202,7 +1203,7 @@ void Jul2017_MCFakeStudy::CheckMCClosure(std::vector<snu::KMuon> MuPreColl, std:
       float Mmumu=(MuTColl.at(0)+MuTColl.at(1)).M();
       if( !(EleTColl.at(0).Pt()>25 && MuTColl.at(0).Pt()>10 && MuTColl.at(1).Pt()>10) ) PassSel=false;
       if( PassSel && fabs(SumCharge(MuTColl))!=0) PassSel=false;
-      if( PassSel && !(Mmumu>12) ) PassSel=false;
+//      if( PassSel && !(Mmumu>12) ) PassSel=false;
       if(PassSel){
         bool JetSelPass=JetColl.size()>=2, BJetSelPass=BJetColl.size()>=1;
         bool OffZ=fabs(Mmumu-91.2)>10.;
@@ -1222,6 +1223,7 @@ void Jul2017_MCFakeStudy::CheckMCClosure(std::vector<snu::KMuon> MuPreColl, std:
         FillHist("PTmu2_obs"+Label, MuTColl.at(1).Pt(), weight, 0., 200., 40);
         FillHist("PTe_obs"+Label, EleTColl.at(0).Pt(), weight, 0., 200., 40);
         FillHist("Mmumu_obs"+Label, (MuTColl.at(0)+MuTColl.at(1)).M(), weight, 0., 200., 40);
+        FillHist("Mmumult12_obs"+Label, (MuTColl.at(0)+MuTColl.at(1)).M(), weight, 0., 12., 12);
         FillHist("Etamu1_obs"+Label, MuTColl.at(0).Eta(), weight, -5., 5., 20);
         FillHist("Etamu2_obs"+Label, MuTColl.at(1).Eta(), weight, -5., 5., 20);
         FillHist("Etae_obs"+Label, EleTColl.at(0).Eta(), weight, -5., 5., 20);

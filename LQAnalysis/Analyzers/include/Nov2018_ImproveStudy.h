@@ -1,15 +1,15 @@
-#ifndef Dec2017_TriLepSR_h
-#define Dec2017_TriLepSR_h
+#ifndef Nov2018_ImproveStudy_h
+#define Nov2018_ImproveStudy_h
 
 #include "AnalyzerCore.h"
 
 
-class Dec2017_TriLepSR : public AnalyzerCore {
+class Nov2018_ImproveStudy : public AnalyzerCore {
 
  public:
   //// constructors                                                                                                                                                             
-  Dec2017_TriLepSR();
-  ~Dec2017_TriLepSR();
+  Nov2018_ImproveStudy();
+  ~Nov2018_ImproveStudy();
 
   /// Functions from core
   virtual void BeginCycle() throw( LQError );
@@ -21,19 +21,17 @@ class Dec2017_TriLepSR : public AnalyzerCore {
   void InitialiseAnalysis() throw( LQError );
   void MakeHistograms();
   void FillCutFlow(TString cut, float w);
-  float FakeRateData(snu::KElectron Ele, TString Option);
-  float FakeRateData(snu::KMuon      Mu, TString Option);
-  float GetPreTrigPURW(int Nvtx);
   void DoSystRun(TString Cycle, TString Mode, std::vector<snu::KElectron> EleColl, std::vector<snu::KElectron> EleLColl, std::vector<snu::KMuon> MuColl, std::vector<snu::KMuon> MuLColl, std::vector<snu::KJet> JetColl, std::vector<snu::KJet> BJetColl, float MET, float METx, float METy, float weight);
-  void CheckSRYield(std::vector<snu::KMuon> MuTColl, std::vector<snu::KMuon> MuLColl, std::vector<snu::KElectron> EleTColl, std::vector<snu::KElectron> EleLColl, std::vector<snu::KJet> JetColl, std::vector<snu::KJet> BJetColl, float MET, float METx, float METy, float weight, TString Label, TString Option);
 
+
+  void CheckMiniMultiIso(std::vector<snu::KMuon> MuTColl, std::vector<snu::KMuon> MuLColl, std::vector<snu::KElectron> EleTColl, std::vector<snu::KElectron> EleLColl, std::vector<snu::KJet> JetColl, std::vector<snu::KJet> BJetColl, float MET, float METx, float METy, float weight, TString Label, TString Option);
   void CheckSRDist(std::vector<snu::KMuon> MuTColl, std::vector<snu::KMuon> MuLColl, std::vector<snu::KElectron> EleTColl, std::vector<snu::KElectron> EleLColl, std::vector<snu::KJet> JetColl, std::vector<snu::KJet> BJetColl, float MET, float METx, float METy, float weight, TString Label, TString Option);
-  bool IsNearBJet(snu::KElectron Ele, std::vector<snu::KJet> bjetNoVetoColl);
-  void ScanFakeRate(std::vector<snu::KElectron> EleColl, std::vector<snu::KMuon> MuLColl, std::vector<snu::KJet> JetColl, std::vector<snu::KJet> BJetColl, float MET, float METx, float METy, int NMVACuts, float MVACuts[], int NIsoCuts, float IsoCuts[], int NPtEdges, float PtEdges[], TString Option);
+  void CheckLowMass(std::vector<snu::KMuon> MuTColl, std::vector<snu::KMuon> MuLColl, std::vector<snu::KElectron> EleTColl, std::vector<snu::KElectron> EleLColl, std::vector<snu::KJet> JetColl, std::vector<snu::KJet> BJetColl, float MET, float METx, float METy, float weight, TString Label, TString Option);
+
   float ConeCorrectedPT(snu::KElectron Ele, float TightIsoCut);
   float ConeCorrectedPT(snu::KMuon     Mu , float TightIsoCut);
 
-  float GetFakeWeight(std::vector<snu::KMuon> MuLColl, std::vector<snu::KElectron> EleLColl, TString MuLID, TString MuTID, TString EleLID, TString EleTID, TString Option);
+
 
  private:
   
@@ -45,6 +43,6 @@ class Dec2017_TriLepSR : public AnalyzerCore {
   std::vector<snu::KElectron> out_electrons;
 
 
-  ClassDef ( Dec2017_TriLepSR, 1);
+  ClassDef ( Nov2018_ImproveStudy, 1);
 };
 #endif

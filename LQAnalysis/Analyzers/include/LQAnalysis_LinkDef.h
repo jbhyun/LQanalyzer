@@ -25,6 +25,8 @@
 
 //#endif // __CINT__
 //Jihwan Bhyun Modification///////////
+#pragma link C++ class Nov2018_ImproveStudy+;
+#pragma link C++ class Nov2018_LowMassCheck+;
 #pragma link C++ class Jun2018_BumpScanForFun+;
 #pragma link C++ class Mar2018_TrilepCR+;
 #pragma link C++ class Mar2018_ForMuPOGSlot+;
@@ -34,8 +36,6 @@
 #pragma link C++ class Jan2018_ForEGMSlot+;
 #pragma link C++ class Jan2018_EleIPQuickCheck+;
 #pragma link C++ class Dec2017_EMuTrigEff+;
-#pragma link C++ class Dec2017_MuonSFValid+;
-#pragma link C++ class Dec2017_TriLepSR+;
 #pragma link C++ class Oct2017_AccTable+;
 #pragma link C++ class Nov2017_GenPDFQ2Syst+;
 #pragma link C++ class Oct2017_GenSystRWSumCalc+;
@@ -44,11 +44,9 @@
 #pragma link C++ class Aug2017_MuIDChoice+;
 #pragma link C++ class Aug2017_MuFakeDataStudy+;
 #pragma link C++ class Aug2017_MuFakeMCStudy+;
-#pragma link C++ class Aug2017_EMuMuTrigCheck+;
 #pragma link C++ class Aug2017_DataEleFRCalc+;
 #pragma link C++ class Aug2017_TriLepSR+;
 #pragma link C++ class Aug2017_ObjEffCalc+;
-#pragma link C++ class Jul2017_EMuMuComp+;
 #pragma link C++ class Jul2017_NvtxWeightCheck+;
 #pragma link C++ class Jul2017_DataFakeStudy+;
 #pragma link C++ class Jul2017_MCFakeStudy+;
@@ -73,10 +71,7 @@
 #pragma link C++ class Feb2017_3l4j_TrigEff+;
 #pragma link C++ class Feb2017_3l4j_PUjetCheck+;
 #pragma link C++ class Feb2017_3l4j_BTagEff+;
-#pragma link C++ class Jan2017_3l4j_DYCheck+;
 #pragma link C++ class Jan2017_3l4j_ObjValid_DiLep+;
-#pragma link C++ class Jan2017_3l4j_TrigInfoCheck+;
-#pragma link C++ class Jan2017_3l4j_Validation_DiLep+;
 
 
 #endif // __CINT__

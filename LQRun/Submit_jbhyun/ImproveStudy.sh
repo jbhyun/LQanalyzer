@@ -5,33 +5,33 @@
 runMC=true
 runData=false
 runFake="False"
-runSignal="True"
+runSignal="False"
 
 ########################################################################
 ## RUN PARAMETERS
 
-AnalysisCode="Feb2018_TrigAccept"
-Stream="DoubleMuon"
-#Stream="MuonEG"
-Skim="FLATCAT"  ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
-#Skim="SKTree_TriLepSkim"  ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
+AnalysisCode="Nov2018_ImproveStudy" 
+#Stream="SingleElectron"
+Stream="MuonEG"
+#Stream="DoubleMuon"
+#Stream="DoubleEG"
+#Skim="FLATCAT"
+#Skim="SKTree_LeptonSkim"  
+#Skim="SKTree_DiLepSkim"   
+Skim="SKTree_TriLepSkim"  
 DataPeriod="ALL"
 job_logstep=1000
 LogLevel="INFO"
-QueueOption="fastq"        #"fastq" #"longq"
-RunningMode="CheckTrigAccept"
-#"EMuMuEComp" #"CheckTrigAccept"
+QueueOption="fastq"    #"longq"
+#QueueOption="longq"    #"longq"
+RunningMode="EMuMu,MiniMultiIso"
+#"TriMu,MiniMultiIso" "EMuMu,MiniMultiIso"
 
-
-#MCList="TopPtMeasSample_Sig"
-#MCList="TopPtMeasSample_SM"
-MCList="Signal_All"
-#MCList="TT"
-#MCList="SignalMajor_All"
-#MCList="MajorFakeSource"
-#MCList="SignalMajor_Old"
+#MCList="Signal_All"        #"SignalMajor_All" "Signal_All"
+MCList="TT"        #"SignalMajor_All" "Signal_All"
 #MCList="Analysis_bkg"
-#MCList="GenSystAnaTargetBkg"
+#MCList="TTLL" #"MajorFakeSource"  #"TT" #"TTLL" #"DY" #"TTLL" #"TT_All"
+#MCList="UnRun"
 
 
 ########################################################################

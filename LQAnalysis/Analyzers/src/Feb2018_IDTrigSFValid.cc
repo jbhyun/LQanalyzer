@@ -214,7 +214,7 @@ void Feb2018_IDTrigSFValid::ExecuteEvents()throw( LQError ){
        reco_weight_ele = mcdata_correction->ElectronRecoScaleFactor(electronColl);
        id_weight_ele   = mcdata_correction->ElectronScaleFactor("ELECTRON_HctoWA_TIGHT", electronColl);
     
-       trk_weight_mu   = mcdata_correction->MuonTrackingEffScaleFactor(muonColl);
+       //trk_weight_mu   = mcdata_correction->MuonTrackingEffScaleFactor(muonColl);
        id_weight_mu    = mcdata_correction->MuonScaleFactor("MUON_HctoWA_TIGHT", muonColl);
 
        btag_sf         = BTagScaleFactor_1a(jetColl, snu::KJet::CSVv2, snu::KJet::Medium);

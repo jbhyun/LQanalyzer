@@ -2,36 +2,42 @@
 
 ########################################################################
 ## MC / DATA
-runMC=true
-runData=false
+runMC=false
+runData=true
 runFake="False"
-runSignal="True"
+runSignal="False"
 
 ########################################################################
 ## RUN PARAMETERS
 
-AnalysisCode="Feb2018_TrigAccept"
-Stream="DoubleMuon"
+AnalysisCode="Nov2018_LowMassCheck" 
+#Stream="SingleElectron"
 #Stream="MuonEG"
-Skim="FLATCAT"  ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
-#Skim="SKTree_TriLepSkim"  ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
+Stream="DoubleMuon"
+#Stream="DoubleEG"
+#Skim="FLATCAT"
+#Skim="SKTree_LeptonSkim"  ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
+Skim="SKTree_DiLepSkim"   ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
+#Skim="SKTree_TriLepSkim"   ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
 DataPeriod="ALL"
 job_logstep=1000
 LogLevel="INFO"
-QueueOption="fastq"        #"fastq" #"longq"
-RunningMode="CheckTrigAccept"
-#"EMuMuEComp" #"CheckTrigAccept"
+QueueOption="fastq"    #"longq"
+#QueueOption="longq"    #"longq"
+RunningMode="DoubleMuon,LowMassCheck"
+#RunningMode="EMuMu,SRDist,SystRun"
+#"EMuMu,StatCommAsk,SystRun"
+#"EMuMu,SRSigDist" #"TriMu,SRSigDist"
+#"CutFlowCheck,EMuMu" #"CutFlowCheck,TriMu"
+#"EMuMu,SRYield,SystRun" #"TriMu,SRYield,SystRun" #"GenNormCheck"
+#"TriMu,SRDist,SystRun" #"EMuMu,SRDist,SystRun" #"SigBkgKin"#"CutOpt,EMuMu,MAWinOpt" #"CutOpt,TriMu,MAWinOpt" #"MmumuShape"
+#"CutOpt,EMuMu,MAWinOpt" #"CutOpt,TriMu,MAWinOpt" 
 
-
-#MCList="TopPtMeasSample_Sig"
-#MCList="TopPtMeasSample_SM"
-MCList="Signal_All"
-#MCList="TT"
-#MCList="SignalMajor_All"
-#MCList="MajorFakeSource"
-#MCList="SignalMajor_Old"
+#MCList="Signal_All"        #"SignalMajor_All" "Signal_All"
 #MCList="Analysis_bkg"
-#MCList="GenSystAnaTargetBkg"
+#MCList="TTLL" #"MajorFakeSource"  #"TT" #"TTLL" #"DY" #"TTLL" #"TT_All"
+#MCList="UnRun"
+MCList="QCD_Mu"
 
 
 ########################################################################

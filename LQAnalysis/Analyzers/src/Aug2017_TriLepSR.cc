@@ -74,7 +74,7 @@ void Aug2017_TriLepSR::ExecuteEvents()throw( LQError ){
 
    bool EMuMu=false, TriMu=false;
    bool CutOpt=false, ObsExpComp=false, SRYield=false, MAWinOpt=false;
-   bool SRDist=false, SigBkgKin=false, CheckSystSize=false, CutFlowCheck=false, DecCompCheck=false;
+   bool SRDist=false, SigBkgKin=false, CheckSystSize=false, CutFlowCheck=false, DecCompCheck=false, SRSigDist=false, StatCommAsk=false;
    bool MACandOpt=false, MmumuShape=false;
    bool DoubleMuon=false, ElectronMuon=false;
    bool SystRun=false, TestRun=false;
@@ -88,6 +88,8 @@ void Aug2017_TriLepSR::ExecuteEvents()throw( LQError ){
      else if(k_flags.at(i).Contains("ObsExpComp"))   {ObsExpComp    = true; Cycle="ObsExpComp";}
      else if(k_flags.at(i).Contains("SRYield"))      {SRYield       = true; Cycle="SRYield";}
      else if(k_flags.at(i).Contains("SRDist"))       {SRDist        = true; Cycle="SRDist";}
+     else if(k_flags.at(i).Contains("SRSigDist"))    {SRSigDist     = true; Cycle="SRSigDist";}
+     else if(k_flags.at(i).Contains("StatCommAsk"))  {StatCommAsk   = true; Cycle="StatCommAsk";}
      else if(k_flags.at(i).Contains("SigBkgKin"))    {SigBkgKin     = true; Cycle="SigBkgKin";}
      else if(k_flags.at(i).Contains("CutFlowCheck")) {CutFlowCheck  = true; }
      else if(k_flags.at(i).Contains("CheckSystSize")) CheckSystSize = true;
@@ -98,6 +100,7 @@ void Aug2017_TriLepSR::ExecuteEvents()throw( LQError ){
      else if(k_flags.at(i).Contains("DoubleMuon"))    DoubleMuon    = true;
      else if(k_flags.at(i).Contains("ElectronMuon"))  ElectronMuon  = true;
    }
+
 
 
     
@@ -258,7 +261,7 @@ void Aug2017_TriLepSR::ExecuteEvents()throw( LQError ){
          reco_weight_ele = mcdata_correction->ElectronRecoScaleFactor(electronColl);
     
          id_weight_mu    = mcdata_correction->MuonScaleFactor("MUON_HctoWA_TIGHT", muonColl);
-         trk_weight_mu   = mcdata_correction->MuonTrackingEffScaleFactor(muonColl);
+//         trk_weight_mu   = mcdata_correction->MuonTrackingEffScaleFactor(muonColl);//No longer recommendation
 
          btag_sf         = BTagScaleFactor_1a(jetColl, snu::KJet::CSVv2, snu::KJet::Medium);
          if(TriMu){
@@ -379,7 +382,7 @@ void Aug2017_TriLepSR::ExecuteEvents()throw( LQError ){
        id_weight_ele   = mcdata_correction->ElectronScaleFactor("ELECTRON_HctoWA_TIGHT", electronColl);
        reco_weight_ele = mcdata_correction->ElectronRecoScaleFactor(electronColl);
        id_weight_mu    = mcdata_correction->MuonScaleFactor("MUON_HctoWA_TIGHT", muonColl);
-       trk_weight_mu   = mcdata_correction->MuonTrackingEffScaleFactor(muonColl);
+       //trk_weight_mu   = mcdata_correction->MuonTrackingEffScaleFactor(muonColl);//No longer recommendation
        btag_sf         = BTagScaleFactor_1a(jetColl, snu::KJet::CSVv2, snu::KJet::Medium);
 
        id_weight_ele_sfup       = mcdata_correction->ElectronScaleFactor("ELECTRON_HctoWA_TIGHT", electronColl,  1);
@@ -390,12 +393,12 @@ void Aug2017_TriLepSR::ExecuteEvents()throw( LQError ){
        id_weight_ele_ElEnup     = mcdata_correction->ElectronScaleFactor("ELECTRON_HctoWA_TIGHT", EleTElEnUpColl);
        reco_weight_ele_ElEnup   = mcdata_correction->ElectronRecoScaleFactor(EleTElEnUpColl);
        id_weight_mu_MuEnup      = mcdata_correction->MuonScaleFactor("MUON_HctoWA_TIGHT", MuTMuEnUpColl);
-       trk_weight_mu_MuEnup     = mcdata_correction->MuonTrackingEffScaleFactor(MuTMuEnUpColl);
+       //trk_weight_mu_MuEnup     = mcdata_correction->MuonTrackingEffScaleFactor(MuTMuEnUpColl);//No longer recommendation
 
        id_weight_ele_ElEndown   = mcdata_correction->ElectronScaleFactor("ELECTRON_HctoWA_TIGHT", EleTElEnDownColl);
        reco_weight_ele_ElEndown = mcdata_correction->ElectronRecoScaleFactor(EleTElEnDownColl);
        id_weight_mu_MuEndown    = mcdata_correction->MuonScaleFactor("MUON_HctoWA_TIGHT", MuTMuEnDownColl);
-       trk_weight_mu_MuEndown   = mcdata_correction->MuonTrackingEffScaleFactor(MuTMuEnDownColl);
+       //trk_weight_mu_MuEndown   = mcdata_correction->MuonTrackingEffScaleFactor(MuTMuEnDownColl);//No longer recommendation
 
        if(TriMu){
          float trigger_sf1          = mcdata_correction->GetTriggerSF(electronColl, muonColl, "HLT_Mu17_TrkIsoVVL_Mu8ORTkMu8_TrkIsoVVL_v");
@@ -455,11 +458,11 @@ void Aug2017_TriLepSR::ExecuteEvents()throw( LQError ){
        xsec_up  +=GetXsecUncertainty(k_sample_name);
        xsec_down-=GetXsecUncertainty(k_sample_name);
        if(TriMu){
-         if(k_sample_name.Contains("ZGto2LG")){ ZG_SF=0.86191; conv_up+=0.15; conv_down-=0.15; }
+         if(k_sample_name.Contains("ZGto2LG")){ ZG_SF=0.845; conv_up+=0.15; conv_down-=0.15; }
          else if(k_sample_name.Contains("TTG")){ conv_up+=0.5; conv_down-=0.5; }
        }
        if(EMuMu){
-         if(k_sample_name.Contains("ZGto2LG")){ ZG_SF=0.963169; conv_up+=0.096; conv_down-=0.096; }
+         if(k_sample_name.Contains("ZGto2LG")){ ZG_SF=0.961; conv_up+=0.092; conv_down-=0.092; }
          else if(k_sample_name.Contains("TTG")){ conv_up+=0.5; conv_down-=0.5; }
        }
      }
@@ -631,6 +634,14 @@ void Aug2017_TriLepSR::ExecuteEvents()throw( LQError ){
      }
      if(TriMu && !SystRun){
        CheckSRDist(muonColl, muonLooseColl, electronColl, electronLooseColl, jetColl, bjetColl, met, met*cos(metphi), met*sin(metphi), weight, "", "TriMu");
+     }
+   }
+   if(SRSigDist){
+     if(EMuMu && !SystRun){
+       CheckSRSigDist(muonColl, muonLooseColl, electronColl, electronLooseColl, jetColl, bjetColl, met, met*cos(metphi), met*sin(metphi), weight, "", "EMuMu");
+     }
+     if(TriMu && !SystRun){
+       CheckSRSigDist(muonColl, muonLooseColl, electronColl, electronLooseColl, jetColl, bjetColl, met, met*cos(metphi), met*sin(metphi), weight, "", "TriMu");
      }
    }
    if(SigBkgKin){
@@ -964,8 +975,11 @@ void Aug2017_TriLepSR::AnalyzeMmumuShape(std::vector<snu::KMuon> MuTColl, std::v
 
   const int NSignal = 7;
   float Mmumu_CentSeed[NSignal]  = {15., 25., 35., 45., 55., 65., 75.};
-  float Mmumu_WidthSeed[NSignal] = {1., 1., 1.3, 1.5, 1.5, 2.0, 2.5};
-  float Mmumu_Step[NSignal-1]    = {1., 1., 1.2, 1.2, 1.2, 1.8};
+  //float Mmumu_WidthSeed[NSignal] = {1., 1., 1.3, 1.5, 1.5, 2.0, 2.5};
+  //float Mmumu_Step[NSignal-1]    = {1., 1., 1.2, 1.2, 1.2, 1.8};
+  float Mmumu_WidthSeed[NSignal] = {0.5,  0.7, 0.8,  1., 1.2, 1.5, 1.8};
+  float Mmumu_Step[NSignal-1]    = {  0.45, 0.55, 0.6, 0.75, 0.9, 1.15};
+
   vector<float> Mmumu_CentFull, Mmumu_WidthFull;
   for(int it_seed=0; it_seed<NSignal; it_seed++){
     float CurrentCenter = Mmumu_CentSeed[it_seed];
@@ -1826,16 +1840,14 @@ void Aug2017_TriLepSR::CheckSRYield(std::vector<snu::KMuon> MuTColl, std::vector
 
   bool EMuMu=Option.Contains("EMuMu"), TriMu=Option.Contains("TriMu");
 
-  const int Ncent=7;
-  float Center[Ncent]      = { 15., 25., 35., 45., 55., 65., 75.};
-  float Width[Ncent]       = { 1., 1. , 1.3, 1.5, 1.5,  2., 2.5};
-  TString CentStr[Ncent]   = { "15", "25", "35", "45", "55", "65", "75"};
-
-
   const int NSignal = 7;
   float Mmumu_CentSeed[NSignal]  = {15., 25., 35., 45., 55., 65., 75.};
-  float Mmumu_WidthSeed[NSignal] = {1., 1., 1.3, 1.5, 1.5, 2.0, 2.5};
-  float Mmumu_Step[NSignal-1]    = {1., 1., 1.2, 1.2, 1.2, 1.8};
+  //float Mmumu_WidthSeed[NSignal] = {1., 1., 1.3, 1.5, 1.5, 2.0, 2.5}; - Old - OffPreAppVer
+  //float Mmumu_Step[NSignal-1]    = {1., 1., 1.2, 1.2, 1.2, 1.8};      - Old - OffPreAppVer
+  float Mmumu_WidthSeed[NSignal] = {0.5,  0.7, 0.8,  1., 1.2, 1.5, 1.8};
+  float Mmumu_Step[NSignal-1]    = {  0.45, 0.55, 0.6, 0.75, 0.9, 1.15};
+  TString CentStr[NSignal]       = { "15", "25", "35", "45", "55", "65", "75"};
+
   vector<float> Mmumu_CentFull, Mmumu_WidthFull;
   for(int it_seed=0; it_seed<NSignal; it_seed++){
     float CurrentCenter = Mmumu_CentSeed[it_seed];
@@ -1880,9 +1892,9 @@ void Aug2017_TriLepSR::CheckSRYield(std::vector<snu::KMuon> MuTColl, std::vector
       FillHist("Count_2jCutPreB_1e2mu_PreSel"+Label, 0., weight, 0., 1., 1);
       if( Mmumu>12. && Mmumu<80 ) FillHist("Count_2jCutPreB_1e2mu_M12to80"+Label, 0., weight, 0., 1., 1);
 
-      for( int it_m=0; it_m<Ncent; it_m++){
+      for( int it_m=0; it_m<NSignal; it_m++){
         float Shift  = 0.;
-        if( fabs(Mmumu-Center[it_m]-Shift)<Width[it_m] ){
+        if( fabs(Mmumu-Mmumu_CentSeed[it_m]-Shift)<Mmumu_WidthSeed[it_m] ){
           FillHist("Count_2jCutPreB_1e2mu_M"+CentStr[it_m]+Label, 0., weight, 0., 1., 1);
         }
       }
@@ -1904,9 +1916,9 @@ void Aug2017_TriLepSR::CheckSRYield(std::vector<snu::KMuon> MuTColl, std::vector
       FillHist("Count_2jCut_1e2mu_PreSel"+Label, 0., weight, 0., 1., 1);
       if( Mmumu>12. && Mmumu<80.  ) FillHist("Count_2jCut_1e2mu_M12to80"+Label, 0., weight, 0., 1., 1);
 
-      for( int it_m=0; it_m<Ncent; it_m++){
+      for( int it_m=0; it_m<NSignal; it_m++){
         float Shift = 0.;
-        if( fabs(Mmumu-Center[it_m]-Shift)<Width[it_m] ){
+        if( fabs(Mmumu-Mmumu_CentSeed[it_m]-Shift)<Mmumu_WidthSeed[it_m] ){
           FillHist("Count_2jCut_M"+CentStr[it_m]+Label, 0., weight, 0., 1., 1);
           //FillHist("Count_2jCut_1e2mu_M"+CentStr[it_m]+Label, 0., weight, 0., 1., 1);
         }
@@ -1914,24 +1926,24 @@ void Aug2017_TriLepSR::CheckSRYield(std::vector<snu::KMuon> MuTColl, std::vector
 
       for(int it_cent=0; it_cent<Mmumu_CentFull.size(); it_cent++){
         if(fabs(Mmumu-Mmumu_CentFull.at(it_cent))<Mmumu_WidthFull.at(it_cent)){
-          FillHist("Mmumu_CntBin_SR2j"+Label, it_cent+0.01, weight, 0., 54., 54);
+          FillHist("Mmumu_CntBin_SR2j"+Label, it_cent+0.01, weight, 0., 95., 95);
         }
   
         float LargeWidth=5.;
         if((Mmumu_CentFull.at(it_cent)-LargeWidth)<12.) LargeWidth=Mmumu_CentFull.at(it_cent)-12.;
         if(fabs(Mmumu-Mmumu_CentFull.at(it_cent))<LargeWidth){
-          FillHist("Mmumu_Width10_SR2j"+Label, it_cent+0.01, weight, 0., 54., 54);
+          FillHist("Mmumu_Width10_SR2j"+Label, it_cent+0.01, weight, 0., 95., 95);
         }
         if(Label==""){
           float Variation=0.2;
           float LargeWidthUp=(1.+Variation)*LargeWidth, LargeWidthDown=(1.-Variation)*LargeWidth;
           if((Mmumu_CentFull.at(it_cent)-LargeWidthUp)<12.) LargeWidthUp=Mmumu_CentFull.at(it_cent)-12.;
           if(fabs(Mmumu-Mmumu_CentFull.at(it_cent))<LargeWidthUp){
-            FillHist("Mmumu_Width10_SR2j_systup_Mrange", it_cent+0.01, weight, 0., 54., 54);
+            FillHist("Mmumu_Width10_SR2j_systup_Mrange", it_cent+0.01, weight, 0., 95., 95);
           }
           if((Mmumu_CentFull.at(it_cent)-LargeWidthDown)<12.) LargeWidthDown=Mmumu_CentFull.at(it_cent)-12.;
           if(fabs(Mmumu-Mmumu_CentFull.at(it_cent))<LargeWidthDown){
-            FillHist("Mmumu_Width10_SR2j_systdown_Mrange", it_cent+0.01, weight, 0., 54., 54);
+            FillHist("Mmumu_Width10_SR2j_systdown_Mrange", it_cent+0.01, weight, 0., 95., 95);
           }
         }
       }
@@ -1961,9 +1973,9 @@ void Aug2017_TriLepSR::CheckSRYield(std::vector<snu::KMuon> MuTColl, std::vector
       FillHist("Count_2jCutPreB_Mmumu_3mu_PreSel"+Label, 0., weight, 0., 1., 1);
       if(Mmumu<80.) FillHist("Count_2jCutPreB_Mmumu_3mu_M12to80"+Label, 0., weight, 0., 1., 1);
 
-      for( int it_m=0; it_m<Ncent; it_m++){
+      for( int it_m=0; it_m<NSignal; it_m++){
         float Shift = 0.;
-        if( fabs(Mmumu-Center[it_m]-Shift)<Width[it_m] ){
+        if( fabs(Mmumu-Mmumu_CentSeed[it_m]-Shift)<Mmumu_WidthSeed[it_m] ){
           FillHist("Count_2jCutPreB_Mmumu_3mu_M"+CentStr[it_m]+Label, 0., weight, 0., 1., 1);
         }
       }
@@ -1980,9 +1992,9 @@ void Aug2017_TriLepSR::CheckSRYield(std::vector<snu::KMuon> MuTColl, std::vector
       FillHist("Count_2jCut_Mmumu_3mu_PreSel"+Label, 0., weight, 0., 1., 1);
       if(Mmumu<80) FillHist("Count_2jCut_Mmumu_3mu_M12to80"+Label, 0., weight, 0., 1., 1);
 
-      for( int it_m=0; it_m<Ncent; it_m++){
+      for( int it_m=0; it_m<NSignal; it_m++){
         float Shift = 0.;
-        if( fabs(Mmumu-Center[it_m]-Shift)<Width[it_m] ){
+        if( fabs(Mmumu-Mmumu_CentSeed[it_m]-Shift)<Mmumu_WidthSeed[it_m] ){
           FillHist("Count_2jCut_M"+CentStr[it_m]+Label, 0., weight, 0., 1., 1);
           //FillHist("Count_2jCut_Mmumu_3mu_M"+CentStr[it_m]+Label, 0., weight, 0., 1., 1);
         }
@@ -1990,24 +2002,24 @@ void Aug2017_TriLepSR::CheckSRYield(std::vector<snu::KMuon> MuTColl, std::vector
 
       for(int it_cent=0; it_cent<Mmumu_CentFull.size(); it_cent++){
         if(fabs(Mmumu-Mmumu_CentFull.at(it_cent))<Mmumu_WidthFull.at(it_cent)){
-          FillHist("Mmumu_CntBin_SR2j"+Label, it_cent+0.01, weight, 0., 54., 54);
+          FillHist("Mmumu_CntBin_SR2j"+Label, it_cent+0.01, weight, 0., 95., 95);
         }
   
         float LargeWidth=5.;
         if((Mmumu_CentFull.at(it_cent)-LargeWidth)<12.) LargeWidth=Mmumu_CentFull.at(it_cent)-12.;
         if(fabs(Mmumu-Mmumu_CentFull.at(it_cent))<LargeWidth){
-          FillHist("Mmumu_Width10_SR2j"+Label, it_cent+0.01, weight, 0., 54., 54);
+          FillHist("Mmumu_Width10_SR2j"+Label, it_cent+0.01, weight, 0., 95., 95);
         }
         if(Label==""){
           float Variation=0.2;
           float LargeWidthUp=(1.+Variation)*LargeWidth, LargeWidthDown=(1.-Variation)*LargeWidth;
           if((Mmumu_CentFull.at(it_cent)-LargeWidthUp)<12.) LargeWidthUp=Mmumu_CentFull.at(it_cent)-12.;
           if(fabs(Mmumu-Mmumu_CentFull.at(it_cent))<LargeWidthUp){
-            FillHist("Mmumu_Width10_SR2j_systup_Mrange", it_cent+0.01, weight, 0., 54., 54);
+            FillHist("Mmumu_Width10_SR2j_systup_Mrange", it_cent+0.01, weight, 0., 95., 95);
           }
           if((Mmumu_CentFull.at(it_cent)-LargeWidthDown)<12.) LargeWidthDown=Mmumu_CentFull.at(it_cent)-12.;
           if(fabs(Mmumu-Mmumu_CentFull.at(it_cent))<LargeWidthDown){
-            FillHist("Mmumu_Width10_SR2j_systdown_Mrange", it_cent+0.01, weight, 0., 54., 54);
+            FillHist("Mmumu_Width10_SR2j_systdown_Mrange", it_cent+0.01, weight, 0., 95., 95);
           }
         }
       }
@@ -2118,7 +2130,7 @@ void Aug2017_TriLepSR::CheckSRDist(std::vector<snu::KMuon> MuTColl, std::vector<
   bool EMuMu=Option.Contains("EMuMu"), TriMu=Option.Contains("TriMu");
   if(k_sample_name.Contains("TTToHcToWA") && Label!="") return;//No systrun for signals
 
-  vector<float> MmumuEdges;
+  vector<float> MmumuEdges, MmumuEdges2, MmumuEdges3, MmumuEdges4;
   float CurrentEdge=0.;
    for(int i=0; i<19; i++){
      if     (i==0)  CurrentEdge=12.;
@@ -2131,11 +2143,37 @@ void Aug2017_TriLepSR::CheckSRDist(std::vector<snu::KMuon> MuTColl, std::vector<
      else CurrentEdge=200.;
      MmumuEdges.push_back(CurrentEdge);
    }
+   for(int i=0; i<36; i++){
+     if     (i==0)  CurrentEdge=12.;
+     else if(i<35)  CurrentEdge+=2.;
+     else if(i==35) CurrentEdge=81.2;
+     MmumuEdges2.push_back(CurrentEdge);
+   }
+   for(int i=0; i<70; i++){
+     if     (i==0)               CurrentEdge =12.;
+     else if(CurrentEdge<80.  )  CurrentEdge+=1.;
+     else if(CurrentEdge<81.2 )  CurrentEdge =81.2;
+     else continue;
+     MmumuEdges3.push_back(CurrentEdge);
+   }
+   for(int i=0; i<114; i++){
+     if     (i==0)                 CurrentEdge=12.;
+     else if(CurrentEdge<20.-1E-3) CurrentEdge+=0.25;
+     else if(CurrentEdge<40.-1E-3) CurrentEdge+=0.5;
+     else if(CurrentEdge<80.-1E-3) CurrentEdge+= 1.;
+     else if(CurrentEdge<81.2 )    CurrentEdge=81.2;
+     else continue;
+     MmumuEdges4.push_back(CurrentEdge);
+   }
+
 
   const int NSignal = 7;
   float Mmumu_CentSeed[NSignal]  = {15., 25., 35., 45., 55., 65., 75.};
-  float Mmumu_WidthSeed[NSignal] = {1., 1., 1.3, 1.5, 1.5, 2.0, 2.5};
-  float Mmumu_Step[NSignal-1]    = {1., 1., 1.2, 1.2, 1.2, 1.8};
+  //float Mmumu_WidthSeed[NSignal] = {1., 1., 1.3, 1.5, 1.5, 2.0, 2.5};//Old - OffPreAppVer
+  //float Mmumu_Step[NSignal-1]    = {1., 1., 1.2, 1.2, 1.2, 1.8};//Old - OffPreAppVer
+  float Mmumu_WidthSeed[NSignal] = {0.5,  0.7, 0.8,  1., 1.2, 1.5, 1.8};
+  float Mmumu_Step[NSignal-1]    = {  0.45, 0.55, 0.6, 0.75, 0.9, 1.15};
+
   vector<float> Mmumu_CentFull, Mmumu_WidthFull;
   for(int it_seed=0; it_seed<NSignal; it_seed++){
     float CurrentCenter = Mmumu_CentSeed[it_seed];
@@ -2160,13 +2198,14 @@ void Aug2017_TriLepSR::CheckSRDist(std::vector<snu::KMuon> MuTColl, std::vector<
     if( !(EleLColl.size()==1 && MuLColl.size()==2) ) return;
     if( !(EleTColl.size()==1 && MuTColl.size()==2) ) return;
     if( !(MuTColl.at(0).Charge()!=MuTColl.at(1).Charge()) ) return;
-    if( !(EleTColl.at(0).Pt()>25 && MuTColl.at(0).Pt()>10 && MuTColl.at(1).Pt()>10) ) return;
+    if( !(EleTColl.at(0).Pt()>25 && MuTColl.at(0).Pt()>10 && MuTColl.at(1).Pt()>5) ) return;
+    //if( !(EleTColl.at(0).Pt()>25 && MuTColl.at(0).Pt()>10 && MuTColl.at(1).Pt()>10) ) return;
     if( fabs(EleTColl.at(0).Eta())>2.5 ) return;
 
     float Mmumu=(MuTColl.at(0)+MuTColl.at(1)).M();
     float MTW = sqrt(2)*sqrt(MET*EleTColl.at(0).Pt()-METx*EleTColl.at(0).Px()-METy*EleTColl.at(0).Py());
     float M3l=(EleTColl.at(0)+MuTColl.at(0)+MuTColl.at(1)).M();
-    if(Mmumu<12) return;
+    //if(Mmumu<12) return;
 
       FillHist("CutFlow_1e2mu"+Label, 0., weight, 0., 20., 20);
       if(Label=="") FillHist("Mmumu_3lOS"+Label, Mmumu, weight, 0., 200., 200);
@@ -2181,7 +2220,7 @@ void Aug2017_TriLepSR::CheckSRDist(std::vector<snu::KMuon> MuTColl, std::vector<
         float LargeWidth=5.;
         if((Mmumu_CentFull.at(it_cent)-LargeWidth)<12.) LargeWidth=Mmumu_CentFull.at(it_cent)-12.;
         if(fabs(Mmumu-Mmumu_CentFull.at(it_cent))<LargeWidth){
-          FillHist("Mmumu_CntBin_3lOSOffZ_Width10"+Label, it_cent+0.01, weight, 0., 54., 54);
+          FillHist("Mmumu_CntBin_3lOSOffZ_Width10"+Label, it_cent+0.01, weight, 0., 95., 95);
         }
       }//----------------
 
@@ -2222,8 +2261,76 @@ void Aug2017_TriLepSR::CheckSRDist(std::vector<snu::KMuon> MuTColl, std::vector<
     FillHist("PTe_SR2j"+Label, EleTColl.at(0).Pt(), weight, 0., 200., 40);
     FillHist("PTmu1_SR2j"+Label, MuTColl.at(0).Pt(), weight, 0., 300., 60);
     FillHist("PTmu2_SR2j"+Label, MuTColl.at(1).Pt(), weight, 0., 200., 40);
-    FillHist("Mmumu_BinW10_SR2j"+Label, Mmumu, weight, &MmumuEdges[0], MmumuEdges.size()-1);
-    FillHist("Mmumu_BinW2_SR2j" +Label, Mmumu, weight, 12., 80., 34);
+    if(isData or (k_sample_name.Contains("TTToHcToWA") and Label=="")) FillHist("Mmumu_BinWp1_SR2j"    +Label, Mmumu, weight, 0., 80., 800);
+    //if(isData or (k_sample_name.Contains("TTToHcToWA") and Label=="")) FillHist("Mmumu_BinWp1_SR2j"    +Label, Mmumu, weight, 12., 80., 680);
+    FillHist("Mmumu_BinW10_SR2j"   +Label, Mmumu, weight, &MmumuEdges[0], MmumuEdges.size()-1);
+    FillHist("Mmumu_BinW2_SR2j"    +Label, Mmumu, weight, 12., 80., 34);
+    FillHist("Mmumu_BinW2Full_SR2j"+Label, Mmumu, weight, &MmumuEdges2[0], MmumuEdges2.size()-1);
+    FillHist("Mmumu_BinW1_SR2j"    +Label, Mmumu, weight, &MmumuEdges3[0], MmumuEdges3.size()-1);
+    FillHist("Mmumu_BinRes_SR2j"   +Label, Mmumu, weight, &MmumuEdges4[0], MmumuEdges4.size()-1);
+    for(int it_cent=0; it_cent<113; it_cent++){
+      float BinCenter=(MmumuEdges4.at(it_cent)+MmumuEdges4.at(it_cent+1))/2.;
+      float LargeWidth=5.;
+      if     ((BinCenter-LargeWidth)<12.)  LargeWidth=BinCenter-12.;
+      else if((BinCenter+LargeWidth)>81.2) LargeWidth=81.2-BinCenter;
+      if(fabs(Mmumu-BinCenter)<LargeWidth){
+        FillHist("Mmumu_BinRes_SR2j_Width10"+Label, BinCenter, weight, &MmumuEdges4[0], MmumuEdges4.size()-1);
+      }
+      if(Label==""){
+        float Variation=LargeWidth>3.? 0.2:0.;
+        float LargeWidthUp=(1.+Variation)*LargeWidth, LargeWidthDown=(1.-Variation)*LargeWidth;
+        if     ((BinCenter-LargeWidthUp)<12. ) LargeWidthUp=BinCenter-12.;
+        else if((BinCenter+LargeWidthUp)>81.2) LargeWidthUp=81.2-BinCenter;
+        if(fabs(Mmumu-BinCenter)<LargeWidthUp){
+          FillHist("Mmumu_BinRes_SR2j_Width10_systup_Mrange", BinCenter, weight, &MmumuEdges4[0], MmumuEdges4.size()-1);
+        }
+        if(fabs(Mmumu-BinCenter)<LargeWidthDown){
+          FillHist("Mmumu_BinRes_SR2j_Width10_systdown_Mrange", BinCenter, weight, &MmumuEdges4[0], MmumuEdges4.size()-1);
+        }
+      }
+    }
+    for(int it_cent=0; it_cent<69; it_cent++){
+      float BinCenter=it_cent!=68? 12.5+it_cent:80.6;
+      float LargeWidth=5.;
+      if     ((BinCenter-LargeWidth)<12.)  LargeWidth=BinCenter-12.;
+      else if((BinCenter+LargeWidth)>81.2) LargeWidth=81.2-BinCenter;
+      if(fabs(Mmumu-BinCenter)<LargeWidth){
+        FillHist("Mmumu_BinW1_SR2j_Width10"+Label, BinCenter, weight, &MmumuEdges3[0], MmumuEdges3.size()-1);
+      }
+      if(Label==""){
+        float Variation=it_cent!=68? 0.2:0.;
+        float LargeWidthUp=(1.+Variation)*LargeWidth, LargeWidthDown=(1.-Variation)*LargeWidth;
+        if     ((BinCenter-LargeWidthUp)<12. ) LargeWidthUp=BinCenter-12.;
+        else if((BinCenter+LargeWidthUp)>81.2) LargeWidthUp=81.2-BinCenter;
+        if(fabs(Mmumu-BinCenter)<LargeWidthUp){
+          FillHist("Mmumu_BinW1_SR2j_Width10_systup_Mrange", BinCenter, weight, &MmumuEdges3[0], MmumuEdges3.size()-1);
+        }
+        if(fabs(Mmumu-BinCenter)<LargeWidthDown){
+          FillHist("Mmumu_BinW1_SR2j_Width10_systdown_Mrange", BinCenter, weight, &MmumuEdges3[0], MmumuEdges3.size()-1);
+        }
+      }
+    }
+    for(int it_cent=0; it_cent<35; it_cent++){
+      float BinCenter=it_cent!=34? 13.+2.*((float) it_cent):80.6;
+      float LargeWidth=5.;
+      if     ((BinCenter-LargeWidth)<12.)  LargeWidth=BinCenter-12.;
+      else if((BinCenter+LargeWidth)>81.2) LargeWidth=81.2-BinCenter;
+      if(fabs(Mmumu-BinCenter)<LargeWidth){
+        FillHist("Mmumu_BinW2Full_SR2j_Width10"+Label, BinCenter, weight, &MmumuEdges2[0], MmumuEdges2.size()-1);
+      }
+      if(Label==""){
+        float Variation=it_cent!=34? 0.2:0.;
+        float LargeWidthUp=(1.+Variation)*LargeWidth, LargeWidthDown=(1.-Variation)*LargeWidth;
+        if     ((BinCenter-LargeWidthUp)<12. ) LargeWidthUp=BinCenter-12.;
+        else if((BinCenter+LargeWidthUp)>81.2) LargeWidthUp=81.2-BinCenter;
+        if(fabs(Mmumu-BinCenter)<LargeWidthUp){
+          FillHist("Mmumu_BinW2Full_SR2j_Width10_systup_Mrange", BinCenter, weight, &MmumuEdges2[0], MmumuEdges2.size()-1);
+        }
+        if(fabs(Mmumu-BinCenter)<LargeWidthDown){
+          FillHist("Mmumu_BinW2Full_SR2j_Width10_systdown_Mrange", BinCenter, weight, &MmumuEdges2[0], MmumuEdges2.size()-1);
+        }
+      }
+    }
     for(int it_cent=0; it_cent<34; it_cent++){
       float BinCenter=13.+2.*((float) it_cent);
       float LargeWidth=5.;
@@ -2248,23 +2355,23 @@ void Aug2017_TriLepSR::CheckSRDist(std::vector<snu::KMuon> MuTColl, std::vector<
     }
     for(int it_cent=0; it_cent<Mmumu_CentFull.size(); it_cent++){
       if(fabs(Mmumu-Mmumu_CentFull.at(it_cent))<Mmumu_WidthFull.at(it_cent)){
-        FillHist("Mmumu_CntBin_SR2j"+Label, it_cent+0.01, weight, 0., 54., 54);
+        FillHist("Mmumu_CntBin_SR2j"+Label, it_cent+0.01, weight, 0., 95., 95);
       }
       float LargeWidth=5.;
       if((Mmumu_CentFull.at(it_cent)-LargeWidth)<12.) LargeWidth=Mmumu_CentFull.at(it_cent)-12.;
       if(fabs(Mmumu-Mmumu_CentFull.at(it_cent))<LargeWidth){
-        FillHist("Mmumu_CntBin_SR2j_Width10"+Label, it_cent+0.01, weight, 0., 54., 54);
+        FillHist("Mmumu_CntBin_SR2j_Width10"+Label, it_cent+0.01, weight, 0., 95., 95);
       }
       if(Label==""){
         float Variation=0.2;
         float LargeWidthUp=(1.+Variation)*LargeWidth, LargeWidthDown=(1.-Variation)*LargeWidth;
         if((Mmumu_CentFull.at(it_cent)-LargeWidthUp)<12.) LargeWidthUp=Mmumu_CentFull.at(it_cent)-12.;
         if(fabs(Mmumu-Mmumu_CentFull.at(it_cent))<LargeWidthUp){
-          FillHist("Mmumu_CntBin_SR2j_Width10_systup_Mrange", it_cent+0.01, weight, 0., 54., 54);
+          FillHist("Mmumu_CntBin_SR2j_Width10_systup_Mrange", it_cent+0.01, weight, 0., 95., 95);
         }
         if((Mmumu_CentFull.at(it_cent)-LargeWidthDown)<12.) LargeWidthDown=Mmumu_CentFull.at(it_cent)-12.;
         if(fabs(Mmumu-Mmumu_CentFull.at(it_cent))<LargeWidthDown){
-          FillHist("Mmumu_CntBin_SR2j_Width10_systdown_Mrange", it_cent+0.01, weight, 0., 54., 54);
+          FillHist("Mmumu_CntBin_SR2j_Width10_systdown_Mrange", it_cent+0.01, weight, 0., 95., 95);
         }
       }
     }
@@ -2280,7 +2387,8 @@ void Aug2017_TriLepSR::CheckSRDist(std::vector<snu::KMuon> MuTColl, std::vector<
     if( !(MuLColl.size()==3 && EleLColl.size()==0) ) return;
     if( !(MuTColl.size()==3) ) return;
     if( fabs(SumCharge(MuTColl))!=1 ) return;
-    if( !(MuTColl.at(0).Pt()>20 && MuTColl.at(1).Pt()>10 && MuTColl.at(2).Pt()>10) ) return;
+    if( !(MuTColl.at(0).Pt()>20 && MuTColl.at(1).Pt()>10 && MuTColl.at(2).Pt()>5) ) return;
+    //if( !(MuTColl.at(0).Pt()>20 && MuTColl.at(1).Pt()>10 && MuTColl.at(2).Pt()>10) ) return;
 
     int   IdxOS  = TriMuChargeIndex(MuTColl, "OS");
     int   IdxSS1 = TriMuChargeIndex(MuTColl, "SS1");
@@ -2291,7 +2399,7 @@ void Aug2017_TriLepSR::CheckSRDist(std::vector<snu::KMuon> MuTColl, std::vector<
     float MOSSS2 = (MuTColl.at(IdxOS)+MuTColl.at(IdxSS2)).M();
     float Mmumu  = (MuTColl.at(IdxOS)+MuTColl.at(IdxSSA)).M();
 
-    if( !(MOSSS1>12 && MOSSS2>12) ) return;
+    //if( !(MOSSS1>12 && MOSSS2>12) ) return;
 
       FillHist("CutFlow_3mu"+Label, 0., weight, 0., 20., 20);
       if(Label=="") FillHist("Mmumu_3lOS"+Label, Mmumu, weight, 0., 200., 200);
@@ -2305,7 +2413,7 @@ void Aug2017_TriLepSR::CheckSRDist(std::vector<snu::KMuon> MuTColl, std::vector<
         float LargeWidth=5.;
         if((Mmumu_CentFull.at(it_cent)-LargeWidth)<12.) LargeWidth=Mmumu_CentFull.at(it_cent)-12.;
         if(fabs(Mmumu-Mmumu_CentFull.at(it_cent))<LargeWidth){
-          FillHist("Mmumu_CntBin_3lOSOffZ_Width10"+Label, it_cent+0.01, weight, 0., 54., 54);
+          FillHist("Mmumu_CntBin_3lOSOffZ_Width10"+Label, it_cent+0.01, weight, 0., 95., 95);
         }
       }//----------------------
 
@@ -2344,8 +2452,76 @@ void Aug2017_TriLepSR::CheckSRDist(std::vector<snu::KMuon> MuTColl, std::vector<
     FillHist("PTmu2_SR2j"+Label, MuTColl.at(1).Pt(), weight, 0., 200., 40);
     FillHist("PTmu3_SR2j"+Label, MuTColl.at(2).Pt(), weight, 0., 200., 40);
     FillHist("MOSSS1_SR2j"+Label, MOSSS1, weight, 0., 200., 80);
+    if(isData or (k_sample_name.Contains("TTToHcToWA") and Label=="")) FillHist("Mmumu_BinWp1_SR2j"    +Label, Mmumu, weight, 0., 80., 800);
+    //if(isData or (k_sample_name.Contains("TTToHcToWA") and Label=="")) FillHist("Mmumu_BinWp1_SR2j"    +Label, Mmumu, weight, 12., 80., 680);
     FillHist("Mmumu_BinW10_SR2j"+Label, Mmumu, weight, &MmumuEdges[0], MmumuEdges.size()-1);
     FillHist("Mmumu_BinW2_SR2j" +Label, Mmumu, weight, 12., 80., 34);
+    FillHist("Mmumu_BinW2Full_SR2j"+Label, Mmumu, weight, &MmumuEdges2[0], MmumuEdges2.size()-1);
+    FillHist("Mmumu_BinW1_SR2j"    +Label, Mmumu, weight, &MmumuEdges3[0], MmumuEdges3.size()-1);
+    FillHist("Mmumu_BinRes_SR2j"   +Label, Mmumu, weight, &MmumuEdges4[0], MmumuEdges4.size()-1);
+    for(int it_cent=0; it_cent<113; it_cent++){
+      float BinCenter=(MmumuEdges4.at(it_cent)+MmumuEdges4.at(it_cent+1))/2.;
+      float LargeWidth=5.;
+      if     ((BinCenter-LargeWidth)<12.)  LargeWidth=BinCenter-12.;
+      else if((BinCenter+LargeWidth)>81.2) LargeWidth=81.2-BinCenter;
+      if(fabs(Mmumu-BinCenter)<LargeWidth){
+        FillHist("Mmumu_BinRes_SR2j_Width10"+Label, BinCenter, weight, &MmumuEdges4[0], MmumuEdges4.size()-1);
+      }
+      if(Label==""){
+        float Variation=LargeWidth>3.? 0.2:0.;
+        float LargeWidthUp=(1.+Variation)*LargeWidth, LargeWidthDown=(1.-Variation)*LargeWidth;
+        if     ((BinCenter-LargeWidthUp)<12. ) LargeWidthUp=BinCenter-12.;
+        else if((BinCenter+LargeWidthUp)>81.2) LargeWidthUp=81.2-BinCenter;
+        if(fabs(Mmumu-BinCenter)<LargeWidthUp){
+          FillHist("Mmumu_BinRes_SR2j_Width10_systup_Mrange", BinCenter, weight, &MmumuEdges4[0], MmumuEdges4.size()-1);
+        }
+        if(fabs(Mmumu-BinCenter)<LargeWidthDown){
+          FillHist("Mmumu_BinRes_SR2j_Width10_systdown_Mrange", BinCenter, weight, &MmumuEdges4[0], MmumuEdges4.size()-1);
+        }
+      }
+    }
+    for(int it_cent=0; it_cent<69; it_cent++){
+      float BinCenter=it_cent!=68? 12.5+it_cent:80.6;
+      float LargeWidth=5.;
+      if     ((BinCenter-LargeWidth)<12.)  LargeWidth=BinCenter-12.;
+      else if((BinCenter+LargeWidth)>81.2) LargeWidth=81.2-BinCenter;
+      if(fabs(Mmumu-BinCenter)<LargeWidth){
+        FillHist("Mmumu_BinW1_SR2j_Width10"+Label, BinCenter, weight, &MmumuEdges3[0], MmumuEdges3.size()-1);
+      }
+      if(Label==""){
+        float Variation=it_cent!=68? 0.2:0.;
+        float LargeWidthUp=(1.+Variation)*LargeWidth, LargeWidthDown=(1.-Variation)*LargeWidth;
+        if     ((BinCenter-LargeWidthUp)<12. ) LargeWidthUp=BinCenter-12.;
+        else if((BinCenter+LargeWidthUp)>81.2) LargeWidthUp=81.2-BinCenter;
+        if(fabs(Mmumu-BinCenter)<LargeWidthUp){
+          FillHist("Mmumu_BinW1_SR2j_Width10_systup_Mrange", BinCenter, weight, &MmumuEdges3[0], MmumuEdges3.size()-1);
+        }
+        if(fabs(Mmumu-BinCenter)<LargeWidthDown){
+          FillHist("Mmumu_BinW1_SR2j_Width10_systdown_Mrange", BinCenter, weight, &MmumuEdges3[0], MmumuEdges3.size()-1);
+        }
+      }
+    }
+    for(int it_cent=0; it_cent<35; it_cent++){
+      float BinCenter=it_cent!=34? 13.+2.*((float) it_cent):80.6;
+      float LargeWidth=5.;
+      if     ((BinCenter-LargeWidth)<12.)  LargeWidth=BinCenter-12.;
+      else if((BinCenter+LargeWidth)>81.2) LargeWidth=81.2-BinCenter;
+      if(fabs(Mmumu-BinCenter)<LargeWidth){
+        FillHist("Mmumu_BinW2Full_SR2j_Width10"+Label, BinCenter, weight, &MmumuEdges2[0], MmumuEdges2.size()-1);
+      }
+      if(Label==""){
+        float Variation=it_cent!=34? 0.2:0.;
+        float LargeWidthUp=(1.+Variation)*LargeWidth, LargeWidthDown=(1.-Variation)*LargeWidth;
+        if     ((BinCenter-LargeWidthUp)<12. ) LargeWidthUp=BinCenter-12.;
+        else if((BinCenter+LargeWidthUp)>81.2) LargeWidthUp=81.2-BinCenter;
+        if(fabs(Mmumu-BinCenter)<LargeWidthUp){
+          FillHist("Mmumu_BinW2Full_SR2j_Width10_systup_Mrange", BinCenter, weight, &MmumuEdges2[0], MmumuEdges2.size()-1);
+        }
+        if(fabs(Mmumu-BinCenter)<LargeWidthDown){
+          FillHist("Mmumu_BinW2Full_SR2j_Width10_systdown_Mrange", BinCenter, weight, &MmumuEdges2[0], MmumuEdges2.size()-1);
+        }
+      }
+    }
     for(int it_cent=0; it_cent<34; it_cent++){
       float BinCenter=13.+2.*((float) it_cent);
       float LargeWidth=5.;
@@ -2370,23 +2546,23 @@ void Aug2017_TriLepSR::CheckSRDist(std::vector<snu::KMuon> MuTColl, std::vector<
     }
     for(int it_cent=0; it_cent<Mmumu_CentFull.size(); it_cent++){
       if(fabs(Mmumu-Mmumu_CentFull.at(it_cent))<Mmumu_WidthFull.at(it_cent)){
-        FillHist("Mmumu_CntBin_SR2j"+Label, it_cent+0.01, weight, 0., 54., 54);
+        FillHist("Mmumu_CntBin_SR2j"+Label, it_cent+0.01, weight, 0., 95., 95);
       }
       float LargeWidth=5.;
       if((Mmumu_CentFull.at(it_cent)-LargeWidth)<12.) LargeWidth=Mmumu_CentFull.at(it_cent)-12.;
       if(fabs(Mmumu-Mmumu_CentFull.at(it_cent))<LargeWidth){
-        FillHist("Mmumu_CntBin_SR2j_Width10"+Label, it_cent+0.01, weight, 0., 54., 54);
+        FillHist("Mmumu_CntBin_SR2j_Width10"+Label, it_cent+0.01, weight, 0., 95., 95);
       }
       if(Label==""){
         float Variation=0.2;
         float LargeWidthUp=(1.+Variation)*LargeWidth, LargeWidthDown=(1.-Variation)*LargeWidth;
         if((Mmumu_CentFull.at(it_cent)-LargeWidthUp)<12.) LargeWidthUp=Mmumu_CentFull.at(it_cent)-12.;
         if(fabs(Mmumu-Mmumu_CentFull.at(it_cent))<LargeWidthUp){
-          FillHist("Mmumu_CntBin_SR2j_Width10_systup_Mrange", it_cent+0.01, weight, 0., 54., 54);
+          FillHist("Mmumu_CntBin_SR2j_Width10_systup_Mrange", it_cent+0.01, weight, 0., 95., 95);
         }
         if((Mmumu_CentFull.at(it_cent)-LargeWidthDown)<12.) LargeWidthDown=Mmumu_CentFull.at(it_cent)-12.;
         if(fabs(Mmumu-Mmumu_CentFull.at(it_cent))<LargeWidthDown){
-          FillHist("Mmumu_CntBin_SR2j_Width10_systdown_Mrange", it_cent+0.01, weight, 0., 54., 54);
+          FillHist("Mmumu_CntBin_SR2j_Width10_systdown_Mrange", it_cent+0.01, weight, 0., 95., 95);
         }
       }
     }
@@ -2399,6 +2575,401 @@ void Aug2017_TriLepSR::CheckSRDist(std::vector<snu::KMuon> MuTColl, std::vector<
     }
   }
 }
+
+
+void Aug2017_TriLepSR::CheckSRSigDist(std::vector<snu::KMuon> MuTColl, std::vector<snu::KMuon> MuLColl, std::vector<snu::KElectron> EleTColl, std::vector<snu::KElectron> EleLColl, std::vector<snu::KJet> JetColl, std::vector<snu::KJet> BJetColl, float MET, float METx, float METy, float weight, TString Label, TString Option){
+
+
+  bool EMuMu=Option.Contains("EMuMu"), TriMu=Option.Contains("TriMu");
+  if(k_sample_name.Contains("TTToHcToWA") && Label!="") return;//No systrun for signals
+
+  vector<float> MmumuEdges, MmumuEdges2;
+  float CurrentEdge=0.;
+   for(int i=0; i<19; i++){
+     if     (i==0)  CurrentEdge=12.;
+     else if(i==1)  CurrentEdge=20.;
+     else if(i<7)   CurrentEdge+=10.;
+     else if(i==7)  CurrentEdge=81.2;
+     else if(i==8)  CurrentEdge=101.2;     
+     else if(i==9)  CurrentEdge=110.;
+     else if(i<18)  CurrentEdge+=10;
+     else CurrentEdge=200.;
+     MmumuEdges.push_back(CurrentEdge);
+   }
+   for(int i=0; i<36; i++){
+     if     (i==0)  CurrentEdge=12.;
+     else if(i<35)  CurrentEdge+=2.;
+     else if(i==35) CurrentEdge=81.2;
+     MmumuEdges2.push_back(CurrentEdge);
+   }
+
+
+  const int NSignal = 7;
+  float Mmumu_CentSeed[NSignal]  = {15., 25., 35., 45., 55., 65., 75.};
+  float Mmumu_WidthSeed[NSignal] = {1., 1., 1.3, 1.5, 1.5, 2.0, 2.5};
+  float Mmumu_Step[NSignal-1]    = {1., 1., 1.2, 1.2, 1.2, 1.8};
+  vector<float> Mmumu_CentFull, Mmumu_WidthFull;
+  for(int it_seed=0; it_seed<NSignal; it_seed++){
+    float CurrentCenter = Mmumu_CentSeed[it_seed];
+    float CurrentWidth  = Mmumu_WidthSeed[it_seed];
+    Mmumu_CentFull.push_back(CurrentCenter);
+    Mmumu_WidthFull.push_back(CurrentWidth);
+    for(int it_step=0; it_step<100; it_step++){
+      if(it_seed==NSignal-1) break;
+      CurrentCenter+= Mmumu_Step[it_seed];
+      CurrentWidth  = (CurrentCenter-Mmumu_CentSeed[it_seed])/10.*Mmumu_WidthSeed[it_seed+1]
+                     +(Mmumu_CentSeed[it_seed+1]-CurrentCenter)/10.*Mmumu_WidthSeed[it_seed];
+      if(CurrentCenter<Mmumu_CentSeed[it_seed]+10.){
+        Mmumu_CentFull.push_back(CurrentCenter);
+        Mmumu_WidthFull.push_back(CurrentWidth);
+      }
+      else break;
+    }
+  }
+
+  int NqW=0, NlW=0, NtaW=0, NqWp=0, NqWm=0, NlWp=0, NlWm=0, NtaWp=0, NtaWm=0;
+  std::vector<snu::KTruth> truthColl; eventbase->GetTruthSel()->Selection(truthColl);
+
+  if( k_sample_name.Contains("TTToHcToWA") ){
+    for(int i=2; i<(int) truthColl.size(); i++){
+      int  LeptonType = GetLeptonType(i,truthColl);
+      int  QuarkType  = GetPartonType(i,truthColl);
+      int  pid        = truthColl.at(i).PdgId();
+      int  mpid       = truthColl.at(truthColl.at(i).IndexMother()).PdgId();
+      bool IsQuark    = fabs(pid)<10;
+      bool IsLepton   = fabs(pid)==11 or fabs(pid)==13;
+      bool IsTau      = fabs(pid)==15;
+      bool IsMotherWp = truthColl.at(truthColl.at(i).IndexMother()).PdgId()== 24;
+      bool IsMotherWm = truthColl.at(truthColl.at(i).IndexMother()).PdgId()==-24;
+      if     (IsQuark  && IsMotherWp) {NqW++;  NqWp++;}
+      else if(IsQuark  && IsMotherWm) {NqW++;  NqWm++;}
+      else if(IsLepton && IsMotherWp) {NlW++;  NlWp++;}
+      else if(IsLepton && IsMotherWm) {NlW++;  NlWm++;}
+      else if(IsTau    && IsMotherWp) {NtaW++; NtaWp++;}
+      else if(IsTau    && IsMotherWm) {NtaW++; NtaWm++;}
+    }//End of truthcoll
+  }
+
+  if(EMuMu){
+    if( !(EleLColl.size()==1 && MuLColl.size()==2) ) return;
+    if( !(EleTColl.size()==1 && MuTColl.size()==2) ) return;
+    if( !(MuTColl.at(0).Charge()!=MuTColl.at(1).Charge()) ) return;
+    if( !(EleTColl.at(0).Pt()>25 && MuTColl.at(0).Pt()>10 && MuTColl.at(1).Pt()>10) ) return;
+    if( fabs(EleTColl.at(0).Eta())>2.5 ) return;
+
+    float Mmumu=(MuTColl.at(0)+MuTColl.at(1)).M();
+    float MTW = sqrt(2)*sqrt(MET*EleTColl.at(0).Pt()-METx*EleTColl.at(0).Px()-METy*EleTColl.at(0).Py());
+    float M3l=(EleTColl.at(0)+MuTColl.at(0)+MuTColl.at(1)).M();
+    if(Mmumu<12) return;
+
+    if(fabs(Mmumu-91.2)<10) return;
+    if(BJetColl.size()==0) return;
+    if(JetColl.size()<2) return;
+
+
+    int Idxj1_W=-1, Idxj2_W=-1;
+    snu::KParticle v; v.SetPxPyPzE(METx, METy, 0, sqrt(METx*METx+METy*METy));
+    float Pzv1=GetvPz(v, EleTColl.at(0), 1), Pzv2=GetvPz(v, EleTColl.at(0), 2);
+    float Pzv=fabs(Pzv1)<fabs(Pzv2)? Pzv1:Pzv2;
+    v.SetXYZM(METx,METy,Pzv,0.);
+
+    float M3lv=(EleTColl.at(0)+MuTColl.at(0)+MuTColl.at(1)+v).M(), M2l2j=0.; 
+    Idxj1_W=GetDaughterCandIdx(JetColl, "W", -1., "Lead");
+    Idxj2_W=GetDaughterCandIdx(JetColl, "W", -1., "Subl");
+    M2l2j=(MuTColl.at(0)+MuTColl.at(1)+JetColl.at(Idxj1_W)+JetColl.at(Idxj2_W)).M();
+
+    FillHist("Mmumu_SR2j"+Label, Mmumu, weight, 0., 200., 200);
+    FillHist("M2l2j_SR2j"+Label, M2l2j, weight, 0., 1000., 100);
+    FillHist("M3lv_SR2j"+Label, M3lv, weight, 0., 1000., 100);
+    if(Mmumu<80){
+      FillHist("M2l2j_lt80_SR2j"+Label, M2l2j, weight, 0., 1000., 100);
+      FillHist("M3lv_lt80_SR2j"+Label, M3lv, weight, 0., 1000., 100);
+
+      int EleType = GetLeptonType(EleTColl.at(0),truthColl);
+      int Mu1Type = GetLeptonType(MuTColl.at(0),truthColl);
+      int Mu2Type = GetLeptonType(MuTColl.at(1),truthColl);
+      if( NlWp==1 && NqWm==2 ){//H+>3lv decay
+        FillHist("M3lv_lt80_T3lv_SR2j"+Label, M3lv, weight, 0., 500., 100);
+      }
+      else{
+        FillHist("M3lv_lt80_F3lv_SR2j"+Label, M3lv, weight, 0., 500., 100);
+      }
+  
+      if( NqWp==2 && Mu1Type==2 && Mu2Type==2 ){
+        FillHist("M2l2j_lt80_T2l2j_SR2j"+Label, M2l2j, weight, 0., 500., 100);
+      }
+      else{
+        FillHist("M2l2j_lt80_F2l2j_SR2j"+Label, M2l2j, weight, 0., 500., 100);
+      }
+    }
+  }
+  if(TriMu){
+    if( !(MuLColl.size()==3 && EleLColl.size()==0) ) return;
+    if( !(MuTColl.size()==3) ) return;
+    if( fabs(SumCharge(MuTColl))!=1 ) return;
+    if( !(MuTColl.at(0).Pt()>20 && MuTColl.at(1).Pt()>10 && MuTColl.at(2).Pt()>10) ) return;
+
+    int   IdxOS  = TriMuChargeIndex(MuTColl, "OS");
+    int   IdxSS1 = TriMuChargeIndex(MuTColl, "SS1");
+    int   IdxSS2 = TriMuChargeIndex(MuTColl, "SS2");
+    int   IdxSSW = TriMuChargeIndex(MuTColl, MET, METx, METy, "SSW");
+    int   IdxSSA = TriMuChargeIndex(MuTColl, MET, METx, METy, "SSA");
+    float MOSSS1 = (MuTColl.at(IdxOS)+MuTColl.at(IdxSS1)).M();
+    float MOSSS2 = (MuTColl.at(IdxOS)+MuTColl.at(IdxSS2)).M();
+    float Mmumu  = (MuTColl.at(IdxOS)+MuTColl.at(IdxSSA)).M();
+
+    if( !(MOSSS1>12 && MOSSS2>12) ) return;
+    if( fabs(MOSSS1-91.2)<10 || fabs(MOSSS2-91.2)<10 ) return;
+    if(BJetColl.size()==0) return;
+    if(JetColl.size()<2) return;
+
+
+    int Idxj1_W=-1, Idxj2_W=-1;
+    snu::KParticle v; v.SetPxPyPzE(METx, METy, 0, sqrt(METx*METx+METy*METy));
+    float Pzv1=GetvPz(v, MuTColl.at(IdxSSW), 1), Pzv2=GetvPz(v, MuTColl.at(IdxSSW), 2);
+    float Pzv=fabs(Pzv1)<fabs(Pzv2)? Pzv1:Pzv2;
+    v.SetXYZM(METx,METy,Pzv,0.);
+
+    float M3lv=(MuTColl.at(0)+MuTColl.at(1)+MuTColl.at(2)+v).M(), M2l2j=0.; 
+    Idxj1_W=GetDaughterCandIdx(JetColl, "W", -1., "Lead");
+    Idxj2_W=GetDaughterCandIdx(JetColl, "W", -1., "Subl");
+    M2l2j=(MuTColl.at(IdxOS)+MuTColl.at(IdxSSA)+JetColl.at(Idxj1_W)+JetColl.at(Idxj2_W)).M();
+
+    FillHist("Mmumu_SR2j"+Label, Mmumu, weight, 0., 200., 200);
+    FillHist("M2l2j_SR2j"+Label, M2l2j, weight, 0., 1000., 100);
+    FillHist("M3lv_SR2j"+Label, M3lv, weight, 0., 1000., 100);
+    if(Mmumu<80){
+      FillHist("M2l2j_lt80_SR2j"+Label, M2l2j, weight, 0., 1000., 100);
+      FillHist("M3lv_lt80_SR2j"+Label, M3lv, weight, 0., 1000., 100);
+
+      int MuOSType  = GetLeptonType(MuTColl.at(IdxOS) , truthColl);
+      int MuSSAType = GetLeptonType(MuTColl.at(IdxSSA), truthColl);
+      int MuSSWType = GetLeptonType(MuTColl.at(IdxSSW), truthColl);
+      int NmuA = (MuOSType==2) + (MuSSAType==2) + (MuSSWType==2);
+
+      if(NlWp==1 && NqWm==2){
+        FillHist("M3lv_lt80_T3lv_SR2j"+Label, M3lv, weight, 0., 500., 100);
+      }
+      else{
+        FillHist("M3lv_lt80_F3lv_SR2j"+Label, M3lv, weight, 0., 500., 100);
+      }
+  
+      if(MuOSType==2 && MuSSAType==2 && NqWp==2){
+        FillHist("M2l2j_lt80_T2l2j_SR2j"+Label, M2l2j, weight, 0., 500., 100);
+      }
+      else{
+        FillHist("M2l2j_lt80_F2l2j_SR2j"+Label, M2l2j, weight, 0., 500., 100);
+      }
+
+    }
+  }
+}
+
+
+void Aug2017_TriLepSR::CheckStatCommRequest(std::vector<snu::KMuon> MuTColl, std::vector<snu::KMuon> MuLColl, std::vector<snu::KElectron> EleTColl, std::vector<snu::KElectron> EleLColl, std::vector<snu::KJet> JetColl, std::vector<snu::KJet> BJetColl, float MET, float METx, float METy, float weight, TString Label, TString Option){
+
+
+
+  bool EMuMu=Option.Contains("EMuMu"), TriMu=Option.Contains("TriMu");
+
+  const int Ncent=7;
+  float Center[Ncent]      = { 15., 25., 35., 45., 55., 65., 75.};
+  float Width[Ncent]       = { 1., 1. , 1.3, 1.5, 1.5,  2., 2.5};
+  TString CentStr[Ncent]   = { "15", "25", "35", "45", "55", "65", "75"};
+
+
+  float WSoSpB_TUnc_05fb[Ncent] = { 0.5, 0.6, 0.8, 0.9, 1.1, 1.2, 1.3};
+  float WSoSpB_TUnc_10fb[Ncent] = { 0.5, 0.7, 0.8, 0.9, 1.2, 1.4, 1.5};
+  float WSoSpB_TUnc_20fb[Ncent] = { 0.6, 0.8, 0.9, 1.1, 1.3, 1.6, 1.7};
+  float WSoSpB_TUnc_40fb[Ncent] = { 0.8, 0.9, 1.1, 1.2, 1.5, 1.8, 2.0};
+
+  float WSoSpB_FUnc_05fb[Ncent] = { 0.5, 0.6, 0.8, 1.0, 1.2, 1.5, 1.7};
+  float WSoSpB_FUnc_10fb[Ncent] = { 0.5, 0.7, 0.9, 1.1, 1.3, 1.6, 1.8};
+  float WSoSpB_FUnc_20fb[Ncent] = { 0.6, 0.9, 1.0, 1.2, 1.6, 1.7, 2.0};
+  float WSoSpB_FUnc_40fb[Ncent] = { 0.8, 1.0, 1.2, 1.4, 1.7, 2.4, 2.3};
+
+  //float WAsimov_TUnc[Ncent]     = { 0.4, 0.5, 0.6, 0.8, 0.8, 1.1, 1.3};
+  float WAsimov_TUnc[Ncent]     = { 0.4, 0.5, 0.6, 0.8, 0.9, 1.1, 1.3};
+  float WAsimov_FUnc[Ncent]     = { 0.4, 0.6, 0.8, 0.9, 1.2, 1.4, 1.7};
+
+
+  const int NSignal = 7;
+  float Mmumu_CentSeed[NSignal]  = {15., 25., 35., 45., 55., 65., 75.};
+  float Mmumu_WidthSeed[NSignal] = {1., 1., 1.3, 1.5, 1.5, 2.0, 2.5};
+  float Mmumu_Step[NSignal-1]    = {1., 1., 1.2, 1.2, 1.2, 1.8};
+  vector<float> Mmumu_CentFull, Mmumu_WidthFull;
+  for(int it_seed=0; it_seed<NSignal; it_seed++){
+    float CurrentCenter = Mmumu_CentSeed[it_seed];
+    float CurrentWidth  = Mmumu_WidthSeed[it_seed];
+    Mmumu_CentFull.push_back(CurrentCenter);
+    Mmumu_WidthFull.push_back(CurrentWidth);
+    for(int it_step=0; it_step<100; it_step++){
+      if(it_seed==NSignal-1) break;
+      CurrentCenter+= Mmumu_Step[it_seed];
+      CurrentWidth  = (CurrentCenter-Mmumu_CentSeed[it_seed])/10.*Mmumu_WidthSeed[it_seed+1]
+                     +(Mmumu_CentSeed[it_seed+1]-CurrentCenter)/10.*Mmumu_WidthSeed[it_seed];
+      if(CurrentCenter<Mmumu_CentSeed[it_seed]+10.){
+        Mmumu_CentFull.push_back(CurrentCenter);
+        Mmumu_WidthFull.push_back(CurrentWidth);
+      }
+      else break;
+    }
+  }
+
+  if(EMuMu){
+    if( !(EleLColl.size()==1 && MuLColl.size()==2) ) return;
+    if( !(EleTColl.size()==1 && MuTColl.size()==2) ) return;
+    if( !(MuTColl.at(0).Charge()!=MuTColl.at(1).Charge()) ) return;
+    if( !(EleTColl.at(0).Pt()>25 && MuTColl.at(0).Pt()>10 && MuTColl.at(1).Pt()>10) ) return;
+    if( fabs(EleTColl.at(0).Eta())>2.5 ) return;
+
+    float Mmumu=(MuTColl.at(0)+MuTColl.at(1)).M();
+    float MTW = sqrt(2)*sqrt(MET*EleTColl.at(0).Pt()-METx*EleTColl.at(0).Px()-METy*EleTColl.at(0).Py());
+    float M3l=(EleTColl.at(0)+MuTColl.at(0)+MuTColl.at(1)).M();
+    if(Mmumu<12) return;
+
+    if(fabs(Mmumu-91.2)<10) return;
+    if(BJetColl.size()==0 ) return;
+    if(JetColl.size()<2   ) return;
+
+    for( int it_m=0; it_m<Ncent; it_m++){
+      if( fabs(Mmumu-Center[it_m])<Width[it_m] ){
+        FillHist("Mmumu_CntBin_SR2j_Analysis"+Label, it_m+0.01, weight, 0., 7., 7);
+      }
+
+      if( fabs(Mmumu-Center[it_m])<WAsimov_TUnc[it_m] ){
+        FillHist("Mmumu_CntBin_SR2j_AsimovTUnc"+Label, it_m+0.01, weight, 0., 7., 7);
+      }
+      if( fabs(Mmumu-Center[it_m])<WAsimov_FUnc[it_m] ){
+
+        FillHist("Mmumu_CntBin_SR2j_AsimovFUnc"+Label, it_m+0.01, weight, 0., 7., 7);
+
+      }
+      if( fabs(Mmumu-Center[it_m])<WSoSpB_TUnc_05fb[it_m] ){
+        FillHist("Mmumu_CntBin_SR2j_SoSpBTUnc05"+Label, it_m+0.01, weight, 0., 7., 7);
+      }
+      if( fabs(Mmumu-Center[it_m])<WSoSpB_TUnc_10fb[it_m] ){
+        FillHist("Mmumu_CntBin_SR2j_SoSpBTUnc10"+Label, it_m+0.01, weight, 0., 7., 7);
+      }
+      if( fabs(Mmumu-Center[it_m])<WSoSpB_TUnc_20fb[it_m] ){
+        FillHist("Mmumu_CntBin_SR2j_SoSpBTUnc20"+Label, it_m+0.01, weight, 0., 7., 7);
+      }
+      if( fabs(Mmumu-Center[it_m])<WSoSpB_TUnc_40fb[it_m] ){
+        FillHist("Mmumu_CntBin_SR2j_SoSpBTUnc40"+Label, it_m+0.01, weight, 0., 7., 7);
+      }
+
+      if( fabs(Mmumu-Center[it_m])<WSoSpB_FUnc_05fb[it_m] ){
+        FillHist("Mmumu_CntBin_SR2j_SoSpBFUnc05"+Label, it_m+0.01, weight, 0., 7., 7);
+      }
+      if( fabs(Mmumu-Center[it_m])<WSoSpB_FUnc_10fb[it_m] ){
+        FillHist("Mmumu_CntBin_SR2j_SoSpBFUnc10"+Label, it_m+0.01, weight, 0., 7., 7);
+      }
+      if( fabs(Mmumu-Center[it_m])<WSoSpB_FUnc_20fb[it_m] ){
+        FillHist("Mmumu_CntBin_SR2j_SoSpBFUnc20"+Label, it_m+0.01, weight, 0., 7., 7);
+      }
+      if( fabs(Mmumu-Center[it_m])<WSoSpB_FUnc_40fb[it_m] ){
+        FillHist("Mmumu_CntBin_SR2j_SoSpBFUnc40"+Label, it_m+0.01, weight, 0., 7., 7);
+      }
+
+      //Regardless of size of signal bins, the size of larger bin is the same.
+      float LargeWidth=5.;
+      if((Center[it_m]-LargeWidth)<12.) LargeWidth=Center[it_m]-12.;
+      if(fabs(Mmumu-Center[it_m])<LargeWidth){
+        FillHist("Mmumu_Width10_SR2j"+Label, it_m+0.01, weight, 0., 7., 7);
+      }
+      if(Label==""){
+        float Variation=0.2;
+        float LargeWidthUp=(1.+Variation)*LargeWidth, LargeWidthDown=(1.-Variation)*LargeWidth;
+        if((Center[it_m]-LargeWidthUp)<12.) LargeWidthUp=Center[it_m]-12.;
+        if(fabs(Mmumu-Center[it_m])<LargeWidthUp){
+          FillHist("Mmumu_Width10_SR2j_systup_Mrange", it_m+0.01, weight, 0., 7., 7);
+        }
+        if((Center[it_m]-LargeWidthDown)<12.) LargeWidthDown=Center[it_m]-12.;
+        if(fabs(Mmumu-Center[it_m])<LargeWidthDown){
+          FillHist("Mmumu_Width10_SR2j_systdown_Mrange", it_m+0.01, weight, 0., 7., 7);
+        }
+      }
+    }
+  }
+  if(TriMu){
+    if( !(MuLColl.size()==3 && EleLColl.size()==0) ) return;
+    if( !(MuTColl.size()==3) ) return;
+    if( fabs(SumCharge(MuTColl))!=1 ) return;
+    if( !(MuTColl.at(0).Pt()>20. && MuTColl.at(1).Pt()>10. && MuTColl.at(2).Pt()>10.) ) return;
+
+    int   IdxOS  = TriMuChargeIndex(MuTColl, "OS");
+    int   IdxSS1 = TriMuChargeIndex(MuTColl, "SS1");
+    int   IdxSS2 = TriMuChargeIndex(MuTColl, "SS2");
+    int   IdxSSA = TriMuChargeIndex(MuTColl, MET, METx, METy, "SSA");
+    float MOSSS1 = (MuTColl.at(IdxOS)+MuTColl.at(IdxSS1)).M();
+    float MOSSS2 = (MuTColl.at(IdxOS)+MuTColl.at(IdxSS2)).M();
+    //float Mmumu  = MOSSS2;
+    float Mmumu  = (MuTColl.at(IdxOS)+MuTColl.at(IdxSSA)).M();
+    if( !(MOSSS1>12. && MOSSS2>12.) ) return;
+    if( fabs(MOSSS1-91.2)<10. || fabs(MOSSS2-91.2)<10. ) return;
+    if( BJetColl.size()==0 ) return;
+    if( JetColl.size()<2 ) return;
+
+    for( int it_m=0; it_m<Ncent; it_m++){
+      if( fabs(Mmumu-Center[it_m])<Width[it_m] ){
+        FillHist("Mmumu_CntBin_SR2j_Analysis"+Label, it_m+0.01, weight, 0., 7., 7);
+      }
+
+      if( fabs(Mmumu-Center[it_m])<WAsimov_TUnc[it_m] ){
+        FillHist("Mmumu_CntBin_SR2j_AsimovTUnc"+Label, it_m+0.01, weight, 0., 7., 7);
+      }
+      if( fabs(Mmumu-Center[it_m])<WAsimov_FUnc[it_m] ){
+        FillHist("Mmumu_CntBin_SR2j_AsimovFUnc"+Label, it_m+0.01, weight, 0., 7., 7);
+      }
+      if( fabs(Mmumu-Center[it_m])<WSoSpB_TUnc_05fb[it_m] ){
+        FillHist("Mmumu_CntBin_SR2j_SoSpBTUnc05"+Label, it_m+0.01, weight, 0., 7., 7);
+      }
+      if( fabs(Mmumu-Center[it_m])<WSoSpB_TUnc_10fb[it_m] ){
+        FillHist("Mmumu_CntBin_SR2j_SoSpBTUnc10"+Label, it_m+0.01, weight, 0., 7., 7);
+      }
+      if( fabs(Mmumu-Center[it_m])<WSoSpB_TUnc_20fb[it_m] ){
+        FillHist("Mmumu_CntBin_SR2j_SoSpBTUnc20"+Label, it_m+0.01, weight, 0., 7., 7);
+      }
+      if( fabs(Mmumu-Center[it_m])<WSoSpB_TUnc_40fb[it_m] ){
+        FillHist("Mmumu_CntBin_SR2j_SoSpBTUnc40"+Label, it_m+0.01, weight, 0., 7., 7);
+      }
+
+      if( fabs(Mmumu-Center[it_m])<WSoSpB_FUnc_05fb[it_m] ){
+        FillHist("Mmumu_CntBin_SR2j_SoSpBFUnc05"+Label, it_m+0.01, weight, 0., 7., 7);
+      }
+      if( fabs(Mmumu-Center[it_m])<WSoSpB_FUnc_10fb[it_m] ){
+        FillHist("Mmumu_CntBin_SR2j_SoSpBFUnc10"+Label, it_m+0.01, weight, 0., 7., 7);
+      }
+      if( fabs(Mmumu-Center[it_m])<WSoSpB_FUnc_20fb[it_m] ){
+        FillHist("Mmumu_CntBin_SR2j_SoSpBFUnc20"+Label, it_m+0.01, weight, 0., 7., 7);
+      }
+      if( fabs(Mmumu-Center[it_m])<WSoSpB_FUnc_40fb[it_m] ){
+        FillHist("Mmumu_CntBin_SR2j_SoSpBFUnc40"+Label, it_m+0.01, weight, 0., 7., 7);
+      }
+
+      //Regardless of size of signal bins, the size of larger bin is the same.
+      float LargeWidth=5.;
+      if((Center[it_m]-LargeWidth)<12.) LargeWidth=Center[it_m]-12.;
+      if(fabs(Mmumu-Center[it_m])<LargeWidth){
+        FillHist("Mmumu_Width10_SR2j"+Label, it_m+0.01, weight, 0., 7., 7);
+      }
+      if(Label==""){
+        float Variation=0.2;
+        float LargeWidthUp=(1.+Variation)*LargeWidth, LargeWidthDown=(1.-Variation)*LargeWidth;
+        if((Center[it_m]-LargeWidthUp)<12.) LargeWidthUp=Center[it_m]-12.;
+        if(fabs(Mmumu-Center[it_m])<LargeWidthUp){
+          FillHist("Mmumu_Width10_SR2j_systup_Mrange", it_m+0.01, weight, 0., 7., 7);
+        }
+        if((Center[it_m]-LargeWidthDown)<12.) LargeWidthDown=Center[it_m]-12.;
+        if(fabs(Mmumu-Center[it_m])<LargeWidthDown){
+          FillHist("Mmumu_Width10_SR2j_systdown_Mrange", it_m+0.01, weight, 0., 7., 7);
+        }
+      }
+    }
+  }
+}
+
+
 
 
 void Aug2017_TriLepSR::DoSystRun(TString Cycle, TString Mode, std::vector<snu::KElectron> EleColl, std::vector<snu::KElectron> EleLColl, std::vector<snu::KMuon> MuColl, std::vector<snu::KMuon> MuLColl, std::vector<snu::KJet> JetColl, std::vector<snu::KJet> BJetColl, float MET, float METx, float METy, float weight){
@@ -2433,6 +3004,9 @@ void Aug2017_TriLepSR::DoSystRun(TString Cycle, TString Mode, std::vector<snu::K
   }//End of Closure Cycle
   else if(Cycle=="SRDist"){
     CheckSRDist(MuColl, MuLColl, EleColl, EleLColl, JetColl, BJetColl, MET, METx, METy, weight, SystDirLabel+SystKindLabel, ChannelLabel);
+  }
+  else if(Cycle=="StatCommAsk"){
+    CheckStatCommRequest(MuColl, MuLColl, EleColl, EleLColl, JetColl,  BJetColl, MET, METx, METy, weight, SystDirLabel+SystKindLabel, ChannelLabel);
   }
 
 

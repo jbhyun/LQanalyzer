@@ -214,7 +214,7 @@ void Feb2018_TrigAccept::ExecuteEvents()throw( LQError ){
        //id_weight_ele   = mcdata_correction->ElectronScaleFactor("ELECTRON_HctoWA_TIGHT", electronColl);
        reco_weight_ele = mcdata_correction->ElectronRecoScaleFactor(electronColl);
        //id_weight_mu    = mcdata_correction->MuonScaleFactor("MUON_HctoWA_TIGHT", muonColl);
-       trk_weight_mu   = mcdata_correction->MuonTrackingEffScaleFactor(muonColl);
+       //trk_weight_mu   = mcdata_correction->MuonTrackingEffScaleFactor(muonColl);
        btag_sf         = BTagScaleFactor_1a(jetColl, snu::KJet::CSVv2, snu::KJet::Medium);
        //float trigger_sf1 = mcdata_correction->GetTriggerSF(electronColl, muonColl, "HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v");
        //float trigger_sf2 = mcdata_correction->GetTriggerSF(electronColl, muonColl, "HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ_v");
@@ -379,7 +379,7 @@ void Feb2018_TrigAccept::ExecuteEvents()throw( LQError ){
        id_weight_ele   = mcdata_correction->ElectronScaleFactor("ELECTRON_HctoWA_TIGHT", electronTightColl);
        reco_weight_ele = mcdata_correction->ElectronRecoScaleFactor(electronTightColl);
        id_weight_mu    = mcdata_correction->MuonScaleFactor("MUON_HctoWA_TIGHT", muonTightColl);
-       trk_weight_mu   = mcdata_correction->MuonTrackingEffScaleFactor(muonTightColl);
+       //trk_weight_mu   = mcdata_correction->MuonTrackingEffScaleFactor(muonTightColl);
 
        if(electronTightColl.size()>0){
          float trigger_sf1 = mcdata_correction->GetTriggerSF(electronTightColl, muonTightColl, "HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v");

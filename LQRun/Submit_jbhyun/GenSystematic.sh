@@ -5,21 +5,22 @@
 runMC=true
 runData=false
 runFake="False"
-runSignal="False"
+runSignal="True"
 
 ########################################################################
 ## RUN PARAMETERS
 
 AnalysisCode="Nov2017_GenPDFQ2Syst" #"Oct2017_GenSystRWSumCalc"
-#Stream="MuonEG"
-Stream="DoubleMuon"
+Stream="MuonEG"
+#Stream="DoubleMuon"
 Skim="FLATCAT"  ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
 #Skim="SKTree_TriLepSkim"  ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
 DataPeriod="ALL"
 job_logstep=1000
 LogLevel="INFO"
 QueueOption="fastq"    #"longq"
-RunningMode="TriMu,PDFQ2Syst,BkdRun"
+RunningMode="PDFQ2Syst,EMuMu"
+#"TriMu,PDFQ2Syst,BkdRun"
 #"PDFQ2Syst,TriMu"
 #"MultiLep,GenFilterBias" #"PDFQ2Syst,MultiLep" #"TopPtCheck" #"MultiLep,LOvsNLOBias"
 

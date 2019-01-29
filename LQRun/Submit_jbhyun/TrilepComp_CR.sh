@@ -2,8 +2,8 @@
 
 ########################################################################
 ## MC / DATA
-runMC=false
-runData=true
+runMC=true
+runData=false
 runFake="False"
 runSignal="False"
 

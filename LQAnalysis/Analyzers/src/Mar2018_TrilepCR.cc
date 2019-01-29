@@ -255,7 +255,7 @@ void Mar2018_TrilepCR::ExecuteEvents()throw( LQError ){
          reco_weight_ele = mcdata_correction->ElectronRecoScaleFactor(electronColl);
          id_weight_ele   = mcdata_correction->ElectronScaleFactor("ELECTRON_HctoWA_TIGHT", electronColl);
       
-         trk_weight_mu   = mcdata_correction->MuonTrackingEffScaleFactor(muonColl);
+         //trk_weight_mu   = mcdata_correction->MuonTrackingEffScaleFactor(muonColl); - No longer recommendation
          id_weight_mu    = mcdata_correction->MuonScaleFactor("MUON_HctoWA_TIGHT", muonColl);
 
          btag_sf         = BTagScaleFactor_1a(jetColl, snu::KJet::CSVv2, snu::KJet::Medium);
@@ -371,7 +371,7 @@ void Mar2018_TrilepCR::ExecuteEvents()throw( LQError ){
        id_weight_ele   = mcdata_correction->ElectronScaleFactor("ELECTRON_HctoWA_TIGHT", electronColl);
        reco_weight_ele = mcdata_correction->ElectronRecoScaleFactor(electronColl);
        id_weight_mu    = mcdata_correction->MuonScaleFactor("MUON_HctoWA_TIGHT", muonColl);
-       trk_weight_mu   = mcdata_correction->MuonTrackingEffScaleFactor(muonColl);
+       //trk_weight_mu   = mcdata_correction->MuonTrackingEffScaleFactor(muonColl); - No longer recommendation
        btag_sf         = BTagScaleFactor_1a(jetColl, snu::KJet::CSVv2, snu::KJet::Medium);
 
        id_weight_ele_sfup       = mcdata_correction->ElectronScaleFactor("ELECTRON_HctoWA_TIGHT", electronColl,  1);
@@ -382,12 +382,12 @@ void Mar2018_TrilepCR::ExecuteEvents()throw( LQError ){
        id_weight_ele_ElEnup     = mcdata_correction->ElectronScaleFactor("ELECTRON_HctoWA_TIGHT", EleTElEnUpColl);
        reco_weight_ele_ElEnup   = mcdata_correction->ElectronRecoScaleFactor(EleTElEnUpColl);
        id_weight_mu_MuEnup      = mcdata_correction->MuonScaleFactor("MUON_HctoWA_TIGHT", MuTMuEnUpColl);
-       trk_weight_mu_MuEnup     = mcdata_correction->MuonTrackingEffScaleFactor(MuTMuEnUpColl);
+       //trk_weight_mu_MuEnup     = mcdata_correction->MuonTrackingEffScaleFactor(MuTMuEnUpColl); - No longer recommendation
 
        id_weight_ele_ElEndown   = mcdata_correction->ElectronScaleFactor("ELECTRON_HctoWA_TIGHT", EleTElEnDownColl);
        reco_weight_ele_ElEndown = mcdata_correction->ElectronRecoScaleFactor(EleTElEnDownColl);
        id_weight_mu_MuEndown    = mcdata_correction->MuonScaleFactor("MUON_HctoWA_TIGHT", MuTMuEnDownColl);
-       trk_weight_mu_MuEndown   = mcdata_correction->MuonTrackingEffScaleFactor(MuTMuEnDownColl);
+       //trk_weight_mu_MuEndown   = mcdata_correction->MuonTrackingEffScaleFactor(MuTMuEnDownColl); - No longer recommendation
 
        if(TriMu){
          float trigger_sf1          = mcdata_correction->GetTriggerSF(electronColl, muonColl, "HLT_Mu17_TrkIsoVVL_Mu8ORTkMu8_TrkIsoVVL_v");
@@ -447,11 +447,11 @@ void Mar2018_TrilepCR::ExecuteEvents()throw( LQError ){
        xsec_up  +=GetXsecUncertainty(k_sample_name);
        xsec_down-=GetXsecUncertainty(k_sample_name);
        if(TriMu){
-         if(k_sample_name.Contains("ZGto2LG")){ ZG_SF=0.86191; conv_up+=0.15; conv_down-=0.15; }
+         if(k_sample_name.Contains("ZGto2LG")){ ZG_SF=0.845; conv_up+=0.15; conv_down-=0.15; }
          else if(k_sample_name.Contains("TTG")){ conv_up+=0.5; conv_down-=0.5; }
        }
        if(EMuMu){
-         if(k_sample_name.Contains("ZGto2LG")){ ZG_SF=0.963169; conv_up+=0.096; conv_down-=0.096; }
+         if(k_sample_name.Contains("ZGto2LG")){ ZG_SF=0.961; conv_up+=0.092; conv_down-=0.092; }
          else if(k_sample_name.Contains("TTG")){ conv_up+=0.5; conv_down-=0.5; }
        }
      }
@@ -893,8 +893,10 @@ void Mar2018_TrilepCR::CheckSSDilepCRs(std::vector<snu::KMuon> MuTColl, std::vec
 
   const int NSignal = 7;
   float Mmumu_CentSeed[NSignal]  = {15., 25., 35., 45., 55., 65., 75.};
-  float Mmumu_WidthSeed[NSignal] = {1., 1., 1.3, 1.5, 1.5, 2.0, 2.5};
-  float Mmumu_Step[NSignal-1]    = {1., 1., 1.2, 1.2, 1.2, 1.8};
+  //float Mmumu_WidthSeed[NSignal] = {1., 1., 1.3, 1.5, 1.5, 2.0, 2.5};
+  //float Mmumu_Step[NSignal-1]    = {1., 1., 1.2, 1.2, 1.2, 1.8};
+  float Mmumu_WidthSeed[NSignal] = {0.5,  0.7, 0.8,  1., 1.2, 1.5, 1.8};
+  float Mmumu_Step[NSignal-1]    = {  0.45, 0.55, 0.6, 0.75, 0.9, 1.15};
   vector<float> Mmumu_CentFull, Mmumu_WidthFull;
   for(int it_seed=0; it_seed<NSignal; it_seed++){
     float CurrentCenter = Mmumu_CentSeed[it_seed];
@@ -972,23 +974,23 @@ void Mar2018_TrilepCR::CheckSSDilepCRs(std::vector<snu::KMuon> MuTColl, std::vec
   }
   for(int it_cent=0; it_cent<Mmumu_CentFull.size(); it_cent++){
     if(fabs(Mmumu-Mmumu_CentFull.at(it_cent))<Mmumu_WidthFull.at(it_cent)){
-      FillHist("Mmumu_CntBin"+Label, it_cent+0.01, weight, 0., 54., 54);
+      FillHist("Mmumu_CntBin"+Label, it_cent+0.01, weight, 0., 95., 95);
     }
     float LargeWidth=5.;
     if((Mmumu_CentFull.at(it_cent)-LargeWidth)<12.) LargeWidth=Mmumu_CentFull.at(it_cent)-12.;
     if(fabs(Mmumu-Mmumu_CentFull.at(it_cent))<LargeWidth){
-      FillHist("Mmumu_CntBin_Width10"+Label, it_cent+0.01, weight, 0., 54., 54);
+      FillHist("Mmumu_CntBin_Width10"+Label, it_cent+0.01, weight, 0., 95., 95);
     }
     if(Label==""){
       float Variation=0.2;
       float LargeWidthUp=(1.+Variation)*LargeWidth, LargeWidthDown=(1.-Variation)*LargeWidth;
       if((Mmumu_CentFull.at(it_cent)-LargeWidthUp)<12.) LargeWidthUp=Mmumu_CentFull.at(it_cent)-12.;
       if(fabs(Mmumu-Mmumu_CentFull.at(it_cent))<LargeWidthUp){
-        FillHist("Mmumu_CntBin_Width10_systup_Mrange", it_cent+0.01, weight, 0., 54., 54);
+        FillHist("Mmumu_CntBin_Width10_systup_Mrange", it_cent+0.01, weight, 0., 95., 95);
       }
       if((Mmumu_CentFull.at(it_cent)-LargeWidthDown)<12.) LargeWidthDown=Mmumu_CentFull.at(it_cent)-12.;
       if(fabs(Mmumu-Mmumu_CentFull.at(it_cent))<LargeWidthDown){
-        FillHist("Mmumu_CntBin_Width10_systdown_Mrange", it_cent+0.01, weight, 0., 54., 54);
+        FillHist("Mmumu_CntBin_Width10_systdown_Mrange", it_cent+0.01, weight, 0., 95., 95);
       }
     }
   }
