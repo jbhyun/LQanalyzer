@@ -121,7 +121,7 @@ export LQANALYZER_CORE_PATH=${LQANALYZER_DIR}/LQCore/
 export isSLC5="False"
 export BTAGDIR=${LQANALYZER_DIR}/LQAnalysis/src/BTag/BTag2015/
 export ROCHDIR=${LQANALYZER_DIR}/LQAnalysis/src/rochcor2015/rochcor2015C11/
-if [[ "$HOSTNAME" == "cms.snu.ac.kr" ]];
+if [[ "$HOSTNAME" == "tamsa1" ]];
 then 
     export OBJ=obj/cms21_2015
     export LQANALYZER_LIB_PATH=${LQANALYZER_DIR}/LQLib/cms21_2015

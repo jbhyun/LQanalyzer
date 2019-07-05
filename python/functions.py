@@ -52,7 +52,7 @@ def CopySKTrees(channel,sample,mc,docopy):
 
     if docopy == "True":
         user = raw_input("Please enter username of cms21 account")    
-        run = "scp " + str(user) + "@147.47.242.42:" + inputdir + "/*.root " + sample_dir
+        run = "scp -P 1240 " + str(user) + "@147.47.242.42:" + inputdir + "/*.root " + sample_dir
         print run
         os.system(run)
     
@@ -96,12 +96,13 @@ def make_batch_script(workdir, jname, lqdir, macroname, cluster):
     config+='#$ -e ' + workdir + ' \n'
 
     config+='echo "Job started at " `date` \n'
-    if cluster:
-        config+='cd /share/apps/root_v5_34_32/root/ \n'
-    else:
-        config+='cd /share/apps/root_v5-34-32/root/ \n'
+#    if cluster:
+#        config+='cd /share/apps/root_v5_34_32/root/ \n'
+#    else:
+#        config+='cd /share/apps/root_v5-34-32/root/ \n'
 
-    config+='. bin/thisroot.sh \n'
+    config+='cd /data2/Users/jbhyun/cmssw/CMSSW/CMSSW_8_0_21/src; export VO_CMS_SW_DIR=/cvmfs/cms.cern.ch; source $VO_CMS_SW_DIR/cmsset_default.sh; export SCRAM_ARCH=slc6_amd64_gcc530; cmsenv \n'
+#    config+='. bin/thisroot.sh \n'
     config+='cd ' + lqdir + '\n'
 
     config+='source setup.sh ' + os.getenv("CATVERSION") + ' \n'

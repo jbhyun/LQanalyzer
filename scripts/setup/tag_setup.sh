@@ -85,7 +85,7 @@ elif [ $HOSTNAME == "tamsa2.snu.ac.kr" ];
 then
     source /share/apps/root_v5_34_32/root/bin/thisroot.sh
 else
-    source /share/apps/root_v5-34-32/root/bin/thisroot.sh
+#    source /share/apps/root_v5-34-32/root/bin/thisroot.sh
 fi    
 
 
@@ -257,7 +257,7 @@ export LQANALYZER_CORE_PATH=${LQANALYZER_DIR}/LQCore/
 export isSLC5="False"
 export BTAGDIR=${LQANALYZER_DIR}/LQAnalysis/AnalyzerTools/BTag/BTagC11/
 export ROCHDIR=${LQANALYZER_DIR}/LQAnalysis/AnalyzerTools/rochcor2016/
-if [[ "$HOSTNAME" == "cms.snu.ac.kr" ]];
+if [[ "$HOSTNAME" == "tamsa1" ]];
 then 
     if [[ $LIBTAG == *"v"* ]]; then
 	export OBJ=obj/cms21$LIBTAG

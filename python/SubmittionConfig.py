@@ -422,7 +422,7 @@ def FreeSpaceInQueue(jobqueue, deftagger):
         return 1000.
 
     path_clust_check_njobs=an_jonpre+"/CAT_SKTreeOutput/" + os.getenv("USER")  + "/CLUSTERLOG" + str(deftagger)+ "/clustercheck.txt"
-    os.system("qstat -f   > " +  path_clust_check_njobs)
+    os.system("condor_q   > " +  path_clust_check_njobs)
     file_clust_check_njobs=open(path_clust_check_njobs ,"r")
     fastq_ninqueue=0.
     fastq_nallowedinqueue=0.
@@ -475,7 +475,7 @@ def ChangeQueue(jobsummary, jobqueue, ncores_job, deftagger, rundebug):
     if rundebug:
         file_debug.write("queue ok\n")
     path_clust_check_njobs=an_jonpre+"/CAT_SKTreeOutput/" + os.getenv("USER")  + "/CLUSTERLOG" + str(deftagger)+ "/clustercheck.txt"
-    os.system("qstat -f   > " +  path_clust_check_njobs)
+    os.system("condor_q   > " +  path_clust_check_njobs)
     file_clust_check_njobs=open(path_clust_check_njobs ,"r")
     fastq_ninqueue=0.
     fastq_nallowedinqueue=0.

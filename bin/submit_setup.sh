@@ -690,7 +690,7 @@ function sendrequestcat
 function listqueue
 {
     
-    qstat -f 
+    condor_q 
     echo " " 
     echo "To select a certain queue use -q <qname> like "
     while read line

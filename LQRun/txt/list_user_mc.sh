@@ -11,8 +11,12 @@ declare -a ListToProd=('TTToHcToWA_incl_MHc130_MA35_v2')
 #declare -a ListToProd=('DYJets_MG_10to50_TrigInfoSample' 'DYJets_MG_TrigInfoSample' 'TT_powheg_TrigInfoSample')
 
 declare -a AllSample=('WJets' 'DYJets_10to50' 'DYJets' 'SingleTop_s' 'SingleTbar_t' 'SingleTop_t' 'SingleTbar_tW' 'SingleTop_tW' 'TT_powheg' 'ZZ' 'WZ' 'WW' 'WGtoLNuG' 'WGtoLNuEE' 'WGtoLNuMM' 'ZGto2LG' 'ttH_nonbb' 'ttH_bb' 'ttW' 'ttZ') 
-declare -a UnRun=("ttH_nonbb")
+#declare -a UnRun=('TTToHcToWA_incl_MHc150_MA15' 'TTToHcToWA_incl_MHc150_MA25' 'TTToHcToWA_incl_MHc150_MA35' 'TTToHcToWA_incl_MHc150_MA45' 'TTToHcToWA_incl_MHc150_MA55' 'TTToHcToWA_incl_MHc150_MA65' 'TTToHcToWA_incl_MHc160_MA15' 'TTToHcToWA_incl_MHc160_MA25' 'TTToHcToWA_incl_MHc160_MA35' 'TTToHcToWA_incl_MHc160_MA45' 'TTToHcToWA_incl_MHc160_MA55' 'TTToHcToWA_incl_MHc160_MA65' 'TTToHcToWA_incl_MHc160_MA75')
 
+declare -a UnRun=('TTToHcToWA_incl_MHc100_MA15' 'TTToHcToWA_incl_MHc110_MA15' 'TTToHcToWA_incl_MHc110_MA25' 'TTToHcToWA_incl_MHc120_MA15' 'TTToHcToWA_incl_MHc120_MA25' 'TTToHcToWA_incl_MHc120_MA35' 'TTToHcToWA_incl_MHc130_MA15' 'TTToHcToWA_incl_MHc130_MA25' 'TTToHcToWA_incl_MHc130_MA35' 'TTToHcToWA_incl_MHc130_MA45' 'TTToHcToWA_incl_MHc140_MA15' 'TTToHcToWA_incl_MHc140_MA25' 'TTToHcToWA_incl_MHc140_MA35' 'TTToHcToWA_incl_MHc140_MA45' 'TTToHcToWA_incl_MHc140_MA55')
+
+
+declare -a Bkgd_ZZ4l=("ZZTo4L_powheg" "ZGto2LG" "ttZ" "ttH_nonbb")
 
 #####################################################################################
 #Background#################
@@ -28,7 +32,7 @@ declare -a DYMG=("DYJets_MG")
 declare -a VJets=('DYJets_10to50' 'LowStat_DYJets' 'WJets')
 declare -a ZZ4l=("ZZTo4L_powheg") 
 declare -a ZG2l=("ZGto2LG") 
-declare -a TT_All=('TT_powheg' 'TTLJ_powheg')
+declare -a TT_All=('TT_powheg' 'TTLL_powheg')
 #declare -a TT_All=('TT_powheg' 'TTLL_powheg' 'TTLJ_powheg')
 declare -a TTLJ=('TTLJ_powheg') 
 declare -a TTLL=('TTLL_powheg') 
@@ -90,6 +94,10 @@ declare -a TopPtMeasSample_Sig=('TTToHcToWA_incl_MHc160_MA35')
 ##Signal###############
 #####################################################################################
 declare -a SignalMajor_All=("TTToHcToWA_incl_MHc100_MA15" "TTToHcToWA_incl_MHc160_MA15" "TTToHcToWA_incl_MHc140_MA45" "TTToHcToWA_incl_MHc160_MA45" "TTToHcToWA_incl_MHc160_MA75")
+
+declare -a SigEffValidCheck=("TTToHcToWA_incl_MHc100_MA15" "TTToHcToWA_incl_MHc120_MA15" "TTToHcToWA_incl_MHc140_MA15" "TTToHcToWA_incl_MHc160_MA15" "TTToHcToWA_incl_MHc120_MA35" "TTToHcToWA_incl_MHc140_MA35" "TTToHcToWA_incl_MHc160_MA35" "TTToHcToWA_1e2mu_MHc100_MA15" "TTToHcToWA_1e2mu_MHc120_MA15" "TTToHcToWA_1e2mu_MHc140_MA15" "TTToHcToWA_1e2mu_MHc160_MA15" "TTToHcToWA_1e2mu_MHc120_MA35" "TTToHcToWA_1e2mu_MHc140_MA35" "TTToHcToWA_1e2mu_MHc160_MA35" "TTToHcToWA_3mu_MHc100_MA15" "TTToHcToWA_3mu_MHc120_MA15" "TTToHcToWA_3mu_MHc140_MA15" "TTToHcToWA_3mu_MHc160_MA15" "TTToHcToWA_3mu_MHc120_MA35" "TTToHcToWA_3mu_MHc140_MA35" "TTToHcToWA_3mu_MHc160_MA35" "TTToHcToWA_1ta2mu_MHc100_MA15" "TTToHcToWA_1ta2mu_MHc120_MA15" "TTToHcToWA_1ta2mu_MHc140_MA15" "TTToHcToWA_1ta2mu_MHc160_MA15" "TTToHcToWA_1ta2mu_MHc120_MA35" "TTToHcToWA_1ta2mu_MHc140_MA35" "TTToHcToWA_1ta2mu_MHc160_MA35" "TTToHcToWA_2l2mu_MHc100_MA15" "TTToHcToWA_2l2mu_MHc120_MA15" "TTToHcToWA_2l2mu_MHc140_MA15" "TTToHcToWA_2l2mu_MHc160_MA15" "TTToHcToWA_2l2mu_MHc120_MA35" "TTToHcToWA_2l2mu_MHc140_MA35" "TTToHcToWA_2l2mu_MHc160_MA35") 
+
+
 
 
 declare -a Signal_All=('TTToHcToWA_incl_MHc100_MA15' 'TTToHcToWA_incl_MHc110_MA15' 'TTToHcToWA_incl_MHc110_MA25' 'TTToHcToWA_incl_MHc120_MA15' 'TTToHcToWA_incl_MHc120_MA25' 'TTToHcToWA_incl_MHc120_MA35' 'TTToHcToWA_incl_MHc130_MA15' 'TTToHcToWA_incl_MHc130_MA25' 'TTToHcToWA_incl_MHc130_MA35' 'TTToHcToWA_incl_MHc130_MA45' 'TTToHcToWA_incl_MHc140_MA15' 'TTToHcToWA_incl_MHc140_MA25' 'TTToHcToWA_incl_MHc140_MA35' 'TTToHcToWA_incl_MHc140_MA45' 'TTToHcToWA_incl_MHc140_MA55' 'TTToHcToWA_incl_MHc150_MA15' 'TTToHcToWA_incl_MHc150_MA25' 'TTToHcToWA_incl_MHc150_MA35' 'TTToHcToWA_incl_MHc150_MA45' 'TTToHcToWA_incl_MHc150_MA55' 'TTToHcToWA_incl_MHc150_MA65' 'TTToHcToWA_incl_MHc160_MA15' 'TTToHcToWA_incl_MHc160_MA25' 'TTToHcToWA_incl_MHc160_MA35' 'TTToHcToWA_incl_MHc160_MA45' 'TTToHcToWA_incl_MHc160_MA55' 'TTToHcToWA_incl_MHc160_MA65' 'TTToHcToWA_incl_MHc160_MA75')

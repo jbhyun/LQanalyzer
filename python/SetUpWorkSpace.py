@@ -41,7 +41,7 @@ if not LQANALYZER_DIR == "None" :
 
         CleanUpLogs(path_jobpre+"LQAnalyzer_rootfiles_for_analysis/CATAnalyzerStatistics/"+ getpass.getuser()+ "/")
         CleanUpJobLogs(LQANALYZER_LOG)
-	if os.getenv("HOSTNAME") == "cms.snu.ac.kr":
+	if os.getenv("HOSTNAME") == "tamsa1":
             CleanUpLogs(path_jobpre+"CAT_SKTreeOutput/" + getpass.getuser()+ "/")
             CleanUpLogs("/data2/CAT_SKTreeOutput/" + getpass.getuser()+ "/")
             CleanUpLogs("/data7/CAT_SKTreeOutput/" + getpass.getuser()+ "/")
@@ -61,7 +61,7 @@ if not LQANALYZER_DIR == "None" :
 	os.system("cp " + localfiledir + "/Luminosity/triggers_catversion_"+str(os.getenv("CATVERSION"))+"* "  + lumifiledir)
 	os.system("cp " + localfiledir + "/Luminosity/lumi_catversion_"+str(os.getenv("CATVERSION"))+".txt "  + lumifiledir)
 	os.system("cp " + datasetfiledir + "/list_all_mc_"+str(os.getenv("CATVERSION"))+".sh " + txtfiledir)
-        if os.getenv("HOSTNAME") == "cms.snu.ac.kr":
+        if os.getenv("HOSTNAME") == "tamsa1":
             list_sel= ["muons","electrons","jets","fatjets"]
             for x in list_sel:
                 if not filecmp.cmp(localfiledir + "/Selection/"+str(x)+".sel",seldir+"/"+str(x)+".sel"):
@@ -75,7 +75,7 @@ if not LQANALYZER_DIR == "None" :
         else:
             os.system("rm " + seldir  +"/electrons.sel") 
             while not os.path.exists(seldir  +"/electrons.sel"):
-                os.system("scp 147.47.242.42:/data1/LQAnalyzer_rootfiles_for_analysis/CATAnalysis2016/Selection/*.sel  " + seldir)
+                os.system("scp -P 1240 147.47.242.42:/data1/LQAnalyzer_rootfiles_for_analysis/CATAnalysis2016/Selection/*.sel  " + seldir)
                 
 	#os.system("cp " + localfiledir + "/*.csv " + btagfiledir)
 	#os.system("source " +  os.getenv("LQANALYZER_DIR") + "/bin/IncludePrivateSamples.sh")

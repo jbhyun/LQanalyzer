@@ -25,6 +25,8 @@
 
 //#endif // __CINT__
 //Jihwan Bhyun Modification///////////
+#pragma link C++ class Mar2019_AdditionalChecks+;
+#pragma link C++ class Feb2019_4lScan+;
 #pragma link C++ class Nov2018_ImproveStudy+;
 #pragma link C++ class Nov2018_LowMassCheck+;
 #pragma link C++ class Jun2018_BumpScanForFun+;
