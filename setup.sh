@@ -14,6 +14,7 @@
 echo "Setting up environment for compiling/running CATAnalzer with SKTree"
 
 export SKFLATVERSION="v9-4-9v2"
+#export SKFLATVERSION="v9-4-9v2"
 
 
 source bin/setup_timezone.sh

@@ -2,12 +2,8 @@ import os,sys,getpass
 
 path_jobpre="/data1/"
 
-isKisti = ("ui" in str(os.getenv("HOSTNAME")))
+isKisti = ("tamsa1" in str(os.getenv("HOSTNAME")))
 
-if not isKisti:
-    path_jobpre="/data1/"
-else:
-    path_jobpre="/cms/scratch/SNU/CATAnalyzer/"
 
 
 if not os.path.exists(path_jobpre+"LQAnalyzer_rootfiles_for_analysis/CATAnalyzerStatistics/" + getpass.getuser()):

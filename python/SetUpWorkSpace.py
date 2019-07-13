@@ -12,8 +12,6 @@ def MakeDirectory(dirpath):
 
 path_jobpre="/data1/"
 
-if  "ui"  in str(os.getenv("HOSTNAME")):
-    path_jobpre="/cms/scratch/SNU/CATAnalyzer/"
 
 LQANALYZER_DIR= str(os.getenv("LQANALYZER_DIR"))
 LQANALYZER_LOG= str(os.getenv("LQANALYZER_LOG_PATH"))
@@ -40,19 +38,15 @@ if not LQANALYZER_DIR == "None" :
 
         CleanUpLogs(path_jobpre+"LQAnalyzer_rootfiles_for_analysis/CATAnalyzerStatistics/"+ getpass.getuser()+ "/")
         CleanUpJobLogs(LQANALYZER_LOG)
-	if os.getenv("HOSTNAME") == "cms.snu.ac.kr":
-            CleanUpLogs(path_jobpre+"CAT_SKTreeOutput/" + getpass.getuser()+ "/")
-            CleanUpLogs("/data2/CAT_SKTreeOutput/" + getpass.getuser()+ "/")
-            CleanUpLogs("/data2/DATA/CAT_SKTreeOutput/" + getpass.getuser()+ "/")
-            CleanUpLogs("/data7/CAT_SKTreeOutput/" + getpass.getuser()+ "/")
-            CleanUpLogs("/data7/DATA/CAT_SKTreeOutput/" + getpass.getuser()+ "/")
-            CleanUpLogs("/data8/CAT_SKTreeOutput/" + getpass.getuser()+ "/")
-            CleanUpLogs("/data8/DATA/CAT_SKTreeOutput/" + getpass.getuser()+ "/")
-            CleanUpLogs("/data7/DATA/CAT_SKTreeOutput/" + getpass.getuser()+ "/")
-        else:
-            ## setup kisti clean
-            CleanUpLogs(path_jobpre+"CAT_SKTreeOutput/" + getpass.getuser()+ "/")
-            CleanUpLogs(os.getenv("LQANALYZER_BATCHLIB_PATH"))
+        CleanUpLogs(path_jobpre+"CAT_SKTreeOutput/" + getpass.getuser()+ "/")
+        CleanUpLogs("/data2/CAT_SKTreeOutput/" + getpass.getuser()+ "/")
+        CleanUpLogs("/data2/DATA/CAT_SKTreeOutput/" + getpass.getuser()+ "/")
+        CleanUpLogs("/data7/CAT_SKTreeOutput/" + getpass.getuser()+ "/")
+        CleanUpLogs("/data7/DATA/CAT_SKTreeOutput/" + getpass.getuser()+ "/")
+        CleanUpLogs("/data8/CAT_SKTreeOutput/" + getpass.getuser()+ "/")
+        CleanUpLogs("/data8/DATA/CAT_SKTreeOutput/" + getpass.getuser()+ "/")
+        CleanUpLogs("/data7/DATA/CAT_SKTreeOutput/" + getpass.getuser()+ "/")
+        CleanUpLogs(os.getenv("LQANALYZER_BATCHLIB_PATH"))
 
 
 

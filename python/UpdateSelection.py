@@ -24,9 +24,6 @@ def SendEmail(localsummary, mastersummary):
 
 
     hist_pre =  "/data2/DATA/CAT_SKTreeOutput/"
-    isKisti = ("ui" in str(os.getenv("HOSTNAME")))
-    if isKisti:
-        hist_pre ="/cms/scratch/SNU/CATAnalyzer/"
 
     path_file_email=hist_pre + os.getenv("USER")  + "/email.sh"
     file_email=open(path_file_email,"w")

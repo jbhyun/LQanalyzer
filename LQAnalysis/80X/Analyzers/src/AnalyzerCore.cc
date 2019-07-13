@@ -4904,3 +4904,1545 @@ int AnalyzerCore::GetPhotonType(int PhotonIdx, std::vector<snu::KTruth> TruthCol
 }
 
 //------------------------------------------------------------------------------------------//
+
+
+
+//Jihwan Bhyun Modification//////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////
+
+
+std::vector<snu::KJet> AnalyzerCore::SelBJets(std::vector<snu::KJet>& jetColl,TString level){
+//Gets Jetcollection as argument and selects Btagged jet in the collection and returns the b tagged jet collection
+//If argument jetcoll is in Pt order, then by the algorithm returned bjetcoll will also be in Pt order
+   std::vector<snu::KJet> bjetColl;
+   for(unsigned int i=0; i<jetColl.size(); i++){
+     if(level.Contains("Loose")){ if(jetColl.at(i).BJetTaggerValue(KJet::CSVv2) > 0.5426) bjetColl.push_back(jetColl.at(i));}
+     if(level.Contains("Medium")){ if(jetColl.at(i).BJetTaggerValue(KJet::CSVv2) > 0.8484) bjetColl.push_back(jetColl.at(i));}
+     if(level.Contains("Tight")){ if(jetColl.at(i).BJetTaggerValue(KJet::CSVv2) > 0.9535) bjetColl.push_back(jetColl.at(i));}
+   }
+   return bjetColl;
+}
+
+
+std::vector<snu::KJet> AnalyzerCore::SelLightJets(std::vector<snu::KJet>& jetColl, TString level){
+
+    std::vector<snu::KJet> ljetColl;
+    for(vector<KJet>::iterator itj=jetColl.begin(); itj!=jetColl.end(); ++itj){
+      if(level.Contains("Loose")){ if(itj->BJetTaggerValue(KJet::CSVv2)<0.5426) ljetColl.push_back((*itj));}
+      if(level.Contains("Medium")){ if(itj->BJetTaggerValue(KJet::CSVv2)<0.8484) ljetColl.push_back((*itj));}
+      if(level.Contains("Tight")){ if(itj->BJetTaggerValue(KJet::CSVv2)<0.9535) ljetColl.push_back((*itj));}
+    }
+    return ljetColl;
+}
+
+std::vector<int> AnalyzerCore::GetSFBJetIdx(std::vector<snu::KJet>& jetColl,TString level){
+   std::vector<int> bIdxColl;
+   for(unsigned int i=0; i<jetColl.size(); i++){
+     if(level.Contains("Medium")){ if(IsBTagged(jetColl.at(i),snu::KJet::CSVv2,snu::KJet::Medium)){ bIdxColl.push_back(i); }}
+   }
+   for(unsigned int i=0; i<jetColl.size(); i++){
+     if(level.Contains("Tight")){ if(IsBTagged(jetColl.at(i),snu::KJet::CSVv2,snu::KJet::Tight)){ bIdxColl.push_back(i); }}
+   }
+
+   return bIdxColl;
+}
+
+
+std::vector<int> AnalyzerCore::GetSFLJetIdx(std::vector<snu::KJet>& jetColl, std::vector<int>& bIdxColl,TString level){
+   std::vector<int> ljIdxColl;
+   if(jetColl.size()<bIdxColl.size()){ cout<<"[Error] Input Wrong to GetSFLJetIdx"<<endl; return ljIdxColl;}
+   for(unsigned int i=0; i<jetColl.size(); i++){
+     bool trig=true;
+     for(int j=0; j<bIdxColl.size(); j++){ if(bIdxColl.at(j)==i) trig=false; }
+     if(trig) ljIdxColl.push_back(i);
+   }
+   return ljIdxColl;
+}
+
+std::vector<snu::KElectron> AnalyzerCore::SelEndcapElectrons(std::vector<snu::KElectron>& electronColl){
+//19. Jul. 2016, Used for data validation
+//selects endcap electrons of the electron collection
+   std::vector<snu::KElectron> eECColl;
+   for(unsigned int i=0; i<electronColl.size(); i++){
+     if(fabs(electronColl.at(i).Eta())>1.479) eECColl.push_back(electronColl.at(i));
+   }
+   return eECColl;
+}
+
+
+int AnalyzerCore::SumCharge(std::vector<snu::KMuon>& MuonColl){
+    int Q=0;
+    for(unsigned int i=0; i<MuonColl.size(); i++){Q+=MuonColl.at(i).Charge();}
+    return Q;
+}
+
+
+int AnalyzerCore::TriMuChargeIndex(std::vector<snu::KMuon>& MuonColl, TString charge){
+    //First Choose 2SS, 1OS muons(++- or --+) SS means 2 of them having same sign, OS means 1 of them having different sign from others.
+    // charge="OS" will return the index of muon that having different charge from other 2,
+    // charge="SS1" will return the index of first muon that having same sign
+    // charge="SS2" will return the index of second muon that having same sign
+
+    if(MuonColl.size()!=3) return -1;
+    if(fabs(SumCharge(MuonColl))>1) return -1;
+    
+    int IdxOS=-1, IdxSS1=-1, IdxSS2=-1;
+    if     (MuonColl.at(0).Charge()==MuonColl.at(1).Charge()){ IdxSS1=0, IdxSS2=1, IdxOS=2; }
+    else if(MuonColl.at(0).Charge()==MuonColl.at(2).Charge()){ IdxSS1=0, IdxSS2=2, IdxOS=1; }
+    else if(MuonColl.at(1).Charge()==MuonColl.at(2).Charge()){ IdxSS1=1, IdxSS2=2, IdxOS=0; }
+
+    int ReturnIdx=-1;
+    if     (charge.Contains("OS") ) ReturnIdx=IdxOS;
+    else if(charge.Contains("SS1")) ReturnIdx=IdxSS1;
+    else if(charge.Contains("SS2")) ReturnIdx=IdxSS2;
+
+    return ReturnIdx;
+}
+
+int AnalyzerCore::TriMuChargeIndex(std::vector<snu::KMuon>& MuonColl, float MET, float METx, float METy, TString charge){
+    //First Choose 2SS, 1OS muons(++- or --+) SS means 2 of them having same sign, OS means 1 of them having different sign from others.
+    // charge="OS" will return the index of muon that having different charge from other 2,
+    // charge="SS1" will return the index of first muon that having same sign
+    // charge="SS2" will return the index of second muon that having same sign
+
+    if(MuonColl.size()!=3) return -1;
+    if(fabs(SumCharge(MuonColl))>1) return -1;
+    
+    int IdxOS=-1, IdxSS1=-1, IdxSS2=-1;
+    if     (MuonColl.at(0).Charge()==MuonColl.at(1).Charge()){ IdxSS1=0, IdxSS2=1, IdxOS=2; }
+    else if(MuonColl.at(0).Charge()==MuonColl.at(2).Charge()){ IdxSS1=0, IdxSS2=2, IdxOS=1; }
+    else if(MuonColl.at(1).Charge()==MuonColl.at(2).Charge()){ IdxSS1=1, IdxSS2=2, IdxOS=0; }
+
+    int ReturnIdx=-1;
+    if     (charge.Contains("OS") ) ReturnIdx=IdxOS;
+    else if(charge.Contains("SS1")) ReturnIdx=IdxSS1;
+    else if(charge.Contains("SS2")) ReturnIdx=IdxSS2;
+
+    int IdxSSW=-1, IdxSSA=-1;
+    if(charge.Contains("SSW") || charge.Contains("SSA")){
+      if(IdxSS1<0 || IdxSS2<0) return ReturnIdx;
+      float dPt   = fabs(MuonColl.at(IdxSS1).Pt()-MuonColl.at(IdxSS2).Pt());
+      float MTW1  = sqrt(2)*sqrt(MET*MuonColl.at(IdxSS1).Pt()-METx*MuonColl.at(IdxSS1).Px()-METy*MuonColl.at(IdxSS1).Py());
+      float MTW2  = sqrt(2)*sqrt(MET*MuonColl.at(IdxSS2).Pt()-METx*MuonColl.at(IdxSS2).Px()-METy*MuonColl.at(IdxSS2).Py());
+      bool  SS1_W = MTW1>50. && MTW1<120.;
+      bool  SS2_W = MTW2>50. && MTW2<120.;
+      if( dPt<25. && SS2_W && (!SS1_W) ){ IdxSSW=IdxSS2; IdxSSA=IdxSS1; }
+      else{ IdxSSW=IdxSS1; IdxSSA=IdxSS2; }
+    }
+    if     (charge.Contains("SSW")) ReturnIdx=IdxSSW;
+    else if(charge.Contains("SSA")) ReturnIdx=IdxSSA;
+    
+    return ReturnIdx;
+}
+
+
+double AnalyzerCore::GetvPz(snu::KParticle v, snu::KElectron e, int pm){
+     double RecoPz=0;
+     double X=80.4*80.4/2+e.Px()*v.Px()+e.Py()*v.Py();
+     double D=e.E()*e.E()*(X*X-v.Pt()*v.Pt()*e.Pt()*e.Pt());
+     if(pm==1) {if(D>=0) {double RecoPzv1 = (e.Pz()*X+sqrt(D))/(e.Pt()*e.Pt()); RecoPz=RecoPzv1;}
+                if(D<0)  {double RecoPzv1 = (e.Pz()*X)/(e.Pt()*e.Pt()); RecoPz=RecoPzv1;}
+               }
+     if(pm==2) {if(D>=0) {double RecoPzv2 = (e.Pz()*X-sqrt(D))/(e.Pt()*e.Pt()); RecoPz=RecoPzv2;}
+                if(D<0)  {double RecoPzv2 = (e.Pz()*X)/(e.Pt()*e.Pt()); RecoPz=RecoPzv2;}
+               }
+     return RecoPz;
+}
+
+double AnalyzerCore::GetvPz(snu::KParticle v, snu::KMuon mu, int pm){
+     double RecoPz=0;
+     double X=80.4*80.4/2+mu.Px()*v.Px()+mu.Py()*v.Py();
+     double D=mu.E()*mu.E()*(X*X-v.Pt()*v.Pt()*mu.Pt()*mu.Pt());
+     if(pm==1) {if(D>=0) {double RecoPzv1 = (mu.Pz()*X+sqrt(D))/(mu.Pt()*mu.Pt()); RecoPz=RecoPzv1;}
+                if(D<0)  {double RecoPzv1 = (mu.Pz()*X)/(mu.Pt()*mu.Pt()); RecoPz=RecoPzv1;}
+               }
+     if(pm==2) {if(D>=0) {double RecoPzv2 = (mu.Pz()*X-sqrt(D))/(mu.Pt()*mu.Pt()); RecoPz=RecoPzv2;}
+                if(D<0)  {double RecoPzv2 = (mu.Pz()*X)/(mu.Pt()*mu.Pt()); RecoPz=RecoPzv2;}
+               }
+     return RecoPz;
+}
+
+double AnalyzerCore::GetAngle(snu::KElectron e, snu::KMuon mu){
+    TVector3 v1,v2;
+    v1.SetPtEtaPhi(e.Pt(), e.Eta(), e.Phi());  v2.SetPtEtaPhi(mu.Pt(), mu.Eta(), mu.Phi());
+    double angle=v1.Angle(v2);
+    return angle;
+}
+
+double AnalyzerCore::GetAngle(snu::KMuon mu1, snu::KMuon mu2){
+    TVector3 v1,v2;
+    v1.SetPtEtaPhi(mu1.Pt(), mu1.Eta(), mu1.Phi());  v2.SetPtEtaPhi(mu2.Pt(), mu2.Eta(), mu2.Phi());
+    double angle=v1.Angle(v2);
+    return angle;
+}
+
+double AnalyzerCore::GetAngle(snu::KElectron e, snu::KJet j){
+    TVector3 v1,v2;
+    v1.SetPtEtaPhi(e.Pt(), e.Eta(), e.Phi());  v2.SetPtEtaPhi(j.Pt(), j.Eta(), j.Phi());
+    double angle=v1.Angle(v2);
+    return angle;
+}
+
+double AnalyzerCore::GetAngle(snu::KMuon mu, snu::KJet j){
+    TVector3 v1,v2;
+    v1.SetPtEtaPhi(mu.Pt(), mu.Eta(), mu.Phi());  v2.SetPtEtaPhi(j.Pt(), j.Eta(), j.Phi());
+    double angle=v1.Angle(v2);
+    return angle;
+}
+
+double AnalyzerCore::GetAngle(snu::KJet j1, snu::KJet j2){
+    TVector3 v1,v2;
+    v1.SetPtEtaPhi(j1.Pt(), j1.Eta(), j1.Phi());  v2.SetPtEtaPhi(j2.Pt(), j2.Eta(), j2.Phi());
+    double angle=v1.Angle(v2);
+    return angle;
+}
+
+
+double AnalyzerCore::dPtRel(snu::KTruth T, snu::KElectron e){
+    double X=fabs(e.Pt()-T.Pt())/T.Pt();
+    return X;
+}
+
+double AnalyzerCore::dPtRel(snu::KTruth T, snu::KMuon mu){
+    double X=fabs(mu.Pt()-T.Pt())/T.Pt();
+    return X;
+}
+
+double AnalyzerCore::dPtRel(snu::KTruth T, snu::KJet j){
+    double X=fabs(j.Pt()-T.Pt())/T.Pt();
+    return X;
+}
+
+/*
+double AnalyzerCore::RelPt(snu::KTruth T, snu::KJet j){
+  if(j.Pt()==0) return -1;
+  double
+  
+}*/
+
+
+int AnalyzerCore::GenMatchedIdx(snu::KTruth T, std::vector<snu::KMuon>& MuonColl){
+    //Usage: Returns index of the muon in Muoncoll that matches Truth object T
+    //Algo: Make a collecton passing minimum cut : dRmax=0.05, dPtRelmax=0.2 
+    //**Here I consider dR more imp. => dPtRel is relatively looser.
+    //if none, return index -1, if 1, return the index
+    //if ambiguous, select one with minimum dRRel relative to dRmaxcut + dPtRel relative to dPtRelmax
+    std::vector<int> muCandIdxColl;
+    int muFinalCandIdx;
+    double tmp, score, dRoCut, dPtReloCut; //oCut:over Cut
+
+    for( int i=0; i<MuonColl.size(); i++){
+      if(T.DeltaR(MuonColl.at(i))<0.1) muCandIdxColl.push_back(i);
+      //if((T.DeltaR(MuonColl.at(i))<0.1)&&(dPtRel(T,MuonColl.at(i))<0.2)) muCandIdxColl.push_back(i);
+    }
+    if(muCandIdxColl.size()==0) muFinalCandIdx=-1;
+    else if(muCandIdxColl.size()==1) muFinalCandIdx=muCandIdxColl.at(0);
+    else if(muCandIdxColl.size()>1){
+       for( int i=0; i<muCandIdxColl.size(); i++){
+          dRoCut=T.DeltaR(MuonColl.at(muCandIdxColl.at(i)))/0.05;
+          dPtReloCut=0.;
+          //dPtReloCut=dPtRel(T,MuonColl.at(muCandIdxColl.at(i)))/0.2;
+          tmp=dRoCut+dPtReloCut;
+          if(i==0) {muFinalCandIdx=muCandIdxColl.at(i); score=dRoCut+dPtReloCut;}
+          else if(tmp<score) {muFinalCandIdx=muCandIdxColl.at(i); score=tmp;}
+       }
+    }
+
+    return muFinalCandIdx;
+}
+
+int AnalyzerCore::GenMatchedIdx(snu::KTruth T, std::vector<snu::KElectron>& ElectronColl){
+    //Usage: Returns index of the electtron in Electroncoll that matches Truth object T
+    //Algo: Make a collecton passing minimum cut : dRmax=0.05, dPtRelmax=0.2 
+    //**Here I consider dR more imp. => dPtRel is relatively looser.
+    //if none, return index -1, if 1, return the index
+    //if ambiguous, select one with minimum dRRel relative to dRmaxcut + dPtRel relative to dPtRelmax
+    std::vector<int> eCandIdxColl;
+    int eFinalCandIdx;
+    double tmp, score, dRoCut, dPtReloCut; //oCut:over Cut
+
+    for( int i=0; i<ElectronColl.size(); i++){
+      if((T.DeltaR(ElectronColl.at(i))<0.1)&&(dPtRel(T,ElectronColl.at(i))<0.2)) eCandIdxColl.push_back(i);
+    }
+    if(eCandIdxColl.size()==0) eFinalCandIdx=-1;
+    else if(eCandIdxColl.size()==1) eFinalCandIdx=eCandIdxColl.at(0);
+    else if(eCandIdxColl.size()>1){
+       for( int i=0; i<eCandIdxColl.size(); i++){
+          dRoCut=T.DeltaR(ElectronColl.at(eCandIdxColl.at(i)))/0.05;
+          dPtReloCut=dPtRel(T,ElectronColl.at(eCandIdxColl.at(i)))/0.2;
+          tmp=dRoCut+dPtReloCut;
+          if(i==0) {eFinalCandIdx=eCandIdxColl.at(i); score=dRoCut+dPtReloCut;}
+          else if(tmp<score) {eFinalCandIdx=eCandIdxColl.at(i); score=tmp;}
+       }
+    }
+
+    return eFinalCandIdx;
+}
+
+int AnalyzerCore::GenMatchedIdx(snu::KTruth T, std::vector<snu::KJet>& JetColl){
+    //Usage: Returns index of the jet in Jetcoll that matches Truth object T
+    //Algo: Make a collecton passing minimum cut : dRmax=0.5, dPtRelmax=0.2 
+    //**Here I consider dR more imp. => dPtRel is relatively looser.
+    //if none, return index -1, if 1, return the index
+    //if ambiguous, select one with minimum dRRel relative to dRmaxcut + dPtRel relative to dPtRelmax
+    std::vector<int> bjCandIdxColl;
+    std::vector<int> ljCandIdxColl;
+    int jFinalCandIdx;
+    double tmp, score, dRoCut, dPtReloCut; //oCut:over Cut
+
+    for( int i=0; i<JetColl.size(); i++){
+      if((T.DeltaR(JetColl.at(i))<0.5)&&(dPtRel(T,JetColl.at(i))<0.7)){
+         if(JetColl.at(i).IsBTagged(KJet::CSVv2,KJet::Medium)) bjCandIdxColl.push_back(i);
+         else ljCandIdxColl.push_back(i);
+      }
+    }
+
+    //B Matcher Algo
+    if(fabs(T.PdgId())==5){
+      if((bjCandIdxColl.size()==0)&&(ljCandIdxColl.size()==0)) jFinalCandIdx=-1;
+      else if((bjCandIdxColl.size()==0)&&(ljCandIdxColl.size()==1)) jFinalCandIdx=ljCandIdxColl.at(0);
+      else if((bjCandIdxColl.size()==0)){// 0 bjCandColl , >1 ljCandColl
+         for( int i=0; i<ljCandIdxColl.size(); i++){
+            dRoCut=T.DeltaR(JetColl.at(ljCandIdxColl.at(i)))/0.5;
+            dPtReloCut=dPtRel(T,JetColl.at(ljCandIdxColl.at(i)))/0.7;
+            tmp=dRoCut+dPtReloCut;
+            if(i==0) {jFinalCandIdx=ljCandIdxColl.at(i); score=dRoCut+dPtReloCut;}
+            else if(tmp<score) {jFinalCandIdx=ljCandIdxColl.at(i); score=tmp;}
+         }
+      }
+      else if(bjCandIdxColl.size()==1) jFinalCandIdx=bjCandIdxColl.at(0);
+      else {//>1 bjCand, & any # ljCand
+         for( int i=0; i<bjCandIdxColl.size(); i++){
+            dRoCut=T.DeltaR(JetColl.at(bjCandIdxColl.at(i)))/0.5;
+            dPtReloCut=dPtRel(T,JetColl.at(bjCandIdxColl.at(i)))/0.7;
+            tmp=dRoCut+dPtReloCut;
+            if(i==0) {jFinalCandIdx=bjCandIdxColl.at(i); score=dRoCut+dPtReloCut;}
+            else if(tmp<score) {jFinalCandIdx=bjCandIdxColl.at(i); score=tmp;}
+         }
+      }
+   }//B matcher Algo
+   //light jet matcher
+   else{
+     if(ljCandIdxColl.size()==0) jFinalCandIdx=-1;
+     else if(ljCandIdxColl.size()==1) jFinalCandIdx=ljCandIdxColl.at(0);
+     else{
+         for( int i=0; i<ljCandIdxColl.size(); i++){
+            dRoCut=T.DeltaR(JetColl.at(ljCandIdxColl.at(i)))/0.5;
+            dPtReloCut=dPtRel(T,JetColl.at(ljCandIdxColl.at(i)))/0.7;
+            tmp=dRoCut+dPtReloCut;
+            if(i==0) {jFinalCandIdx=ljCandIdxColl.at(i); score=dRoCut+dPtReloCut;}
+            else if(tmp<score) {jFinalCandIdx=ljCandIdxColl.at(i); score=tmp;}
+         }
+     }
+   }//light jet matcher
+
+    return jFinalCandIdx;
+}
+
+
+bool AnalyzerCore::GenDecayInfo(std::vector<snu::KTruth>& TruthColl, TString Option){
+//Option: Decay3lv  ; return true if hc decays 3l+v(1e2mu or 3mu or 1ta2mu)
+//        DecayPr3lv; return true if hc decays to 1e2mu or 3mu
+//        Decayta3lv: return true if hc decays to 1ta2mu
+
+  bool DecayPr3lv=false, Decayta3lv=false, Decay3lv=false, Decay2l2j=false, Decaytlv=false, Decaytatlv=false;
+  bool TrigPr3lv = Option.Contains("DecayPr3lv"), Trigta3lv = Option.Contains("Decayta3lv");
+  bool Trig3lv   = Option.Contains("Decay3lv"),   Trig2l2j  = Option.Contains("Decay2l2j"), Trig4l = Option.Contains("Decay4l");
+  bool Trigtatlv = Option.Contains("Decaytalv");
+  bool Trigger   = false;
+
+  for(int i=2; i<(int) TruthColl.size(); i++){
+    if(TruthColl.at(i).IndexMother()==-1) continue;
+      int fpid=abs(TruthColl.at(i).PdgId());
+      int GenSt=TruthColl.at(i).GenStatus();
+    if( !(GenSt==1 || GenSt==2 || (GenSt>20 && GenSt<30)) ) continue;
+    if( !(fpid==11 || fpid==13 || fpid==15 || fpid<6) ) continue;
+
+    int MotherIdx       = FirstNonSelfMotherIdx(i,TruthColl);
+    int GrMotherIdx     = FirstNonSelfMotherIdx(MotherIdx,TruthColl);
+    int MPID=0, GrMPID=0;
+    if( MotherIdx!=-1     ) MPID     = TruthColl.at(MotherIdx).PdgId();
+    if( GrMotherIdx!=-1   ) GrMPID   = TruthColl.at(GrMotherIdx).PdgId();
+
+    if( fpid<6 && abs(MPID)==24  && abs(GrMPID)==37                  )  Decay2l2j=true;
+    if( (fpid==11 || fpid==13 )   && abs(MPID)==24 && abs(GrMPID)==37 ){ Decay3lv =true; DecayPr3lv=true; }
+    if( fpid==15 && abs(MPID)==24 && abs(GrMPID)==37                  ){ Decay3lv =true; Decayta3lv=true; }
+    if( (fpid==11 || fpid==13 || fpid==15) && abs(MPID)==24 && abs(GrMPID)==6 ) Decaytlv=true;
+    if( fpid==15 && abs(MPID)==24 && abs(GrMPID)==6 ) Decaytatlv=true;
+  }
+
+  if     (Trig3lv  ) Trigger = Decay3lv;
+  else if(TrigPr3lv) Trigger = DecayPr3lv;
+  else if(Trigta3lv) Trigger = Decayta3lv;
+  else if(Trig2l2j ) Trigger = Decay2l2j;
+  else if(Trig4l   ) Trigger = Decay3lv and Decaytlv;
+  else if(Trigtatlv) Trigger = Decaytatlv;
+
+  return Trigger;
+}
+
+
+int AnalyzerCore::GetGenMatchedSigIndex(std::vector<snu::KTruth>& truthColl, std::vector<snu::KMuon>& muonColl, std::vector<snu::KElectron>& electronColl, std::vector<snu::KJet>& jetColl, TString PtlName, float weight){
+// Possible PtlName list : "mum_A", "mup_A", "e_W" , "mu_W", "j1_W", "j2_W", "b_t" , "bx_tx" 
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+////Gen Matching//////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////
+
+//Truth Objects/////////
+   int count=0;
+   snu::KTruth b_t, bx_tx, mum_A, mup_A; // Doesn't dep. on decaymode
+   snu::KTruth e_W, ve_W, mu_W, vmu_W, j1_W, j2_W;//dep. on decaymode
+//   snu::KTruth tmpj1_W_tx, tmpj2_W_tx;
+   bool Decay3lv=false, emumu_gen=false, trimu_gen=false;
+   bool emumu=false, trimu=false;
+   int mum_Ai, mup_Ai, e_Wi, mu_Wi, j1_Wi, j2_Wi, b_ti, bx_txi;
+
+   if((muonColl.size()==2)&&(electronColl.size()==1)) emumu=true;
+   else if((muonColl.size()==3)&&(electronColl.size()==0)) trimu=true;
+
+
+   for(unsigned int i=0; i<truthColl.size(); i++){
+     if(truthColl.at(i).IndexMother()==-1) continue;
+     int pid=truthColl.at(i).PdgId();
+     int MotherIdx=truthColl.at(i).IndexMother();
+     int Motherpid=truthColl.at(MotherIdx).PdgId();
+//     if(truthColl.at(MotherIdx).IndexMother()==-1) continue;
+//     int GrmaIdx=truthColl.at(MotherIdx).IndexMother();
+//     int Grmapid=truthColl.at(GrmaIdx).PdgId();
+//     Actually ^ is not needed since we only generated H+ not H- > W+ from H+ && W- from tx
+     //H+ side(t side); t> b H+ > b (A w+)
+     if(Motherpid==6){
+       if(pid==5) b_t=truthColl.at(i);
+     }
+     else if(Motherpid==36){
+       if(pid==13) mum_A=truthColl.at(i);
+       else if(pid==-13) mup_A=truthColl.at(i);
+     }
+     else if(Motherpid==24){
+       if((fabs(pid)>10)&&(fabs(pid)<20)){
+         Decay3lv=true;
+         if(pid==-11) {e_W=truthColl.at(i); emumu_gen=true;}
+         else if(pid==-13) {mu_W=truthColl.at(i); trimu_gen=true;}
+         else if(pid==12) ve_W=truthColl.at(i);
+         else if(pid==14) vmu_W=truthColl.at(i);
+       }
+       else if(fabs(pid)<10){
+         Decay3lv=false;
+         if(count==0) j1_W=truthColl.at(i);
+         else j2_W=truthColl.at(i);
+         count++;
+       }
+     }
+
+     //tx side ; tx>bx w-
+     else if(Motherpid==-6){
+         if(pid==-5) bx_tx=truthColl.at(i);
+     }
+     else if(Motherpid==-24){
+       if((fabs(pid)>10)&&(fabs(pid)<20)){
+         if(pid==11) {e_W=truthColl.at(i); emumu_gen=true;}
+         else if(pid==13) {mu_W=truthColl.at(i); trimu_gen=true;}
+         else if(pid==-12) ve_W=truthColl.at(i);
+         else if(pid==-14) vmu_W=truthColl.at(i);
+       }
+       else if(fabs(pid)<10){
+         if(count==0) j1_W=truthColl.at(i);
+         else j2_W=truthColl.at(i);
+         count++;
+       }
+     }
+
+   }
+
+
+//Gen-Reco Matching/////////
+   //if((emumu)&&(emumu_gen)){
+   if(emumu){
+      if(Decay3lv){
+        //top-H+ side
+        mum_Ai=GenMatchedIdx(mum_A, muonColl);  mup_Ai=GenMatchedIdx(mup_A, muonColl);
+        if(emumu_gen){e_Wi=GenMatchedIdx(e_W, electronColl);} else e_Wi=-1;
+        b_ti=GenMatchedIdx(b_t, jetColl);
+
+        //tx side
+        bx_txi=GenMatchedIdx(bx_tx, jetColl);
+        j1_Wi=GenMatchedIdx(j1_W, jetColl);  j2_Wi=GenMatchedIdx(j2_W, jetColl);
+     }
+     else{
+        //top-H+ side
+        mum_Ai=GenMatchedIdx(mum_A, muonColl); mup_Ai=GenMatchedIdx(mup_A, muonColl);
+        b_ti=GenMatchedIdx(b_t, jetColl);
+        j1_Wi=GenMatchedIdx(j1_W, jetColl); j2_Wi=GenMatchedIdx(j2_W, jetColl);
+
+        //tx side
+        bx_txi=GenMatchedIdx(bx_tx, jetColl);
+        if(emumu_gen){ e_Wi=GenMatchedIdx(e_W, electronColl);} else e_Wi=-1;
+     }
+
+     //Filtering and cutflows
+     FillHist("Basic_GenMatchFlow_emu", 0, weight, 0., 6., 6);//Nocut
+     if((mum_Ai!=-1)&&(mup_Ai!=-1)){ FillHist("Basic_GenMatchFlow_emu", 1, weight, 0., 6., 6);//step1
+        if(e_Wi!=-1){ FillHist("Basic_GenMatchFlow_emu", 2, weight, 0., 6., 6);//step2
+           if(mum_Ai!=mup_Ai){ FillHist("Basic_GenMatchFlow_emu", 3, weight, 0., 6., 6);
+             if((j1_Wi!=-1)&&(j2_Wi!=-1)){ FillHist("Basic_GenMatchFlow_emu", 4, weight, 0., 6., 6);//step3
+                if((bx_txi!=-1)&&(b_ti!=-1)) FillHist("Basic_GenMatchFlow_emu", 5, weight, 0., 6., 6);//step4
+             }
+           }
+        }
+     }
+
+     if     (PtlName=="mum_A") return mum_Ai;
+     else if(PtlName=="mup_A") return mup_Ai;
+     else if(PtlName=="e_W")   return e_Wi;
+     else if(PtlName=="mu_W")  return -1;
+     else if(PtlName=="j1_W")  return j1_Wi;
+     else if(PtlName=="j2_W")  return j2_Wi;
+     else if(PtlName=="b_t")   return b_ti;
+     else if(PtlName=="bx_tx") return bx_txi;
+   }
+   else if(trimu){
+      if(Decay3lv){
+        //top-H+ side
+        mum_Ai=GenMatchedIdx(mum_A, muonColl); mup_Ai=GenMatchedIdx(mup_A, muonColl);
+        if(trimu_gen){ mu_Wi=GenMatchedIdx(mu_W, muonColl);} else mu_Wi=-1;
+        b_ti=GenMatchedIdx(b_t, jetColl);
+
+        //tx side
+        bx_txi=GenMatchedIdx(bx_tx, jetColl);
+        j1_Wi=GenMatchedIdx(j1_W, jetColl); j2_Wi=GenMatchedIdx(j2_W, jetColl);
+     }
+     else{
+        //top-H+ side
+        mum_Ai=GenMatchedIdx(mum_A, muonColl); mup_Ai=GenMatchedIdx(mup_A, muonColl);
+        b_ti=GenMatchedIdx(b_t, jetColl);
+        j1_Wi=GenMatchedIdx(j1_W, jetColl); j2_Wi=GenMatchedIdx(j2_W, jetColl);
+
+        //tx side
+        bx_txi=GenMatchedIdx(bx_tx, jetColl);
+        if(trimu_gen){ mu_Wi=GenMatchedIdx(mu_W, muonColl);} else mu_Wi=-1;
+     }
+
+     //Filtering and cutflows
+     FillHist("Basic_GenMatchFlow_3mu", 0, weight, 0., 7., 7);//Nocut
+     if((mum_Ai!=-1)&&(mup_Ai!=-1)){ FillHist("Basic_GenMatchFlow_3mu", 1, weight, 0., 7., 7);//step1
+        if(mu_Wi!=-1){ FillHist("Basic_GenMatchFlow_3mu", 2, weight, 0., 7., 7);//step2
+          if(mum_Ai!=mup_Ai){ FillHist("Basic_GenMatchFlow_3mu", 3, weight, 0., 7., 7);
+            if((mu_Wi!=mum_Ai)&&(mu_Wi!=mup_Ai)){ FillHist("Basic_GenMatchFlow_3mu", 4, weight, 0., 7., 7);
+               if((j1_Wi!=-1)&&(j2_Wi!=-1)){ FillHist("Basic_GenMatchFlow_3mu", 5, weight, 0., 7., 7);//step3
+                  if((bx_txi!=-1)&&(b_ti!=-1)) FillHist("Basic_GenMatchFlow_3mu", 6, weight, 0., 7., 7);//step4
+               }
+            }
+         }
+       }
+     }
+     if     (PtlName=="mum_A") return mum_Ai;
+     else if(PtlName=="mup_A") return mup_Ai;
+     else if(PtlName=="e_W")   return -1;
+     else if(PtlName=="mu_W")  return mu_Wi;
+     else if(PtlName=="j1_W")  return j1_Wi;
+     else if(PtlName=="j2_W")  return j2_Wi;
+     else if(PtlName=="b_t")   return b_ti;
+     else if(PtlName=="bx_tx") return bx_txi;
+   }//
+
+//////////////////////////////////////////////////////////////////////////////////////
+return -1;
+//End of function
+}
+
+int AnalyzerCore::NPromptLeptons(std::vector<snu::KTruth>& truthColl, TString Option){
+  
+  int NPromptLepton_Tot=0, NPromptLepton_EW=0, NPromptLepton_BSM=0;
+  int NTauHard=0;
+  bool InAcceptance=(Option.Contains("InAcceptance") || Option.Contains("_A"));
+  bool InclTauLep  =(Option.Contains("TauLep")       || Option.Contains("_TL"));
+  bool InclTau     =(Option.Contains("InclTau")      || Option.Contains("_T"));
+  bool OnlyConv    =(Option.Contains("OnlyConv")     || Option.Contains("_C"));
+    if(InclTau && InclTauLep) InclTauLep=false;//To avoid double counting;
+  std::vector<int> PromptIdxColl;
+
+  //Prompt Count
+  for(unsigned int i=2; i<truthColl.size(); i++){
+    if( truthColl.at(i).IndexMother()<0 )  continue;
+     int fpid=fabs(truthColl.at(i).PdgId());
+    if( !(fpid==11 || fpid==13 || fpid==15) ) continue;
+    if( fpid==15 ){
+       int mpid=fabs(truthColl.at(truthColl.at(i).IndexMother()).PdgId());
+       if((mpid==23 || mpid==24) && truthColl.at(i).GenStatus()==2)              NTauHard++;
+       else if(truthColl.at(i).GenStatus()>20 && truthColl.at(i).GenStatus()<30) NTauHard++;
+    }
+    if( !((fpid==11 || fpid==13) && truthColl.at(i).GenStatus()==1 ) )  continue;
+
+    int LepType=GetLeptonType(i, truthColl);
+
+    if(!InAcceptance){
+      if(LepType==1) {NPromptLepton_EW++; PromptIdxColl.push_back(i);}
+      if(LepType==2) {NPromptLepton_BSM++; PromptIdxColl.push_back(i);}
+      if(InclTauLep && LepType==3) NPromptLepton_EW++;
+    }
+    else{
+      if( (fpid==11 && fabs(truthColl.at(i).Eta())<2.5) 
+         || (fpid==13 && fabs(truthColl.at(i).Eta())<2.4) ){
+        if(LepType==1) NPromptLepton_EW++;
+        if(LepType==2) NPromptLepton_BSM++;
+        if(InclTauLep && LepType==3) NPromptLepton_EW++;
+      }
+    }
+  }
+
+  //Conversion Count
+  std::vector<int> ConvBranchIdxColl;
+  for(int i=0; i<PromptIdxColl.size(); i++){
+    for(int j=i+1; j<PromptIdxColl.size(); j++){
+      int pid1 =truthColl.at(PromptIdxColl.at(i)).PdgId();
+      int midx1=truthColl.at(PromptIdxColl.at(i)).IndexMother(), mid1=truthColl.at(midx1).PdgId();
+      while(mid1==pid1){
+        int pid2 =truthColl.at(PromptIdxColl.at(j)).PdgId();
+        int midx2=truthColl.at(PromptIdxColl.at(j)).IndexMother(), mid2=truthColl.at(midx2).PdgId();
+        while(mid2==pid2){
+          if(midx1==midx2) break;
+          else {midx2=truthColl.at(midx2).IndexMother(); mid2=truthColl.at(midx2).PdgId();}
+        }
+        if(midx1==midx2){ ConvBranchIdxColl.push_back(midx1); break; }
+        else {midx1=truthColl.at(midx1).IndexMother(); mid1=truthColl.at(midx1).PdgId();}
+      }
+    }
+  }
+  int NConv=ConvBranchIdxColl.size(), NMultiConv=0, SameBranchCount=0;
+  for(int i=0; i<ConvBranchIdxColl.size(); i++){
+    for(int j=i+1; j<ConvBranchIdxColl.size(); j++){
+      if(ConvBranchIdxColl.at(i)==ConvBranchIdxColl.at(j)) SameBranchCount++;
+    }
+  }
+  if(SameBranchCount==3) NMultiConv++;//Basically we should also count all the nC2 (n=3,4...) but higher order terms need not be considered till now yet.
+  NConv-=NMultiConv;
+
+  NPromptLepton_Tot=NPromptLepton_EW+NPromptLepton_BSM-NConv;
+  if(InclTau) NPromptLepton_Tot+=NTauHard;
+
+  if     (Option.Contains("EW"))  return (NPromptLepton_Tot-NPromptLepton_BSM);
+  else if(Option.Contains("BSM")) return NPromptLepton_BSM;
+  else if(OnlyConv)               return NConv;
+
+  return NPromptLepton_Tot;
+}
+
+int AnalyzerCore::NLeptonicBosonDecay(std::vector<snu::KTruth>& TruthColl){
+
+   int Counter=0;
+   for(int i=2; i<TruthColl.size(); i++){
+      int fpid=fabs(TruthColl.at(i).PdgId());     
+     if( !(fpid==11 || fpid==13 || fpid==15) ) continue;
+      int mfpid=fabs(TruthColl.at(TruthColl.at(i).IndexMother()).PdgId());
+      int GenSt=TruthColl.at(i).GenStatus();
+     if( GenSt>20 && GenSt<30 ) Counter++;
+     else if( mfpid==23 || mfpid==24 || mfpid==25 ) Counter++;
+   }
+
+   return Counter;
+}
+
+
+int AnalyzerCore::GenMatchedIdx(snu::KJet Jet, std::vector<snu::KTruth>& TruthColl){
+  //Seeding from jet, find parton matched to jet within dRmax;
+  //Does not return matched index if not matched or matched multiple partons.(-1:Unmatched, -2:Multiple)
+
+  int MatchedIdx=-1;
+  float dR=999., dRmax=0.5;
+  int CountMatched=0;
+  for(int i=2; i<TruthColl.size(); i++){
+    if( TruthColl.at(i).IndexMother()<0) continue;
+    if( TruthColl.at(i).GenStatus()!=23 ) continue;
+      int fpid=fabs(TruthColl.at(i).PdgId());
+    if( !((fpid>0 && fpid<=5) || fpid==21) ) continue;
+    if( TruthColl.at(i).DeltaR(Jet)>dRmax )  continue;
+    if( CountMatched>1 ) return -2;
+
+    if(TruthColl.at(i).DeltaR(Jet)<dR){ dR=TruthColl.at(i).DeltaR(Jet); MatchedIdx=i; CountMatched++;}
+  }
+
+  return MatchedIdx;
+}
+
+
+bool AnalyzerCore::IsHardPhotonConverted(std::vector<snu::KTruth> TruthColl){
+
+  bool IsConverted=false;
+  for(int i=2; i<TruthColl.size(); i++){
+    int fpid  = fabs(TruthColl.at(i).PdgId());
+    int MPID_direct= TruthColl.at(TruthColl.at(i).IndexMother()).PdgId();
+    if( !(fpid!=22 && MPID_direct==22) ) continue;
+
+    int MotherIdx  = FirstNonSelfMotherIdx(i,TruthColl);
+    int LastSelfMIdx=-1, MStatus_orig=-1;
+    if(MotherIdx!=-1){
+      LastSelfMIdx = LastSelfMotherIdx(MotherIdx,TruthColl);
+      MStatus_orig = TruthColl.at(LastSelfMIdx).GenStatus();
+    }
+
+    if( MPID_direct==22 && MStatus_orig==23 ){ IsConverted=true; break; }
+  }
+
+  return IsConverted;
+}
+
+
+bool AnalyzerCore::IsJetConsistentPartonHadronMatch(snu::KJet Jet, std::vector<snu::KTruth>& TruthColl, TString Option){
+
+  bool IsConsistent=false;
+  bool AllFlav=false, BFlav=false, HeavyFlav=false;
+    if     (Option.Contains("AllFlav")) AllFlav  =true;
+    else if(Option.Contains("BFlav"))   BFlav    =true;
+    else if(Option.Contains("Heavy"))   HeavyFlav=true;
+  int MatchedIdx=GenMatchedIdx(Jet,TruthColl);
+  int MatchedPartonPID=0;
+  int JetHadronFlav=Jet.HadronFlavour();
+    if(MatchedIdx>=0) MatchedPartonPID=TruthColl.at(MatchedIdx).PdgId();
+
+  if(AllFlav){
+    if     ( JetHadronFlav==5 && fabs(MatchedPartonPID)==5 ) IsConsistent=true;
+    else if( JetHadronFlav==4 && fabs(MatchedPartonPID)==4 ) IsConsistent=true;
+    else if( JetHadronFlav==0 && ((fabs(MatchedPartonPID)<4 && MatchedPartonPID!=0) || MatchedPartonPID==21) ) IsConsistent=true;
+  }
+  else if(BFlav){
+    IsConsistent=true;
+    if     ( JetHadronFlav==5 && fabs(MatchedPartonPID)!=5 ) IsConsistent=false;
+    else if( JetHadronFlav!=5 && fabs(MatchedPartonPID)==5 ) IsConsistent=false;
+  }
+  else if(HeavyFlav){
+    IsConsistent=true;
+    if     ( JetHadronFlav==5 &&   fabs(MatchedPartonPID)!=5 ) IsConsistent=false;
+    else if( JetHadronFlav==4 && !(fabs(MatchedPartonPID)==5 || fabs(MatchedPartonPID)==4) ) IsConsistent=false;
+    else if( JetHadronFlav==0 &&  (fabs(MatchedPartonPID)==5 || fabs(MatchedPartonPID)==4) ) IsConsistent=false;
+  }
+
+  return IsConsistent;
+}
+
+bool AnalyzerCore::HasEWLepInJet(snu::KJet Jet, std::vector<snu::KTruth>& TruthColl, TString Option){
+
+  int HasEWLep=false;
+  bool InclEWTau=Option.Contains("InclTau");
+  for(int i=2; i<TruthColl.size(); i++){
+    if(TruthColl.at(i).IndexMother()<0 )  continue;
+    bool IsCand=false;
+    int abspid=fabs(TruthColl.at(i).PdgId());
+    int absmpid=fabs(TruthColl.at(TruthColl.at(i).IndexMother()).PdgId());
+    if( TruthColl.at(i).GenStatus()==1 ){
+      if( abspid==11 || abspid==13 ){
+        int LepType=GetLeptonType(i, TruthColl);
+        if( LepType==1 || LepType==2 || LepType==3 ) IsCand=true; 
+      }
+    }
+    if( InclEWTau && abspid==15 && TruthColl.at(i).GenStatus()>20 && TruthColl.at(i).GenStatus()<30 ) IsCand=true;
+    else if( InclEWTau && abspid==15 && (absmpid==23 || absmpid==24) && TruthColl.at(i).GenStatus()==2 ) IsCand=true;
+
+    if( IsCand && TruthColl.at(i).DeltaR(Jet)<0.4) HasEWLep=true;
+    if( HasEWLep ) break;
+  }
+
+  return HasEWLep;
+}
+
+bool AnalyzerCore::NearEWLep(snu::KElectron Ele, std::vector<snu::KTruth>& TruthColl, TString Option){
+
+  bool NearEWLep=false;
+  bool InclEWTau=Option.Contains("InclTau");
+  float PTthreshold=10.; //Intended for suppressing conversion fake;
+  for(int i=2; i<TruthColl.size(); i++){
+    if(TruthColl.at(i).IndexMother()<0 ) continue;
+    //if(TruthColl.at(i).Pt()<PTthreshold) continue;
+    bool IsCand=false;
+    int abspid=fabs(TruthColl.at(i).PdgId());
+    int absmpid=fabs(TruthColl.at(TruthColl.at(i).IndexMother()).PdgId());
+    if( TruthColl.at(i).GenStatus()==1 ){
+      if( abspid==11 || abspid==13 ){
+        int LepType=GetLeptonType(i, TruthColl);
+        if( LepType==1 || LepType==2 || LepType==3 ) IsCand=true; 
+      }
+    }
+    if( InclEWTau && abspid==15 && TruthColl.at(i).GenStatus()>20 && TruthColl.at(i).GenStatus()<30 ) IsCand=true;
+    else if( InclEWTau && abspid==15 && (absmpid==23 || absmpid==24) && TruthColl.at(i).GenStatus()==2 ) IsCand=true;
+
+    if( IsCand && TruthColl.at(i).DeltaR(Ele)<0.4) NearEWLep=true;
+    if( NearEWLep ) break;
+  }
+
+  return NearEWLep;
+}
+
+
+bool AnalyzerCore::NearPhoton(snu::KElectron Ele, std::vector<snu::KTruth>& TruthColl, TString Option){//1)
+
+  bool NearPhoton=false;
+  bool OnlyHardPhoton=false;
+    if(Option=="Hard") OnlyHardPhoton=true;
+  float PTthreshold=10.;
+  float dRmax=0.2;//2)
+
+  for(int i=2; i<TruthColl.size(); i++){
+    if( TruthColl.at(i).IndexMother()<0   ) continue;
+    if( TruthColl.at(i).PdgId()!=22       ) continue;
+    if( !(TruthColl.at(i).GenStatus()==1 || TruthColl.at(i).GenStatus()==23) ) continue;
+    if( TruthColl.at(i).Pt()<PTthreshold  ) continue;
+    if( !(Ele.Pt()/TruthColl.at(i).Pt()>0.8 && Ele.Pt()/TruthColl.at(i).Pt()<1.2) ) continue;//3)
+    if( Ele.DeltaR(TruthColl.at(i))>dRmax ) continue;
+
+    if( GetPhotonType(i,TruthColl)>0      ){ NearPhoton=true; break; }
+  }
+
+  return NearPhoton;
+//footnote
+//1) When checked with ZG sample with CBPOGT ElePt>25, Hardscattered photons, External conversion is only meaningful for electrons.
+//   Electron External Conversion~3000 Muon external conversion. This is in agreement with theoretical calculation that xsec~M^{-2} in asymmetric limit.
+//   ref. Arxiv:1110.1368v1
+//2) When checked with ZG sample with CBPOGT ElePt>25GeV, HardScatter Photons, Matching Eff~99.7% even when tested with dR01 cone.
+//   But just used conservative cone size.
+//3) When checked with ZG sample with CBPOGT ElePt>25GeV, HardScatter Photons, Matching Eff~99.5%
+//   External Conversion object's momentum is roughly symmetric with mother photon's momentum(similar fraction lower/upper than PT(G))
+}
+
+
+std::vector<snu::KElectron> AnalyzerCore::SkimLepColl(std::vector<snu::KElectron>& EleColl, std::vector<snu::KTruth>& TruthColl, TString Option){
+
+  bool GetPrompt=false, GetHadFake=false, GetEWtau=false, GetNHIntConv=false, GetNHExtConv=false;
+  if(Option.Contains("Prompt"))          GetPrompt    =true;
+  if(Option.Contains("HFake"))           GetHadFake   =true;
+  if(Option.Contains("EWtau"))           GetEWtau     =true;
+  if(Option.Contains("NHConv"))         {GetNHIntConv =true; GetNHExtConv=true;}
+  else{ if(Option.Contains("NHIntConv")) GetNHIntConv =true;
+        if(Option.Contains("NHExtConv")) GetNHExtConv =true; }
+  if(     Option=="Fake"     )          {GetHadFake   =true; GetNHExtConv=true;}
+
+
+  std::vector<snu::KElectron> ReturnVec;
+  for(int i=0; i<EleColl.size(); i++){
+    //if(GetHadFake){
+      //if(NearEWLep(EleColl.at(i), TruthColl, "InclTau")) continue;
+      //if(NearPhoton(EleColl.at(i), TruthColl))           continue;
+    //}
+
+    int LepType=GetLeptonType(EleColl.at(i), TruthColl);
+    if( GetPrompt    && (LepType==1 || LepType==2) ) ReturnVec.push_back(EleColl.at(i));
+    if( GetHadFake   && (LepType<0 && LepType>=-4) ) ReturnVec.push_back(EleColl.at(i));
+    if( GetEWtau     &&         LepType==3         ) ReturnVec.push_back(EleColl.at(i));
+    if( GetNHIntConv &&         LepType>=4         ) ReturnVec.push_back(EleColl.at(i));
+    if( GetNHExtConv &&         LepType<-4         ) ReturnVec.push_back(EleColl.at(i));
+  }
+
+  return ReturnVec;
+}
+
+
+std::vector<snu::KElectron> AnalyzerCore::SkimLepColl(std::vector<snu::KElectron>& EleColl, TString Option, float PTmin){
+  
+  std::vector<snu::KElectron> ReturnColl;
+  bool Barrel1=false, Barrel2=false, Endcap=false, PtCut=false;
+  if(Option.Contains("B1")) Barrel1=true;
+  if(Option.Contains("B2")) Barrel2=true;
+  if(Option.Contains("E"))  Endcap =true;
+  if(Option.Contains("Pt")) PtCut  =true;
+
+  for(int i=0; i<EleColl.size(); i++){
+    bool PassSel=false;
+    if( PtCut   && EleColl.at(i).Pt()<PTmin ) continue;
+    if( Barrel1 && fabs(EleColl.at(i).Eta())<0.8 ) ReturnColl.push_back(EleColl.at(i));
+    if( Barrel2 && fabs(EleColl.at(i).Eta())>=0.8 && fabs(EleColl.at(i).Eta())<1.479 ) ReturnColl.push_back(EleColl.at(i));
+    if( Endcap  && fabs(EleColl.at(i).Eta())>=1.479 && fabs(EleColl.at(i).Eta())<2.5 ) ReturnColl.push_back(EleColl.at(i));
+  }
+
+  return ReturnColl;
+}
+
+
+std::vector<snu::KMuon> AnalyzerCore::SkimLepColl(std::vector<snu::KMuon>& MuColl, std::vector<snu::KTruth>& TruthColl, TString Option){
+
+  bool GetPrompt=false, GetHadFake=false, GetEWtau=false, GetNHIntConv=false, GetNHExtConv=false;
+  if(Option.Contains("Prompt"))          GetPrompt    =true;
+  if(Option.Contains("HFake"))           GetHadFake   =true;
+  if(Option.Contains("EWtau"))           GetEWtau     =true;
+  if(Option.Contains("NHConv"))         {GetNHIntConv =true; GetNHExtConv=true;}
+  else{ if(Option.Contains("NHIntConv")) GetNHIntConv =true;
+        if(Option.Contains("NHExtConv")) GetNHExtConv =true; }
+  if(     Option=="Fake"     )          {GetHadFake   =true; GetNHExtConv=true;}
+
+
+  std::vector<snu::KMuon> ReturnVec;
+  for(int i=0; i<MuColl.size(); i++){
+    int LepType=GetLeptonType(MuColl.at(i), TruthColl);
+    if( GetPrompt    && (LepType==1 || LepType==2) ) ReturnVec.push_back(MuColl.at(i));
+    if( GetHadFake   && (LepType<0 && LepType>=-4) ) ReturnVec.push_back(MuColl.at(i));
+    if( GetEWtau     &&         LepType==3         ) ReturnVec.push_back(MuColl.at(i));
+    if( GetNHIntConv &&         LepType>=4         ) ReturnVec.push_back(MuColl.at(i));
+    if( GetNHExtConv &&         LepType<-4         ) ReturnVec.push_back(MuColl.at(i));
+  }
+
+  return ReturnVec;
+}
+
+std::vector<snu::KJet> AnalyzerCore::SkimJetColl(std::vector<snu::KJet>& JetColl, std::vector<snu::KTruth>& TruthColl, TString Option){
+
+  bool GetTrueJet=false, GetFakeJet=false, GetPrLepCleanJet=false, ExcTau=false;
+  TString Criteria="";
+  if(Option.Contains("True"))   GetTrueJet       =true;
+  if(Option.Contains("Fake"))   GetFakeJet       =true;
+  if(Option.Contains("NoPr"))   GetPrLepCleanJet =true;
+  if(Option.Contains("NoTau")) {ExcTau           =true; Criteria="InclTau";}
+
+  std::vector<snu::KJet> ReturnVec;
+  for(int i=0; i<JetColl.size(); i++){
+    bool HasEWLep=HasEWLepInJet(JetColl.at(i), TruthColl, Criteria);
+    if( GetPrLepCleanJet && (!HasEWLep) ) ReturnVec.push_back(JetColl.at(i));
+  }
+
+  return ReturnVec;
+}
+
+std::vector<snu::KJet> AnalyzerCore::SkimJetColl(std::vector<snu::KJet>& JetColl, std::vector<snu::KElectron>& EleColl, std::vector<snu::KMuon>& MuColl, TString Option){
+
+  std::vector<snu::KJet> ReturnVec;
+  for(int i=0; i<JetColl.size(); i++){
+
+    bool NearLep=false;
+    for(int j=0; j<EleColl.size(); j++){
+      if(JetColl.at(i).DeltaR(EleColl.at(j))<0.4) NearLep=true;
+    }
+
+    for(int j=0; j<MuColl.size(); j++){
+      if(JetColl.at(i).DeltaR(MuColl.at(j))<0.4) NearLep=true;
+    }
+
+    if(!NearLep) ReturnVec.push_back(JetColl.at(i));
+  }
+
+  return ReturnVec;
+}
+
+
+
+int AnalyzerCore::GetNearJetIdx(snu::KElectron Ele, std::vector<snu::KJet> JetColl){
+
+   int NearJetIdx=-1;
+   float dRmin=999., dRmax=0.4;
+   for(int i=0; i<JetColl.size(); i++){
+     float dR=Ele.DeltaR(JetColl.at(i));
+     if(dR>dRmax) continue;
+     if(dR<dRmin){ dRmin=dR; NearJetIdx=i;}
+   }
+   
+   return NearJetIdx;
+}
+
+
+
+//template <class Ptl> int AnalyzerCore::GetDaughterCandIdx(std::vector<Ptl> PtlColl, TString MotherPtl, float WindowWidth, TString Option){
+int AnalyzerCore::GetDaughterCandIdx(std::vector<snu::KMuon> PtlColl, TString MotherPtl, float WindowWidth, TString Option){
+
+  if(MotherPtl=="Z"){
+    float mindM=9999.; int IdxLead=-1, IdxSubl=-1;
+    for(unsigned int i=0; i<PtlColl.size(); i++){
+      for(unsigned int j=i+1; j<PtlColl.size(); j++){
+        float Mass=(PtlColl.at(i)+PtlColl.at(j)).M();
+        if(PtlColl.at(i).Charge()==PtlColl.at(j).Charge()) continue;
+        if(fabs(Mass-91.2)<mindM) {mindM=fabs(Mass-91.2); IdxLead=i; IdxSubl=j;}
+      }
+    }
+    if(mindM<WindowWidth){
+      if     (Option.Contains("Lead")) return IdxLead;
+      else if(Option.Contains("Subl")) return IdxSubl;
+    }
+    else if(WindowWidth<0 || Option.Contains("NoLimit")){
+      if     (Option.Contains("Lead")) return IdxLead;
+      else if(Option.Contains("Subl")) return IdxSubl;
+    }
+  }
+
+  return -1;
+};
+
+int AnalyzerCore::GetDaughterCandIdx(std::vector<snu::KJet> PtlColl, TString MotherPtl, float WindowWidth, TString Option){
+
+  float MotherMass=-1., mindM=9999.; int IdxLead=-1, IdxSubl=-1;
+
+  if     (MotherPtl=="Z") MotherMass=91.2; 
+  else if(MotherPtl=="W") MotherMass=80.4;
+  else return -1;
+
+  for(unsigned int i=0; i<PtlColl.size(); i++){
+    for(unsigned int j=i+1; j<PtlColl.size(); j++){
+      float Mass=(PtlColl.at(i)+PtlColl.at(j)).M();
+      if(fabs(Mass-MotherMass)<mindM) {mindM=fabs(Mass-MotherMass); IdxLead=i; IdxSubl=j;}
+    }
+  }
+  if(mindM<WindowWidth){
+    if     (Option.Contains("Lead")) return IdxLead;
+    else if(Option.Contains("Subl")) return IdxSubl;
+  }
+  else if(WindowWidth<0 || Option.Contains("NoLimit")){
+    if     (Option.Contains("Lead")) return IdxLead;
+    else if(Option.Contains("Subl")) return IdxSubl;
+  }
+
+  return -1;
+};
+
+
+
+double AnalyzerCore::TopPTReweight(std::vector<snu::KTruth> TruthColl){
+  //Reference: https://twiki.cern.ch/twiki/bin/view/CMS/TopPtReweighting
+  //This is coded for H+>WA CR, but this can be generally used for any kinds of decay of SM top pair events.
+  //Caution : This can be used for SM ttbar samples only. Though top pt disagreement is obseved in several generators,
+  //          but the SF are derived from Powheg+Pythia sample(Run2). So it is safe to use this only for Powheg ttbar.
+  //          And this MUST NOT be applied to single top sample and tops produced from BSM mechanism
+  //Current normalisation factor version : v8-0-6
+
+  double weight=1.;
+
+  for(std::vector<snu::KTruth>::iterator it_truth= TruthColl.begin(); it_truth!=TruthColl.end(); it_truth++){
+    if(fabs(it_truth->PdgId())==6 && fabs(it_truth->GenStatus())<30 && fabs(it_truth->GenStatus())>20){
+      weight*=exp(0.0615-0.0005*it_truth->Pt());
+    }
+  }
+  return sqrt(weight)*0.999777;
+
+}
+
+float AnalyzerCore::GenFilterEfficiency(TString SampleName){
+
+  if( isData ) return 1.;
+  else if( !(SampleName.Contains("3mu") || SampleName.Contains("1e2mu")) ) return 1.;
+
+  if     (SampleName.Contains("MHc90_MZp2" )) return 0.309;
+  else if(SampleName.Contains("MHc100_MZp2")) return 0.451;
+  else if(SampleName.Contains("MHc110_MZp2")) return 0.557;
+  else if(SampleName.Contains("MHc120_MZp2")) return 0.614;
+  else if(SampleName.Contains("MHc130_MZp2")) return 0.642;
+  else if(SampleName.Contains("MHc140_MZp2")) return 0.656;
+  else if(SampleName.Contains("MHc150_MZp2")) return 0.628;
+  else if(SampleName.Contains("MHc160_MZp2")) return 0.510;
+
+  else if(SampleName.Contains("MHc90_MZp5" )) return 0.275;
+  else if(SampleName.Contains("MHc100_MZp5")) return 0.445;
+  else if(SampleName.Contains("MHc110_MZp5")) return 0.546;
+  else if(SampleName.Contains("MHc120_MZp5")) return 0.603;
+  else if(SampleName.Contains("MHc130_MZp5")) return 0.637;
+  else if(SampleName.Contains("MHc140_MZp5")) return 0.650;
+  else if(SampleName.Contains("MHc150_MZp5")) return 0.631;
+  else if(SampleName.Contains("MHc160_MZp5")) return 0.504;
+
+  else if(SampleName.Contains("MHc90_MZp8" )) return 0.268;
+  else if(SampleName.Contains("MHc100_MZp8")) return 0.423;
+  else if(SampleName.Contains("MHc110_MZp8")) return 0.533;
+  else if(SampleName.Contains("MHc120_MZp8")) return 0.596;
+  else if(SampleName.Contains("MHc130_MZp8")) return 0.629;
+  else if(SampleName.Contains("MHc140_MZp8")) return 0.642;
+  else if(SampleName.Contains("MHc150_MZp8")) return 0.616;
+  else if(SampleName.Contains("MHc160_MZp8")) return 0.503;
+
+  else if(SampleName.Contains("MHc90_MA10" )) return 0.373;
+  else if(SampleName.Contains("MHc100_MA10")) return 0.380;
+  else if(SampleName.Contains("MHc110_MA10")) return 0.457;
+  else if(SampleName.Contains("MHc120_MA10")) return 0.501;
+  else if(SampleName.Contains("MHc130_MA10")) return 0.531;
+  else if(SampleName.Contains("MHc140_MA10")) return 0.550;
+  else if(SampleName.Contains("MHc150_MA10")) return 0.535;
+  else if(SampleName.Contains("MHc160_MA10")) return 0.436;
+
+  else if(SampleName.Contains("MHc90_MA10" )) return 0.373;
+  else if(SampleName.Contains("MHc100_MA10")) return 0.380;
+  else if(SampleName.Contains("MHc110_MA10")) return 0.457;
+  else if(SampleName.Contains("MHc120_MA10")) return 0.501;
+  else if(SampleName.Contains("MHc130_MA10")) return 0.531;
+  else if(SampleName.Contains("MHc140_MA10")) return 0.550;
+  else if(SampleName.Contains("MHc150_MA10")) return 0.535;
+  else if(SampleName.Contains("MHc160_MA10")) return 0.436;
+
+  else if(SampleName.Contains("MHc100_MA15")) return 0.464;
+  else if(SampleName.Contains("MHc110_MA15")) return 0.496;
+  else if(SampleName.Contains("MHc120_MA15")) return 0.528;
+  else if(SampleName.Contains("MHc130_MA15")) return 0.547;
+  else if(SampleName.Contains("MHc140_MA15")) return 0.558;
+  else if(SampleName.Contains("MHc150_MA15")) return 0.540;
+  else if(SampleName.Contains("MHc160_MA15")) return 0.440;
+
+  else if(SampleName.Contains("MHc100_MA20")) return 0.556;
+  else if(SampleName.Contains("MHc110_MA20")) return 0.564;
+  else if(SampleName.Contains("MHc120_MA20")) return 0.572;
+  else if(SampleName.Contains("MHc130_MA20")) return 0.576;
+  else if(SampleName.Contains("MHc140_MA20")) return 0.576;
+  else if(SampleName.Contains("MHc150_MA20")) return 0.554;
+  else if(SampleName.Contains("MHc160_MA20")) return 0.450;
+
+  else if(SampleName.Contains("MHc110_MA25")) return 0.620;
+  else if(SampleName.Contains("MHc120_MA25")) return 0.617;
+  else if(SampleName.Contains("MHc130_MA25")) return 0.613;
+  else if(SampleName.Contains("MHc140_MA25")) return 0.609;
+  else if(SampleName.Contains("MHc150_MA25")) return 0.577;
+  else if(SampleName.Contains("MHc160_MA25")) return 0.459;
+
+  else if(SampleName.Contains("MHc110_MA30")) return 0.648;
+  else if(SampleName.Contains("MHc120_MA30")) return 0.652;
+  else if(SampleName.Contains("MHc130_MA30")) return 0.644;
+  else if(SampleName.Contains("MHc140_MA30")) return 0.632;
+  else if(SampleName.Contains("MHc150_MA30")) return 0.594;
+  else if(SampleName.Contains("MHc160_MA30")) return 0.471;
+
+  else if(SampleName.Contains("MHc120_MA35")) return 0.672;
+  else if(SampleName.Contains("MHc130_MA35")) return 0.665;
+  else if(SampleName.Contains("MHc140_MA35")) return 0.649;
+  else if(SampleName.Contains("MHc150_MA35")) return 0.612;
+  else if(SampleName.Contains("MHc160_MA35")) return 0.485;
+
+
+  return 1.;
+
+}
+
+
+float AnalyzerCore::GetHiggsMass(TString SampleName, TString Option){
+
+  bool AMass=Option.Contains("A");
+  bool HcMass=Option.Contains("H+");
+  if(AMass && HcMass) return -1.;
+  if(isData) return -1.;
+
+  float HiggsMass=0.;
+  if(AMass){
+    if     (SampleName.Contains("MA15")) HiggsMass= 15.;
+    else if(SampleName.Contains("MA25")) HiggsMass= 25.;
+    else if(SampleName.Contains("MA35")) HiggsMass= 35.;
+    else if(SampleName.Contains("MA45")) HiggsMass= 45.;
+    else if(SampleName.Contains("MA55")) HiggsMass= 55.;
+    else if(SampleName.Contains("MA65")) HiggsMass= 65.;
+    else if(SampleName.Contains("MA75")) HiggsMass= 75.;
+  }
+  else if(HcMass){
+    if     (SampleName.Contains("MHc100")) HiggsMass= 100.;
+    else if(SampleName.Contains("MHc110")) HiggsMass= 110.;
+    else if(SampleName.Contains("MHc120")) HiggsMass= 120.;
+    else if(SampleName.Contains("MHc130")) HiggsMass= 130.;
+    else if(SampleName.Contains("MHc140")) HiggsMass= 140.;
+    else if(SampleName.Contains("MHc150")) HiggsMass= 150.;
+    else if(SampleName.Contains("MHc160")) HiggsMass= 160.;
+  }
+
+  return HiggsMass;
+}
+
+
+float AnalyzerCore::SignalNorm(TString SampleName, float Xsec){
+
+  //Normalise xsec(tt)*[2*Br(t>bH+)*Br(H+>AW)*Br(A>mumu)*Br(t->bW)] to required value.
+
+  if( isData ) return 1.;
+  if( !(SampleName.Contains("TTToHcToWA") || SampleName.Contains("TTToHcToWZp")) ) return 1.;
+
+  float weight=Xsec/20.;
+  //20 is current default xsec value for all signal samples
+  //At Xsec, we have N*2*[Xsec/(20*2/14%)] =N*Xsec/20*14%
+
+  //Branching fraction weights to each channels
+  if     (SampleName.Contains("1e2mu"))  weight*=0.1464;
+  else if(SampleName.Contains("3mu"))    weight*=0.1464;
+  else if(SampleName.Contains("1ta2mu")) weight*=0.1464;
+  else if(SampleName.Contains("2l2mu"))  weight*=0.1061;
+
+  return weight;
+
+}
+
+
+
+bool AnalyzerCore::PassIDCriteria(snu::KElectron Ele, TString ID, TString Option){
+
+  bool PassID=true;
+  if(ID=="POGCBTIP"){
+    if(Ele.SNUID()<1000) PassID=false;
+    if( !((fabs(Ele.Eta())<1.447 && Ele.PFRelIso(0.3)< 0.0588) || (fabs(Ele.Eta())>=1.447 && Ele.PFRelIso(0.3)<0.0571)) ) PassID=false;
+    if( !(fabs(Ele.dxy())<0.05)  ) PassID=false;
+    if( !(fabs(Ele.dz())<0.1)    ) PassID=false;
+    if( !(fabs(Ele.dxySig())<3.) ) PassID=false;
+  }
+  else if(ID=="POGMVAMIP"){
+    if( !(Ele.PassNotrigMVAMedium()) ) PassID=false;
+    if( !(Ele.IsTrigMVAValid())      ) PassID=false;
+    if( !(Ele.PassesConvVeto())      ) PassID=false;
+    if( !(Ele.PFRelIso(0.3)<0.1)     ) PassID=false;
+    if( !(fabs(Ele.dxy())<0.025)     ) PassID=false;
+    if( !(fabs(Ele.dz())<0.05)       ) PassID=false;
+    if( !(fabs(Ele.dxySig())<4.)     ) PassID=false;
+  }
+  else if(ID=="POGMVATIP"){
+    if( !(Ele.PassNotrigMVATight())  ) PassID=false;
+    if( !(Ele.IsTrigMVAValid())      ) PassID=false;
+    if( !(Ele.PassesConvVeto())      ) PassID=false;
+    if( !(Ele.PFRelIso(0.3)<0.1)     ) PassID=false;
+    if( !(fabs(Ele.dxy())<0.025)     ) PassID=false;
+    if( !(fabs(Ele.dz())<0.05)       ) PassID=false;
+    if( !(fabs(Ele.dxySig())<4.)     ) PassID=false;
+  }
+  else if(ID=="POGWP90Isop1IPp025p05sig4"){
+    if( !(Ele.PassNotrigMVAMedium()) ) PassID=false;
+    if( !(Ele.IsTrigMVAValid())      ) PassID=false;
+    if( !(Ele.PassesConvVeto())      ) PassID=false;
+    if( !(Ele.PFRelIso(0.3)<0.1)     ) PassID=false;
+    if( !(fabs(Ele.dxy())<0.025)     ) PassID=false;
+    if( !(fabs(Ele.dz())<0.05)       ) PassID=false;
+    if( !(fabs(Ele.dxySig())<4.)     ) PassID=false;
+  }
+  else if(ID=="POGWP90Isop08IPp025p05sig4"){
+    if( !(Ele.PassNotrigMVAMedium()) ) PassID=false;
+    if( !(Ele.IsTrigMVAValid())      ) PassID=false;
+    if( !(Ele.PassesConvVeto())      ) PassID=false;
+    if( !(Ele.PFRelIso(0.3)<0.08)    ) PassID=false;
+    if( !(fabs(Ele.dxy())<0.025)     ) PassID=false;
+    if( !(fabs(Ele.dz())<0.05)       ) PassID=false;
+    if( !(fabs(Ele.dxySig())<4.)     ) PassID=false;
+  }
+  else if(ID=="POGWP90Isop06IPp025p05sig4"){
+    if( !(Ele.PassNotrigMVAMedium()) ) PassID=false;
+    if( !(Ele.IsTrigMVAValid())      ) PassID=false;
+    if( !(Ele.PassesConvVeto())      ) PassID=false;
+    if( !(Ele.PFRelIso(0.3)<0.06)    ) PassID=false;
+    if( !(fabs(Ele.dxy())<0.025)     ) PassID=false;
+    if( !(fabs(Ele.dz())<0.05)       ) PassID=false;
+    if( !(fabs(Ele.dxySig())<4.)     ) PassID=false;
+  }
+  else if(ID=="LMVA06Isop4IPp025p05sig4"){
+    if( !(Ele.IsTrigMVAValid())      ) PassID=false;
+    if( !(Ele.PassesConvVeto())      ) PassID=false;
+    if( !(Ele.PFRelIso(0.3)<0.4)     ) PassID=false;
+    if( !(fabs(Ele.dxy())<0.025)     ) PassID=false;
+    if( !(fabs(Ele.dz())<0.05)       ) PassID=false;
+    if( !(fabs(Ele.dxySig())<4.)     ) PassID=false;
+
+    if     ( fabs(Ele.Eta())<0.8   ){ if(Ele.MVA()<-0.92) PassID=false; }
+    else if( fabs(Ele.Eta())<1.479 ){ if(Ele.MVA()<-0.85) PassID=false; }
+    else                            { if(Ele.MVA()<-0.76) PassID=false; }
+  }
+  else if(ID=="LNoMVANoIsoIPp05p1sig4"){
+    if( !(Ele.IsTrigMVAValid())      ) PassID=false;
+    if( !(Ele.PassesConvVeto())      ) PassID=false;
+    if( !(fabs(Ele.dxy())<0.05)     ) PassID=false;
+    if( !(fabs(Ele.dz())<0.1)       ) PassID=false;
+    if( !(fabs(Ele.dxySig())<4.)     ) PassID=false;
+  }
+  else if(ID=="POGMVAMIso"){
+    if( !(Ele.PassNotrigMVAMedium()) ) PassID=false;
+    if( !(Ele.IsTrigMVAValid())      ) PassID=false;
+    if( !(Ele.PassesConvVeto())      ) PassID=false;
+    if( !(Ele.PFRelIso(0.3)<0.1)     ) PassID=false;
+  }
+  else if(ID=="POGMVAM"){
+    if( !(Ele.PassNotrigMVAMedium()) ) PassID=false;
+    if( !(Ele.IsTrigMVAValid())      ) PassID=false;
+    if( !(Ele.PassesConvVeto())      ) PassID=false;
+  }
+  else if(ID=="POGWP90Isop06IPp025p1sig4"){
+    if( !(Ele.PassNotrigMVAMedium()) ) PassID=false;
+    if( !(Ele.IsTrigMVAValid())      ) PassID=false;
+    if( !(Ele.PassesConvVeto())      ) PassID=false;
+    if( !(Ele.PFRelIso(0.3)<0.06)    ) PassID=false;
+    if( !(fabs(Ele.dxy())<0.025)     ) PassID=false;
+    if( !(fabs(Ele.dz())<0.1)        ) PassID=false;
+    if( !(fabs(Ele.dxySig())<4.)     ) PassID=false;
+  }
+  else if(ID=="HctoWAFakeLoose"){
+    if( !(Ele.IsTrigMVAValid())      ) PassID=false;
+    if( !(Ele.PassesConvVeto())      ) PassID=false;
+    if( !(Ele.PFRelIso(0.3)<0.4)     ) PassID=false;
+    if( !(fabs(Ele.dxy())<0.025)     ) PassID=false;
+    if( !(fabs(Ele.dz())<0.1   )     ) PassID=false;
+    if( !(fabs(Ele.dxySig())<4.)     ) PassID=false;
+
+    if     ( fabs(Ele.Eta())<0.8   ){ if(Ele.MVA()<-0.92) PassID=false; }
+    else if( fabs(Ele.Eta())<1.479 ){ if(Ele.MVA()<-0.88) PassID=false; }
+    else                            { if(Ele.MVA()<-0.78) PassID=false; }
+  }
+  else{ cout<<"Error: No Matched ID!"<<endl; return false;}
+
+  return PassID;
+
+}
+
+bool AnalyzerCore::PassIDCriteria(snu::KMuon Mu, TString ID, TString Option){
+
+  bool PassID=true;
+  bool Debug=Option.Contains("Debug"); Debug=true; int IdxCase=0;
+  bool RochCorr=Option.Contains("Roch");
+  float fEta=fabs(Mu.Eta());
+  if(ID=="HNTrilepFakeL2"){
+    if( !(Mu.IsTight())      ) PassID=false;
+    if     ( !RochCorr && !(Mu.RelIso04()<0.4) ) PassID=false;
+    else if(  RochCorr && Mu.RochPt()>0 && !(Mu.RelIso04()*Mu.MiniAODPt()/Mu.RochPt()<0.4) ) PassID=false;
+    if( !(fabs(Mu.dXY())<0.01) ) PassID=false;
+    if( !(fabs(Mu.dZ()) <0.1 ) ) PassID=false;
+    if( !(fabs(Mu.dXYSig())<3.)) PassID=false;
+  }
+  else if(ID=="POGLNoIso"){
+    if( !(Mu.IsLoose()) ) PassID=false;
+  }
+  else if(ID=="POGTIsop4IPp2p1"){
+    if     ( !RochCorr && !(Mu.RelIso04()<0.4)     ) PassID=false;
+    else if(  RochCorr && !(RochIso(Mu,"0.4")<0.4) ) PassID=false;
+    if     ( !(Mu.IsTight())                       ) PassID=false;
+    if     ( !(fabs(Mu.dXY())<0.2)      ) PassID=false;
+    if     ( !(fabs(Mu.dZ())<0.1)       ) PassID=false;
+  }
+  else if(ID=="POGTIsop6IPp2p1NoChi"){
+    if     ( !RochCorr && !(Mu.RelIso04()<0.6)     ) PassID=false;
+    else if(  RochCorr && !(RochIso(Mu,"0.4")<0.6) ) PassID=false;
+    if     ( !(Mu.IsPF() && Mu.IsGlobal())         ) PassID=false;
+    if     ( !( Mu.validHits()    >0
+             && Mu.validPixHits() >0
+             && Mu.validStations()>1
+             && Mu.ActiveLayer()  >5 )  ) PassID=false;
+    if     ( !(fabs(Mu.dXY())<0.2)      ) PassID=false;
+    if     ( !(fabs(Mu.dZ())<0.1)       ) PassID=false;
+  }
+  else if(ID=="POGTIsop4IPp2p1sig4NoChi"){
+    if     ( !RochCorr && !(Mu.RelIso04()<0.4)     ) PassID=false;
+    else if(  RochCorr && !(RochIso(Mu,"0.4")<0.4) ) PassID=false;
+    if     ( !(Mu.IsPF() && Mu.IsGlobal())         ) PassID=false;
+    if     ( !( Mu.validHits()    >0
+             && Mu.validPixHits() >0
+             && Mu.validStations()>1
+             && Mu.ActiveLayer()  >5 )  ) PassID=false;
+    if     ( !(fabs(Mu.dXY())<0.2)      ) PassID=false;
+    if     ( !(fabs(Mu.dZ())<0.1)       ) PassID=false;
+    if     ( !(fabs(Mu.dXYSig())<4.)    ) PassID=false;
+  }
+  else if(ID=="POGTIsop6IPp2p1sig4"){
+    if     ( !RochCorr && !(Mu.RelIso04()<0.6)     ) PassID=false;
+    else if(  RochCorr && !(RochIso(Mu,"0.4")<0.6) ) PassID=false;
+    if     ( !(Mu.IsTight())                       ) PassID=false;
+    if     ( !(fabs(Mu.dXY())<0.2)      ) PassID=false;
+    if     ( !(fabs(Mu.dZ())<0.1)       ) PassID=false;
+    if     ( !(fabs(Mu.dXYSig())<4.)    ) PassID=false;
+  }
+  else if(ID=="POGTIsop6IPp2p1"){
+    if     ( !RochCorr && !(Mu.RelIso04()<0.6)     ) PassID=false;
+    else if(  RochCorr && !(RochIso(Mu,"0.4")<0.6) ) PassID=false;
+    if     ( !(Mu.IsTight())                       ) PassID=false;
+    if     ( !(fabs(Mu.dXY())<0.2)      ) PassID=false;
+    if     ( !(fabs(Mu.dZ())<0.1)       ) PassID=false;
+  }
+  else if(ID=="POGTIsop4IPp01p05sig4Chi4"){
+    if     ( !RochCorr && !(Mu.RelIso04()<0.4)     ) PassID=false;
+    else if(  RochCorr && !(RochIso(Mu,"0.4")<0.4) ) PassID=false;
+    if     ( !(Mu.IsTight())                       ) PassID=false;
+    if     ( !(fabs(Mu.dXY())<0.01)     ) PassID=false;
+    if     ( !(fabs(Mu.dZ() )<0.05)     ) PassID=false;
+    if     ( !(fabs(Mu.dXYSig())<4.)    ) PassID=false;
+    if     ( !(fabs(Mu.GlobalChi2())<4.)) PassID=false;
+  }
+  else if(ID=="POGTIsop6IPp01p05sig4Chi4"){
+    if     ( !RochCorr && !(Mu.RelIso04()<0.6)     ) PassID=false;
+    else if(  RochCorr && !(RochIso(Mu,"0.4")<0.6) ) PassID=false;
+    if     ( !(Mu.IsTight())                       ) PassID=false;
+    if     ( !(fabs(Mu.dXY())<0.01)     ) PassID=false;
+    if     ( !(fabs(Mu.dZ() )<0.05)     ) PassID=false;
+    if     ( !(fabs(Mu.dXYSig())<4.)    ) PassID=false;
+    if     ( !(fabs(Mu.GlobalChi2())<4.)) PassID=false;
+  }
+  else if(ID=="POGLIsop4IPp5p1Chi100"){
+    if     ( !RochCorr && !(Mu.RelIso04()<0.4)     ) PassID=false;
+    else if(  RochCorr && !(RochIso(Mu,"0.4")<0.4) ) PassID=false;
+    if     ( !(Mu.IsLoose())            ) PassID=false;
+    if     ( !(fabs(Mu.dXY())<0.5)      ) PassID=false;
+    if     ( !(fabs(Mu.dZ())<0.1)       ) PassID=false;
+    if     ( !(fabs(Mu.GlobalChi2())<100.)) PassID=false;
+  }
+  else if(ID=="POGTIsop20IPp01p05sig4Chi4"){
+    if     ( !RochCorr && !(Mu.RelIso04()    <0.20) ) PassID=false;
+    else if(  RochCorr && !(RochIso(Mu,"0.4")<0.20) ) PassID=false;
+    if     ( !(Mu.IsTight())            ) PassID=false;
+    if     ( !(fabs(Mu.dXY())<0.01)     ) PassID=false;
+    if     ( !(fabs(Mu.dZ() )<0.05)    ) PassID=false;
+    if     ( !(fabs(Mu.dXYSig())<4.)    ) PassID=false;
+    if     ( !(fabs(Mu.GlobalChi2())<4.)) PassID=false;
+  }
+  else{ cout<<"Error: No Matched ID!"<<endl; return false;}
+
+  return PassID;
+}
+
+
+
+bool AnalyzerCore::HasStrangeEleCand(std::vector<snu::KElectron> EleColl){
+//Recommended to check whether weird electrons affect each of analysis or not.
+//Ref : https://hypernews.cern.ch/HyperNews/CMS/get/physics-announcements/4803.html
+
+  bool HasIt=false;
+  for(int i=0; i<EleColl.size(); i++){
+    if(CouldBeStrangeEleCand(EleColl.at(i))){ HasIt=true; break; }
+  }
+
+  return HasIt;
+}
+
+bool AnalyzerCore::CouldBeStrangeEleCand(snu::KElectron Ele){
+//Recommended to check whether weird electrons affect each of analysis or not.
+//Ref : https://hypernews.cern.ch/HyperNews/CMS/get/physics-announcements/4803.html
+
+  return fabs(Ele.Eta()-Ele.SCEta())>0.2;
+
+}
+
+float AnalyzerCore::RochIso(snu::KMuon Mu, TString ConeSize){
+
+  if     ( !Mu.IsRochesterCorrected() ) return 0.;
+  else if(  Mu.RochPt()==0.           ) return 0.;
+
+  float PFRelIsodbeta = ConeSize=="0.4"? Mu.RelIso04():Mu.RelIso03();
+  return PFRelIsodbeta*Mu.MiniAODPt()/Mu.RochPt();
+
+}
+
+
+int AnalyzerCore::GetSigGenPtlIdx(vector<snu::KTruth>& TruthColl, TString PtlName){
+
+  int IdxPtl=-1;
+
+  if(PtlName=="mup_A"){
+    for(int i=2; i<TruthColl.size(); i++){
+      if(TruthColl.at(i).GenStatus()!=1) continue;
+      if(TruthColl.at(i).PdgId()!=-13) continue;
+      if(TruthColl.at(FirstNonSelfMotherIdx(i, TruthColl)).PdgId()!=36) continue;
+      IdxPtl=i; break;
+    }
+  }
+  else if(PtlName=="mum_A"){
+    for(int i=2; i<TruthColl.size(); i++){
+      if(TruthColl.at(i).GenStatus()!=1) continue;
+      if(TruthColl.at(i).PdgId()!=13) continue;
+      if(TruthColl.at(FirstNonSelfMotherIdx(i, TruthColl)).PdgId()!=36) continue;
+      IdxPtl=i; break;
+    }
+  }
+  else if(PtlName=="mu_W_hc" || PtlName=="l_W_hc"){
+    for(int i=2; i<TruthColl.size(); i++){
+      if(TruthColl.at(i).GenStatus()!=1) continue;
+      if(TruthColl.at(i).PdgId()!=-13) continue;
+      if(TruthColl.at(FirstNonSelfMotherIdx(i, TruthColl)).PdgId()!=24) continue;
+      IdxPtl=i; break;
+    }
+  }
+  else if(PtlName=="mu_W_tx" || PtlName=="l_W_tx"){
+    for(int i=2; i<TruthColl.size(); i++){
+      if(TruthColl.at(i).GenStatus()!=1) continue;
+      if(TruthColl.at(i).PdgId()!=13) continue;
+      if(TruthColl.at(FirstNonSelfMotherIdx(i, TruthColl)).PdgId()!=-24) continue;
+      IdxPtl=i; break;
+    }
+  }
+  else if(PtlName=="e_W_hc" || PtlName=="l_W_hc"){
+    for(int i=2; i<TruthColl.size(); i++){
+      if(TruthColl.at(i).GenStatus()!=1) continue;
+      if(TruthColl.at(i).PdgId()!=-11) continue;
+      if(TruthColl.at(FirstNonSelfMotherIdx(i, TruthColl)).PdgId()!=24) continue;
+      IdxPtl=i; break;
+    }
+  }
+  else if(PtlName=="e_W_tx" || PtlName=="l_W_tx"){
+    for(int i=2; i<TruthColl.size(); i++){
+      if(TruthColl.at(i).GenStatus()!=1) continue;
+      if(TruthColl.at(i).PdgId()!=11) continue;
+      if(TruthColl.at(FirstNonSelfMotherIdx(i, TruthColl)).PdgId()!=-24) continue;
+      IdxPtl=i; break;
+    }
+  }
+  else if(PtlName=="mu_ta_W_hc" || PtlName=="l_ta_W_hc"){
+    for(int i=2; i<TruthColl.size(); i++){
+      if(TruthColl.at(i).GenStatus()!=1) continue;
+      if(TruthColl.at(i).PdgId()!=-13) continue;
+      int MotherIdx=FirstNonSelfMotherIdx(i, TruthColl);
+      if(TruthColl.at(MotherIdx).PdgId()!=-15) continue;
+      if(TruthColl.at(FirstNonSelfMotherIdx(MotherIdx, TruthColl)).PdgId()!=24) continue;
+      IdxPtl=i; break;
+    }
+  }
+  else if(PtlName=="mu_ta_W_tx" || PtlName=="l_ta_W_tx"){
+    for(int i=2; i<TruthColl.size(); i++){
+      if(TruthColl.at(i).GenStatus()!=1) continue;
+      if(TruthColl.at(i).PdgId()!=13) continue;
+      int MotherIdx=FirstNonSelfMotherIdx(i, TruthColl);
+      if(TruthColl.at(MotherIdx).PdgId()!=15) continue;
+      if(TruthColl.at(FirstNonSelfMotherIdx(MotherIdx, TruthColl)).PdgId()!=-24) continue;
+      IdxPtl=i; break;
+    }
+  }
+  else if(PtlName=="e_ta_W_hc" || PtlName=="l_ta_W_hc"){
+    for(int i=2; i<TruthColl.size(); i++){
+      if(TruthColl.at(i).GenStatus()!=1) continue;
+      if(TruthColl.at(i).PdgId()!=-11) continue;
+      int MotherIdx=FirstNonSelfMotherIdx(i, TruthColl);
+      if(TruthColl.at(MotherIdx).PdgId()!=-15) continue;
+      if(TruthColl.at(FirstNonSelfMotherIdx(MotherIdx, TruthColl)).PdgId()!=24) continue;
+      IdxPtl=i; break;
+    }
+  }
+  else if(PtlName=="e_ta_W_tx" || PtlName=="l_ta_W_tx"){
+    for(int i=2; i<TruthColl.size(); i++){
+      if(TruthColl.at(i).GenStatus()!=1) continue;
+      if(TruthColl.at(i).PdgId()!=11) continue;
+      int MotherIdx=FirstNonSelfMotherIdx(i, TruthColl);
+      if(TruthColl.at(MotherIdx).PdgId()!=15) continue;
+      if(TruthColl.at(FirstNonSelfMotherIdx(MotherIdx, TruthColl)).PdgId()!=-24) continue;
+      IdxPtl=i; break;
+    }
+  }
+
+  return IdxPtl;
+
+}
+
+
+void AnalyzerCore::SetMuonResCorrection(vector<snu::KMuon>& MuColl, TString Option){
+
+  bool SystVar=false;
+  float SystDir=0.;
+  if(Option.Contains("Syst")){
+    if     (Option.Contains("Up"))  {SystVar=true; SystDir= 1.;}
+    else if(Option.Contains("Down")){SystVar=true; SystDir=-1.;}
+  }
+
+  for(int i=0; i<(int) MuColl.size(); i++){
+    double dRelPt = mcdata_correction->GetRochesterMomentumWidth(MuColl.at(i));
+    MuColl.at(i) *= (1.+SystDir*dRelPt);
+  }
+
+  return;
+}
+
+
+float AnalyzerCore::GetXsecUncertainty(TString SampleName, TString Option){
+
+  int ReturnType=1; //1:Total 2:Q2 3:PDF 4:as
+  if     (Option.Contains("Q2") ) ReturnType=2;
+  else if(Option.Contains("PDF")) ReturnType=3;
+  else if(Option.Contains("as") ) ReturnType=4;
+
+  float Uncertainty=0.;
+  if     (SampleName.Contains("WZTo3LNu_powheg")){
+    if(ReturnType==1) Uncertainty=0.041;//NNLO
+  }
+  else if(SampleName.Contains("ZZTo4L_powheg")){
+    if(ReturnType==1) Uncertainty=0.08;//NNLO
+  }
+  else if(SampleName.Contains("ttW")){
+    if(ReturnType==1) Uncertainty=0.133;
+  }
+  else if(SampleName.Contains("ttZ")){
+    if(ReturnType==1) Uncertainty=0.12;
+  }
+  else if(SampleName.Contains("ttH_nonbb")){
+    if(ReturnType==1) Uncertainty=0.128;
+  }
+  else if(SampleName.Contains("tZq")){
+    if(ReturnType==1) Uncertainty=0.5;
+  }
+
+  return Uncertainty;
+}

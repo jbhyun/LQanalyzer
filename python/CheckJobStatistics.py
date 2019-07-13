@@ -6,9 +6,6 @@ if "tamsa2.snu.ac.kr" in str(os.getenv("HOSTNAME")):
 
 
 
-if  "ui" in str(os.getenv("HOSTNAME")):
-    path_jobpre="/cms/scratch/SNU/CATAnalyzer/"
-
 
 from optparse import OptionParser
 parser = OptionParser()

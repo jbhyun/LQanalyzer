@@ -11,12 +11,8 @@ from functions_config import *
 path_jobpre="/data1/"  ###  pre-path for input files for job runnig
 an_jobpre="/data2/DATA/"   ####  pre-path for job output
 
-isKisti = ("ui" in str(os.getenv("HOSTNAME")))
+isKisti = ("tamsa1" in str(os.getenv("HOSTNAME")))
     
-if isKisti:
-    path_jobpre="/cms/scratch/SNU/CATAnalyzer/"
-    an_jobpre="/cms/scratch/SNU/CATAnalyzer/"
-
 #Import parser to get options                                                                                                                                                 
 #parser = SetUpParser()
  
@@ -197,8 +193,7 @@ for nsample in range(0, len(sample)):
 
     isMC = ISMC(s)
     if not isMC:
-        if not isKisti:
-            an_jobpre="/data7/DATA/"
+        an_jobpre="/data7/DATA/"
             ####
             #### change dir of workspace to same as where data is  stored
 
@@ -494,7 +489,9 @@ for nsample in range(0, len(sample)):
             if bs == sample[ijobcheck]:
                 correctedtmpnjobs_for_submittion -= expected_jobs_to_submit[ijobcheck]*GetRunning(tagger,sample[ijobcheck])
         
-    njobs_for_submittion=int(DetermineNjobs(job_summary,njobfiles,longestjob,number_of_cores, tagger, s, cycle,useskim, printedqueue, nfreeqall, submit_allfiles, rundebug,correctedtmpnjobs_for_submittion, nmediumjobs))
+#    njobs_for_submittion=int(DetermineNjobs(job_summary,njobfiles,longestjob,number_of_cores, tagger, s, cycle,useskim, printedqueue, nfreeqall, submit_allfiles, rundebug,correctedtmpnjobs_for_submittion, nmediumjobs))
+    njobs_for_submittion=int(DetermineNjobs_custom(s, useskim))
+#    njobs_for_submittion=20
 
     
     if rundebug:
@@ -1788,8 +1785,6 @@ if runningData and  not "SKTreeMaker" in cycle:
 
         
     hist_pre =  "/data2/DATA/CAT_SKTreeOutput/"
-    if isKisti:
-        hist_pre ="/cms/scratch/SNU/CATAnalyzer/"
 
     cffile_read_counter = open(hist_pre+os.getenv("USER")+"/Histdir" + tagger + "/CutFlow.txt","r")
     cfnhists=0
@@ -1832,8 +1827,6 @@ elif  not "SKTreeMaker" in cycle:
         sample_err=[]
         for hs in sample:
             hist_pre =  "/data2/DATA/CAT_SKTreeOutput/"
-            if isKisti:
-                hist_pre ="/cms/scratch/SNU/CATAnalyzer/"
             file_read_counter = open(hist_pre+os.getenv("USER")+"/Histdir" + tagger + "/"+hs+"Hist.txt","r")
             for rc_line in file_read_counter:
                 cut_line=False
@@ -1958,10 +1951,7 @@ remdir=False
 if remdir:
     njobs_in_total=0.
     path_clust_check2=an_jobpre+"/CAT_SKTreeOutput/" + os.getenv("USER")  + "/CLUSTERLOG" + str(tagger)+ "/clusterjobs.txt"
-    if not  "ui" in str(os.getenv("HOSTNAME")):
-        os.system("qstat -u " + os.getenv("USER") + " > " +  path_clust_check)
-    else:
-        os.system("condor_q " + os.getenv("USER") + " > " +  path_clust_check)
+    os.system("condor_q " + os.getenv("USER") + " > " +  path_clust_check)
 
     file_clust_check2=open(path_clust_check2,"r")
     for sline in file_clust_check2:

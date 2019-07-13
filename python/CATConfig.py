@@ -10,10 +10,8 @@ from optparse import OptionParser
 
 path_jobpre="/data1/"
 
-isKisti = ("ui" in str(os.getenv("HOSTNAME")))
+isKisti = ("tamsa1" in str(os.getenv("HOSTNAME")))
 
-if isKisti:
-    path_jobpre="/cms/scratch/SNU/CATAnalyzer/"
 
 
 #Import parser to get options                                                                                                                                                  
@@ -182,8 +180,8 @@ if sample == "H_v2" or sample == "H_v3":
 if not mc:
     output_mounted="/data7/DATA"
 
-if  "ui" in str(os.getenv("HOSTNAME")):
-    output_mounted="/cms/scratch/SNU/CATAnalyzer/"    
+#if  "ui" in str(os.getenv("HOSTNAME")):
+#    output_mounted="/cms/scratch/SNU/CATAnalyzer/"    
 
 
 ##########################################################                                                                                                                     
@@ -342,8 +340,6 @@ sample_catversion = ""
 output_catversion=os.getenv("CATVERSION")
 
 host_tag="snu"
-if isKisti:
-    host_tag="kisti"
 
 if "HeavyNeutrino" in sample or "Majorana" in sample or "HN" in  sample or "CHT" in sample or "TTToH" in sample or "WR" in sample:
     datasetfile="datasets_"+host_tag+"_sig_CAT_mc_"
@@ -393,11 +389,11 @@ while inDS == "":
                 if len(entries)==3:
                     if new_channel ==entries[0] and sample == entries[1]:
                         inDS = entries[2]
-                if len(entries)==2:
-                    if "kisti_cat" == entries[0] and isKisti:
-                        inDS_pre= entries[1]
-                    if "tamsa_cat" == entries[0] and not isKisti:
-                        inDS_pre= entries[1]
+#                if len(entries)==2:
+#                    if "kisti_cat" == entries[0] and isKisti:
+#                        inDS_pre= entries[1]
+#                    if "tamsa_cat" == entries[0] and isKisti:
+#                        inDS_pre= entries[1]
 
         sample = "period"+sample
         eff_lumi=1.
@@ -417,11 +413,11 @@ while inDS == "":
                         eff_lumi = entries[4]
                         inDS = entries[5]
 
-                if len(entries)==2:
-                    if "kisti_cat" == entries[0] and isKisti:
-                        inDS_pre= entries[1]
-                    if "tamsa_cat" == entries[0] and not isKisti:
-                        inDS_pre= entries[1]
+#                if len(entries)==2:
+#                    if "kisti_cat" == entries[0] and isKisti:
+#                        inDS_pre= entries[1]
+#                    if "tamsa_cat" == entries[0] and isKisti:
+#                        inDS_pre= entries[1]
 
 
     iversion = iversion +1
@@ -465,8 +461,9 @@ path_log=path_jobpre+"/LQAnalyzer_rootfiles_for_analysis/CATAnalyzerStatistics/"
 
 time.sleep(5.)
 
+#Not certain
 if not  "ui" in str(os.getenv("HOSTNAME")):
-    os.system("qstat -u '*' > " + path_log)
+    os.system("condor_q  " + os.getenv("USER") + " > " + path_log)
     file_log=open(path_log,"r")
 
     njobs=0

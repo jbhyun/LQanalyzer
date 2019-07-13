@@ -4,11 +4,6 @@ path_jobpre="/data1/"
 
 an_jonpre="/data2/DATA/"
 
-isKisti = ("ui" in str(os.getenv("HOSTNAME")))
-
-if  isKisti:
-    path_jobpre="/cms/scratch/SNU/CATAnalyzer/"
-    an_jonpre="/cms/scratch/SNU/CATAnalyzer/"
 
 
 def SendEmail(cattag, email_user):

@@ -1,5 +1,5 @@
 import os 
-isKisti = ("ui" in str(os.getenv("HOSTNAME")))
+isKisti = ("tamsa1" in str(os.getenv("HOSTNAME")))
 
 def   GetMonth(imonth):
     if imonth == 1:
@@ -34,8 +34,6 @@ def   GetMonth(imonth):
 def InputFileName(ktag, is_signal):
     
     host_tag="snu"
-    if isKisti:
-        host_tag="kisti"
 
     if is_signal:
         return "datasets_"+host_tag+"_sig_CAT"+ktag+"_mc_"
@@ -189,7 +187,6 @@ def   MergeData(defrunnp,defruncf,defdata_lumi, defFinaloutputdir,  defcatversio
         #### can be used to change version 
         versiontag = "" + versiontag
  
-    isKisti = ("ui" in str(os.getenv("HOSTNAME")))
 
     if defuseskim == "FLATCAT":
         defoutput_file_skim_tag=defoutput_file_skim_tag+ versiontag
@@ -251,9 +248,6 @@ def   MergeData(defrunnp,defruncf,defdata_lumi, defFinaloutputdir,  defcatversio
                 os.system("mv "  + defFinaloutputdir+ "/"+ defcycle+"_"+defoutput_file_skim_tag+".root " + defFinaloutputdirMC+ "/"+defcycle+ "_"+defchannel+"_"+foutname+deftmp_filename+".root")
 
                 hist_pre =  "/data2/DATA/CAT_SKTreeOutput/"
-
-                if isKisti:
-                    hist_pre ="/cms/scratch/SNU/CATAnalyzer/"
 
                 if not os.path.exists( hist_pre+os.getenv("USER")+"/Histdir" + deftagger ):
                     os.system("mkdir " +  hist_pre+os.getenv("USER")+"/Histdir" + deftagger)
@@ -329,9 +323,6 @@ def   MergeData(defrunnp,defruncf,defdata_lumi, defFinaloutputdir,  defcatversio
                 os.system("mv "  + defFinaloutputdir+ "/"+defcycle+"_data" + versiontag+".root  " + defFinaloutputdirMC+ "/"+defcycle+"_data_" + defchannel+ versiontag+deftmp_filename+".root")
 
                 hist_pre =  "/data2/DATA/CAT_SKTreeOutput/"
-                if isKisti:
-                    hist_pre ="/cms/scratch/SNU/CATAnalyzer/"
-
 
                 print "MergeData: "+ hist_pre
                 if not os.path.exists( hist_pre+os.getenv("USER")+"/Histdir" + deftagger ):
@@ -387,7 +378,7 @@ def NewForat(ct):
 def GetNFiles( deftagger,defsample,defcycle,defskim):
 
 
-    isKisti = ("ui" in str(os.getenv("HOSTNAME")))
+    isKisti = ("tamsa1" in str(os.getenv("HOSTNAME")))
 
     if isKisti:
         return 1
@@ -454,7 +445,7 @@ def GetNFiles( deftagger,defsample,defcycle,defskim):
 def GetAverageTime( gettinglongest, deftagger,defsample,defcycle,defskim, rundebug):
 
 
-    isKisti = ("ui" in str(os.getenv("HOSTNAME")))
+    isKisti = ("tamsa1" in str(os.getenv("HOSTNAME")))
 
     if isKisti:
         return 1.
@@ -563,7 +554,7 @@ def GetAverageTime( gettinglongest, deftagger,defsample,defcycle,defskim, rundeb
 def FreeSpaceInQueue(jobqueue, deftagger):
 
     
-    isKisti = ("ui" in str(os.getenv("HOSTNAME")))
+    isKisti = ("tamsa1" in str(os.getenv("HOSTNAME")))
 
     if isKisti:
         return 100.
@@ -624,7 +615,7 @@ def FreeSpaceInQueue(jobqueue, deftagger):
 def ChangeQueue(job_summary, jobqueue, ncores_job, deftagger, rundebug):
 
 
-    isKisti = ("ui" in str(os.getenv("HOSTNAME")))
+    isKisti = ("tamsa1" in str(os.getenv("HOSTNAME")))
 
     if isKisti:
         return jobqueue
@@ -775,9 +766,29 @@ def ChangeQueue(job_summary, jobqueue, ncores_job, deftagger, rundebug):
     return jobqueue
 
 
+def DetermineNjobs_custom(SampleName, Skim):
+
+   AnalyzerPath = os.getenv("LQANALYZER_DIR")
+   IsSignal = ("TTToHcToWA" in SampleName)
+   if IsSignal:
+      return 2
+
+   for line in open(AnalyzerPath + "/LQRun/txt/NjobSetting_nonsig_CAT_mc_v8-0-7.txt", 'r'):
+      if line.startswith("#"):
+         continue
+
+      entries = line.split()
+      if len(entries) < 3 or SampleName != entries[0]:
+         continue
+      return entries[2]
+   
+   return 20
+ 
+
+
 def DetermineNjobs(jobsummary, nfiles_job, longestjobtime, ncores_job, deftagger,defsample,defcycle,defskim, defqueue, nfreeqall, submitall, rundebug, njobs_expectedtorun, jobsleft):
 
-    isKisti = ("ui" in str(os.getenv("HOSTNAME")))
+    isKisti = ("tamsa1" in str(os.getenv("HOSTNAME")))
 
     if isKisti:
         return 2
@@ -1073,7 +1084,7 @@ def DetermineNjobs(jobsummary, nfiles_job, longestjobtime, ncores_job, deftagger
 def CheckJobHistory(info_type, defsample, defcycle, tagger,defskim):
 
 
-    if "ui" in str(os.getenv("HOSTNAME")):
+    if "tamsa1" in str(os.getenv("HOSTNAME")):
         if info_type == "MemoryV":
             return "None"
         if info_type == "MemoryP":
@@ -1197,11 +1208,6 @@ def SendEmail(jobsummary, deftagger, e_subject, email_user, sendplots, plotlist)
 
 
     an_jobpre="/data2/DATA/"   ####  pre-path for job output                                                                                                                                                    
-    isKisti = ("ui" in str(os.getenv("HOSTNAME")))
-
-    if isKisti:
-        an_jobpre="/cms/scratch/SNU/CATAnalyzer/"
-
     if not os.path.exists(an_jobpre+"/CAT_SKTreeOutput/" + os.getenv("USER")  + "/CLUSTERLOG" + str(deftagger)):
         an_jobpre="/data7/DATA/"
 
@@ -1409,10 +1415,6 @@ def GetOutFileName(defskim, ismc , defsample, defrunnp, defruncf, defchannel ,de
 
 
     an_jobpre="/data2/DATA/"   ####  pre-path for job output                                                                                                                                                    
-    isKisti = ("ui" in str(os.getenv("HOSTNAME")))
-
-    if isKisti:
-        an_jobpre="/cms/scratch/SNU/CATAnalyzer/"
 
     if not ismc:
         an_jobpre="/data7/DATA/"
@@ -1597,10 +1599,7 @@ def GetRunning(tagger, rsample):
 
 
     an_jobpre="/data2/DATA/"   ####  pre-path for job output                                                                                                                                                    
-    isKisti = ("ui" in str(os.getenv("HOSTNAME")))
-
-    if isKisti:
-        an_jobpre="/cms/scratch/SNU/CATAnalyzer/"
+    isKisti = ("tamsa1" in str(os.getenv("HOSTNAME")))
 
 
     if not os.path.exists(an_jobpre+"/CAT_SKTreeOutput/" + os.getenv("USER")  + "/CLUSTERLOG" + str(tagger)):

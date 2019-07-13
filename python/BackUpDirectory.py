@@ -23,9 +23,6 @@ def checkLumiFile(backupdir,backup_datelist):
     lumidir=os.getenv("LQANALYZER_DATASETFILE_DIR")
 
     host_tag="snu"
-    isKisti = ("ui" in str(os.getenv("HOSTNAME")))
-    if isKisti:
-        host_tag="kisti"
 
     currentfile=lumidir+"/datasets_"+host_tag+"_CAT_mc_" + catversion+".txt"
     

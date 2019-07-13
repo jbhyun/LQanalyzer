@@ -157,7 +157,7 @@ void  MCDataCorrections::SetupDoubleEGTriggerSF(int ileg, string sleg){
 void MCDataCorrections::FillCorrectionHists(){
 
   string file = string(getenv("LQANALYZER_DIR")) + "/CATConfig/CattupleConfig/corrections_"+string(getenv("CATVERSION"))+".txt" ;
-  cout << "Correction file = " << file << endl;
+  //cout << "Correction file = " << file << endl;
   ifstream corr_file(file.c_str());
   string sline;
   while(getline(corr_file,sline) ){
@@ -213,8 +213,6 @@ void MCDataCorrections::FillCorrectionHist(string label, string dirname, string 
   }
 
   if(!TString(histtype).Contains("TH2")) return;
-
-  //  if(TString(histtype).Contains("TH2D"))
   TFile *infile_sf = TFile::Open((string(getenv(dirname.c_str()))+ "/" + filename).c_str());
   CheckFile(infile_sf);
   TDirectory* tempDir = getTemporaryDirectory();
@@ -224,34 +222,34 @@ void MCDataCorrections::FillCorrectionHist(string label, string dirname, string 
   TString tmp_histsname = histsname;
   TString tmp_filename = filename;
   if(tmp_filename.Contains("MuonTriggerEfficiency")){
-    cout << "[MuonTriggerEfficiency]" << endl;
+    //cout << "[MuonTriggerEfficiency]" << endl;
     TString tmp_label = label;
-    cout << "label = "  << label << endl;
+    //cout << "label = "  << label << endl;
     //==== Data
     TH2F* tmp_Data =  dynamic_cast<TH2F*> (( infile_sf->Get((histsname+"_Data").c_str()))->Clone());
     CorrectionMap[label+"_Data"] = tmp_Data;
-    cout << "CorrectionMap["<<label+"_Data" <<"] = "<< endl;
-    cout << histsname+"_Data" << " (from " << getenv(dirname.c_str())<< "/" << filename<<")" << endl;
+    //cout << "CorrectionMap["<<label+"_Data" <<"] = "<< endl;
+    //cout << histsname+"_Data" << " (from " << getenv(dirname.c_str())<< "/" << filename<<")" << endl;
     //==== MC
     TH2F* tmp_MC =  dynamic_cast<TH2F*> (( infile_sf->Get((histsname+"_MC").c_str()))->Clone());
     CorrectionMap[label+"_MC"] = tmp_MC;
-    cout << "CorrectionMap["<<label+"_MC" <<"] = " << endl;
-    cout << histsname+"_MC" << " (from " << getenv(dirname.c_str())<< "/" << filename<<")" << endl;
+    //cout << "CorrectionMap["<<label+"_MC" <<"] = " << endl;
+    //cout << histsname+"_MC" << " (from " << getenv(dirname.c_str())<< "/" << filename<<")" << endl;
   }
   else if(tmp_filename.Contains("ElectronTriggerEfficiency")){
-    cout << "[ElectronTriggerEfficiency]" << endl;
+    //cout << "[ElectronTriggerEfficiency]" << endl;
     TString tmp_label = label;
-    cout << "label = "  << label << endl;
+    //cout << "label = "  << label << endl;
     //==== Data
     TH2F* tmp_Data =  dynamic_cast<TH2F*> (( infile_sf->Get((histsname+"Data2D").c_str()))->Clone());
     CorrectionMap[label+"_Data"] = tmp_Data;
-    cout << "CorrectionMap["<<label+"_Data" <<"] = "<< endl;
-    cout << histsname+"_Data" << " (from " << getenv(dirname.c_str())<< "/" << filename<<")" << endl;
+    //cout << "CorrectionMap["<<label+"_Data" <<"] = "<< endl;
+    //cout << histsname+"_Data" << " (from " << getenv(dirname.c_str())<< "/" << filename<<")" << endl;
     //==== MC
     TH2F* tmp_MC =  dynamic_cast<TH2F*> (( infile_sf->Get((histsname+"MC2D").c_str()))->Clone());
     CorrectionMap[label+"_MC"] = tmp_MC;
-    cout << "CorrectionMap["<<label+"_MC" <<"] = " << endl;
-    cout << histsname+"_MC" << " (from " << getenv(dirname.c_str())<< "/" << filename<<")" << endl;
+    //cout << "CorrectionMap["<<label+"_MC" <<"] = " << endl;
+    //cout << histsname+"_MC" << " (from " << getenv(dirname.c_str())<< "/" << filename<<")" << endl;
   }
   else{
     if(TString(histtype).Contains("TH2D")) {
@@ -264,8 +262,8 @@ void MCDataCorrections::FillCorrectionHist(string label, string dirname, string 
       
       TH2F* tmp =  dynamic_cast<TH2F*> (( infile_sf->Get(histsname.c_str()))->Clone());
       CorrectionMap[label] = tmp;
-      cout << "CorrectionMap["<<label <<"] = " << endl;
-      cout << histsname << " (from " << getenv(dirname.c_str())<< "/" << filename<<")" << endl;
+      //cout << "CorrectionMap["<<label <<"] = " << endl;
+      //cout << histsname << " (from " << getenv(dirname.c_str())<< "/" << filename<<")" << endl;
     }
   }
   infile_sf->Close();
@@ -1664,6 +1662,7 @@ void MCDataCorrections::CheckFile(TFile* file){
   return;
 }
 
+
 bool MCDataCorrections::CheckCorrectionHist(TString label){
   map<TString, TH2F*>::iterator  mapit = CorrectionMap.find(label);
   map<TString, TH1D*>::iterator  mapit1D = CorrectionMap1D.find(label);
@@ -1673,9 +1672,7 @@ bool MCDataCorrections::CheckCorrectionHist(TString label){
   else if (mapit1D!= CorrectionMap1D.end()){
     return true;
   }
-  else {
-    return false;
-  }
+  else return false;
 }
 
 bool MCDataCorrections::CheckCorrectionHist2D(TString label){
@@ -1821,6 +1818,83 @@ float MCDataCorrections::GetCorrectedMuonMomentum(snu::KMuon muon, std::vector<s
   }
   
   return (scalefactor*muon.Pt());
+}
+
+float MCDataCorrections::GetRochesterMomentumWidth(snu::KMuon muon){
+
+  double u1 = gRandom->Rndm();
+  double u2 = gRandom->Rndm();
+
+  //double sf_central = muon.Pt()/muon.MiniAODPt();
+  double sf_central = rc->kScaleAndSmearMC(float(muon.Charge()), muon.MiniAODPt(), muon.Eta(), muon.Phi(), muon.ActiveLayer(), u1, u2, 0,0);
+
+  TH1D *hist_rms = new TH1D("hist_rms", "", 1000, 0.5, 1.5);
+  for(int i=0; i<100; i++){
+    //cout << "[RMS] i = " << i << endl;
+    double scalefactor = rc->kScaleAndSmearMC(float(muon.Charge()), muon.MiniAODPt(), muon.Eta(), muon.Phi(), muon.ActiveLayer(), u1, u2, 1,i);
+    hist_rms->Fill(scalefactor);
+  }
+  double RMSWidth = hist_rms->GetRMS();
+  delete hist_rms;
+  double Stat_syst = RMSWidth;
+
+  double Zpt_syst = fabs(rc->kScaleAndSmearMC(float(muon.Charge()), muon.MiniAODPt(), muon.Eta(), muon.Phi(), muon.ActiveLayer(), u1, u2, 2,0)-sf_central);
+  //double Ewk_syst = fabs(rc->kScaleAndSmearMC(float(muon.Charge()), muon.MiniAODPt(), muon.Eta(), muon.Phi(), muon.ActiveLayer(), u1, u2, 3,0)-sf_central);
+
+  double CorDm_syst=-999;
+  for(int i=0; i<5; i++){
+    //cout << "[CorDm] i = " << i << endl;
+    double scalefactor = rc->kScaleAndSmearMC(float(muon.Charge()), muon.MiniAODPt(), muon.Eta(), muon.Phi(), muon.ActiveLayer(), u1, u2, 4,i);
+    double diff = fabs(scalefactor-sf_central);
+    if(diff>CorDm_syst) CorDm_syst = diff;
+  }
+  double FitDm_syst=-999;
+  for(int i=0; i<5; i++){
+    //cout << "[FitDm] i = " << i << endl;
+    double scalefactor = rc->kScaleAndSmearMC(float(muon.Charge()), muon.MiniAODPt(), muon.Eta(), muon.Phi(), muon.ActiveLayer(), u1, u2, 5,i);
+    double diff = fabs(scalefactor-sf_central);
+    if(diff>FitDm_syst) FitDm_syst = diff;
+  }
+
+/*
+  double lumi_periodB = 5.929001722;
+  double lumi_periodC = 2.645968083;
+  double lumi_periodD = 4.35344881;
+  double lumi_periodE = 4.049732039;
+  double lumi_periodF = 3.157020934;
+  double lumi_periodG = 7.549615806;
+  double lumi_periodH = 8.545039549 + 0.216782873;
+  double lumis[7] = {
+    lumi_periodB,
+    lumi_periodC,
+    lumi_periodD,
+    lumi_periodE,
+    lumi_periodF,
+    lumi_periodG,
+    lumi_periodH
+  };
+  double total_lumi = (lumi_periodB+lumi_periodC+lumi_periodD+lumi_periodE+lumi_periodF+lumi_periodG+lumi_periodH);
+  double Run_syst = 0.;
+  for(int i=0; i<7; i++){
+    double scalefactor = rc->kScaleAndSmearMC(float(muon.Charge()), muon.MiniAODPt(), muon.Eta(), muon.Phi(), muon.ActiveLayer(), u1, u2, 7,i);
+    double diff = fabs(scalefactor-sf_central);
+    double this_syst = diff*lumis[i]/total_lumi;
+    Run_syst += this_syst*this_syst;
+  }
+  Run_syst = sqrt(Run_syst);
+*/
+
+  double tot_stat = 0.;
+  tot_stat += Stat_syst*Stat_syst;
+  tot_stat += Zpt_syst*Zpt_syst;
+  //tot_stat += Ewk_syst*Ewk_syst;
+  tot_stat += CorDm_syst*CorDm_syst;
+  tot_stat += FitDm_syst*FitDm_syst;
+  //tot_stat += Run_syst*Run_syst;
+
+  tot_stat = sqrt(tot_stat);
+  return tot_stat;
+
 }
 
 vector<TLorentzVector> MCDataCorrections::MakeTLorentz(vector<snu::KElectron> el){

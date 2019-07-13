@@ -1,0 +1,31 @@
+#!/bin/bash
+# Author : Jihwan Bhyun, Jan. 20. 2017
+# Context : kill all the processes submitted with LQanalyzer or kill some specific process jobs.
+# Usage : ./killer <LogPath>
+
+#KillAll="true"  ## true, True, false, False accepted.
+KillAll="false"
+#declare -a ToKillProcess=('ttW' 'ttH' 'tZq' 'WWZ' 'WZZ' 'ZZZ' 'WWW')
+declare -a ToKillProcess=('DYJets_10to50' 'DYJets' 'SingleTbar_tW_noHadron' 'SingleTop_tW_noHadron' 'TT_powheg' 'WZ' 'ZZ' 'WW')
+
+if [[ ! -d $1 ]]; then echo "Log path wrong, exiting"; exit 1; fi
+if [[ -e Assassin.sh ]]; then rm Assassin.sh; echo "Removed previous assassin code."; fi
+
+if [[ $KillAll == "true" || $KillAll == "True" ]];
+then
+  echo "#!/bin/bash" > Assassin.sh
+  grep -r "kill" $1 | sed "s/^.*source/source/g" >> Assassin.sh
+elif [[ $KillAll == "false" || $KillAll == "False" ]];
+then
+  echo "#!/bin/bash" > Assassin.sh
+  for Proc in "${ToKillProcess[@]}"; do
+    grep -r "kill.*${Proc}" $1 | sed "s/^.*source/source/g" >> Assassin.sh
+  done
+else
+  echo "Clarify what you want. Exiting"; exit 1;
+fi
+
+chmod 700 Assassin.sh
+./Assassin.sh
+
+#if [[ $? -eq 0 ]]; rm Assassin.sh; fi;

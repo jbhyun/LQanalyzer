@@ -11,7 +11,7 @@ from functions import *
 from batch_function import *
 from functions_submit import *
 
-isKisti = ("ui" in str(os.getenv("HOSTNAME")))
+isKisti = ("tamsa1" in str(os.getenv("HOSTNAME")))
 
 DEBUGMODE=False
 
@@ -37,9 +37,6 @@ original_channel = new_channel
 path_jobpre="/data1/"
 if "tamsa2.snu.ac.kr" in str(os.getenv("HOSTNAME")):
     path_jobpre="/data2/"
-
-if  isKisti:
-    path_jobpre="/cms/scratch/SNU/CATAnalyzer/"
 
     
     
@@ -115,11 +112,6 @@ if len(sample)>1:
 
 merge_mounted="/data8/DATA"
  
-
-if isKisti:
-    merge_mounted = "/xrootd_user/"+getpass.getuser()+"/xrootd/"                                                                      
-    workoutput_mounted="/cms/scratch/SNU/CATAnalyzer/"
-    sktreeoutput="/xrootd_user/"+getpass.getuser()+"/xrootd/"
 
                     
 ##########################################################
@@ -236,9 +228,6 @@ while inDS == "":
         output_catversion = catversion
 
     host_tag="snu"
-    if isKisti:
-        host_tag="kisti"
-        
 
     print "Using CAT " +sample_catversion + " ntuples"
     if mc:
@@ -263,9 +252,9 @@ while inDS == "":
                     if new_channel ==entries[0] and sample == entries[1]:
                         inDS = entries[2]
                 if len(entries)==2:
-                    if "kisti_cat" == entries[0] and isKisti:
-                        inDS_pre= entries[1]
-                    if "tamsa_cat" == entries[0] and not isKisti:
+#                    if "kisti_cat" == entries[0] and isKisti:
+#                        inDS_pre= entries[1]
+                    if "tamsa_cat" == entries[0] and isKisti:
                         inDS_pre= entries[1]
 
 
@@ -287,9 +276,9 @@ while inDS == "":
                         inDS = entries[5]
 
                 if len(entries)==2:
-                    if "kisti_cat" == entries[0] and isKisti:
-                        inDS_pre= entries[1]
-                    if "tamsa_cat" == entries[0] and not isKisti:
+#                    if "kisti_cat" == entries[0] and isKisti:
+#                        inDS_pre= entries[1]
+                    if "tamsa_cat" == entries[0] and isKisti:
                         inDS_pre= entries[1]
 
     iversion = iversion +1                
@@ -351,15 +340,7 @@ fr_update = open(local_sub_dir + '/inputlist_updated.txt', 'w')
 ### Update list for kisti so batch can read file path
 ### inputlist_updated.txt now has updated paths
 for line in fr:    
-    if isKisti:
-        if "/xrootd_user/" in line:
-            newline = line.replace("/xrootd_user/jalmond/xrootd","root://cms-xrdr.sdfarm.kr:1094///xrd/store/user/jalmond")
-        else:
-            newline = line.replace("/xrootd/store/user/jalmond" , "root://cms-xrdr.sdfarm.kr:1094///xrd/store/user/jalmond")
-
-        fr_update.write(newline)
-    else:
-        fr_update.write(line)
+    fr_update.write(line)
 fr.close()
 fr_update.close()
 
@@ -734,7 +715,7 @@ for i in range(0,number_of_batch_jobs):
         kisti_batchfile.write('executable = runJob'+str(tagger)+'.sh\n')
         kisti_batchfile.write('universe   = vanilla\n')
         kisti_batchfile.write('arguments  = $(Process)\n')
-        kisti_batchfile.write('requirements = ( HasSingularity == true )\n')
+#        kisti_batchfile.write('requirements = ( HasSingularity == true )\n')
         kisti_batchfile.write('log = condor.log\n')
         kisti_batchfile.write('getenv     = True\n')
         kisti_batchfile.write('should_transfer_files = YES\n')
@@ -742,10 +723,10 @@ for i in range(0,number_of_batch_jobs):
         kisti_batchfile.write('output = job_$(Process).log\n')
         kisti_batchfile.write('error = job_$(Process).err\n')
         kisti_batchfile.write('transfer_input_files = '+output+'Job_000/runFile.tar.gz\n')
-        kisti_batchfile.write('use_x509userproxy = true\n')
-        kisti_batchfile.write('accounting_group=group_cms\n')
-        kisti_batchfile.write('+SingularityImage = "/cvmfs/singularity.opensciencegrid.org/opensciencegrid/osgvo-el6:latest"\n')
-        kisti_batchfile.write('+SingularityBind = "/cvmfs, /cms, /share"\n')
+#        kisti_batchfile.write('use_x509userproxy = true\n')
+#        kisti_batchfile.write('accounting_group=group_cms\n')
+#        kisti_batchfile.write('+SingularityImage = "/cvmfs/singularity.opensciencegrid.org/opensciencegrid/osgvo-el6:latest"\n')
+#        kisti_batchfile.write('+SingularityBind = "/cvmfs, /cms, /share"\n')
         kisti_batchfile.write('transfer_output_remaps = "hists.root = output/hists_$(Process).root"\n')
         kisti_batchfile.write('queue '+str(number_of_cores)+' \n')
         kisti_batchfile.close()
@@ -1049,7 +1030,7 @@ while not JobSuccess:
                     break
                 job_finished=True
                 running_status = CheckRunningBatch(isKisti, filename, array_batchjobs, i, output) 
-                sys.stdout.write('\r running_status == '+str( running_status) + ' ' + str(filename)+ ' \n')
+#                sys.stdout.write('\r running_status == '+str( running_status) + ' ' + str(filename)+ ' \n')
                 job_id_c=array_batchjobs[i-1]
 
 
@@ -1057,7 +1038,7 @@ while not JobSuccess:
                     number_of_cores=0
                     JobSuccess=True
                     JobOutput=False
-                    sys.stdout.write('\r running_status == 2 \n')
+                    sys.stdout.write('\r running_status == 2 i.e. finished well. \n')
                                             
                 if running_status == 1:
                     job_finished = False
@@ -1110,7 +1091,7 @@ while not JobSuccess:
                         
                         os.system("source " + output+ "JobKill.sh")
 
-                        check_error_outfile = output + "/Job_000/job_0.err"
+                        check_error_outfile = output + "/Job" +  "_" +  str(i) + "/"+ outsamplename+ "_Job_"+ str(i) +".e"+array_batchjobs[i-1]
                         print "Error file for job ["+str(job_id_c)+"] shows:"
                         for line in open(check_error_outfile, 'r'):
                             print line
@@ -1189,8 +1170,20 @@ else:
 
     sys.stdout.write('\r JobCompleted L1179 localsubmit.py:')
     sys.stdout.flush()
+
     
     if "SKTreeMaker" in cycle:
+        SKTreeOutput_pre = workoutput_mounted+"/CatNtuples/" + sample_catversion
+        if not os.path.exists(SKTreeOutput_pre):
+            os.system("mkdir " + SKTreeOutput_pre)
+    
+        SKTreeOutput_pre2 = workoutput_mounted+"/CatNtuples/" + sample_catversion + "/SKTrees/"
+        if not os.path.exists(SKTreeOutput_pre2):
+            os.system("mkdir " + SKTreeOutput_pre2)
+    
+        SKTreeOutput = workoutput_mounted+"/CatNtuples/" + sample_catversion + "/SKTrees/"
+
+
         sys.stdout.write('\r JobCompleted L1183 localsubmit.py: SKTreeMaker[X]')
         sys.stdout.flush()
 
@@ -1201,6 +1194,8 @@ else:
         if not os.path.exists(Finaloutputdir):
             os.system("mkdir " + Finaloutputdir)
 
+    if not os.path.exists(Finaloutputdir):
+        os.system("mkdir " + Finaloutputdir)
 
     outfile = cycle + "_" + filechannel + outsamplename + ".root"
 
@@ -1216,8 +1211,6 @@ else:
         
         if mc:
             hist_pre =  "/data2/DATA/CAT_SKTreeOutput/"
-            if isKisti:
-                hist_pre ="/cms/scratch/SNU/CATAnalyzer/CAT_SKTreeOutput/"
             if not os.path.exists( hist_pre+os.getenv("USER")+"/Histdir" + tagger ):
                 os.system("mkdir " +  hist_pre+os.getenv("USER")+"/Histdir" + tagger)
             os.system("source "+os.getenv("LQANALYZER_DIR")+"/scripts/Counter.sh " + mergeoutputdir +  outfile + " > "+hist_pre+os.getenv("USER")+"/Histdir" + tagger + "/"+original_sample+"Hist.txt"   )

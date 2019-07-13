@@ -44,14 +44,9 @@ if not os.path.exists(tag_dir):
 
     MakeDirectory(tag_dir)
             
-    if "cms.snu.ac.kr" in str(os.getenv("HOSTNAME")):
-        MakeDirectory("/data8/DATA/CAT_SKTreeOutput/" + os.getenv("USER"))
-        MakeDirectory("/data7/DATA/CAT_SKTreeOutput/" + os.getenv("USER"))
-
-    else:
-        MakeDirectory("/cms/scratch/SNU/CATAnalyzer/" + os.getenv("USER"))
-        MakeDirectory("/cms/scratch/SNU/CATAnalyzer/CAT_SKTreeOutput/" + os.getenv("USER"))
-        MakeDirectory(os.getenv("LQANALYZER_BATCHLIB_PATH"))
+    MakeDirectory("/data8/DATA/CAT_SKTreeOutput/" + os.getenv("USER"))
+    MakeDirectory("/data7/DATA/CAT_SKTreeOutput/" + os.getenv("USER"))
+    MakeDirectory(os.getenv("LQANALYZER_BATCHLIB_PATH"))
     
 
     print "Copying all latest rootfiles for use in analysis"
@@ -104,10 +99,6 @@ if not os.path.exists(tag_dir):
     
     mount_name="/data2/DATA/"
 
-    if  "ui" in str(os.getenv("HOSTNAME")):
-        mount_name="/cms/scratch/SNU/CATAnalyzer"
-
-
 
     new_out=mount_name+"/CAT_SKTreeOutput/JobOutPut/"+os.getenv("USER")
     print "cleaning up home directory"
@@ -115,10 +106,8 @@ if not os.path.exists(tag_dir):
     if not os.path.exists(new_out):
         os.system("mkdir " + new_out)
 
-    if not "cmscluster.snu.ac.kr" in str(os.getenv("HOSTNAME")):
-        if "cms.snu.ac.kr" in str(os.getenv("HOSTNAME")):
-            MakeDirectory("/data7/DATA/CAT_SKTreeOutput/"+os.getenv("USER"))
-            MakeDirectory("/data8/DATA/CAT_SKTreeOutput/"+os.getenv("USER"))
+    MakeDirectory("/data7/DATA/CAT_SKTreeOutput/"+os.getenv("USER"))
+    MakeDirectory("/data8/DATA/CAT_SKTreeOutput/"+os.getenv("USER"))
 
     new_out=mount_name+"/CAT_SKTreeOutput/JobOutPut/"+os.getenv("USER")+"/LQanalyzer/"
     if not os.path.exists(new_out):

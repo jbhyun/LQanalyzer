@@ -83,10 +83,11 @@ class BaseSelection {
 
   /// variables to set cuts
   Double_t pt_cut_min, pt_cut_max, eta_cut_min, eta_cut, 
+           sceta_cut_min, sceta_cut,
            jpt_cut_min, jpt_cut_max, jeta_cut_min, jeta_cut,
            relIso_cut, relIsoMIN_cut, chiNdof_cut, chiNdofMIN_cut, 
            dxy_cut, dxyMIN_cut, dz_cut,
-    dxySig_min, dxySig_max, IP3D_min, IP3D_max;
+           dxySig_min, dxySig_max, IP3D_min, IP3D_max;
   Double_t relIsoBarrel_max, relIsoBarrel_min, dxyBarrel_max, dzBarrel_max,
            relIsoEndcap_max, relIsoEndcap_min, dxyEndcap_max, dzEndcap_max;
 
@@ -126,7 +127,7 @@ class BaseSelection {
   ~BaseSelection();
 
   /// bools to tell selector to apply cuts
-  Bool_t apply_ptcut,apply_etacut, apply_jptcut,apply_jetacut, apply_relisocut, apply_chi2cut, apply_dxycut, apply_dzcut, apply_general, apply_deposit;
+  Bool_t apply_ptcut,apply_etacut, apply_scetacut, apply_jptcut,apply_jetacut, apply_relisocut, apply_chi2cut, apply_dxycut, apply_dzcut, apply_general, apply_deposit;
   Bool_t apply_ID, apply_convcut, apply_chargeconst, apply_HLTSafeCut, applypileuptool;
   Bool_t apply_dxysigmin, apply_dxysigmax, apply_IP3Dmin, apply_IP3Dmax;
   Bool_t apply_BESepCut, apply_BETrRegIncl;
@@ -140,10 +141,12 @@ class BaseSelection {
   void SetPt(Double_t minPt);
   void SetJetPt(Double_t minPt);
   void SetEta(Double_t Eta);
+  void SetSCEta(Double_t SCEta);
   void SetUseJetPileUp(bool use);
   void SetPileUpJetID(bool use, TString pujetidwp="Loose");
   void SetJetEta(Double_t Eta);
   void SetEta(Double_t minEta, Double_t Eta);
+  void SetSCEta(Double_t minSCEta, Double_t SCEta);
   void SetRelIso(Double_t RelIso);
   void SetRelIso(Double_t RelIsoMIN, Double_t RelIso);
   void SetChiNdof(Double_t ChiNdof);

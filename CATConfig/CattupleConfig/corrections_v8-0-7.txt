@@ -1,0 +1,17 @@
+# --------------  --------------  --------------  --------------  --------------  --------------  --------------  -------------- #
+# LABEL    DIRLABEL   rootfilename            hist name    histtype
+# --------------  --------------  --------------  --------------  --------------  --------------  --------------  -------------- #
+### EL_RECO IDFILEDIR egammaEffi.txt_EGM2D_reco.root EGamma_SF2D  TH2F 
+### TRACKING_EFF IDFILEDIR Tracking_EfficienciesAndSF_BCDEFGH.root ratio_eff_eta3_dr030e030_corr TGraphAsymmErrors
+### ID_ELECTRON_HctoWA_TIGHT IDFILEDIR IDSF_Ele_HctoWA_BtoH.root  EGamma_SF2D TH2F
+### ID_BCDEF_MUON_HctoWA_TIGHT IDFILEDIR IDSF_Mu_HctoWA_RunBCDEF.root abseta_pt_PLOT TH2F
+### ID_GH_MUON_HctoWA_TIGHT IDFILEDIR IDSF_Mu_HctoWA_RunGH.root abseta_pt_PLOT TH2F
+### TRIGEFF_DiMu_Mu17_HctoWA_MC TRIGGERFILEDIR TrigEff_Mu17_TrkIsoVVL_Mu8ORTkMu8_TrkIsoVVL_HctoWA.root TrigEff_Mu17_BtoH_MC TH2F
+### TRIGEFF_DiMu_Mu8ORTkMu8_HctoWA_MC TRIGGERFILEDIR TrigEff_Mu17_TrkIsoVVL_Mu8ORTkMu8_TrkIsoVVL_HctoWA.root TrigEff_Mu8ORTkMu8_BtoH_MC TH2F
+### TRIGEFF_DiMu_Mu17_HctoWA_DATA TRIGGERFILEDIR TrigEff_Mu17_TrkIsoVVL_Mu8ORTkMu8_TrkIsoVVL_HctoWA.root TrigEff_Mu17_BtoH_Data TH2F
+### TRIGEFF_DiMu_Mu8ORTkMu8_HctoWA_DATA TRIGGERFILEDIR TrigEff_Mu17_TrkIsoVVL_Mu8ORTkMu8_TrkIsoVVL_HctoWA.root TrigEff_Mu8ORTkMu8_BtoH_Data TH2F
+### TRIGEFF_EMu_Ele23_HctoWA_DATA TRIGGERFILEDIR TrigEff_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_HctoWA.root hEff_Ele23_Data_BtoH TH2D
+### TRIGEFF_EMu_Ele23_HctoWA_MC TRIGGERFILEDIR TrigEff_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_HctoWA.root hEff_Ele23_MC_BtoH TH2D
+### TRIGEFF_EMu_Mu8_HctoWA_DATA TRIGGERFILEDIR TrigEff_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_HctoWA.root hEff_Mu8_Data_BtoH TH2D
+### TRIGEFF_EMu_Mu8_HctoWA_MC TRIGGERFILEDIR TrigEff_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_HctoWA.root hEff_Mu8_MC_BtoH TH2D
+#END

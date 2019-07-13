@@ -165,10 +165,15 @@ void ElectronSelection::Selection(std::vector<KElectron>& leptonColl, TString Op
       pass_selection = false;
       if(DebugPrint) cout << "Selection: Fail Pt Cut" << endl;
     }
-    if(apply_etacut && !(fabs(el->SCEta()) < eta_cut)) {
+    if(apply_etacut && !(fabs(el->Eta()) < eta_cut)) {
       pass_selection = false;
       if(DebugPrint) cout << "Selection: Fail Eta Cut" << endl;
     }
+    if(apply_scetacut && !(fabs(el->SCEta()) < eta_cut)) {
+      pass_selection = false;
+      if(DebugPrint) cout << "Selection: Fail Eta Cut" << endl;
+    }
+
 
     //Whether to include EE-EBtransition region(Default: not)
     if(!apply_BETrRegIncl){
@@ -388,10 +393,9 @@ bool ElectronSelection::PassID(snu::KElectron el, ID id){
   else if( id == ELECTRON_HN_MVA_TIGHT && (!el.PassTrigMVAHNTightv4())  ){ pass_selection = false; }
   else if( id == ELECTRON_HctoWA_FAKELOOSE ){
     if     ( fabs(el.Eta())<0.8   ){ if( el.MVA()<-0.92 ) pass_selection=false; }
-    else if( fabs(el.Eta())<1.479 ){ if( el.MVA()<-0.85 ) pass_selection=false; }
-    else if( fabs(el.Eta())<2.5   ){ if( el.MVA()<-0.76 ) pass_selection=false; }
+    else if( fabs(el.Eta())<1.479 ){ if( el.MVA()<-0.88 ) pass_selection=false; }
+    else if( fabs(el.Eta())<2.5   ){ if( el.MVA()<-0.78 ) pass_selection=false; }
   }
 
   return pass_selection;
-
 }

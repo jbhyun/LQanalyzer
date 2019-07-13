@@ -5,20 +5,13 @@ def CleanUpJobLogs(path):
 
     logspace1 = path
     if (os.path.exists(logspace1)):
-        if not "ui" in str(os.getenv("HOSTNAME")):
-            os.system("qstat -u " + getpass.getuser()+ " > " +   logspace1 + "/qsub_del")
-        else:
-            os.system("condor_q " + getpass.getuser()+ " > " +   logspace1 + "/qsub_del")
+        os.system("condor_q " + getpass.getuser()+ " > " +   logspace1 + "/qsub_del")
         qsub_all_filename = logspace1 +'/qsub_del'
         n_qsub_jobs=0
         for qsub_all_line in open(qsub_all_filename, 'r'):
-            if not "ui" in str(os.getenv("HOSTNAME")):
-                if getpass.getuser() in qsub_all_line:
-                    n_qsub_jobs=n_qsub_jobs+1
-            else:
-                if "held" in qsub_all_line:
-                    split_qsub_all_line = qsub_all_line.split()
-                    n_qsub_jobs =  split_qsub_all_line[0] 
+            if "held" in qsub_all_line:
+                split_qsub_all_line = qsub_all_line.split()
+                n_qsub_jobs =  split_qsub_all_line[0] 
 
         os.system("rm "+logspace1 + "/qsub_del")
         if n_qsub_jobs != 0:
@@ -92,22 +85,14 @@ def CleanUpLogs(path):
 
     if (os.path.exists(logspace1)):
 
-        if not "ui" in str(os.getenv("HOSTNAME")):
-            os.system("qstat -u " + getpass.getuser()+ " > " +   logspace1 + "/qsub_del")
-        else:
-            os.system("condor_q " + getpass.getuser()+ " > " +   logspace1 + "/qsub_del")
+        os.system("condor_q " + getpass.getuser()+ " > " +   logspace1 + "/qsub_del")
 
         qsub_all_filename = logspace1 +'/qsub_del'
         n_qsub_jobs=0
         for qsub_all_line in open(qsub_all_filename, 'r'):
-
-            if not "ui" in str(os.getenv("HOSTNAME")):
-                if getpass.getuser() in qsub_all_line:
-                    n_qsub_jobs=n_qsub_jobs+1
-            else:
-                if "held" in qsub_all_line:
-                    split_qsub_all_line = qsub_all_line.split()
-                    n_qsub_jobs =  split_qsub_all_line[0]
+            if "held" in qsub_all_line:
+                split_qsub_all_line = qsub_all_line.split()
+                n_qsub_jobs =  split_qsub_all_line[0]
             
         os.system("rm "+logspace1 + "/qsub_del")
         if n_qsub_jobs != 0:
@@ -148,22 +133,14 @@ def CleanUpLogs(path):
 
                         if n_previous_jobs == 0:
 
-                            if not "ui" in str(os.getenv("HOSTNAME")):
-                                os.system("qstat -u " + getpass.getuser()+ " > " +   logspace1 + "/qsub_del")
-                            else:
-                                os.system("condor_q " + getpass.getuser()+ " > " +   logspace1 + "/qsub_del")
-
+                            os.system("condor_q " + getpass.getuser()+ " > " +   logspace1 + "/qsub_del")
 
                             qsub_all_filename = logspace1 +'/qsub_del'
                             n_qsub_jobs=0
                             for qsub_all_line in open(qsub_all_filename, 'r'):
-                                if not "ui" in str(os.getenv("HOSTNAME")):
-                                    if getpass.getuser() in qsub_all_line:
-                                        n_qsub_jobs=n_qsub_jobs+1
-                                else:
-                                    if "held" in qsub_all_line:
-                                        split_qsub_all_line = qsub_all_line.split()
-                                        n_qsub_jobs =  split_qsub_all_line[0]
+                                if "held" in qsub_all_line:
+                                    split_qsub_all_line = qsub_all_line.split()
+                                    n_qsub_jobs =  split_qsub_all_line[0]
 
                             if n_qsub_jobs == 0:
                                 os.system(" rm -r " + logspace1 + "/" + entries[8])

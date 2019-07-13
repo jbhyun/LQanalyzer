@@ -136,7 +136,7 @@ source /cvmfs/cms.cern.ch/slc6_amd64_gcc630/cms/cmssw/CMSSW_9_4_4/external/slc6_
 NoAuthError=999
 Trial=0
 while [ "$NoAuthError" -ne 0 ]; do
-  if [ "$Trial" -gt 9999 ]; then
+  if [ "$Trial" -gt 1 ]; then
     break
   fi
   echo "#### running ####"
@@ -154,6 +154,7 @@ cat err.log >&2
 '''
     run_commands.close()
 
+#  if [ "$Trial" -gt 9999 ]; then
 #    config='#!/bin/sh'
 #    config+="SECTION=`printf %03d $1`\n"
 #    config+="WORKDIR=`pwd'\n"

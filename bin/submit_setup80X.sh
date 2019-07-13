@@ -718,10 +718,6 @@ function runlist
     
     prefix_sample="/data2/DATA/"
 
-    if [[ $HOSTNAME == "ui"* ]];
-        then
-        prefix_sample="/xrootd/store/user/jalmond/"
-    fi
 
     if [[ $submit_searchlist == *$search_tag* ]];
 	then
@@ -1422,13 +1418,7 @@ while [ "$1" != "" ]; do
 				;;
         -SIG | --submitall)     shift
                                 RUNSIG="true"
-				
-				if [[ $HOSTNAME == "ui"* ]];
-				then
-				    TXTPATH=${LQANALYZER_RUN_PATH}"/txt/datasets_kisti_sig_"
-				else
-				    TXTPATH=${LQANALYZER_RUN_PATH}"/txt/datasets_snu_sig_"
-				fi
+				TXTPATH=${LQANALYZER_RUN_PATH}"/txt/datasets_snu_sig_"
 				;;
 #	-sktree | --usesktrees )shift
 #                                submit_skinput="$1"
@@ -2124,11 +2114,11 @@ if [[ $MakeFullLists == "true" ]];
       
       #### LOOP OVER INPUT TXT FILE AND CHECK FOR AVAILABLE SAMPLES
 
-      prefix_sample="/data2/DATA/"
-      if [[ $HOSTNAME == "ui"* ]];
-      then
-          prefix_sample="/xrootd/store/user/jalmond/"
-      fi
+#      prefix_sample="/data2/DATA/"
+#      if [[ $HOSTNAME == "ui"* ]];
+#      then
+#          prefix_sample="/xrootd/store/user/jalmond/"
+#      fi
 
       
       while read line
