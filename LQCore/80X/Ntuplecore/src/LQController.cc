@@ -813,11 +813,9 @@ bool LQController::CheckBranch(std::string ntuple_version, std::string version_e
 LQController::_catversion  LQController::GetCatVersion(std::string filepath) throw(LQError){
   TString ts_path(filepath); 
   if(ts_path.Contains(getenv("CATVERSION"))) return v801;
-  
   else cout << "WARNING CATVERSION cannot be found in input dir name... " << endl;
   //throw LQError( "CATVERSION cannot be found in input dir name... If you are running your own sample make give the input dir a name with /v-X-X-X/ corresponding to catversion you are using!",   LQError::StopExecution );
   
-  return v801;
 }
 
 float LQController::CalculateWeight() throw(LQError) {

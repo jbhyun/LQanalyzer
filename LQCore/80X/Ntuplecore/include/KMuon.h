@@ -57,6 +57,7 @@ namespace snu {
     void SetRochE(double e);
     void Setdz(double dz);
     void Setdxy(double dxy);
+    void Setdxy_sig(double dxysig);
     void Setdxy_sig2D(double dxysig2);
     void Setdxy_sig3D(double dxysig3);
     void SetGlobalchi2(double glob_chi2);
@@ -125,16 +126,14 @@ namespace snu {
     inline Double_t dZ() const {return k_dz;}
     inline Double_t dXY() const {return k_dxy;}
     inline Double_t dXYSig() const {
-      if(k_dxy_sig == -999)return k_dxy_sig2D;
-      else return k_dxy_sig;
+      return k_dxy_sig;
     }
     inline Double_t dXYSig2D() const {
-      if(k_dxy_sig == -999)return k_dxy_sig2D;
-      else return k_dxy_sig;
+      return k_dxy_sig2D;
     }
     inline Double_t dXYSig3D() const {return k_dxy_sig3D;}
     inline Double_t  dxy() const {return  k_dxy;}
-    inline Double_t  dxySig() const {return  k_dxy_sig2D;}
+    inline Double_t  dxySig() const {return  k_dxy_sig;}
     inline Double_t  dxySig2D() const {return  k_dxy_sig2D;}
     inline Double_t  dxySig3D() const {return  k_dxy_sig3D;}
     inline Double_t  dz() const {return  k_dz;}

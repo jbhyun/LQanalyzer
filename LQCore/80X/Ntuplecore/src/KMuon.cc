@@ -372,6 +372,11 @@ void KMuon::Setdxy(double dxy){
   k_dxy = dxy;
 }
 
+void KMuon::Setdxy_sig(double dxysig){
+
+  k_dxy_sig = dxysig;
+}
+
 void KMuon::Setdxy_sig2D(double dxysig2D){
 
   k_dxy_sig2D = dxysig2D;

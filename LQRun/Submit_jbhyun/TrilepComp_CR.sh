@@ -12,8 +12,8 @@ runSignal="False"
 
 AnalysisCode="Mar2018_TrilepCR"
 #Stream="SingleElectron"
-#Stream="MuonEG"
-Stream="DoubleMuon"
+Stream="MuonEG"
+#Stream="DoubleMuon"
 #Stream="DoubleEG"
 #Skim="SKTree_LeptonSkim"  ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
 #Skim="SKTree_DiLepSkim"   ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]LepSkim/ flatcat
@@ -21,16 +21,15 @@ Skim="SKTree_TriLepSkim"   ### SKTree_NoSkim/SKTree_LeptonSkim/SKTree_Di[Tri]Lep
 DataPeriod="ALL" #"ALL"
 job_logstep=1000
 LogLevel="INFO"
-QueueOption="fastq"    #"longq"
-RunningMode="SSDilepCR,TriMu,SystRun"
+RunningMode="EMuMu,TrilepCR,SystRun"
 #"SSDilepCR,TriMu,SystRun" "SSDilepCR,EMuMu,SystRun"
 #"EMuMu,TrilepCR,SystRun" #"TriMu,TrilepCR,SystRun"
 #"EMuMu,TTZAnomaly,SystRun"
  
-MCList="UnRun"
+#MCList="UnRun"
 #MCList="TT_All" #TT should be run with single lepton skim for emu!!
 #MCList="SignalMajor_All"
-#MCList="Analysis_bkg"
+MCList="Analysis_bkg"
 #MCList="CR_CFCV_Dilep"
 #MCList="CR_SSDilep"
 
@@ -95,14 +94,14 @@ date >> CommandHist.txt
 
 
 if [[ $runData == 'false' || $runData == 'False' ]];
-  then nohup bash ${LQANALYZER_BIN_PATH}/submitSKTree.sh -b True -a ${AnalysisCode} -p ${DataPeriod} -s ${Skim} -list ${MCList} -o ${OutputDir} -d ${LogLevel} -q ${QueueOption} -userflag ${RunningMode} ${TrigSig}
-  echo "nohup bash ${LQANALYZER_BIN_PATH}/submitSKTree.sh -b True -a ${AnalysisCode} -p ${DataPeriod} -s ${Skim} -list ${MCList} -o ${OutputDir} -d ${LogLevel} -q ${QueueOption} -userflag ${RunningMode} ${TrigSig}">> CommandHist.txt
+  then nohup bash ${LQANALYZER_BIN_PATH}/submitSKTree80X.sh -b True -a ${AnalysisCode} -p ${DataPeriod} -s ${Skim} -list ${MCList} -o ${OutputDir} -d ${LogLevel} -userflag ${RunningMode} 
+  echo "nohup bash ${LQANALYZER_BIN_PATH}/submitSKTree80X.sh -b True -a ${AnalysisCode} -p ${DataPeriod} -s ${Skim} -list ${MCList} -o ${OutputDir} -d ${LogLevel} -userflag ${RunningMode}">> CommandHist.txt
 elif [[ $runMC == 'false' || $runMC == 'False' ]];
-  then nohup bash ${LQANALYZER_BIN_PATH}/submitSKTree.sh -b True -a ${AnalysisCode} -S ${Stream} -p ${DataPeriod} -s ${Skim} -o ${OutputDir} -d ${LogLevel} -q ${QueueOption} -fake ${runFake} -userflag ${RunningMode}
-  echo "nohup bash ${LQANALYZER_BIN_PATH}/submitSKTree.sh -b True -a ${AnalysisCode} -S ${Stream} -p ${DataPeriod} -s ${Skim} -o ${OutputDir} -d ${LogLevel} -q ${QueueOption} -fake ${runFake} -userflag ${RunningMode}" >> CommandHist.txt
+  then nohup bash ${LQANALYZER_BIN_PATH}/submitSKTree80X.sh -b True -a ${AnalysisCode} -S ${Stream} -p ${DataPeriod} -s ${Skim} -o ${OutputDir} -d ${LogLevel} -fake ${runFake} -userflag ${RunningMode}
+  echo "nohup bash ${LQANALYZER_BIN_PATH}/submitSKTree80X.sh -b True -a ${AnalysisCode} -S ${Stream} -p ${DataPeriod} -s ${Skim} -o ${OutputDir} -d ${LogLevel} -fake ${runFake} -userflag ${RunningMode}" >> CommandHist.txt
 else
-  nohup bash ${LQANALYZER_BIN_PATH}/submitSKTree.sh -b True -a ${AnalysisCode} -S ${Stream} -p ${DataPeriod} -s ${Skim} -list ${MCList} -o ${OutputDir} -d ${LogLevel} -q ${QueueOption} -fake ${runFake} -userflag ${RunningMode} ${TrigSig}
-  echo "nohup bash ${LQANALYZER_BIN_PATH}/submitSKTree.sh -b True -a ${AnalysisCode} -S ${Stream} -p ${DataPeriod} -s ${Skim} -list ${MCList} -o ${OutputDir} -d ${LogLevel} -q ${QueueOption} -fake ${runFake} -userflag ${RunningMode} ${TrigSig}" >> CommandHist.txt
+  nohup bash ${LQANALYZER_BIN_PATH}/submitSKTree80X.sh -b True -a ${AnalysisCode} -S ${Stream} -p ${DataPeriod} -s ${Skim} -list ${MCList} -o ${OutputDir} -d ${LogLevel} -userflag ${RunningMode}
+  echo "nohup bash ${LQANALYZER_BIN_PATH}/submitSKTree80X.sh -b True -a ${AnalysisCode} -S ${Stream} -p ${DataPeriod} -s ${Skim} -list ${MCList} -o ${OutputDir} -d ${LogLevel} -userflag ${RunningMode}" >> CommandHist.txt
 fi
 
 echo >> CommandHist.txt

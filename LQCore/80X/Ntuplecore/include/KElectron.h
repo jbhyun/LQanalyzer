@@ -67,6 +67,7 @@ namespace snu {
     //// set   vertex variables
     void SetType(int eltype);
     void Setdxy(Double_t d_xy);
+    void Setdxy_sig(Double_t d_xysig);
     void Setdxy_sig2D(Double_t d_xysig);
     void Setdxy_sig3D(Double_t d_xysig);
     void Setdz(Double_t d_z);
@@ -307,12 +308,10 @@ namespace snu {
     /// VtxDist with vertex chosen to be primary   
     inline Double_t  dxy() const {return  k_dxy;}
     inline Double_t  dxySig() const {
-      if(k_dxy_sig == -999) return k_dxy_sig2D;
-      else return k_dxy_sig;
+      return k_dxy_sig;
     }
     inline Double_t  dxySig2D() const {
-      if(k_dxy_sig == -999) return k_dxy_sig2D;
-      else return k_dxy_sig;
+      return k_dxy_sig2D;
     }
     inline Double_t  dxySig3D() const {return  k_dxy_sig3D;}
     inline Double_t  dz() const {return  k_dz;}

@@ -723,6 +723,8 @@ for i in range(0,number_of_batch_jobs):
         kisti_batchfile.write('output = job_$(Process).log\n')
         kisti_batchfile.write('error = job_$(Process).err\n')
         kisti_batchfile.write('transfer_input_files = '+output+'Job_000/runFile.tar.gz\n')
+        kisti_batchfile.write('request_disk = 100MB\n')
+        kisti_batchfile.write('request_memory = 800MB\n')
 #        kisti_batchfile.write('use_x509userproxy = true\n')
 #        kisti_batchfile.write('accounting_group=group_cms\n')
 #        kisti_batchfile.write('+SingularityImage = "/cvmfs/singularity.opensciencegrid.org/opensciencegrid/osgvo-el6:latest"\n')
@@ -1277,6 +1279,7 @@ else:
         
         if not number_of_cores == 1:    
             os.system("mv "+ output + "/*/*.o* " + os.getenv("LQANALYZER_LOG_PATH") + "/" + outsamplename)
+#HEREMODIFIED
         os.system("rm -r " + output)
         os.system("rm -r " + local_sub_dir)
         os.system("rm -r " + timestamp_dir)
@@ -1291,8 +1294,10 @@ else:
             
     else:
         print "TMP directory " + output + "is not removed. "
+#HEREMODIFIED
         os.system("rm -r " + local_sub_dir)
         
+#HEREMODIFIED
 if os.path.exists(local_sub_dir):
     os.system("rm -r " + local_sub_dir)
     os.system("rm -r " + timestamp_dir)

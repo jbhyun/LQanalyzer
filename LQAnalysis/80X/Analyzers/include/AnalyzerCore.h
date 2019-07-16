@@ -456,6 +456,7 @@ class AnalyzerCore : public LQCycleBase {
   int  LastSelfMotherIdx(int TruthIdx, std::vector<snu::KTruth>& TruthColl);
   bool HasHadronicAncestor(int TruthIdx, std::vector<snu::KTruth>& TruthColl);
   bool IsFinalPhotonSt23(std::vector<snu::KTruth> TruthColl);
+  int  GetPartonType(int TruthIdx, std::vector<snu::KTruth>& TruthColl, TString Option="");
   int  GetLeptonType(int TruthIdx, std::vector<snu::KTruth>& TruthColl, TString Option="");
   int  GetLeptonType(snu::KElectron El, std::vector<snu::KTruth>& TruthColl, TString Option="");
   int  GetLeptonType(snu::KMuon Mu, std::vector<snu::KTruth>& TruthColl, TString Option="");

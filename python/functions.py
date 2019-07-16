@@ -127,16 +127,16 @@ tar -zxvf runFile.tar.gz
 echo "#### cmsenv ####"
 export CMS_PATH=/cvmfs/cms.cern.ch
 source $CMS_PATH/cmsset_default.sh
-export SCRAM_ARCH=slc6_amd64_gcc630
-cd /cvmfs/cms.cern.ch/slc6_amd64_gcc630/cms/cmssw/CMSSW_9_4_4/src/
+export SCRAM_ARCH=slc7_amd64_gcc630
+cd /cvmfs/cms.cern.ch/slc7_amd64_gcc630/cms/cmssw/CMSSW_9_4_4/src/
 eval `scramv1 runtime -sh`
 cd -
 echo "#### setup root ####"
-source /cvmfs/cms.cern.ch/slc6_amd64_gcc630/cms/cmssw/CMSSW_9_4_4/external/slc6_amd64_gcc630/bin/thisroot.sh
+source /cvmfs/cms.cern.ch/slc7_amd64_gcc630/cms/cmssw/CMSSW_9_4_4/external/slc7_amd64_gcc630/bin/thisroot.sh
 NoAuthError=999
 Trial=0
 while [ "$NoAuthError" -ne 0 ]; do
-  if [ "$Trial" -gt 1 ]; then
+  if [ "$Trial" -gt 3 ]; then
     break
   fi
   echo "#### running ####"
@@ -166,12 +166,12 @@ cat err.log >&2
  #   config+='echo "#### cmsenv ####"\n'
  #   config+="export CMS_PATH=/cvmfs/cms.cern.ch\n"
  #   config+="source $CMS_PATH/cmsset_default.sh\n"
- #   config+="export SCRAM_ARCH=slc6_amd64_gcc630\n"
- #   config+="cd /cvmfs/cms.cern.ch/slc6_amd64_gcc630/cms/cmssw/CMSSW_9_4_4/src/\n"
+ #   config+="export SCRAM_ARCH=slc7_amd64_gcc630\n"
+ #   config+="cd /cvmfs/cms.cern.ch/slc7_amd64_gcc630/cms/cmssw/CMSSW_9_4_4/src/\n"
  #   config+="eval `scramv1 runtime -sh`\n"
  #   config+="cd -\n"
  #   config+='echo "#### setup root ####"\n'
- #   config+="'source /cvmfs/cms.cern.ch/slc6_amd64_gcc630/cms/cmssw/CMSSW_9_4_4/external/slc6_amd64_gcc630/bin/thisroot.sh'\n"
+ #   config+="'source /cvmfs/cms.cern.ch/slc7_amd64_gcc630/cms/cmssw/CMSSW_9_4_4/external/slc7_amd64_gcc630/bin/thisroot.sh'\n"
  #   config+="\n"
  #   config+="NoAuthError=999\n"
  #   config+="Trial=0\n"

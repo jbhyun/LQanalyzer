@@ -51,11 +51,11 @@ else
     
     export CMS_PATH=/cvmfs/cms.cern.ch
     source $CMS_PATH/cmsset_default.sh
-    export SCRAM_ARCH=slc6_amd64_gcc630
-    cd /cvmfs/cms.cern.ch/slc6_amd64_gcc630/cms/cmssw/CMSSW_9_4_4/src/
+    export SCRAM_ARCH=slc7_amd64_gcc630
+    cd /cvmfs/cms.cern.ch/slc7_amd64_gcc630/cms/cmssw/CMSSW_9_4_4/src/
     eval `scramv1 runtime -sh`
     cd -
-    source /cvmfs/cms.cern.ch/slc6_amd64_gcc630/cms/cmssw/CMSSW_9_4_4/external/slc6_amd64_gcc630/bin/thisroot.sh
+    source /cvmfs/cms.cern.ch/slc7_amd64_gcc630/cms/cmssw/CMSSW_9_4_4/external/slc7_amd64_gcc630/bin/thisroot.sh
 
 fi
 

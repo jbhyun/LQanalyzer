@@ -13,7 +13,7 @@ declare -a ListToProd=('TTToHcToWA_incl_MHc130_MA35_v2')
 declare -a AllSample=('WJets' 'DYJets_10to50' 'DYJets' 'SingleTop_s' 'SingleTbar_t' 'SingleTop_t' 'SingleTbar_tW' 'SingleTop_tW' 'TT_powheg' 'ZZ' 'WZ' 'WW' 'WGtoLNuG' 'WGtoLNuEE' 'WGtoLNuMM' 'ZGto2LG' 'ttH_nonbb' 'ttH_bb' 'ttW' 'ttZ') 
 #declare -a UnRun=('TTToHcToWA_incl_MHc150_MA15' 'TTToHcToWA_incl_MHc150_MA25' 'TTToHcToWA_incl_MHc150_MA35' 'TTToHcToWA_incl_MHc150_MA45' 'TTToHcToWA_incl_MHc150_MA55' 'TTToHcToWA_incl_MHc150_MA65' 'TTToHcToWA_incl_MHc160_MA15' 'TTToHcToWA_incl_MHc160_MA25' 'TTToHcToWA_incl_MHc160_MA35' 'TTToHcToWA_incl_MHc160_MA45' 'TTToHcToWA_incl_MHc160_MA55' 'TTToHcToWA_incl_MHc160_MA65' 'TTToHcToWA_incl_MHc160_MA75')
 
-declare -a UnRun=('TTToHcToWA_incl_MHc100_MA15' 'TTToHcToWA_incl_MHc110_MA15' 'TTToHcToWA_incl_MHc110_MA25' 'TTToHcToWA_incl_MHc120_MA15' 'TTToHcToWA_incl_MHc120_MA25' 'TTToHcToWA_incl_MHc120_MA35' 'TTToHcToWA_incl_MHc130_MA15' 'TTToHcToWA_incl_MHc130_MA25' 'TTToHcToWA_incl_MHc130_MA35' 'TTToHcToWA_incl_MHc130_MA45' 'TTToHcToWA_incl_MHc140_MA15' 'TTToHcToWA_incl_MHc140_MA25' 'TTToHcToWA_incl_MHc140_MA35' 'TTToHcToWA_incl_MHc140_MA45' 'TTToHcToWA_incl_MHc140_MA55')
+declare -a UnRun=("WWZ" "WZZ")
 
 
 declare -a Bkgd_ZZ4l=("ZZTo4L_powheg" "ZGto2LG" "ttZ" "ttH_nonbb")

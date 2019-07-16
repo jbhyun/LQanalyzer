@@ -1820,6 +1820,7 @@ float MCDataCorrections::GetCorrectedMuonMomentum(snu::KMuon muon, std::vector<s
   return (scalefactor*muon.Pt());
 }
 
+
 float MCDataCorrections::GetRochesterMomentumWidth(snu::KMuon muon){
 
   double u1 = gRandom->Rndm();

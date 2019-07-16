@@ -151,8 +151,8 @@ void ElectronSelection::Selection(std::vector<KElectron>& leptonColl, TString Op
 
     // HLT Emulation Cuts 
     if(apply_HLTSafeCut){
-      if     ( HLTSafeLevel.Contains("CaloIdL_TrackIdL_IsoVL") && (!el->IsTrigMVAValid()) ) pass_selection=false;
-      else if( HLTSafeLevel.Contains("WPLoose")                && (!el->PassHLTID())      ) pass_selection=false;
+      if     ( HLTSafeLevel.Contains("CaloIdL_TrackIdL_IsoVL") && (!el->IsTrigMVAValid()) && el->Pt()>15. ) pass_selection=false;
+      else if( HLTSafeLevel.Contains("WPLoose")                && (!el->PassHLTID()     )                 ) pass_selection=false;
     }
 
     // SetRelIso. Default: PFRelIso03
@@ -192,12 +192,8 @@ void ElectronSelection::Selection(std::vector<KElectron>& leptonColl, TString Op
     }
 
     //d0 Significance
-    if(apply_dxysigmin && !(fabs(el->dxySig2D()) >= dxySig_min)) pass_selection = false;
-    if(apply_dxysigmax && !(fabs(el->dxySig2D()) <  dxySig_max)) pass_selection = false;
-
-    if(apply_IP3Dmin && !(fabs(el->dxySig3D()) >= IP3D_min)) pass_selection = false;
-    if(apply_IP3Dmax && !(fabs(el->dxySig3D()) <  IP3D_max)) pass_selection = false;
-
+    if(apply_dxysigmin && !(fabs(el->dxySig()) >= dxySig_min)) pass_selection = false;
+    if(apply_dxysigmax && !(fabs(el->dxySig()) <  dxySig_max)) pass_selection = false;
 
 
     if(apply_BESepCut){
@@ -226,7 +222,6 @@ void ElectronSelection::Selection(std::vector<KElectron>& leptonColl, TString Op
         if(DebugPrint) cout << "Selection: Fail dxy Cut" << endl;
       }
     }
-    
 
 
     if(pass_selection){

@@ -50,7 +50,8 @@ if not LQANALYZER_DIR == "None" :
 
 
 
-        yeartags = ["80X", "94X"]
+        yeartags = ["80X"]
+        #yeartags = ["80X", "94X"]
 
         for yt in yeartags:
             samples_version = str(os.getenv("CATVERSION"))

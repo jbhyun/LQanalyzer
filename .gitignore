@@ -5,6 +5,7 @@
 */*.pcm
 bin/catconfig
 LQRun/txt/
+LQRun/Submit_jbhyun/CommandHist.txt
 LQanalyzer/LQRun/txt
 LQRun/*/job_output/
 LQLib/

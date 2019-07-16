@@ -548,9 +548,15 @@ void KElectron::Setdz(double d_z){
 void KElectron::Setdxy(double d_xy){ 
   k_dxy = d_xy;
 }
+
+void KElectron::Setdxy_sig(double d_xysig){
+  k_dxy_sig = d_xysig;
+}
+
 void KElectron::Setdxy_sig2D(double d_xysig2D){
   k_dxy_sig2D = d_xysig2D;
 }
+
 void KElectron::Setdxy_sig3D(double d_xysig3D){
   k_dxy_sig3D = d_xysig3D;
 }

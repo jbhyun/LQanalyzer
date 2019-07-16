@@ -193,17 +193,11 @@ void MuonSelection::Selection( std::vector<KMuon>& leptonColl, bool applyrochest
       if(apply_dxycut && !(fabs(muit->dXY())< dxy_cut )) pass_selection = false;
       if(DebugPrint && apply_dxycut && !(fabs(muit->dXY())< dxy_cut ))cout << "Fails Selection::dxy cut " << endl;
 
-      if(apply_dxysigmin && !(fabs(muit->dXYSig2D()) >= dxySig_min )) pass_selection = false;
-      if(DebugPrint && apply_dxysigmin && !(fabs(muit->dXYSig2D()) >= dxySig_min ))cout << "Fails Selection::dxySigMin cut " << endl;
+      if(apply_dxysigmin && !(fabs(muit->dXYSig()) >= dxySig_min )) pass_selection = false;
+      if(DebugPrint && apply_dxysigmin && !(fabs(muit->dXYSig()) >= dxySig_min ))cout << "Fails Selection::dxySigMin cut " << endl;
 
-      if(apply_dxysigmax && !(fabs(muit->dXYSig2D()) < dxySig_max )) pass_selection = false;
-      if(DebugPrint && apply_dxysigmax && !(fabs(muit->dXYSig2D()) < dxySig_max ))cout << "Fails Selection::dxySigMin cut " << endl;
-
-      
-      if(apply_IP3Dmin && !(fabs(muit->dXYSig3D()) >= IP3D_min )) pass_selection = false;
-
-      if(apply_IP3Dmax && !(fabs(muit->dXYSig3D()) < IP3D_max )) pass_selection = false;
-
+      if(apply_dxysigmax && !(fabs(muit->dXYSig()) < dxySig_max )) pass_selection = false;
+      if(DebugPrint && apply_dxysigmax && !(fabs(muit->dXYSig()) < dxySig_max ))cout << "Fails Selection::dxySigMin cut " << endl;
 
       if(apply_chi2cut && !( muit->GlobalChi2() < chiNdof_cut && muit->GlobalChi2() >= chiNdofMIN_cut )) pass_selection = false;
       if(DebugPrint && apply_chi2cut && !( muit->GlobalChi2() <chiNdof_cut && muit->GlobalChi2()  >=chiNdofMIN_cut)) cout << "Fails chi2 cut " << endl;

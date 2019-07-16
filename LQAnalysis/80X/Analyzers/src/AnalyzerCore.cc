@@ -218,7 +218,7 @@ void AnalyzerCore::FillEventComparisonFile(TString label){
 vector<TString >  AnalyzerCore::GetHNDiLepElTriggers(){
 
   vector<TString> triglist;
-  if(isData){
+  if(k_isdata){
     if(k_channel.Contains("SingleElectron"))triglist.push_back("HLT_Ele32_eta2p1_WPTight_Gsf_v");
     if(k_channel.Contains("DoubleEG")) triglist.push_back("HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v");
   }
@@ -235,8 +235,8 @@ bool AnalyzerCore::FailHNDataSetCheck(){
   bool _singleMuon =(k_channel.Contains("SingleMuon"));
   TString analysis_trigger_eg="HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v";
   TString analysis_trigger_muon="HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_v";
-  if(isData && _singleEG && PassTrigger(analysis_trigger_eg)) return false;
-  if(isData && _singleMuon && PassTrigger(analysis_trigger_muon)) return false;
+  if(k_isdata && _singleEG && PassTrigger(analysis_trigger_eg)) return false;
+  if(k_isdata && _singleMuon && PassTrigger(analysis_trigger_muon)) return false;
 
   return true;
 }
@@ -369,7 +369,7 @@ float AnalyzerCore::GetConvWeight(snu::KMuon mu){
 }
 
 void AnalyzerCore::SetupLuminosityMap(bool initialsetup, TString forceperiod){
-  if(isData) return ;
+  if(k_isdata) return ;
 
   TString lumitriggerpath="";
   TString singleperiod = getenv("CATAnalyzerPeriod");
@@ -477,31 +477,42 @@ float AnalyzerCore::GetTriggerPrescaleCorrection(TString triggername){
 
 
 float AnalyzerCore::GetKFactor(){
-  
+
+
   if(k_sample_name.Contains("ZZTo4L_powheg")) {
-    // http://arxiv.org/abs/1405.2219
-    //  1.16[3] brings pp->ZZ from NLO to NNLO
-    return 1.16;
+    // Physics Letters B 750 (2015) 311 arXiv:https://arxiv.org/abs/1405.2219
+    return 1.15;
+  }
+  if(k_sample_name.Contains("WZTo3LNu_powheg")){
+    //Physics Letters B 761 (2016) pp.179-183
+    //http://dx.doi.org/10.1016/j.physletb.2016.08.017 
+    return 1.109;
+  }
+  if(k_sample_name.Contains("ttZ") && !k_sample_name.Contains("To")){
+    return 839.3/780.;
+  }
+  if(k_sample_name.Contains("ttW") && !k_sample_name.Contains("To")){
+    return 600.8/610.;
   }
   if(k_sample_name.Contains("ZZTo2L2Nu_Powheg")) {
-    // http://arxiv.org/abs/1405.2219                                                                                     
-    //  1.16[3] brings pp->ZZ from NLO to NNLO                                                                            
+    // http://arxiv.org/abs/1405.2219 1.16[3] brings pp->ZZ from NLO to NNLO                                                                            
     return 1.16;
   }
   if(k_sample_name.Contains("ZZTo2L2Q_Powheg")) {
-    // http://arxiv.org/abs/1405.2219                                                                                        //  1.16[3] brings pp->ZZ from NLO to NNLO 
-    
+    // http://arxiv.org/abs/1405.2219 1.16[3] brings pp->ZZ from NLO to NNLO 
     return 1.16;
   }
 
   if(k_sample_name.Contains("ggZZto")){
-    //  1.67 brings gg->ZZ from LO to NLO (http://arxiv.org/abs/1509.06734)
+    // 1.67 brings gg->ZZ from LO to NLO (http://arxiv.org/abs/1509.06734)
     return 1.67;
   }
   if(k_sample_name.Contains("ggHtoZZ")){
     return 1.67;
     //AN2016_359
   }
+
+  
 
   return 1.;
     
@@ -1196,7 +1207,7 @@ int AnalyzerCore::GetDataPeriod(){
 
 int AnalyzerCore::GetPeriod(){
 
-  if(isData) return GetDataPeriod();
+  if(k_isdata) return GetDataPeriod();
   else return GetMCPeriod();
 
 }
@@ -1205,7 +1216,7 @@ int AnalyzerCore::GetMCPeriod(){
   /// This function returns a period B-H for MC events. 
   /// It uses a random number and retrunds a period based on the luminosity of each period
   /// It assumes the trigger used is unprescaled
-  if(isData) return -1;
+  if(k_isdata) return -1;
   if(!k_reset_period) return a_mcperiod;
   k_reset_period=false;
   
@@ -1217,7 +1228,7 @@ int AnalyzerCore::GetMCPeriod(){
 }
 
 int AnalyzerCore::GetMCPeriodRandom(){
-  if(isData) return -1;
+  if(k_isdata) return -1;
   double r =gRandom->Rndm(); /// random number between 0 and 1
   
   // https://docs.google.com/spreadsheets/d/1rWM3AlFKO8IJVaeoQkWZYWwSvicQ1QCXYSzH74QyZqE/edit?alt=json#gid=1689385956
@@ -1837,7 +1848,7 @@ bool AnalyzerCore::Is2015Analysis(){
 
 float AnalyzerCore::WeightByTrigger(vector<TString> triggernames, float tlumi){
   
-  if(isData){
+  if(k_isdata){
     for(unsigned int i=0; i < triggernames.size() ; i++){
       //// code here sets weight to -99999. if user tries to use incorrect dataset in data 
       /// datasets for each trigger in 2015 can be seen in following googledoc:
@@ -1922,7 +1933,7 @@ float AnalyzerCore::WeightByTrigger(TString triggername, float tlumi){
   /// Depends on trigger 
   /// 
 
-  if(isData) return 1.;
+  if(k_isdata) return 1.;
   //  brilcalc lumi -u /pb 
   // --normtag /afs/cern.ch/user/l/lumipro/public/normtag_file/moriond16_normtag.json 
   // -i jsonfiles/Cert_13TeV_16Dec2015ReReco_Collisions15_25ns_JSON_v2.txt 
@@ -1936,6 +1947,7 @@ float AnalyzerCore::WeightByTrigger(TString triggername, float tlumi){
     float corr_trig = GetTriggerPrescaleCorrection(triggername);
     if(triggername.Contains(mit->first)) return (corr_trig*mit->second / tlumi);
   }
+  cout<<"HERE2"<<endl;
   m_logger << ERROR << "Error in getting weight for trigger  " << triggername << "  prescale. Trigname is not correct or not in map"  << LQLogger::endmsg; exit(0);
 
   return 1.;
@@ -2195,9 +2207,9 @@ void AnalyzerCore::SetUpEvent(Long64_t entry, float ev_weight) throw( LQError ) 
   if(!IDSetup)   SetupID();
   if(!setupDDBkg)SetupDDBkg();
   
-  if(k_running_nonprompt&&fake_configured &&!self_configured){
-    cout << "Setting up fakes(Def)" << endl;
-    m_datadriven_bkg->SetupFake();self_configured=true; }
+//  if(k_running_nonprompt&&fake_configured &&!self_configured){
+//    cout << "Setting up fakes(Def)" << endl;
+//    m_datadriven_bkg->SetupFake();self_configured=true; }
 
 
 
@@ -2207,8 +2219,8 @@ void AnalyzerCore::SetUpEvent(Long64_t entry, float ev_weight) throw( LQError ) 
   
   if(LQinput){
 
-    m_logger << DEBUG << "k_isdata = " << k_isdata << " and isData = " << isData << LQLogger::endmsg;
-    if(k_isdata != isData) throw LQError( "!!! Event is confused. It does not know if it is data or MC", LQError::SkipCycle );
+    m_logger << DEBUG << "k_isdata = " << k_isdata << " and k_isdata = " << k_isdata << LQLogger::endmsg;
+    if(k_isdata != k_isdata) throw LQError( "!!! Event is confused. It does not know if it is data or MC", LQError::SkipCycle );
   }
   else isData = k_isdata;
   
@@ -2270,7 +2282,8 @@ void AnalyzerCore::SetUpEvent(Long64_t entry, float ev_weight) throw( LQError ) 
   bool setupFullIDinSelection=false;
   /// setting this to true makes the code run slower
 
-  if(k_running_nonprompt || k_running_chargeflip || setupFullIDinSelection){
+  if(false){
+  //if(k_running_nonprompt || k_running_chargeflip || setupFullIDinSelection){
     //m_datadriven_bkg needs ID maps to get isTight for IDs 
     m_datadriven_bkg->SetEventBase(eventbase);
   }
@@ -2288,15 +2301,15 @@ void AnalyzerCore::SetUpEvent(Long64_t entry, float ev_weight) throw( LQError ) 
 
   if(!k_classname.Contains("SKTreeMaker")){
     mcdata_correction->SetPeriod(GetPeriod());
-    mcdata_correction->SetIsData(isData);
+    mcdata_correction->SetIsData(k_isdata);
   }
   if (k_classname == "SKTreeMaker"){
     mcdata_correction->SetPeriod(GetPeriod());
-    mcdata_correction->SetIsData(isData);
+    mcdata_correction->SetIsData(k_isdata);
   }
   if (k_classname == "SKTreeMakerHNDiLep"){
     mcdata_correction->SetPeriod(GetPeriod());
-    mcdata_correction->SetIsData(isData);
+    mcdata_correction->SetIsData(k_isdata);
   }
   
 
@@ -2353,7 +2366,7 @@ int AnalyzerCore::AssignnNumberOfTruth(){
 
 bool AnalyzerCore::IsSignal(){
 
-  if(isData) return false;
+  if(k_isdata) return false;
   if(k_sample_name.Contains("Majornana")) return true;
   if(k_sample_name.Contains("Tchannel")) return true;
   if(k_sample_name.Contains("HNE")) return true;
@@ -2421,7 +2434,7 @@ float AnalyzerCore::GetLT(std::vector<snu::KElectron> electrons){
 
 
 bool AnalyzerCore::IsDiEl(){
-  if(isData) return false;
+  if(k_isdata) return false;
   int iel(0);
   for(unsigned int ig=0; ig < eventbase->GetTruth().size(); ig++){
     if(eventbase->GetTruth().at(ig).IndexMother() <= 0)continue;
@@ -2446,7 +2459,7 @@ bool AnalyzerCore::ISCF(snu::KElectron el){
 
 bool AnalyzerCore::IsInternalConversion(snu::KMuon mu){
 
-  if(isData) return false;
+  if(k_isdata) return false;
 
   bool conv=false;
   std::vector<snu::KTruth> truthColl= eventbase->GetTruth();
@@ -2465,7 +2478,7 @@ bool AnalyzerCore::IsInternalConversion(snu::KMuon mu){
 
 bool AnalyzerCore::IsInternalConversion(snu::KElectron el){
 
-  if(isData) return false;
+  if(k_isdata) return false;
   std::vector<snu::KTruth> truthColl= eventbase->GetTruth();
 
   bool conv=false;
@@ -2483,7 +2496,7 @@ bool AnalyzerCore::IsInternalConversion(snu::KElectron el){
 
 bool AnalyzerCore::IsExternalConversion(snu::KElectron el){
 
-  if(isData) return false;
+  if(k_isdata) return false;
 
   std::vector<snu::KTruth> truthColl= eventbase->GetTruth();
 
@@ -2564,7 +2577,7 @@ bool AnalyzerCore::NonPrompt(snu::KMuon mu){
 
 bool AnalyzerCore::AllPrompt(std::vector<snu::KMuon> muons, int method){
   
-  if(isData) return true;
+  if(k_isdata) return true;
   bool allprompt=true;
   std::vector<snu::KTruth> truthColl= eventbase->GetTruth();
 
@@ -2672,7 +2685,7 @@ vector<int> AnalyzerCore::GetVirtualMassIndex(int mode, int pdgid){
 
 }
 float AnalyzerCore::GetVirtualMass(int pdg, bool includenu, bool includeph){
-  if(isData) return -999.;
+  if(k_isdata) return -999.;
   vector<KTruth> es1;
   for(unsigned int ig=0; ig < eventbase->GetTruth().size(); ig++){
 
@@ -2735,7 +2748,7 @@ float AnalyzerCore::GetVirtualMass(int pdg, bool includenu, bool includeph){
 
 float AnalyzerCore::GetVirtualMassConv(int cmindex,int nconvindx){
 
-  if(isData) return -999.;
+  if(k_isdata) return -999.;
   vector<KTruth> es1;
   for(unsigned int ig=0; ig < eventbase->GetTruth().size(); ig++){
 
@@ -2771,7 +2784,7 @@ float AnalyzerCore::GetVirtualMassConv(int cmindex,int nconvindx){
 
 
 void AnalyzerCore::TruthPrintOut(){
-  if(isData) return;
+  if(k_isdata) return;
   m_logger << INFO<< "RunNumber/Event Number = "  << eventbase->GetEvent().RunNumber() << " : " << eventbase->GetEvent().EventNumber() << LQLogger::endmsg;
   cout << "Particle Index |  PdgId  | GenStatus   | Mother PdgId |  Part_Eta | Part_Pt | Part_Phi | Mother Index |   " << endl;
 
@@ -2794,7 +2807,7 @@ void AnalyzerCore::TruthPrintOut(){
 }
 
 void AnalyzerCore::TruthPrintOut(snu::KMuon muon){
-  if(isData) return;
+  if(k_isdata) return;
   m_logger << INFO<< "RunNumber/Event Number = "  << eventbase->GetEvent().RunNumber() << " : " << eventbase->GetEvent().EventNumber() << LQLogger::endmsg;
   cout << "Particle Index |  PdgId  | GenStatus   | Mother PdgId |  Part_Eta | Part_Pt | Part_Phi | Mother Index |   " << endl;
 
@@ -2821,7 +2834,7 @@ void AnalyzerCore::TruthPrintOut(snu::KMuon muon){
 }
 
 void AnalyzerCore::TruthPrintOut(snu::KElectron electron){
-  if(isData) return;
+  if(k_isdata) return;
   m_logger << INFO<< "RunNumber/Event Number = "  << eventbase->GetEvent().RunNumber() << " : " << eventbase->GetEvent().EventNumber() << LQLogger::endmsg;
   cout << "Particle Index |  PdgId  | GenStatus   | Mother PdgId |  Part_Eta | Part_Pt | Part_Phi | Mother Index |   " << endl;
 
@@ -3044,9 +3057,11 @@ void AnalyzerCore::PrintTruth(){
   
   cout << "=========================================================" << endl;
   cout << "truth size = " << truthColl.size() << endl;
-  cout << "index" << '\t' << "pdgid" << '\t' << "mother" << '\t' << "mother pid" << endl;
-  for(unsigned int i=2; i<truthColl.size(); i++){
-    cout << i << '\t' << truthColl.at(i).PdgId() << '\t' << truthColl.at(i).IndexMother() << '\t' << truthColl.at( truthColl.at(i).IndexMother() ).PdgId() << endl;
+  //cout << "index" << '\t' << "pdgid" << '\t' << "mother" << '\t' << "mother pid" << endl;
+  cout<<"Idx"<<'\t'<<"PID"<<'\t'<<"MIdx"<<'\t'<<"MPID"<<'\t'<<"GenSt"<<'\t'<<"Type"<<'\t'<<"pt"<<'\t'<<"eta"<<'\t'<<"phi"<<endl;
+  for(int i=2; i<truthColl.size(); i++){
+    //cout << i << '\t' << truthColl.at(i).PdgId() << '\t' << truthColl.at(i).IndexMother() << '\t' << truthColl.at( truthColl.at(i).IndexMother() ).PdgId() << endl;
+    cout<<i<<'\t'<<truthColl.at(i).PdgId()<<'\t'<<truthColl.at(i).IndexMother()<<'\t'<<truthColl.at(truthColl.at(i).IndexMother()).PdgId()<<'\t'<<truthColl.at(i).GenStatus()<<'\t'<<GetLeptonType(i, truthColl)<<'\t'<<truthColl.at(i).Pt()<<'\t'<<truthColl.at(i).Eta()<<'\t'<<truthColl.at(i).Phi()<<'\t'<<endl;
   }
 
 }
@@ -3187,7 +3202,7 @@ void AnalyzerCore::FillHistPerLumi(TString histname, float value, float w, float
 	if(eventbase->GetEvent().RunNumber()  < it->first) {
 	  map<int,float>::iterator it2 = mapLumiPerBlock.find(it->first);
 	  
-	  if(isData){
+	  if(k_isdata){
 	    float neww= w /it2->second;
 	    if(GetHist(histname+"_perlumi")) GetHist(histname+"_perlumi")->Fill(it->second, neww);
 	    if(GetHist(histname+"_"+it->second)) GetHist(histname+"_"+it->second)->Fill(value,neww);
@@ -3586,19 +3601,7 @@ void AnalyzerCore::WriteHists(){
       mapit->second->Write();
     }
     else{
-      TDirectory *dir = m_outputFile->GetDirectory("Hists");
-   
-      if (dir) {
-	m_outputFile->cd("Hists");
-	mapit->second->Write();
-	m_outputFile->cd();
-      }
-      else{
-	Dir = m_outputFile->mkdir("Hists");
-	m_outputFile->cd( Dir->GetName() );
-	mapit->second->Write();
-	m_outputFile->cd();
-      }
+      mapit->second->Write();
     }
   }
   for(map<TString, TH2*>::iterator mapit = maphist2D.begin(); mapit != maphist2D.end(); mapit++){
@@ -3763,7 +3766,7 @@ bool AnalyzerCore::PassMETFilter(){
     m_logger << DEBUG << "Event Fails  PassBadPFMuonFilter" << LQLogger::endmsg;
   }
 
-  if (isData){
+  if (k_isdata){
     if(!eventbase->GetEvent().PassBadEESupercrystalFilter()) {
       pass = false;
       m_logger << DEBUG << "Event FailsPassBadEESupercrystalFilter" << LQLogger::endmsg;
@@ -3969,7 +3972,7 @@ int AnalyzerCore::NBJet(std::vector<snu::KJet> jets,  KJet::Tagger tag, KJet::WO
     continue;
 
     bool isBtag=false;
-    if (isData) {
+    if (k_isdata) {
 
       if (it_lf->second->IsTagged(jets.at(ij).BJetTaggerValue(tag),  -999999, jets.at(ij).Pt(), jets.at(ij).Eta(),period))
 	isBtag=true;
@@ -4046,7 +4049,7 @@ bool AnalyzerCore::IsBTagged(snu::KJet jet,  KJet::Tagger tag, KJet::WORKING_POI
   if ( tag == snu::KJet::JETPROB) return -999;
   
   bool isBtag=false;
-  if (isData) {
+  if (k_isdata) {
     
     if (it_lf->second->IsTagged(jet.BJetTaggerValue(tag),  -999999, jet.Pt(), jet.Eta(), mcperiod))
       isBtag=true;
@@ -4070,7 +4073,7 @@ float AnalyzerCore::BTagScaleFactor_1a(std::vector<snu::KJet> jetColl, KJet::Tag
   //This is coded for H+->WA analysis. I'm fine with anybody else using this function, but be aware that HN analyses decided to use 2a method.
   //And I currently have no plan to use multiple WP. so I just coded to work only for single WP regime.
 
-  if(isData) return 1.;
+  if(k_isdata) return 1.;
 
   if(mcperiod == 0) {
     Message("FYI : mcperiod not set in AnalyzerCore::BTagScaleFactor_1a: meaning auto-set", DEBUG);
@@ -4138,7 +4141,6 @@ float AnalyzerCore::BTagScaleFactor_1a(std::vector<snu::KJet> jetColl, KJet::Tag
   return BTagSF;
 
 }
-
 
 
 double AnalyzerCore::MuonDYMassCorrection(std::vector<snu::KMuon> mu, double w){
@@ -4568,6 +4570,33 @@ bool AnalyzerCore::IsFinalPhotonSt23(std::vector<snu::KTruth> TruthColl){
 //**footnotes
 //a) The status 1 photon is end of the history of status 23 photon.
 //b) Some particle is daughter of status 23 photon.
+}
+
+
+int AnalyzerCore::GetPartonType(int TruthIdx, std::vector<snu::KTruth>& TruthColl, TString Option){
+//Type : 1:W decay product (LO sample)
+//       Currently have interest only in parton from W decay
+//       0:Error/Non classified 
+
+  //Only consider Status 1 lepton
+  if(TruthIdx<2) return 0;
+  if( !(fabs(TruthColl.at(TruthIdx).PdgId())>0 && fabs(TruthColl.at(TruthIdx).PdgId())<10) ) return 0;
+
+  int PartonType=0;
+  int MotherIdx       = TruthColl.at(TruthIdx).IndexMother();
+
+  int MPID=0;
+  int Status_now=0;
+    if(    TruthIdx!=-1   ){ Status_now    = TruthColl.at(TruthIdx).GenStatus();
+                           }
+    if(   MotherIdx!=-1   ){ MPID         = TruthColl.at(MotherIdx).PdgId();
+                           }
+
+  if     ( TruthIdx==-1 )                                       PartonType= 0;
+  else if( fabs(MPID)==23 || fabs(MPID)==24 || fabs(MPID)==25 ) PartonType= 1;
+  else PartonType=0;
+
+  return PartonType;
 }
 
 
@@ -5910,7 +5939,7 @@ double AnalyzerCore::TopPTReweight(std::vector<snu::KTruth> TruthColl){
 
 float AnalyzerCore::GenFilterEfficiency(TString SampleName){
 
-  if( isData ) return 1.;
+  if( k_isdata ) return 1.;
   else if( !(SampleName.Contains("3mu") || SampleName.Contains("1e2mu")) ) return 1.;
 
   if     (SampleName.Contains("MHc90_MZp2" )) return 0.309;
@@ -6005,7 +6034,7 @@ float AnalyzerCore::GetHiggsMass(TString SampleName, TString Option){
   bool AMass=Option.Contains("A");
   bool HcMass=Option.Contains("H+");
   if(AMass && HcMass) return -1.;
-  if(isData) return -1.;
+  if(k_isdata) return -1.;
 
   float HiggsMass=0.;
   if(AMass){
@@ -6035,7 +6064,7 @@ float AnalyzerCore::SignalNorm(TString SampleName, float Xsec){
 
   //Normalise xsec(tt)*[2*Br(t>bH+)*Br(H+>AW)*Br(A>mumu)*Br(t->bW)] to required value.
 
-  if( isData ) return 1.;
+  if( k_isdata ) return 1.;
   if( !(SampleName.Contains("TTToHcToWA") || SampleName.Contains("TTToHcToWZp")) ) return 1.;
 
   float weight=Xsec/20.;
